@@ -19,7 +19,7 @@ set (HEADERS
 	inc/ProgContainers.h
 	inc/ProgData.h
 	inc/ProgEvent.h
-    inc/ProgEvents.h
+	inc/ProgEvents.h
 	inc/ProgMeta.h
 	inc/PrognosticsModel.h
 	inc/PrognosticsModelFactory.h
