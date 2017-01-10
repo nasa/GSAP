@@ -19,6 +19,7 @@
 #include <unordered_map>
 #include <string>
 #include <chrono>  // Used for storing time (LastUpdated)
+#include <math.h>  // For NAN
 
 namespace PCOE {
     /** @class  Datum
