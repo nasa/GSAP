@@ -90,4 +90,4 @@ endif()
 #Libraries
 add_subdirectory(${CMAKE_SOURCE_DIR}/support/)
 add_subdirectory(${CMAKE_SOURCE_DIR}/framework/)
-add_subdirectory(${CMAKE_SOURCE_DIR}/test/)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Test/)
