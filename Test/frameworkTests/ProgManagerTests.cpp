@@ -28,24 +28,24 @@ namespace TestProgManager {
     }
 
     void construct_path() {
-        std::string path = "../test/validation/cfg/prog.cfg";
+        std::string path = "../example/cfg/prog.cfg";
         ProgManager pm(path);
     }
 
     void construct_config() {
-        std::string path = "../test/validation/cfg/prog.cfg";
+        std::string path = "../example/cfg/prog.cfg";
         GSAPConfigMap config(path);
         ProgManager pm(config);
     }
 
     void setConfig_path() {
-        std::string path = "../test/validation/cfg/prog.cfg";
+        std::string path = "../example/cfg/prog.cfg";
         ProgManager pm;
         pm.setConfig(path);
     }
 
     void setConfig_config() {
-        std::string path = "../test/validation/cfg/prog.cfg";
+        std::string path = "../example/cfg/prog.cfg";
         GSAPConfigMap config(path);
         ProgManager pm;
         pm.setConfig(config);
