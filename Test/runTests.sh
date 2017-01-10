@@ -45,6 +45,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# For some reason the makefile is placed up one directory in some systems
+if [ -a ../Makefile ]; then
+		popd
+fi
+
 echo -e "\n\n${YELLOW}Running make.${NORMAL}"
 make
 if [ $? -ne 0 ]; then
@@ -53,8 +58,11 @@ if [ $? -ne 0 ]; then
     popd
     exit 1
 fi
-popd
 
+# This is to handle the case where the makefile was placed up one directory
+if [ ! -d build ]; then
+		popd
+fi
 
 pushd bin
 echo -e "\n\n${YELLOW}Running Tests.${NORMAL}"
