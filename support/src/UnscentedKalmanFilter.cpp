@@ -77,15 +77,15 @@ namespace PCOE {
         m_sigmaX.w.resize(2 * pModel->getNumStates() + 1);
         
         // Set kappa to default value, unless has been configured already
-        if (isnan(m_sigmaX.kappa)) {
+        if (std::isnan(m_sigmaX.kappa)) {
             m_sigmaX.kappa = 3.0 - pModel->getNumStates();
         }
         // Set alpha to default value, unless has been configured already
-        if (isnan(m_sigmaX.alpha)) {
+        if (std::isnan(m_sigmaX.alpha)) {
             m_sigmaX.alpha = 1;
         }
         // Set beta to default value, unless has been configured already
-        if (isnan(m_sigmaX.beta)) {
+        if (std::isnan(m_sigmaX.beta)) {
             m_sigmaX.beta = 0;
         }
     }
