@@ -1,0 +1,60 @@
+set (HEADERS
+	inc/ConfigMap.h
+	inc/DataPoint.h
+	inc/DataPoints.h
+	inc/DataStore.h
+	inc/Datum.h
+	inc/Exceptions.h
+	inc/Factory.h
+	inc/GaussianVariable.h
+	inc/GSAPConfigMap.h
+	inc/Matrix.h
+	inc/Model.h
+	inc/ModelFactory.h
+	inc/MonteCarloPredictor.h
+	inc/Observer.h
+	inc/ObserverFactory.h
+	inc/Predictor.h
+	inc/PredictorFactory.h
+	inc/ProgContainers.h
+	inc/ProgData.h
+	inc/ProgEvent.h
+    inc/ProgEvents.h
+	inc/ProgMeta.h
+	inc/PrognosticsModel.h
+	inc/PrognosticsModelFactory.h
+	inc/Singleton.h
+	inc/StatisticalTools.h
+	inc/Thread.h
+	inc/ThreadSafeLog.h
+	inc/UData.h
+	inc/UDataInterfaces.h
+	inc/UnscentedKalmanFilter.h
+)
+
+set(SRCS
+	src/ConfigMap.cpp
+	src/DataPoint.cpp
+	src/DataPoints.cpp
+	src/GaussianVariable.cpp
+	src/GSAPConfigMap.cpp
+	src/Matrix.cpp
+	src/Model.cpp
+	src/MonteCarloPredictor.cpp
+	src/Observer.cpp
+	src/ProgContainers.cpp
+	src/ProgData.cpp
+	src/ProgEvent.cpp
+	src/ProgEvents.cpp
+	src/ProgMeta.cpp
+	src/StatisticalTools.cpp
+	src/Thread.cpp
+	src/ThreadSafeLog.cpp
+	src/UData.cpp
+	src/UDataInterfaces.cpp
+	src/UnscentedKalmanFilter.cpp
+)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)
+
+add_library(support ${HEADERS} ${SRCS})
