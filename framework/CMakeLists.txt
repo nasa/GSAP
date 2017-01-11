@@ -25,7 +25,7 @@ set(SRCS
 	src/Battery.cpp
 )
 
-include_directories(${CMAKE_SOURCE_DIR}/support/inc/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../support/inc/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)
 
 add_library(framework ${HEADERS} ${SRCS})
