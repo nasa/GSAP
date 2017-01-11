@@ -120,7 +120,7 @@ namespace PCOE {
     }
     
     template <class T>
-    void Datum<T>::setTime(Datum::time_point lastUpdateIn) {
+    void Datum<T>::setTime(std::chrono::time_point<clock> lastUpdateIn) {
         lastUpdated = lastUpdateIn;
     }
 }
