@@ -14,6 +14,8 @@ set (HEADERS
 	inc/MonteCarloPredictor.h
 	inc/Observer.h
 	inc/ObserverFactory.h
+	inc/Optimizer.h
+	inc/ParticleSwarmOptimizer.h
 	inc/Predictor.h
 	inc/PredictorFactory.h
 	inc/ProgContainers.h
@@ -42,11 +44,14 @@ set(SRCS
 	src/Model.cpp
 	src/MonteCarloPredictor.cpp
 	src/Observer.cpp
+	src/Optimizer.cpp
+	src/ParticleSwarmOptimizer.cpp
 	src/ProgContainers.cpp
 	src/ProgData.cpp
 	src/ProgEvent.cpp
 	src/ProgEvents.cpp
 	src/ProgMeta.cpp
+	src/PrognosticsModel.cpp
 	src/StatisticalTools.cpp
 	src/Thread.cpp
 	src/ThreadSafeLog.cpp

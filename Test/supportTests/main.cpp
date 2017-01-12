@@ -29,6 +29,7 @@
 #include "ProgDataTests.h"
 #include "ThreadTests.h"
 #include "UDataTests.h"
+#include "OptimizerTests.h"
 
 using namespace PCOE::Test;
 
@@ -136,6 +137,7 @@ int main() {
     context.AddTest("Tank Initialization", testTankInitialize, "Model Tank");
     context.AddTest("Tank State Eqn", testTankStateEqn, "Model Tank");
     context.AddTest("Tank Output Eqn", testTankOutputEqn, "Model Tank");
+    context.AddTest("Tank Simulate", testTankSimulate, "Model Tank");
 
     context.AddTest("Battery Set Parameters", testBatterySetParameters, "Model Battery");
     context.AddTest("Battery Initialization", testBatteryInitialization, "Model Battery");
@@ -144,6 +146,13 @@ int main() {
     context.AddTest("Battery Threshold Eqn", testBatteryThresholdEqn, "Model Battery");
     context.AddTest("Battery Input Eqn", testBatteryInputEqn, "Model Battery");
     context.AddTest("Battery Predicted Output Eqn", testBatteryPredictedOutputEqn, "Model Battery");
+    
+    context.AddTest("Battery EOL Initialization", testBatteryEOLInitialization, "Model BatteryEOL");
+    context.AddTest("Battery EOL State Eqn", testBatteryEOLStateEqn, "Model BatteryEOL");
+    context.AddTest("Battery EOL Output Eqn", testBatteryEOLOutputEqn, "Model BatteryEOL");
+    context.AddTest("Battery EOL Threshold Eqn", testBatteryEOLThresholdEqn, "Model BatteryEOL");
+    context.AddTest("Battery EOL Input Eqn", testBatteryEOLInputEqn, "Model BatteryEOL");
+    context.AddTest("Battery EOL Predicted Output Eqn", testBatteryEOLPredictedOutputEqn, "Model BatteryEOL");
 
     // Observer Tests
     context.AddCategoryInitializer("Observer", observerTestsInit);
@@ -174,6 +183,11 @@ int main() {
     context.AddCategoryInitializer("Predictor", predictorTestInit);
     context.AddTest("Monte Carlo Predictor Configuration for Battery", testMonteCarloBatteryConfig, "Predictor");
     context.AddTest("Monte Carlo Prediction for Battery", testMonteCarloBatteryPredict, "Predictor");
+    
+    // Optimizer Tests
+    context.AddCategoryInitializer("Optimizer", optimizerTestsInit);
+    context.AddTest("Battery Aging Parameter Estimation", testBatteryParamEst);
+    context.AddTest("Battery Aging Rate Parameter Estimation", testBatteryAgingRateParamEst);
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");

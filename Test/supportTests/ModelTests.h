@@ -24,6 +24,7 @@
 void testTankInitialize();
 void testTankStateEqn();
 void testTankOutputEqn();
+void testTankSimulate();
 
 // Battery model tests
 void testBatterySetParameters();
@@ -33,5 +34,13 @@ void testBatteryOutputEqn();
 void testBatteryThresholdEqn();
 void testBatteryInputEqn();
 void testBatteryPredictedOutputEqn();
+
+// Battery EOL model tests
+void testBatteryEOLInitialization();
+void testBatteryEOLStateEqn();
+void testBatteryEOLOutputEqn();
+void testBatteryEOLThresholdEqn();
+void testBatteryEOLInputEqn();
+void testBatteryEOLPredictedOutputEqn();
 
 #endif // MODELTESTS_H

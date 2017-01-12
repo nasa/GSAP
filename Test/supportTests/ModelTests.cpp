@@ -25,6 +25,7 @@
 #include "Model.h"
 #include "Tank3.h"
 #include "Battery.h"
+#include "BatteryEOL.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -142,6 +143,41 @@ void testTankOutputEqn()
     Assert::AreEqual(0.1, z[0], 1e-12);
     Assert::AreEqual(0.05, z[1], 1e-12);
     Assert::AreEqual(1.0 / 30.0, z[2], 1e-12);
+}
+
+void testTankSimulate() {
+    // Create Tank3 model
+    Tank3 TankModel = Tank3();
+    
+    // Set parameter values
+    TankModel.parameters.K1 = 1;
+    TankModel.parameters.K2 = 2;
+    TankModel.parameters.K3 = 3;
+    TankModel.parameters.R1 = 1;
+    TankModel.parameters.R2 = 2;
+    TankModel.parameters.R3 = 3;
+    TankModel.parameters.R1c2 = 1;
+    TankModel.parameters.R2c3 = 2;
+    
+    // Set up u (input flows)
+    std::vector<double> u = {1, 2, 3};
+    
+    // Set up x0 (masses)
+    std::vector<double> x0 = {0, 0, 0};
+    
+    // Set up X, Z trajectories
+    Trajectory X, Z;
+    
+    // Simulate up to time 10
+    TankModel.simulate(0,10,x0,u,X,Z);
+    
+    // Check final values
+    Assert::AreEqual(X.back()[0],-0.5666, 0.001, "X[0] value");
+    Assert::AreEqual(X.back()[1],8.522, 0.001, "X[1] value");
+    Assert::AreEqual(X.back()[2],15.0265, 0.001, "X[2] value");
+    Assert::AreEqual(Z.back()[0],-0.5666, 0.001, "Z[0] value");
+    Assert::AreEqual(Z.back()[1],4.26107, 0.001, "Z[1] value");
+    Assert::AreEqual(Z.back()[2],5.0088, 0.001, "Z[2] value");
 }
 
 void testBatterySetParameters()
@@ -339,4 +375,158 @@ void testBatteryPredictedOutputEqn()
 
     // Check values
     Assert::AreEqual(1, z[0], 1e-5);
+}
+
+void testBatteryEOLInitialization() {
+    // Create battery model
+    Battery battery = Battery();
+    
+    // Create battery eol model, and set discharge model
+    BatteryEOL batteryEOL = BatteryEOL();
+    batteryEOL.setDischargeModel(&battery);
+    
+    // Set up vectors
+    std::vector<double> x(batteryEOL.getNumStates());
+    std::vector<double> u0(batteryEOL.getNumInputs());
+    std::vector<double> z0(batteryEOL.getNumOutputs());
+    
+    // Initialize (u,z don't matter)
+    batteryEOL.initialize(x, u0, z0);
+    
+    // Check states
+    Assert::AreEqual(x[batteryEOL.indices.states.Ro],battery.parameters.Ro);
+    Assert::AreEqual(x[batteryEOL.indices.states.qMobile],battery.parameters.qMobile);
+    Assert::AreEqual(x[batteryEOL.indices.states.tDiffusion],battery.parameters.tDiffusion);
+}
+
+void testBatteryEOLStateEqn() {
+    // Create battery model
+    Battery battery = Battery();
+    
+    // Create battery eol model, and set discharge model
+    BatteryEOL batteryEOL = BatteryEOL();
+    batteryEOL.setDischargeModel(&battery);
+    
+    // Set up vectors
+    std::vector<double> x(batteryEOL.getNumStates());
+    std::vector<double> u(batteryEOL.getNumInputs());
+    std::vector<double> z(batteryEOL.getNumOutputs());
+    std::vector<double> zeroNoise(batteryEOL.getNumStates());
+    
+    // Initialize (u,z don't matter)
+    batteryEOL.initialize(x, u, z);
+    
+    // Set input (current), dt, parameters
+    u[0] = 2;
+    double dt = 1;
+    batteryEOL.parameters.wQMobile = 10;
+    batteryEOL.parameters.wRo = 20;
+    batteryEOL.parameters.wTDiffusion = 30;
+    
+    // Compute next state
+    batteryEOL.stateEqn(0, x, u, zeroNoise, dt);
+    
+    // Check values
+    Assert::AreEqual(x[batteryEOL.indices.states.Ro],battery.parameters.Ro+2*20);
+    Assert::AreEqual(x[batteryEOL.indices.states.qMobile],battery.parameters.qMobile+2*10);
+    Assert::AreEqual(x[batteryEOL.indices.states.tDiffusion],battery.parameters.tDiffusion+2*30);
+}
+
+void testBatteryEOLOutputEqn() {
+    // Create battery model
+    Battery battery = Battery();
+    
+    // Create battery eol model, and set discharge model
+    BatteryEOL batteryEOL = BatteryEOL();
+    batteryEOL.setDischargeModel(&battery);
+    
+    // Set up vectors
+    std::vector<double> x(batteryEOL.getNumStates());
+    std::vector<double> u(batteryEOL.getNumInputs());
+    std::vector<double> z(batteryEOL.getNumOutputs());
+    std::vector<double> zeroNoise(batteryEOL.getNumOutputs());
+    
+    // Initialize (u,z don't matter)
+    batteryEOL.initialize(x, u, z);
+    
+    // Compute outputs
+    batteryEOL.outputEqn(0, x, u, zeroNoise, z);
+    
+    // Check values
+    Assert::AreEqual(z[0],6952);
+}
+
+void testBatteryEOLThresholdEqn() {
+    // Create battery model
+    Battery battery = Battery();
+    
+    // Create battery eol model, and set discharge model
+    BatteryEOL batteryEOL = BatteryEOL();
+    batteryEOL.setDischargeModel(&battery);
+    
+    // Set up vectors
+    std::vector<double> x(batteryEOL.getNumStates());
+    std::vector<double> u(batteryEOL.getNumInputs());
+    std::vector<double> z(batteryEOL.getNumOutputs());
+    std::vector<double> zeroNoise(batteryEOL.getNumOutputs());
+    
+    // Initialize (u,z don't matter)
+    batteryEOL.initialize(x, u, z);
+    
+    // Check threshold
+    Assert::IsFalse(batteryEOL.thresholdEqn(0, x, u));
+    
+    // Change qMobile and check threshold
+    x[batteryEOL.indices.states.qMobile] = 7600/2;
+    Assert::IsTrue(batteryEOL.thresholdEqn(0, x, u));
+    
+    // Change qMobile back to nominal, but increase minCapacity above nominal
+    x[batteryEOL.indices.states.qMobile] = 7600;
+    batteryEOL.parameters.minCapacity = 6953;
+    Assert::IsTrue(batteryEOL.thresholdEqn(0, x, u));
+}
+
+void testBatteryEOLInputEqn() {
+    // Create battery eol model
+    BatteryEOL batteryEOL = BatteryEOL();
+    
+    // Set up vectors
+    std::vector<double> inputParameters(batteryEOL.getNumInputParameters());
+    std::vector<double> u(batteryEOL.getNumInputs());
+    
+    // Check default input
+    std::vector<double> emptyInputParameters;
+    batteryEOL.inputEqn(0, emptyInputParameters, u);
+    Assert::AreEqual(batteryEOL.parameters.nominalDischargeCurrent,u[0]);
+    
+    // Check set value
+    inputParameters[0] = 5;
+    batteryEOL.inputEqn(0,inputParameters,u);
+    Assert::AreEqual(u[0],5);
+}
+
+void testBatteryEOLPredictedOutputEqn() {
+    // Create battery model
+    Battery battery = Battery();
+    
+    // Create battery eol model, and set discharge model
+    BatteryEOL batteryEOL = BatteryEOL();
+    batteryEOL.setDischargeModel(&battery);
+    
+    // Set up vectors
+    std::vector<double> x(batteryEOL.getNumStates());
+    std::vector<double> u(batteryEOL.getNumInputs());
+    std::vector<double> z1(batteryEOL.getNumOutputs());
+    std::vector<double> z2(batteryEOL.getNumPredictedOutputs());
+    std::vector<double> zeroNoise(batteryEOL.getNumOutputs());
+    
+    // Initialize (u,z don't matter)
+    batteryEOL.initialize(x, u, z1);
+    
+    // Compute outputs and predicted outputs
+    batteryEOL.outputEqn(0, x, u, zeroNoise, z1);
+    batteryEOL.outputEqn(0, x, u, zeroNoise, z2);
+    
+    // Check values - they should be equal because outputs and predicted outputs are same
+    Assert::AreEqual(z1[0],z2[0]);
 }

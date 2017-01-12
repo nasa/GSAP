@@ -6,6 +6,7 @@ set(HEADERS
 	MatrixTests.h
 	ModelTests.h
 	ObserverTests.h
+	OptimizerTests.h
 	PEventTests.h
 	PredictorTests.h
 	ProgDataTests.h
@@ -22,6 +23,7 @@ set(SRCS
 	MatrixTests.cpp
 	ModelTests.cpp
 	ObserverTests.cpp
+	OptimizerTests.cpp
 	PEventTests.cpp
 	PredictorTests.cpp
 	ProgDataTests.cpp

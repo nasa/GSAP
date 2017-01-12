@@ -23,6 +23,9 @@
 #include <vector>
 
 namespace PCOE {
+    // Trajectory typedef - state/input/output vector in time
+    typedef std::vector<std::vector<double>> Trajectory;
+    
     class Model {
     protected:
         unsigned int numStates;
@@ -77,6 +80,16 @@ namespace PCOE {
         // Get/set dt
         double getDt() const;
         void setDt(const double newDt);
+        
+        // Simulate functions
+        // 1. Assume sampling time and constant inputs
+        void simulate(const double t0, const double tFinal, const std::vector<double> & x0, const std::vector<double> & u, Trajectory & X, Trajectory & Z);
+        // 2. Assume sampling time, given input vector
+        void simulate(const double t0, const double tFinal, const std::vector<double> & x0, const Trajectory & U, Trajectory & X, Trajectory & Z);
+        // 3. Given time vector, assume constant inputs
+        void simulate(const std::vector<double> & T, const std::vector<double> & x0, const std::vector<double> & u, Trajectory & X, Trajectory & Z);
+        // 4. Given time vector and input trajectory
+        void simulate(const std::vector<double> & T, const std::vector<double> & x0, const Trajectory & U, Trajectory & X, Trajectory & Z);
     };
 }
 

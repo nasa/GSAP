@@ -61,6 +61,9 @@ namespace PCOE {
 
         inline unsigned int getNumInputParameters() const { return numInputParameters; }
         inline unsigned int getNumPredictedOutputs() const { return numPredictedOutputs; }
+        
+        // Simulate to threshold
+        double simulateToThreshold(double t0, const std::vector<double> & x0, const std::vector<double> & inputParameters, Trajectory & X, Trajectory & Z);
     };
 }
 #endif  // PCOE_PROGNOSTICSMODEL_H
