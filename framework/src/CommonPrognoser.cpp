@@ -42,7 +42,7 @@
 
 namespace PCOE {
    // DEFAULTS
-   const unsigned int  DEFAULT_INTERVAL_DELAY = 500;  // ms
+   const std::string  DEFAULT_INTERVAL_DELAY = "500";  // ms
    const unsigned int  DEFAULT_SAVE_INTERVAL = 60;   // loops
 
    // CONFIGURATION KEYS
@@ -70,9 +70,9 @@ namespace PCOE {
        // Fill in Defaults
       if (!configParams.includes(INTERVAL_DELAY_KEY)) {
            configParams.set(INTERVAL_DELAY_KEY,
-               "DEFAULT_INTERVAL_DELAY");
+               DEFAULT_INTERVAL_DELAY);
        }
-      loopInterval=atoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str());
+      loopInterval=std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str());
 
        if (!configParams.includes(HIST_PATH_KEY)) {
            configParams.set(HIST_PATH_KEY,
