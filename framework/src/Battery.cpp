@@ -35,7 +35,7 @@ Battery::Battery() {
     numStates = 8;
     numInputs = 1;
     numOutputs = 2;
-    numInputParameters = 2;
+    numInputParameters = 1;
     numPredictedOutputs = 1;
     m_dt = 1;
     // Set some default parameters
@@ -226,9 +226,10 @@ bool Battery::thresholdEqn(const double t, const std::vector<double> & x, const 
 
 // Battery Input Equation
 void Battery::inputEqn(const double t, const std::vector<double> & inputParameters, std::vector<double> & u) {
-    // Implements variable loading, consisting of a sequence of constant loading portions witch specified magnitude and duration
-    // inputParameters contains an even number of elements, pairs of (magnitude,duration)
-    if (inputParameters.size() < 2 || inputParameters.size() % 2 != 0) {
+    // Implements variable loading, consisting of a sequence of segments with specified magnitude and duration. Each segment starts at the current magnitude and ramps up to the second. When the end is reached, the last value is held.
+    
+    // inputParameters must contain an odd number of elements, pairs of (magnitude,duration) with a final magnitude (final duration is infinity)
+    if (inputParameters.size() < 1 || inputParameters.size() % 2 == 0) {
         throw std::range_error("Battery::inputEqn - Incorrect number of input parameters");
     }
 
@@ -238,18 +239,22 @@ void Battery::inputEqn(const double t, const std::vector<double> & inputParamete
     // the user of the battery model to take care of this, since the battery model itself,
     // i.e., the C++ object, does not have any state.
     double elapsedTime = 0;
-    for (unsigned int i = 0; i < inputParameters.size(); i += 2) {
+    for (unsigned int i = 0; i < inputParameters.size()-1; i += 2) {
         // Update time
+        double previousElapsedTime = elapsedTime;
         elapsedTime += inputParameters[i + 1];
         // If t hasn't reached elapsedTime yet, this is the portion to use
         if (t <= elapsedTime) {
-            u[0] = inputParameters[i];
+            // Input is interpolated between this value and next in the list
+            double duration = inputParameters[i+1];
+            double deltaT = t-previousElapsedTime;
+            u[0] = inputParameters[i] + (inputParameters[i+2]-inputParameters[i])*deltaT/duration;
             return;
         }
     }
 
     // If we get here, we've run out of portions, so just use the last one
-    u[0] = inputParameters[inputParameters.size() - 2];
+    u[0] = inputParameters.back();
 }
 
 // Battery Predicted Outputs Equation

@@ -62,8 +62,6 @@ void testMonteCarloBatteryPredict()
     std::vector<std::string> inputUncertainty;
     inputUncertainty.push_back("8");		// Mean of magnitude
     inputUncertainty.push_back("0.1");		// Std of mangnitude
-    inputUncertainty.push_back("5000");		// Mean of duration
-    inputUncertainty.push_back("1");		// Std of duration
     configMap["Predictor.inputUncertainty"] = inputUncertainty;
    
     // Create a battery model (to help set up inputs for predict)
@@ -155,9 +153,7 @@ void testMonteCarloBatteryConfig()
     // Create a constant loading scenario (single portion)
     std::vector<std::string> inputUncertainty;
     inputUncertainty.push_back("8");		// Mean of magnitude
-    inputUncertainty.push_back("0.1");		// Std of mangnitude
-    inputUncertainty.push_back("5000");		// Mean of duration
-    inputUncertainty.push_back("1");		// Std of duration
+    inputUncertainty.push_back("0.1");		// Std of magnitude
     configMap["Predictor.inputUncertainty"] = inputUncertainty;
     
     // Create MonteCarloPredictor for battery
