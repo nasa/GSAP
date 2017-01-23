@@ -28,6 +28,9 @@
 #include "ModelFactory.h"
 #include "PrognosticsModelFactory.h"
 
+// Default parameter values
+static const double QMOBILE_DEFAULT_VALUE = 7600;
+
 class Battery final : public PCOE::PrognosticsModel {
  public:
     // Constructor
@@ -174,7 +177,7 @@ class Battery final : public PCOE::PrognosticsModel {
                             const std::vector<double> & u, std::vector<double> & z);
 
     // Set default parameters, based on 18650 cells
-    void setParameters(const double qMobile = 7600);
+    void setParameters(const double qMobile = QMOBILE_DEFAULT_VALUE, const double Vol = 2e-5);
 
     /** @brief      Initialize state vector given initial inputs and outputs.
     *   @param      x Current state vector. This gets updated.
