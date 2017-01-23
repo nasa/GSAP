@@ -25,10 +25,12 @@ set (HEADERS
 	inc/PrognosticsModelFactory.h
 	inc/Singleton.h
 	inc/StatisticalTools.h
+	inc/TCPSocket.h
 	inc/Thread.h
 	inc/ThreadSafeLog.h
 	inc/UData.h
 	inc/UDataInterfaces.h
+	inc/UDPSocket.h
 	inc/UnscentedKalmanFilter.h
 )
 
@@ -48,10 +50,12 @@ set(SRCS
 	src/ProgEvents.cpp
 	src/ProgMeta.cpp
 	src/StatisticalTools.cpp
+	src/TCPSocket.cpp
 	src/Thread.cpp
 	src/ThreadSafeLog.cpp
 	src/UData.cpp
 	src/UDataInterfaces.cpp
+	src/UDPSocket.cpp
 	src/UnscentedKalmanFilter.cpp
 )
 
