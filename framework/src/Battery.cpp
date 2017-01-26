@@ -28,14 +28,56 @@ using namespace PCOE;
 
 // Configuration Keys
 const std::string QMOBILE_KEY = "Battery.qMobile";
+const std::string VOL_KEY = "Battery.Vol";
+const std::string AN0_KEY = "Battery.An0";
+const std::string AN1_KEY = "Battery.An1";
+const std::string AN10_KEY = "Battery.An10";
+const std::string AN11_KEY = "Battery.An11";
+const std::string AN12_KEY = "Battery.An12";
+const std::string AN2_KEY = "Battery.An2";
+const std::string AN3_KEY = "Battery.An3";
+const std::string AN4_KEY = "Battery.An4";
+const std::string AN5_KEY = "Battery.An5";
+const std::string AN6_KEY = "Battery.An6";
+const std::string AN7_KEY = "Battery.An7";
+const std::string AN8_KEY = "Battery.An8";
+const std::string AN9_KEY = "Battery.An9";
+const std::string AP0_KEY = "Battery.Ap0";
+const std::string AP1_KEY = "Battery.Ap1";
+const std::string AP10_KEY = "Battery.Ap10";
+const std::string AP11_KEY = "Battery.Ap11";
+const std::string AP12_KEY = "Battery.Ap12";
+const std::string AP2_KEY = "Battery.Ap2";
+const std::string AP3_KEY = "Battery.Ap3";
+const std::string AP4_KEY = "Battery.Ap4";
+const std::string AP5_KEY = "Battery.Ap5";
+const std::string AP6_KEY = "Battery.Ap6";
+const std::string AP7_KEY = "Battery.Ap7";
+const std::string AP8_KEY = "Battery.Ap8";
+const std::string AP9_KEY = "Battery.Ap9";
 const std::string RO_KEY = "Battery.Ro";
+const std::string SN_KEY = "Battery.Sn";
+const std::string SP_KEY = "Battery.Sp";
+const std::string U0N_KEY = "Battery.U0n";
+const std::string U0P_KEY = "Battery.U0p";
 const std::string VEOD_KEY = "Battery.VEOD";
+const std::string VOLSFRACTION_KEY = "Battery.VolSFraction";
+const std::string KN_KEY = "Battery.kn";
+const std::string KP_KEY = "Battery.kp";
+const std::string TDIFFUSION_KEY = "Battery.tDiffusion";
+const std::string TO_KEY = "Battery.to";
+const std::string TSN_KEY = "Battery.tsn";
+const std::string TSP_KEY = "Battery.tsp";
+const std::string XNMAX_KEY = "Battery.xnMax";
+const std::string XNMIN_KEY = "Battery.xnMin";
+const std::string XPMAX_KEY = "Battery.xpMax";
+const std::string XPMIN_KEY = "Battery.xpMin";
 
 Battery::Battery() {
     numStates = 8;
     numInputs = 1;
     numOutputs = 2;
-    numInputParameters = 2;
+    numInputParameters = 1;
     numPredictedOutputs = 1;
     m_dt = 1;
     // Set some default parameters
@@ -44,14 +86,148 @@ Battery::Battery() {
 
 // Constructor based on configMap
 Battery::Battery(const ConfigMap & configMap) : Battery::Battery() {
-    if (configMap.includes(QMOBILE_KEY)) {
+    // Check for arguments to setParameters first, qMobile and Vol
+    // There are default values available, so call to setParameters is different depending
+    // on which are given in the configMap.
+    if (configMap.includes(QMOBILE_KEY) && configMap.includes(VOL_KEY)) {
+        setParameters(std::stod(configMap.at(QMOBILE_KEY)[0]), std::stod(configMap.at(VOL_KEY)[0]));
+    }
+    else if (configMap.includes(QMOBILE_KEY) && !configMap.includes(VOL_KEY)) {
         setParameters(std::stod(configMap.at(QMOBILE_KEY)[0]));
+    }
+    else if (!configMap.includes(QMOBILE_KEY) && configMap.includes(VOL_KEY)) {
+        setParameters(QMOBILE_DEFAULT_VALUE, std::stod(configMap.at(VOL_KEY)[0]));
+    }
+    // For the remaining parameters, we set them after the call to setParameters,
+    // because no other parameter values are derived from them.
+    if (configMap.includes(AN0_KEY)) {
+        parameters.An0 = std::stod(configMap.at(AN0_KEY)[0]);
+    }
+    if (configMap.includes(AN1_KEY)) {
+        parameters.An1 = std::stod(configMap.at(AN1_KEY)[0]);
+    }
+    if (configMap.includes(AN10_KEY)) {
+        parameters.An10 = std::stod(configMap.at(AN10_KEY)[0]);
+    }
+    if (configMap.includes(AN11_KEY)) {
+        parameters.An11 = std::stod(configMap.at(AN11_KEY)[0]);
+    }
+    if (configMap.includes(AN12_KEY)) {
+        parameters.An12 = std::stod(configMap.at(AN12_KEY)[0]);
+    }
+    if (configMap.includes(AN2_KEY)) {
+        parameters.An2 = std::stod(configMap.at(AN2_KEY)[0]);
+    }
+    if (configMap.includes(AN3_KEY)) {
+        parameters.An3 = std::stod(configMap.at(AN3_KEY)[0]);
+    }
+    if (configMap.includes(AN4_KEY)) {
+        parameters.An4 = std::stod(configMap.at(AN4_KEY)[0]);
+    }
+    if (configMap.includes(AN5_KEY)) {
+        parameters.An5 = std::stod(configMap.at(AN5_KEY)[0]);
+    }
+    if (configMap.includes(AN6_KEY)) {
+        parameters.An6 = std::stod(configMap.at(AN6_KEY)[0]);
+    }
+    if (configMap.includes(AN7_KEY)) {
+        parameters.An7 = std::stod(configMap.at(AN7_KEY)[0]);
+    }
+    if (configMap.includes(AN8_KEY)) {
+        parameters.An8 = std::stod(configMap.at(AN8_KEY)[0]);
+    }
+    if (configMap.includes(AN9_KEY)) {
+        parameters.An9 = std::stod(configMap.at(AN9_KEY)[0]);
+    }
+    if (configMap.includes(AP0_KEY)) {
+        parameters.Ap0 = std::stod(configMap.at(AP0_KEY)[0]);
+    }
+    if (configMap.includes(AP1_KEY)) {
+        parameters.Ap1 = std::stod(configMap.at(AP1_KEY)[0]);
+    }
+    if (configMap.includes(AP10_KEY)) {
+        parameters.Ap10 = std::stod(configMap.at(AP10_KEY)[0]);
+    }
+    if (configMap.includes(AP11_KEY)) {
+        parameters.Ap11 = std::stod(configMap.at(AP11_KEY)[0]);
+    }
+    if (configMap.includes(AP12_KEY)) {
+        parameters.Ap12 = std::stod(configMap.at(AP12_KEY)[0]);
+    }
+    if (configMap.includes(AP2_KEY)) {
+        parameters.Ap2 = std::stod(configMap.at(AP2_KEY)[0]);
+    }
+    if (configMap.includes(AP3_KEY)) {
+        parameters.Ap3 = std::stod(configMap.at(AP3_KEY)[0]);
+    }
+    if (configMap.includes(AP4_KEY)) {
+        parameters.Ap4 = std::stod(configMap.at(AP4_KEY)[0]);
+    }
+    if (configMap.includes(AP5_KEY)) {
+        parameters.Ap5 = std::stod(configMap.at(AP5_KEY)[0]);
+    }
+    if (configMap.includes(AP6_KEY)) {
+        parameters.Ap6 = std::stod(configMap.at(AP6_KEY)[0]);
+    }
+    if (configMap.includes(AP7_KEY)) {
+        parameters.Ap7 = std::stod(configMap.at(AP7_KEY)[0]);
+    }
+    if (configMap.includes(AP8_KEY)) {
+        parameters.Ap8 = std::stod(configMap.at(AP8_KEY)[0]);
+    }
+    if (configMap.includes(AP9_KEY)) {
+        parameters.Ap9 = std::stod(configMap.at(AP9_KEY)[0]);
     }
     if (configMap.includes(RO_KEY)) {
         parameters.Ro = std::stod(configMap.at(RO_KEY)[0]);
     }
+    if (configMap.includes(SN_KEY)) {
+        parameters.Sn = std::stod(configMap.at(SN_KEY)[0]);
+    }
+    if (configMap.includes(SP_KEY)) {
+        parameters.Sp = std::stod(configMap.at(SP_KEY)[0]);
+    }
+    if (configMap.includes(U0N_KEY)) {
+        parameters.U0n = std::stod(configMap.at(U0N_KEY)[0]);
+    }
+    if (configMap.includes(U0P_KEY)) {
+        parameters.U0p = std::stod(configMap.at(U0P_KEY)[0]);
+    }
     if (configMap.includes(VEOD_KEY)) {
         parameters.VEOD = std::stod(configMap.at(VEOD_KEY)[0]);
+    }
+    if (configMap.includes(VOLSFRACTION_KEY)) {
+        parameters.VolSFraction = std::stod(configMap.at(VOLSFRACTION_KEY)[0]);
+    }
+    if (configMap.includes(KN_KEY)) {
+        parameters.kn = std::stod(configMap.at(KN_KEY)[0]);
+    }
+    if (configMap.includes(KP_KEY)) {
+        parameters.kp = std::stod(configMap.at(KP_KEY)[0]);
+    }
+    if (configMap.includes(TDIFFUSION_KEY)) {
+        parameters.tDiffusion = std::stod(configMap.at(TDIFFUSION_KEY)[0]);
+    }
+    if (configMap.includes(TO_KEY)) {
+        parameters.to = std::stod(configMap.at(TO_KEY)[0]);
+    }
+    if (configMap.includes(TSN_KEY)) {
+        parameters.tsn = std::stod(configMap.at(TSN_KEY)[0]);
+    }
+    if (configMap.includes(TSP_KEY)) {
+        parameters.tsp = std::stod(configMap.at(TSP_KEY)[0]);
+    }
+    if (configMap.includes(XNMAX_KEY)) {
+        parameters.xnMax = std::stod(configMap.at(XNMAX_KEY)[0]);
+    }
+    if (configMap.includes(XNMIN_KEY)) {
+        parameters.xnMin = std::stod(configMap.at(XNMIN_KEY)[0]);
+    }
+    if (configMap.includes(XPMAX_KEY)) {
+        parameters.xpMax = std::stod(configMap.at(XPMAX_KEY)[0]);
+    }
+    if (configMap.includes(XPMIN_KEY)) {
+        parameters.xpMin = std::stod(configMap.at(XPMIN_KEY)[0]);
     }
 }
 
@@ -226,9 +402,10 @@ bool Battery::thresholdEqn(const double t, const std::vector<double> & x, const 
 
 // Battery Input Equation
 void Battery::inputEqn(const double t, const std::vector<double> & inputParameters, std::vector<double> & u) {
-    // Implements variable loading, consisting of a sequence of constant loading portions witch specified magnitude and duration
-    // inputParameters contains an even number of elements, pairs of (magnitude,duration)
-    if (inputParameters.size() < 2 || inputParameters.size() % 2 != 0) {
+    // Implements variable loading, consisting of a sequence of segments with specified magnitude and duration. Each segment starts at the current magnitude and ramps up to the second. When the end is reached, the last value is held.
+    
+    // inputParameters must contain an odd number of elements, pairs of (magnitude,duration) with a final magnitude (final duration is infinity)
+    if (inputParameters.size() < 1 || inputParameters.size() % 2 == 0) {
         throw std::range_error("Battery::inputEqn - Incorrect number of input parameters");
     }
 
@@ -238,18 +415,22 @@ void Battery::inputEqn(const double t, const std::vector<double> & inputParamete
     // the user of the battery model to take care of this, since the battery model itself,
     // i.e., the C++ object, does not have any state.
     double elapsedTime = 0;
-    for (unsigned int i = 0; i < inputParameters.size(); i += 2) {
+    for (unsigned int i = 0; i < inputParameters.size()-1; i += 2) {
         // Update time
+        double previousElapsedTime = elapsedTime;
         elapsedTime += inputParameters[i + 1];
         // If t hasn't reached elapsedTime yet, this is the portion to use
         if (t <= elapsedTime) {
-            u[0] = inputParameters[i];
+            // Input is interpolated between this value and next in the list
+            double duration = inputParameters[i+1];
+            double deltaT = t-previousElapsedTime;
+            u[0] = inputParameters[i] + (inputParameters[i+2]-inputParameters[i])*deltaT/duration;
             return;
         }
     }
 
     // If we get here, we've run out of portions, so just use the last one
-    u[0] = inputParameters[inputParameters.size() - 2];
+    u[0] = inputParameters.back();
 }
 
 // Battery Predicted Outputs Equation
@@ -264,7 +445,7 @@ void Battery::predictedOutputEqn(const double, const std::vector<double> & x, co
 }
 
 // Set model parameters, given qMobile
-void Battery::setParameters(const double qMobile) {
+void Battery::setParameters(const double qMobile, const double Vol) {
     // Set qMobile
     parameters.qMobile = qMobile;
 
@@ -286,7 +467,7 @@ void Battery::setParameters(const double qMobile) {
     parameters.Sp = 0.00030962;        // surface area (+ electrode)
     parameters.kn = 2120.96;        // lumped constant for BV (- electrode)
     parameters.kp = 248898;            // lumped constant for BV (+ electrode)
-    parameters.Vol = 2e-5;            // total interior battery volume/2 (for computing concentrations)
+    parameters.Vol = Vol;            // total interior battery volume/2 (for computing concentrations)
     parameters.VolSFraction = 0.1;    // fraction of total volume occupied by surface volume
 
     // Volumes (total volume is 2*parameters.Vol), assume volume at each electrode is the
