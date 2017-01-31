@@ -1,18 +1,18 @@
-/**  Model-based Prognoser - Header
-*   @class     ModelBasedPrognoser ModelBasedPrognoser.h
+/**  Benchmark Prognoser - Header
+*   @class     BenchmarkPrognoser BenchmarkPrognoser.h
 *   @ingroup   GPIC++
 *   @ingroup   ProgLib
 *
-*   @brief     Model-based Prognoser Class
+*   @brief     Benchmark Prognoser Class
 *
-*   General model-based prognoser class. It gets created for a specified model, observer, and predictor.
+*   BenchmarkPrognoser class. It gets created for a specified model, observer, and predictor.
 *
-*   @author    Matthew Daigle
+*   @author    Micah Ricks
 *   @version   0.1.0
 *
 *   @pre       Prognostic Configuration File and Prognoster Configuration Files
 *
-*      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
+*      Contact: Micah Ricks (mricks1@bulldogs.aamu.edu)
 *      Created: March 16, 2016
 *
 *   @copyright Copyright (c) 2016 United States Government as represented by
@@ -24,6 +24,7 @@
 #define PCOE_BENCHMARKPROGNOSER_H
 
 #include <memory>
+#include <climits>
 
 #include "CommonPrognoser.h"
 #include "PrognosticsModel.h"
@@ -43,53 +44,71 @@ namespace PCOE {
         double firstTime;
         double lastTime;
     public:
-        /** @brief      Model-based Prognoser Constructor
+        /** @brief      Benchmark Prognoser Constructor
          *  @param      config Map of config parameters from the prognoser config file
          */
         BenchmarkPrognoser(GSAPConfigMap & config);
-
-        /** @brief     Prognostic Monitor Step
-         *
-         *             Preform model updates. This is done every step where there is
-         *             enough data. This is a required method in any component
-         *             prognoser
-         */
+        ~BenchmarkPrognoser();  //destructor
         void step();
-
-        //*------------------------------------------------------*
-        //|          Optional Methods- Uncomment to use          |
-        //*------------------------------------------------------*
-
-        /** @brief     check the validity of any input (sensor) data.
-         *
-         *             This could be as simple as bound checks or a complicated
-         *             analysis. By default this is not done- making this step
-         *             optional in the component prognoser implementation
-         */
-         //void checkInputValidity() {};
-
-         /** @brief     check if there is enough new data to preform prognosis
-          *  @return    if there is enough data
-          *
-          *             Check if the data exists and is new enough to be used for
-          *             prognosis. If false is returned prognostics steps will be
-          *             skipped. By default this returns true- making this step
-          *             optional in the component prognoser implementation
-          */
-          //bool isEnoughData() {return true;};
-
-          /** @brief     check the validity of any prognostics results.
-           *
-           *             This could be as simple as bound checks or a complicated
-           *             analysis. By default this a simple bounds test on timeToEvent
-           *             - making this step optional in the component prognoser
-           *             implementation
-           *             Default implemented in CommonPrognoser
-           */
-           //void checkResultValidity();
     };
+
+
+   class adder {
+   public:
+    int counter=0;
+    unsigned long long min= ULLONG_MAX;
+    unsigned long long max=0;
+
+    // constructor
+     adder(double i=0) {
+
+       total = i;
+    }
+
+
+
+    // adds value to running total
+    void addNum(double number) {
+       total += number;
+       counter++;
+       if(number>max)
+         {max=number;}
+       if(number<min)
+         {min=number;}
+    }
+
+    // getter
+    double getTotal() {
+       return total;
+    }
+
+    //getter
+    int getCounter(){
+      return counter;
+    };
+
+    //getter
+    double getAverage(){
+      double average= (total/counter);
+      return average;
+    }
+
+    //getter
+    double getMax(){
+      return max;
+    }
+
+    //getter
+    double getMin(){
+      return min;
+    }
+
+ private:
+    // hidden data from outside world
+    double total;
+  };
 
     extern bool regModelProg;
 }
 
-#endif // PCOE_MODELBASEDPROGNOSER_H
+#endif // PCOE_BENCHMARKPROGNOSER_H

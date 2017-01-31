@@ -37,7 +37,6 @@ int main() {
     //file<<"test \n";
     //file.close();
 
-    clock_t begin = clock();
     ConfigMap::addSearchPath("../example/cfg/");
 
     // Specify Prognosers
@@ -65,7 +64,5 @@ int main() {
 
     ProgManager PM = ProgManager("bench.cfg");
     PM.run();
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     return 0;
 }

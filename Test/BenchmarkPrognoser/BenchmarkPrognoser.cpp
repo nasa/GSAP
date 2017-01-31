@@ -3,17 +3,17 @@
  *   @ingroup   GPIC++
  *   @ingroup   ProgLib
  *
- *   @brief     Model-based Prognoser Class
+ *   @brief     Benchmark Prognoser Class
  *
- *   General model-based prognoser class. It gets created for a specified model, observer, and predictor.
+ *   BenchmarkPrognoser class.
  *
- *   @author    Matthew Daigle
+ *   @author    Micah Ricks
  *   @version   0.1.0
  *
  *   @pre       Prognostic Configuration File and Prognoster Configuration Files
  *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: March 16, 2016
+ *      Contact: Micah Ricks (mricks1@bulldogs.aamu.edu)
+ *      Created: January 31, 2017
  *
  *   @copyright Copyright (c) 2016 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
@@ -38,6 +38,7 @@
 #include "CommManager.h"
 #include "GSAPConfigMap.h"
 #include <ctime>
+#include <chrono>
 
 namespace PCOE {
     // Configuration Keys
@@ -50,6 +51,8 @@ namespace PCOE {
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
     const std::string INPUTS_KEY = "inputs";
     const std::string OUTPUTS_KEY = "outputs";
+    adder a;
+const unsigned long STEP_SIZE = 50;
 
     BenchmarkPrognoser::BenchmarkPrognoser(GSAPConfigMap & configMap) : CommonPrognoser(configMap), initialized(false) {
         // Check for required config parameters
@@ -96,10 +99,9 @@ namespace PCOE {
     }
 
     void BenchmarkPrognoser::step() {
-        // Initialize time (convert to seconds)
-        std::clock_t begin = clock();
-        std::ofstream file;
-        file.open("test.txt");
+        //init time in nanoseconds
+        unsigned long long  begin= nanosecondsNow();
+
 
 
 
@@ -132,10 +134,10 @@ namespace PCOE {
             // If time has not advanced, skip this step
             if (newT <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
-                clock_t end = clock();
-                double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-               file <<"Elasped time for initialization "<<elapsed_secs<<std::endl;
-                file.close();
+
+            unsigned long long  end= nanosecondsNow();
+            unsigned long long elapsed_secs = (end - begin);
+            a.addNum(elapsed_secs);
 
                 return;
             }
@@ -155,12 +157,17 @@ namespace PCOE {
             // Set lastTime
             lastTime = newT;
 
-
         }
-        clock_t end = clock();
-        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-       file <<elapsed_secs;
-        file.close();
-      //  printf("Initialized time: ",elapsed_secs);
     }
+    
+//destructor
+BenchmarkPrognoser::~BenchmarkPrognoser() {
+  std::ofstream file;
+  file.open("test.txt");
+  file <<"Average time: " << a.getAverage()<<std::endl
+  <<"Number of times step function ran: "<<a.getCounter()<<std::endl
+  <<"Highest time: "<<a.getMax()<<std::endl <<"Lowest time: "<<a.getMin()<<std::endl;
+  file.close();
+}
+
 }
