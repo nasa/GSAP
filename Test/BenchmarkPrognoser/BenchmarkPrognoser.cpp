@@ -38,7 +38,6 @@
 #include "CommManager.h"
 #include "GSAPConfigMap.h"
 #include <ctime>
-#include <chrono>
 
 namespace PCOE {
     // Configuration Keys
@@ -159,7 +158,7 @@ const unsigned long STEP_SIZE = 50;
 
         }
     }
-    
+
 //destructor
 BenchmarkPrognoser::~BenchmarkPrognoser() {
   std::ofstream file;
