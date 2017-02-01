@@ -22,6 +22,7 @@
 
  #include <stdio.h>
  #include <stdlib.h>
+ #include <cstddef>
 
 #include <memory>
 #include <vector>
@@ -29,6 +30,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "Benchmark.h"
 #include "SharedLib.h"
 #include "BenchmarkPrognoser.h"
 #include "ObserverFactory.h"
@@ -50,7 +52,7 @@ namespace PCOE {
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
     const std::string INPUTS_KEY = "inputs";
     const std::string OUTPUTS_KEY = "outputs";
-    adder a;
+    adder a,b;
 const unsigned long STEP_SIZE = 50;
 
     BenchmarkPrognoser::BenchmarkPrognoser(GSAPConfigMap & configMap) : CommonPrognoser(configMap), initialized(false) {
@@ -99,7 +101,13 @@ const unsigned long STEP_SIZE = 50;
 
     void BenchmarkPrognoser::step() {
         //init time in nanoseconds
-        unsigned long long  begin= nanosecondsNow();
+         if(b.begin!=NULL)
+          {
+            b.nanosecondsEnd();
+            b.elapsed_time();
+
+          }
+         a.nanosecondsBegin();
 
 
 
@@ -134,10 +142,9 @@ const unsigned long STEP_SIZE = 50;
             if (newT <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
 
-            unsigned long long  end= nanosecondsNow();
-            unsigned long long elapsed_secs = (end - begin);
-            a.addNum(elapsed_secs);
-
+            a.nanosecondsEnd();
+            a.elapsed_time();
+            b.nanosecondsBegin();
                 return;
             }
 
@@ -162,11 +169,12 @@ const unsigned long STEP_SIZE = 50;
 //destructor
 BenchmarkPrognoser::~BenchmarkPrognoser() {
   std::ofstream file;
-  file.open("test.txt");
-  file <<"Average time: " << a.getAverage()<<std::endl
-  <<"Number of times step function ran: "<<a.getCounter()<<std::endl
-  <<"Highest time: "<<a.getMax()<<std::endl <<"Lowest time: "<<a.getMin()<<std::endl;
-  file.close();
+  a.clearFile();
+  a.printTemp();
+  a.printScreen();
+  b.printScreen();
+  a.writeFile();
+  b.writeFile();
 }
 
 }

@@ -25,6 +25,10 @@
 
 #include <memory>
 #include <climits>
+#include <iomanip>
+#include <cstddef>
+#include <iostream>
+#include <fstream>
 
 #include "CommonPrognoser.h"
 #include "PrognosticsModel.h"
@@ -43,6 +47,7 @@ namespace PCOE {
         bool initialized;
         double firstTime;
         double lastTime;
+
     public:
         /** @brief      Benchmark Prognoser Constructor
          *  @param      config Map of config parameters from the prognoser config file
@@ -51,62 +56,6 @@ namespace PCOE {
         ~BenchmarkPrognoser();  //destructor
         void step();
     };
-
-
-   class adder {
-   public:
-    int counter=0;
-    unsigned long long min= ULLONG_MAX;
-    unsigned long long max=0;
-
-    // constructor
-     adder(double i=0) {
-
-       total = i;
-    }
-
-
-
-    // adds value to running total
-    void addNum(double number) {
-       total += number;
-       counter++;
-       if(number>max)
-         {max=number;}
-       if(number<min)
-         {min=number;}
-    }
-
-    // getter
-    double getTotal() {
-       return total;
-    }
-
-    //getter
-    int getCounter(){
-      return counter;
-    };
-
-    //getter
-    double getAverage(){
-      double average= (total/counter);
-      return average;
-    }
-
-    //getter
-    double getMax(){
-      return max;
-    }
-
-    //getter
-    double getMin(){
-      return min;
-    }
-
- private:
-    // hidden data from outside world
-    double total;
-  };
 
     extern bool regModelProg;
 }

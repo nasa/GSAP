@@ -30,6 +30,7 @@ set (HEADERS
 	inc/UData.h
 	inc/UDataInterfaces.h
 	inc/UnscentedKalmanFilter.h
+	inc/Benchmark.h
 )
 
 set(SRCS

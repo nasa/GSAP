@@ -58,12 +58,6 @@ namespace PCOE {
         using std::chrono::milliseconds;
         return static_cast<unsigned long long>(system_clock::now().time_since_epoch() / milliseconds(1));
     }
-
-    static inline unsigned long long nanosecondsNow() {
-        using std::chrono::high_resolution_clock;
-        using std::chrono::nanoseconds;
-        return static_cast<unsigned long long>(high_resolution_clock::now().time_since_epoch() / nanoseconds(1));
-    }
 }
 
 #endif // PCOE_SHAREDLIB_H

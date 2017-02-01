@@ -24,7 +24,6 @@
 
 #include "CommonPrognoser.h"
 #include "ModelBasedPrognoser.h"
-#include "BenchmarkTest.h"
 #include "Factory.h"
 #include "Singleton.h"
 
