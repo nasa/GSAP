@@ -1,7 +1,5 @@
 /**  Model-based Prognoser - Body
- *   @class     BenchmarkPrognoser BenchmarkPrognoser.h
- *   @ingroup   GPIC++
- *   @ingroup   ProgLib
+ *   @class     BenchmarkPrognoser BenchmarkPrognoser.h Benchmark.h
  *
  *   @brief     Benchmark Prognoser Class
  *
@@ -10,12 +8,11 @@
  *   @author    Micah Ricks
  *   @version   0.1.0
  *
- *   @pre       Prognostic Configuration File and Prognoster Configuration Files
  *
  *      Contact: Micah Ricks (mricks1@bulldogs.aamu.edu)
  *      Created: January 31, 2017
  *
- *   @copyright Copyright (c) 2016 United States Government as represented by
+ *   @copyright Copyright (c) 2017 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -24,22 +21,18 @@
  #include <stdlib.h>
  #include <cstddef>
 
-#include <memory>
-#include <vector>
+ #include <memory>
+ #include <vector>
 
-#include <iostream>
-#include <fstream>
-
-#include "Benchmark.h"
-#include "SharedLib.h"
-#include "BenchmarkPrognoser.h"
-#include "ObserverFactory.h"
-#include "PredictorFactory.h"
-#include "PrognosticsModelFactory.h"
-#include "UData.h"
-#include "CommManager.h"
-#include "GSAPConfigMap.h"
-#include <ctime>
+ #include "Benchmark.h"
+ #include "SharedLib.h"
+ #include "BenchmarkPrognoser.h"
+ #include "ObserverFactory.h"
+ #include "PredictorFactory.h"
+ #include "PrognosticsModelFactory.h"
+ #include "UData.h"
+ #include "CommManager.h"
+ #include "GSAPConfigMap.h"
 
 namespace PCOE {
     // Configuration Keys
@@ -52,8 +45,8 @@ namespace PCOE {
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
     const std::string INPUTS_KEY = "inputs";
     const std::string OUTPUTS_KEY = "outputs";
-    adder a,b;
-const unsigned long STEP_SIZE = 50;
+    Benchmark benchmark1,benchmark2;
+    unsigned long long const INIT_TIME=0;
 
     BenchmarkPrognoser::BenchmarkPrognoser(GSAPConfigMap & configMap) : CommonPrognoser(configMap), initialized(false) {
         // Check for required config parameters
@@ -100,17 +93,15 @@ const unsigned long STEP_SIZE = 50;
     }
 
     void BenchmarkPrognoser::step() {
+
         //init time in nanoseconds
-         if(b.begin!=NULL)
+         if(benchmark2.begin != INIT_TIME)
           {
-            b.nanosecondsEnd();
-            b.elapsed_time();
+            benchmark2.nanosecondsEnd();
+            benchmark2.findElapsedTime();
 
           }
-         a.nanosecondsBegin();
-
-
-
+         benchmark1.nanosecondsBegin();
 
         static double initialTime = comm.getValue(outputs[0]).getTime() / 1.0e3;
 
@@ -142,9 +133,9 @@ const unsigned long STEP_SIZE = 50;
             if (newT <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
 
-            a.nanosecondsEnd();
-            a.elapsed_time();
-            b.nanosecondsBegin();
+            benchmark1.nanosecondsEnd();
+            benchmark1.findElapsedTime();
+            benchmark2.nanosecondsBegin();
                 return;
             }
 
@@ -168,13 +159,12 @@ const unsigned long STEP_SIZE = 50;
 
 //destructor
 BenchmarkPrognoser::~BenchmarkPrognoser() {
-  std::ofstream file;
-  a.clearFile();
-  a.printTemp();
-  a.printScreen();
-  b.printScreen();
-  a.writeFile();
-  b.writeFile();
+  benchmark1.clearFile();
+  benchmark1.printTemp();
+  benchmark1.printScreen();
+  benchmark2.printScreen();
+  benchmark1.writeFile();
+  benchmark2.writeFile();
 }
 
 }
