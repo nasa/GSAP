@@ -125,9 +125,9 @@ namespace PCOE {
 
             /** @brief Verifies that two specified generic type data are almost
               *        equal by comparing the magnitude of the difference
-              *        between @p{expected} and @p{actual} to @p{epsilon}.
+              *        between @p{expected} and @p{actual} to @p{delta}.
               *        The assertion fails if the magnitude of the difference
-              *        is greater than @p{epsilon}.
+              *        is greater than @p{delta}.
               *
               * @param expected The value that the unit test expects.
               * @param acutal   The value that the unit test produced.
@@ -146,9 +146,9 @@ namespace PCOE {
 
             /** @brief Verifies that two specified doubles are almost
               *        equal by comparing the magnitude of the difference
-              *        between @p{expected} and @p{actual} to @p{epsilon}.
+              *        between @p{expected} and @p{actual} to @p{delta}.
               *        The assertion fails if the magnitude of the difference
-              *        is greater than @p{epsilon}.
+              *        is greater than @p{delta}.
               *
               * @param expected The value that the unit test expects.
               * @param acutal   The value that the unit test produced.
@@ -166,9 +166,9 @@ namespace PCOE {
 
             /** @brief Verifies that two specified generic type data are almost
               *        equal by comparing the magnitude of the difference
-              *        between @p{expected} and @p{actual} to @p{epsilon}.
+              *        between @p{expected} and @p{actual} to @p{delta}.
               *        The assertion fails if the magnitude of the difference
-              *        is greater than @p{epsilon}.
+              *        is greater than @p{delta}.
               *
               * @param expected The value that the unit test expects.
               * @param acutal   The value that the unit test produced.
@@ -228,8 +228,8 @@ namespace PCOE {
             /** @brief Verifies that two specified generic type data are not
               *        almost equal by comparing the magnitude of the
               *        difference between @p{expected} and @p{actual} to
-              *        @p{epsilon}. The assertion fails if the magnitude of
-              *        the difference is less than or equal to @p{epsilon}.
+              *        @p{delta}. The assertion fails if the magnitude of
+              *        the difference is less than or equal to @p{delta}.
               *
               * @param notExpected The value that the unit test expects.
               * @param acutal      The value that the unit test produced.
@@ -248,9 +248,9 @@ namespace PCOE {
 
             /** @brief Verifies that two specified doubles are almost
               *        equal by comparing the magnitude of the difference
-              *        between @p{expected} and @p{actual} to @p{epsilon}.
+              *        between @p{expected} and @p{actual} to @p{delta}.
               *        The assertion fails if the magnitude of the difference
-              *        is greater than @p{epsilon}.
+              *        is greater than @p{delta}.
               *
               * @param notExpected The value that the unit test expects.
               * @param acutal      The value that the unit test produced.
@@ -269,8 +269,8 @@ namespace PCOE {
             /** @brief Verifies that two specified generic type data are not
               *        almost equal by comparing the magnitude of the
               *        difference between @p{expected} and @p{actual} to
-              *        @p{epsilon}. The assertion fails if the magnitude of
-              *        the difference is less than or equal to @p{epsilon}.
+              *        @p{delta}. The assertion fails if the magnitude of
+              *        the difference is less than or equal to @p{delta}.
               *
               * @param notExpected The value that the unit test expects.
               * @param acutal      The value that the unit test produced.
