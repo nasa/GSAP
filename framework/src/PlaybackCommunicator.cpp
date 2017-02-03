@@ -113,10 +113,7 @@ namespace PCOE {
             auto length = (pos == std::string::npos)? s.length(): pos;
             length = length - pos;
             
-            printf("%s %lu %lu %s\n", s.c_str(), last, pos, s.substr(last, length).c_str());
-            
             auto s2 = s.substr(last, pos-last);
-            printf("%s\n", s2.c_str());
             last = pos+1;
             trim(s2);
 
