@@ -104,26 +104,35 @@ namespace PCOE {
 
         // Parse Header
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Parsing Header");
+    
+        std::size_t pos = 0;
+        std::size_t last = 0;
+            
+        while (pos != std::string::npos) {
+            pos = s.find(delim, last);
+            auto length = (pos == std::string::npos)? s.length(): pos;
+            length = length - pos;
+            
+            printf("%s %lu %lu %s\n", s.c_str(), last, pos, s.substr(last, length).c_str());
+            
+            auto s2 = s.substr(last, pos-last);
+            printf("%s\n", s2.c_str());
+            last = pos+1;
+            trim(s2);
 
-        std::istringstream ss(s);
-        while (ss) {
-            std::string s2;
-            if (!getline(ss, s2, delim)) {
-                break;
-            }
-
-            if (s2.substr(0, 7).compare(" pData-") == 0) {
+            if (s2.substr(0, 7).compare("pData-") == 0) {
                 // Break line
                 break;
             }
 
             if (s2.compare("Timestamp") != 0 && s2.compare(" Running Time") != 0) {
                 // Ignored lines
-                trim(s);
-                header.push_back(s);
+                header.push_back(s2);
+                log.FormatLine(LOG_TRACE, MODULE_NAME,
+                               "Registered %s", s.c_str());
             }
         }
-        log.FormatLine(LOG_TRACE, MODULE_NAME,
+        log.FormatLine(LOG_INFO, MODULE_NAME,
             "Registered %d parameters", header.size());
     }
 
@@ -171,17 +180,21 @@ namespace PCOE {
                 continue;
             }
             ds[it] = std::stof(s3);
+            log.FormatLine(LOG_TRACE, MODULE_NAME,
+                          "Received %s:%f", it.c_str(), ds[it].get());
             if (timestampFromFile) {
                 ds[it].setTime(theTime);
             }
         }
+        
+        log.WriteLine(LOG_TRACE, MODULE_NAME, "Returning Line");
 
         return ds;
     }
     
     void PlaybackCommunicator::write(AllData dataIn) {
         (void) dataIn;
-        throw std::domain_error("Write not supported");
+        //throw std::domain_error("Write not supported");
     }
 
     PlaybackCommunicator::~PlaybackCommunicator() {
