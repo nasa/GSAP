@@ -27,6 +27,7 @@
 #include "Battery.h"
 #include "Matrix.h"
 #include "UnscentedKalmanFilter.h"
+#include "ParticleFilter.h"
 #include "ThreadSafeLog.h"
 #include "ModelFactory.h"
 
@@ -498,4 +499,170 @@ void testUKFBatteryFromConfig()
         Assert::Fail();
     }
     catch (...) { }
+}
+
+void testPFBatteryFromConfig()
+{
+    GSAPConfigMap configMap;
+    
+    // Observer parameters
+    configMap.set("observer", "ParticleFilter");
+    
+    // Build process noise variance vector
+    std::vector<std::string> pnStrings;
+    for (int i = 0; i < 8; i++) {
+        pnStrings.push_back("1e-10");
+    }
+    configMap["Observer.processNoise"] = pnStrings;
+    
+    // Build sensor noise variance vector
+    std::vector<std::string> snStrings;
+    for (int i = 0; i < 2; i++) {
+        snStrings.push_back("1e-3");
+    }
+    configMap["Observer.sensorNoise"] = snStrings;
+    
+    // Set number of particles
+    configMap.set("Observer.N", "100");
+    
+    // Construct a PF from the config map
+    ParticleFilter pf(configMap);
+    
+    // Create a UKF with bad sn and ensure throws error
+    snStrings.pop_back();
+    configMap["Observer.sensorNoise"] = snStrings;
+    try {
+        ParticleFilter pf2(configMap);
+        Assert::Fail();
+    }
+    catch (...) { }
+    
+    // Create a UKF with bad sn and ensure throws error
+    // Note that it checks pn first, so it is okay that sn is also bad
+    pnStrings.pop_back();
+    configMap["Observer.processNoise"] = pnStrings;
+    try {
+        ParticleFilter pf3(configMap);
+        Assert::Fail();
+    }
+    catch (...) { }
+
+}
+
+void testPFBatteryInitialize()
+{
+    // Create battery model
+    Battery battery = Battery();
+    
+    // Set up state vector
+    std::vector<double> x(8);
+    
+    // Initialize
+    std::vector<double> u0(1);
+    std::vector<double> z0(2);
+    u0[0] = 0;
+    z0[0] = 20;
+    z0[1] = 4.2;
+    battery.initialize(x, u0, z0);
+    
+    // Set up inputs
+    std::vector<double> u(1);
+    
+    // Set up process noise
+    std::vector<double> pn(battery.getNumStates());
+    for (unsigned int i = 0; i < battery.getNumStates(); i++) {
+        pn[i] = 1e-10;
+    }
+    
+    // Set up process noise
+    std::vector<double> sn(battery.getNumOutputs());
+    for (unsigned int i = 0; i < battery.getNumOutputs(); i++) {
+        pn[i] = 1e-3;
+    }
+    
+    // Create a PF
+    size_t N = 100;
+    ParticleFilter PF = ParticleFilter(&battery, N, pn, sn);
+    
+    // Initialize PF
+    double t = 0;
+    PF.initialize(t, x, u);
+    
+    // Check x
+    std::vector<double> xMean = PF.getStateMean();
+    Assert::AreEqual(x, xMean);
+    
+    // Check z
+    std::vector<double> zMean = PF.getOutputMean();
+    Assert::IsTrue(zMean[1] > 4.191423 && zMean[1] < 4.1914237);
+    Assert::AreEqual(20, zMean[0], 1e-12);
+}
+
+void testPFBatteryStep()
+{
+    // Create battery model
+    Battery battery = Battery();
+    
+    // Set up state and output vectors
+    std::vector<double> x(battery.getNumStates());
+    std::vector<double> z(battery.getNumOutputs());
+    
+    // Initialize
+    std::vector<double> u0(1);
+    std::vector<double> z0(2);
+    u0[0] = 0;
+    z0[0] = 20;
+    z0[1] = 4.2;
+    battery.initialize(x, u0, z0);
+    
+    // Set up inputs
+    std::vector<double> u(1);
+    
+    // Set up process noise
+    std::vector<double> pn(battery.getNumStates());
+    for (unsigned int i = 0; i < battery.getNumStates(); i++) {
+        pn[i] = 1e-10;
+    }
+    
+    // Set up process noise
+    std::vector<double> sn(battery.getNumOutputs());
+    for (unsigned int i = 0; i < battery.getNumOutputs(); i++) {
+        sn[i] = 1e-3;
+    }
+    
+    // Create a PF
+    size_t N = 100;
+    ParticleFilter PF = ParticleFilter(&battery, N, pn, sn);
+    
+    // Initialize PF
+    double t = 0;
+    double dt = 1;
+    PF.initialize(t, x, u);
+    
+    // Set up zNoise
+    std::vector<double> zNoise(battery.getNumOutputs());
+    zNoise[0] = 0.01;
+    zNoise[1] = 0.01;
+    
+    // Set up xNoise
+    std::vector<double> xNoise(battery.getNumStates());
+    
+    // Simulate to get outputs for time t
+    t += dt;
+    u[0] = 1;
+    battery.stateEqn(t, x, u, xNoise, dt);
+    battery.outputEqn(t, x, u, zNoise, z);
+    
+    // Step UKF for time t
+    PF.step(t, u, z);
+    
+    // Check x
+    std::vector<double> xMean = PF.getStateMean();
+    Assert::AreEqual(0, xMean[1], 1e-3, "xMean[1]");
+    Assert::AreEqual(760, xMean[5], 1e-1, "xMean[5]");
+    
+    // Check z
+    std::vector<double> zMean = PF.getOutputMean();
+    Assert::AreEqual(20, zMean[0], 1e-6, "zMean[0]");
+    Assert::AreEqual(4.191423, zMean[1], 1e-6, "zMean[1]");
 }

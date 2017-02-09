@@ -14,6 +14,7 @@ set (HEADERS
 	inc/MonteCarloPredictor.h
 	inc/Observer.h
 	inc/ObserverFactory.h
+	inc/ParticleFilter.h
 	inc/Predictor.h
 	inc/PredictorFactory.h
 	inc/ProgContainers.h
@@ -45,6 +46,7 @@ set(SRCS
 	src/Model.cpp
 	src/MonteCarloPredictor.cpp
 	src/Observer.cpp
+	src/ParticleFilter.cpp
 	src/ProgContainers.cpp
 	src/ProgData.cpp
 	src/ProgEvent.cpp
