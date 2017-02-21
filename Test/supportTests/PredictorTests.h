@@ -26,5 +26,6 @@ void predictorTestInit();
 // MC Battery tests
 void testMonteCarloBatteryPredict();
 void testMonteCarloBatteryConfig();
+void testMonteCarloBatteryEOLPredict();
 
 #endif // PREDICTORTESTS_H

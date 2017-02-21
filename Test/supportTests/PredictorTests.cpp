@@ -26,6 +26,7 @@
 #include "MonteCarloPredictor.h"
 #include "UData.h"
 #include "Battery.h"
+#include "BatteryEOL.h"
 #include "PredictorTests.h"
 
 #include "Test.h"
@@ -40,9 +41,10 @@ void predictorTestInit() {
     Log & log = Log::Instance("PredictorTests.log");
     log.Initialize("PredictorTests", "1.0", "No comments.");
 
-    // Create the model factory and register battery model
+    // Create the model factory and register battery models
     PrognosticsModelFactory& modelFactory = PrognosticsModelFactory::instance();
     modelFactory.Register("Battery", PrognosticsModelFactory::Create<Battery>);
+    modelFactory.Register("BatteryEOL", PrognosticsModelFactory::Create<BatteryEOL>);
 }
 
 void testMonteCarloBatteryPredict()
@@ -190,4 +192,92 @@ void testMonteCarloBatteryConfig()
     //catch (std::runtime_error e) {
     //    Assert::AreEqual(1, 1);
     //}
+}
+
+void testMonteCarloBatteryEOLPredict()
+{
+    // Set up configMap
+    GSAPConfigMap configMap;
+    configMap.set("Predictor.numSamples", "10");
+    configMap.set("Predictor.horizon", "50");  // reference discharge cycles
+    configMap.set("Model.event", "EOL");
+    configMap.set("Model.predictedOutputs", "capacity");
+    std::vector<std::string> processNoise = {"1e-10", "1e-15", "1e-20"};
+    configMap["Model.processNoise"] = processNoise;
+    // Create a constant loading scenario (single portion)
+    std::vector<std::string> inputUncertainty;
+    inputUncertainty.push_back("8");		// Mean of magnitude (average discharge current)
+    inputUncertainty.push_back("0.5");		// Std of magnitude
+    configMap["Predictor.inputUncertainty"] = inputUncertainty;
+    
+    // Create a battery model (to help set up inputs for predict)
+    Battery batteryEOD = Battery();
+    // Create battery EOL model based on that discharge model
+    BatteryEOL batteryEOL = BatteryEOL();
+    batteryEOL.setDischargeModel(&batteryEOD);
+    std::vector<double> x(3);
+    std::vector<double> empty;
+    batteryEOL.initialize(x, empty, empty);
+    
+    // Create MonteCarloPredictor for batteryEOL model
+    MonteCarloPredictor MCP(configMap);
+    
+    // Create and set the model with aggressive damage progression
+    batteryEOL.parameters.wQMobile = -10;
+    MCP.setModel(&batteryEOL);
+    
+    // Set up inputs for predict function
+    double t = 0;
+    std::vector<UData> state(batteryEOL.getNumStates());
+    for (unsigned int i = 0; i < batteryEOL.getNumStates(); i++)
+    {
+        // Set uncertainty type and size
+        state[i].uncertainty(UType::MeanCovar);
+        state[i].npoints(batteryEOL.getNumStates());
+        // Set mean
+        state[i][MEAN] = x[i];
+        // Set covariance
+        std::vector<double> covariance(batteryEOL.getNumStates());
+        for (unsigned int j = 0; j < batteryEOL.getNumStates(); j++) {
+            if (i == j) {
+                covariance[j] = std::stod(processNoise[i]);
+            }
+            else {
+                covariance[j] = 0e-30;
+            }
+        }
+        state[i].setVec(COVAR(0), covariance);
+    }
+
+    // Create progdata
+    ProgData data;
+    data.setUncertainty(UType::Samples);
+    data.addEvent("EOL");
+    data.addSystemTrajectory("capacity");
+    data.sysTrajectories.setNSamples(10);           // numSamples
+    data.setPredictions(1, 50);                     // interval, number of predictions
+    data.setupOccurrence(10);						// numSamples
+    data.events["EOL"].timeOfEvent.npoints(10);		// numSamples
+    
+    // Run predict function
+    MCP.predict(t, state, data);
+    
+    // Compute mean of timeOfEvent and SOC at different time points
+    double meanEOL = 0;
+    double meanCapacityAt1 = 0;
+    double meanCapacityAt25 = 0;
+    for (unsigned int i = 0; i < data.events["EOL"].timeOfEvent.npoints(); i++) {
+        meanEOL += data.events["EOL"].timeOfEvent[i] / data.events["EOL"].timeOfEvent.npoints();
+    }
+    for (unsigned int i = 0; i < data.sysTrajectories["capacity"].getNPoints(); i++) {
+        meanCapacityAt1 += data.sysTrajectories["capacity"][0][i] / data.sysTrajectories["capacity"].getNPoints();
+        meanCapacityAt25 += data.sysTrajectories["capacity"][25][i] / data.sysTrajectories["capacity"].getNPoints();
+    }
+    
+    std::cout << meanEOL << ", " << meanCapacityAt1 << ", " << meanCapacityAt25 << std::endl;
+
+    // Check results
+    Assert::AreEqual(39.5, meanEOL, 1);
+    Assert::AreEqual(1.93, meanCapacityAt1, 0.02);
+    Assert::AreEqual(1.39, meanCapacityAt25, 0.1);
 }

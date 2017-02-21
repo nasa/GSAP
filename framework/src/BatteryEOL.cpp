@@ -20,6 +20,7 @@
 #include <vector>
 #include <math.h>
 #include "BatteryEOL.h"
+#include "Battery.h"
 
 #include "ConfigMap.h"
 
@@ -168,7 +169,7 @@ void BatteryEOL::setParameters() {
     parameters.wRo = 0;
     parameters.wTDiffusion = 0;
     parameters.nominalDischargeCurrent = 2.2;
-    parameters.minCapacity = 0.5*6952;  // 50% nominal
+    parameters.minCapacity = 1.1;  // 50% nominal (about 2.2 Ah)
 }
 
 
@@ -190,7 +191,7 @@ void BatteryEOL::checkDischargeModel() {
 double BatteryEOL::simulateReferenceDischarge(const std::vector<double> & x) {
     // Simulate discharge model reference conditions.
     // For example, if nominal capacity is 2.2 Ah, we simulate with a discharge current of 2.2A,
-    // and determine how long it takes to discharge. This time*2.2 is the capacity in Ah.
+    // and determine how long it takes to discharge. This time/3600*2.2 is the capacity in Ah.
     
     // Ensure discharge model has been set
     checkDischargeModel();
@@ -234,7 +235,7 @@ double BatteryEOL::simulateReferenceDischarge(const std::vector<double> & x) {
     }
     
     // Compute capacity
-    double capacity = t*parameters.nominalDischargeCurrent;
+    double capacity = t/3600*parameters.nominalDischargeCurrent;
     return capacity;
     
 }

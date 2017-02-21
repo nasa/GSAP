@@ -182,7 +182,8 @@ int main() {
     // Predictor Tests
     context.AddCategoryInitializer("Predictor", predictorTestInit);
     context.AddTest("Monte Carlo Predictor Configuration for Battery", testMonteCarloBatteryConfig, "Predictor");
-    context.AddTest("Monte Carlo Prediction for Battery", testMonteCarloBatteryPredict, "Predictor");
+    context.AddTest("Monte Carlo Prediction for Battery EOD", testMonteCarloBatteryPredict, "Predictor");
+    context.AddTest("Monte Carlo Prediction for Battery EOL", testMonteCarloBatteryEOLPredict, "Predictor");
     
     // Optimizer Tests
     context.AddCategoryInitializer("Optimizer", optimizerTestsInit);
