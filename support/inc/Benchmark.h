@@ -15,6 +15,10 @@
 #include <climits>
 #include <iomanip>
 #include <chrono>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/wait.h>
+#include <iostream>
 
 namespace PCOE {
 
@@ -27,6 +31,10 @@ namespace PCOE {
    unsigned long long max= INIT_MAX;
    unsigned long long begin,end, elapsed_secs;
    double average,total;
+   long sharedMemoryTotal=0;
+   long kilo;
+
+
    // constructor
     Benchmark() {
       counter=INIT_TOTAL;
@@ -41,6 +49,7 @@ namespace PCOE {
         {max = number;}
       if(number < min)
         {min = number;}
+
    }
 
    // getter
@@ -145,7 +154,31 @@ namespace PCOE {
      FILE * pFile;
      pFile = fopen ("benchmarkResults.txt","a+");
      fprintf(pFile,"%-15s%-25llu%-28f%-26llu\n\n", "Timer:", min, getAverage(),max);
+     //std::cout<<kilo;
      fclose (pFile);
+   }
+
+   void calRamUsage()
+   {
+     #ifdef __linux__
+      struct rusage usage;
+      getrusage(RUSAGE_SELF, &usage);
+      kilo=usage.ru_maxrss;
+     #endif
+
+     #if _WIN32
+     #include<windows.h>
+     #include<stdio.h>
+     #include<tchar.h>
+     #define WIDTH 7
+     MEMORYSTATUSEX statex;
+     statex.dwLength = sizeof (statex);
+     GlobalMemoryStatusEx (&statex);
+      _tprintf (TEXT("There is  %*ld percent of memory in use.\n"),WIDTH, statex.dwMemoryLoad);
+
+     #endif
+
+
    }
 
   private:

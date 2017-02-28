@@ -20,6 +20,9 @@
  #include <stdio.h>
  #include <stdlib.h>
  #include <cstddef>
+ #include <sys/wait.h>
+ #include <sys/time.h>
+ #include <sys/resource.h>
 
  #include <memory>
  #include <vector>
@@ -47,6 +50,7 @@ namespace PCOE {
     const std::string OUTPUTS_KEY = "outputs";
     Benchmark benchmark1,benchmark2;
     unsigned long long const INIT_TIME=0;
+    long kilo;
 
     BenchmarkPrognoser::BenchmarkPrognoser(GSAPConfigMap & configMap) : CommonPrognoser(configMap), initialized(false) {
         // Check for required config parameters
@@ -93,7 +97,7 @@ namespace PCOE {
     }
 
     void BenchmarkPrognoser::step() {
-
+//      struct rusage usage;
         //init time in nanoseconds
          if(benchmark2.begin != INIT_TIME)
           {
@@ -112,6 +116,10 @@ namespace PCOE {
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
         std::vector<double> u(model->getNumInputs());
+//        kilo=usage.ru_maxrss;
+
+  //      pid_t   wait4(0,WIFEXITED(), WUNTRACED , usage.ru_maxrss);
+
         std::vector<double> z(model->getNumOutputs());
         for (unsigned int i = 0; i < model->getNumInputs(); i++) {
             u[i] = comm.getValue(inputs[i]);
@@ -165,6 +173,15 @@ BenchmarkPrognoser::~BenchmarkPrognoser() {
   benchmark2.printScreen();
   benchmark1.writeFile();
   benchmark2.writeFile();
-}
+  benchmark1.calRamUsage();
+//  struct rusage usage;
+  //pid_t wait4(pid_t pid, int * status, int options, struct rusage * rusage);
+  //wait4(0,WIFEXITED(0)&& WEXITSTATUS(0), WUNTRACED , usage.ru_maxrss);
+
+  //getrusage(RUSAGE_SELF, &usage);
+  //kilo=usage.ru_maxrss;
+  std::cout<<"RAM Usage:"<<benchmark1.kilo<<std::endl;
+//  std::cout<<benchmark1.sharedMemoryTotal;
+  }
 
 }
