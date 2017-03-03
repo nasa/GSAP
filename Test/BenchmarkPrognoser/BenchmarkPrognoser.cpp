@@ -48,8 +48,7 @@ namespace PCOE {
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
     const std::string INPUTS_KEY = "inputs";
     const std::string OUTPUTS_KEY = "outputs";
-    Benchmark benchmark1,benchmark2;
-    unsigned long long const INIT_TIME=0;
+
     long kilo;
 
     BenchmarkPrognoser::BenchmarkPrognoser(GSAPConfigMap & configMap) : CommonPrognoser(configMap), initialized(false) {
@@ -99,13 +98,12 @@ namespace PCOE {
     void BenchmarkPrognoser::step() {
 //      struct rusage usage;
         //init time in nanoseconds
-         if(benchmark2.begin != INIT_TIME)
+         if(t2 != INIT_TIME)
           {
-            benchmark2.nanosecondsEnd();
-            benchmark2.findElapsedTime();
+           benchmark2.nanosecondsEnd(t2);
 
           }
-         benchmark1.nanosecondsBegin();
+         auto t1 =benchmark1.nanosecondsBegin();
 
         static double initialTime = comm.getValue(outputs[0]).getTime() / 1.0e3;
 
@@ -141,9 +139,8 @@ namespace PCOE {
             if (newT <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
 
-            benchmark1.nanosecondsEnd();
-            benchmark1.findElapsedTime();
-            benchmark2.nanosecondsBegin();
+            benchmark1.nanosecondsEnd(t1);
+            t2 = benchmark2.nanosecondsBegin();
                 return;
             }
 
@@ -174,14 +171,11 @@ BenchmarkPrognoser::~BenchmarkPrognoser() {
   benchmark1.writeFile();
   benchmark2.writeFile();
   benchmark1.calRamUsage();
-//  struct rusage usage;
-  //pid_t wait4(pid_t pid, int * status, int options, struct rusage * rusage);
-  //wait4(0,WIFEXITED(0)&& WEXITSTATUS(0), WUNTRACED , usage.ru_maxrss);
 
-  //getrusage(RUSAGE_SELF, &usage);
-  //kilo=usage.ru_maxrss;
-  std::cout<<"RAM Usage:"<<benchmark1.kilo<<std::endl;
-//  std::cout<<benchmark1.sharedMemoryTotal;
+
+  std::cout<<"RAM"<<benchmark1.kilo<<std::endl;
+  //std::cout<<"CPU"<<benchmark1.phrame<<std::endl;
+
   }
 
 }

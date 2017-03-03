@@ -25,6 +25,8 @@
 #include "PrognosticsModel.h"
 #include "Observer.h"
 #include "Predictor.h"
+#include "Benchmark.h"
+
 
 namespace PCOE {
     class BenchmarkPrognoser : public CommonPrognoser
@@ -38,6 +40,9 @@ namespace PCOE {
         bool initialized;
         double firstTime;
         double lastTime;
+        Benchmark benchmark1;
+        Benchmark benchmark2;
+        TimeType t2=INIT_TIME;
 
     public:
         /** @brief      Benchmark Prognoser Constructor

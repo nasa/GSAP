@@ -12,6 +12,10 @@
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
+
+ #ifndef PCOE_BENCHMARK_H
+ #define PCOE_BENCHMARK_H
+
 #include <climits>
 #include <iomanip>
 #include <chrono>
@@ -21,6 +25,8 @@
 #include <iostream>
 
 namespace PCOE {
+  using TimeType=unsigned long long;
+  TimeType const INIT_TIME=0;
 
   class Benchmark {
   public:
@@ -101,25 +107,20 @@ namespace PCOE {
    }
 
    //initialize timer
-   void nanosecondsBegin()
+   TimeType nanosecondsBegin()
    {
        using std::chrono::high_resolution_clock;
        using std::chrono::nanoseconds;
-       begin= static_cast<unsigned long long>(high_resolution_clock::now().time_since_epoch() / nanoseconds(1));
+      return begin= static_cast<TimeType>(high_resolution_clock::now().time_since_epoch() / nanoseconds(1));
    }
 
    //end timer
-   void nanosecondsEnd()
+   void nanosecondsEnd(TimeType begin_)
    {
        using std::chrono::high_resolution_clock;
        using std::chrono::nanoseconds;
-       end= static_cast<unsigned long long>(high_resolution_clock::now().time_since_epoch() / nanoseconds(1));
-   }
-
-   //calculate elasped time then pass result to running total function
-   void findElapsedTime()
-   {
-       elapsed_secs = (end-begin);
+       end= static_cast<TimeType>(high_resolution_clock::now().time_since_epoch() / nanoseconds(1));
+       elapsed_secs = (end-begin_);
        addNum(elapsed_secs);
    }
 
@@ -164,13 +165,14 @@ namespace PCOE {
       struct rusage usage;
       getrusage(RUSAGE_SELF, &usage);
       kilo=usage.ru_maxrss;
+      //int phrame=usage.ru_utime.Microseconds;
      #endif
 
      #if _WIN32
-     #include<windows.h>
-     #include<stdio.h>
-     #include<tchar.h>
-     #define WIDTH 7
+      #include<windows.h>
+      #include<stdio.h>
+      #include<tchar.h>
+      #define WIDTH 7
      MEMORYSTATUSEX statex;
      statex.dwLength = sizeof (statex);
      GlobalMemoryStatusEx (&statex);
@@ -182,6 +184,9 @@ namespace PCOE {
    }
 
   private:
-   // hidden data from outside world
   };
+
 }
+
+
+#endif // PCOE_BENCHMARK_H
