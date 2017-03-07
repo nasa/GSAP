@@ -62,10 +62,9 @@ int main() {
     PredictorFactory & pPredictorFactory = PredictorFactory::instance();
     pPredictorFactory.Register("MC", PredictorFactory::Create<MonteCarloPredictor>);
 
-    ProgManager PM = ProgManager("benchMT.cfg");
+    ProgManager PM = ProgManager("bench.cfg");
     PM.run();
 
-  //  ProgManager MT = ProgManager("benchMT.cfg");
-  //  PM.run();
+  
     return 0;
 }

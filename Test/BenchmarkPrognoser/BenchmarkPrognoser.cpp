@@ -174,7 +174,7 @@ BenchmarkPrognoser::~BenchmarkPrognoser() {
 
 
   std::cout<<"RAM"<<benchmark1.kilo<<std::endl;
-  //std::cout<<"CPU"<<benchmark1.phrame<<std::endl;
+  std::cout<<"CPU"<<benchmark1.phrame<<std::endl;
 
   }
 

@@ -39,6 +39,7 @@ namespace PCOE {
    double average,total;
    long sharedMemoryTotal=0;
    long kilo;
+   long phrame;
 
 
    // constructor
@@ -109,19 +110,71 @@ namespace PCOE {
    //initialize timer
    TimeType nanosecondsBegin()
    {
+     #ifdef __linux__
        using std::chrono::high_resolution_clock;
        using std::chrono::nanoseconds;
       return begin= static_cast<TimeType>(high_resolution_clock::now().time_since_epoch() / nanoseconds(1));
+     #endif
+
+     #if _WIN32
+     
+     #include<windows.h>
+     #include<stdio.h>
+     #include<tchar.h>
+
+  FILETIME createTime;
+	FILETIME exitTime;
+	FILETIME kernelTime;
+	FILETIME userTime;
+	if ( GetProcessTimes( GetCurrentProcess( ),
+		&createTime, &exitTime, &kernelTime, &userTime ) != -1 )
+	{
+		SYSTEMTIME userSystemTime;
+		if ( FileTimeToSystemTime( &userTime, &userSystemTime ) != -1 )
+			return begin= (TimeType)userSystemTime.wHour * 3600.0 +
+				(TimeType)userSystemTime.wMinute * 60.0 +
+				(TimeType)userSystemTime.wSecond +
+				(TimeType)userSystemTime.wMilliseconds / 1000.0;
+	}
+ #endif
    }
 
    //end timer
    void nanosecondsEnd(TimeType begin_)
    {
+     #ifdef __linux__
        using std::chrono::high_resolution_clock;
        using std::chrono::nanoseconds;
        end= static_cast<TimeType>(high_resolution_clock::now().time_since_epoch() / nanoseconds(1));
        elapsed_secs = (end-begin_);
        addNum(elapsed_secs);
+       #endif
+
+     #if _WIN32
+
+     #include<windows.h>
+     #include<stdio.h>
+     #include<tchar.h>
+
+     FILETIME createTime2;
+     FILETIME exitTime2;
+     FILETIME kernelTime2;
+     FILETIME userTime2;
+     if ( GetProcessTimes( GetCurrentProcess( ),
+       &createTime2, &exitTime2, &kernelTime2, &userTime2 ) != -1 )
+     {
+       SYSTEMTIME userSystemTime;
+       if ( FileTimeToSystemTime( &userTime2, &userSystemTime2 ) != -1 )
+           end= (TimeType)userSystemTime2.wHour * 3600.0 +
+           (TimeType)userSystemTime2.wMinute * 60.0 +
+           (TimeType)userSystemTime2.wSecond +
+           (TimeType)userSystemTime2.wMilliseconds / 1000.0;
+           elapsed_secs=(end-begin_);
+           addNum(elapsed_secs);
+     }
+
+     #endif
+
    }
 
    // prints the template to the console
@@ -165,7 +218,7 @@ namespace PCOE {
       struct rusage usage;
       getrusage(RUSAGE_SELF, &usage);
       kilo=usage.ru_maxrss;
-      //int phrame=usage.ru_utime.Microseconds;
+      phrame=usage.ru_utime.tv_usec;
      #endif
 
      #if _WIN32
@@ -173,6 +226,7 @@ namespace PCOE {
       #include<stdio.h>
       #include<tchar.h>
       #define WIDTH 7
+
      MEMORYSTATUSEX statex;
      statex.dwLength = sizeof (statex);
      GlobalMemoryStatusEx (&statex);
