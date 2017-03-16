@@ -31,9 +31,11 @@ set (HEADERS
 	inc/UDataInterfaces.h
 	inc/UnscentedKalmanFilter.h
 	inc/Benchmark.h
+	inc/TCPSocket.h
 )
 
 set(SRCS
+	src/TCPSocket.cpp
 	src/ConfigMap.cpp
 	src/DataPoint.cpp
 	src/DataPoints.cpp

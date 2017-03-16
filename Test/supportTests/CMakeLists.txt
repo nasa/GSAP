@@ -11,6 +11,7 @@ set(HEADERS
 	ProgDataTests.h
 	ThreadTests.h
 	UDataTests.h
+	TCPTests.h
 )
 
 set(SRCS
@@ -27,6 +28,7 @@ set(SRCS
 	ProgDataTests.cpp
 	ThreadTests.cpp
 	UDataTests.cpp
+	TCPTests.cpp
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/support/inc/)
