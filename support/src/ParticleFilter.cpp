@@ -33,6 +33,8 @@
 #include "ParticleFilter.h"
 
 namespace PCOE {
+    const double PI = std::atan(1)*4.0; // Use this instead of M_PI- M_PI is not cross platform
+    
     // Configuration Keys
     const std::string N_KEY = "Observer.N";
     const std::string PN_KEY = "Observer.processNoise";
@@ -272,7 +274,7 @@ namespace PCOE {
         zP.col(0,zPredicted);
         Matrix I = zA - zP;
         Matrix expArgument = -0.5*I.transpose()*R.inverse()*I;
-        double lh = 1.0/pow(2*M_PI,zActual.size()/2.0)*1.0/sqrt(R.determinant())*exp(expArgument[0][0]);
+        double lh = 1.0/pow(2.0*PI,zActual.size()/2.0)*1.0/sqrt(R.determinant())*exp(expArgument[0][0]);
         return lh;
     }
     
