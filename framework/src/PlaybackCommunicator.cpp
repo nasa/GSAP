@@ -60,10 +60,12 @@ namespace PCOE {
         if (config.includes(DELIM_KEY)) {
             log.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting delimiter");
 
-            if (config.at(DELIM_KEY)[0].compare("\\t") == 0) {
+			if (config.at(DELIM_KEY).size() == 0) {
+				// Comma
+				delim = ',';
+			} else if (config.at(DELIM_KEY)[0].compare("\\t") == 0) {
                 delim = '\t';
-            }
-            else {
+            } else {
                 delim = config.at(DELIM_KEY)[0].c_str()[0];
             }
         }
