@@ -182,8 +182,8 @@ int main() {
     context.AddTest("Monte Carlo Prediction for Battery", testMonteCarloBatteryPredict, "Predictor");
 
     // TCP Tests
-  // context.AddTest("testConnect",testConnect, "TCP");
-  // context.AddTest("testSend",testSend, "TCP");
+   context.AddTest("testConnect",testConnect, "TCP");
+   context.AddTest("testSend",testSend, "TCP");
    context.AddTest("testReceive",testReceive, "TCP");
 
 
