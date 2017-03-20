@@ -23,7 +23,7 @@
 
 void observerTestsInit();
 
-// UKF Tank  tests
+// UKF Tank tests
 void testUKFTankInitialize();
 void testUKFTankStep();
 void testUKFTankGetInputs();
@@ -32,5 +32,10 @@ void testUKFTankGetInputs();
 void testUKFBatteryFromConfig();
 void testUKFBatteryInitialize();
 void testUKFBatteryStep();
+
+// PF Battery tests
+void testPFBatteryFromConfig();
+void testPFBatteryInitialize();
+void testPFBatteryStep();
 
 #endif // OBSERVERTESTS_H

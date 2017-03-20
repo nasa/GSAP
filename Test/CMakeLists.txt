@@ -9,8 +9,8 @@ set(SRCS
 	src/TestPrognoser.cpp
 )
 
-include_directories(${CMAKE_SOURCE_DIR}/support/inc/)
-include_directories(${CMAKE_SOURCE_DIR}/framework/inc/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../support/inc/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../framework/inc/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)
 
 # Test Library
@@ -21,3 +21,4 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/supportTests/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/frameworkTests/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/commCollectionTests/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/batteryPrognoserTests/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/BenchmarkPrognoser/)

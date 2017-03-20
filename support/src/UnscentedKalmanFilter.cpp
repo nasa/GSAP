@@ -126,7 +126,7 @@ namespace PCOE {
         unsigned int rValueIndex = 0;
         for (unsigned int row = 0; row < dimension; row++) {
             for (unsigned int col = 0; col < dimension; col++) {
-                m_Q[row][col] = std::stod(RValues[rValueIndex]);
+                m_R[row][col] = std::stod(RValues[rValueIndex]);
                 rValueIndex++;
             }
         }

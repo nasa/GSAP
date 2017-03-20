@@ -1,4 +1,4 @@
-Timestamp	power	voltage	temperature
+Timestamp	power	temperature voltage	
 0.00	0.00	20.00	4.10
 1.00	16.00	19.05	4.02
 2.00	16.00	20.52	3.97

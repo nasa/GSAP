@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(GSAP)
 
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin/)
+set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin/)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -88,7 +88,7 @@ else()
 endif()
 
 #Libraries
-add_subdirectory(${CMAKE_SOURCE_DIR}/support/)
-add_subdirectory(${CMAKE_SOURCE_DIR}/framework/)
-add_subdirectory(${CMAKE_SOURCE_DIR}/Test/)
-add_subdirectory(${CMAKE_SOURCE_DIR}/example/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/support/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/framework/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Test/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/example/)
