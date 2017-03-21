@@ -60,10 +60,12 @@ namespace PCOE {
         if (config.includes(DELIM_KEY)) {
             log.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting delimiter");
 
-            if (config.at(DELIM_KEY)[0].compare("\\t") == 0) {
+			if (config.at(DELIM_KEY).size() == 0) {
+				// Comma
+				delim = ',';
+			} else if (config.at(DELIM_KEY)[0].compare("\\t") == 0) {
                 delim = '\t';
-            }
-            else {
+            } else {
                 delim = config.at(DELIM_KEY)[0].c_str()[0];
             }
         }
@@ -104,26 +106,32 @@ namespace PCOE {
 
         // Parse Header
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Parsing Header");
+    
+        std::size_t pos = 0;
+        std::size_t last = 0;
+            
+        while (pos != std::string::npos) {
+            pos = s.find(delim, last);
+            auto length = (pos == std::string::npos)? s.length(): pos;
+            length = length - pos;
+            
+            auto s2 = s.substr(last, pos-last);
+            last = pos+1;
+            trim(s2);
 
-        std::istringstream ss(s);
-        while (ss) {
-            std::string s2;
-            if (!getline(ss, s2, delim)) {
-                break;
-            }
-
-            if (s2.substr(0, 7).compare(" pData-") == 0) {
+            if (s2.substr(0, 7).compare("pData-") == 0) {
                 // Break line
                 break;
             }
 
             if (s2.compare("Timestamp") != 0 && s2.compare(" Running Time") != 0) {
                 // Ignored lines
-                trim(s);
-                header.push_back(s);
+                header.push_back(s2);
+                log.FormatLine(LOG_TRACE, MODULE_NAME,
+                               "Registered %s", s.c_str());
             }
         }
-        log.FormatLine(LOG_TRACE, MODULE_NAME,
+        log.FormatLine(LOG_INFO, MODULE_NAME,
             "Registered %d parameters", header.size());
     }
 
@@ -171,17 +179,21 @@ namespace PCOE {
                 continue;
             }
             ds[it] = std::stof(s3);
+            log.FormatLine(LOG_TRACE, MODULE_NAME,
+                          "Received %s:%f", it.c_str(), ds[it].get());
             if (timestampFromFile) {
                 ds[it].setTime(theTime);
             }
         }
+        
+        log.WriteLine(LOG_TRACE, MODULE_NAME, "Returning Line");
 
         return ds;
     }
     
     void PlaybackCommunicator::write(AllData dataIn) {
         (void) dataIn;
-        throw std::domain_error("Write not supported");
+        //throw std::domain_error("Write not supported");
     }
 
     PlaybackCommunicator::~PlaybackCommunicator() {

@@ -156,7 +156,12 @@ int main() {
     context.AddTest("UKF Battery Construction from ConfigMap", testUKFBatteryFromConfig, "Observer");
     context.AddTest("UKF Initialization for Battery", testUKFBatteryInitialize, "Observer");
     context.AddTest("UKF Step for Battery", testUKFBatteryStep, "Observer");
-
+    
+    // PF Battery tests
+    context.AddTest("PF Battery Construction from ConfigMap", testPFBatteryFromConfig, "Observer");
+    context.AddTest("PF Initialization for Battery", testPFBatteryInitialize, "Observer");
+    context.AddTest("PF Step for Battery", testPFBatteryStep, "Observer");
+    
     // PEvent Tests
     context.AddTest("Initialization", testPEventInit, "PEvent");
     context.AddTest("Meta Data", testPEventMeta, "PEvent");

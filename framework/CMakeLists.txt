@@ -11,7 +11,7 @@ set (HEADERS
 	inc/PlaybackCommunicator.h
 	inc/RecorderCommunicator.h
 	inc/Battery.h
-)
+	)
 
 set(SRCS
 	src/CommManager.cpp
