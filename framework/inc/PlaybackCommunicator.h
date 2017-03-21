@@ -33,7 +33,7 @@
 
 namespace PCOE {
     class PlaybackCommunicator : public CommonCommunicator {
-    public:
+     public:
         /** @brief      Constructor for PlaybackCommunicator - Called by the CommunicatorFactory
          *  @param      config  Reference to configuration map for the communicator
          *  @see        CommunicatorFactory
@@ -48,11 +48,15 @@ namespace PCOE {
          **/
         DataStore read() override;
 
+        /** @brief      Publisher callback funciton- used to consume data from the prognostic framework
+         *  @param      data        Reference to DataStore containing all the input data
+         *  @param      progData    Output from each prognoser
+         **/
         void write(AllData) override;
 
         ~PlaybackCommunicator();
 
-    private:
+     private:
         std::ifstream playbackStream;       ///< The stream to be used as a header
         std::vector<std::string> header;    ///< The input parameters to be played back (from the header)
         char delim;                         ///< Delimiter

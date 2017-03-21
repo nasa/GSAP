@@ -63,7 +63,7 @@ namespace PCOE {
         void setTime(time_point tp); ///< Set the time that it was last edited in milliseconds
 
     private:
-        T data;    ///< Tje data being stored
+        T data;    ///< The data being stored
         time_point lastUpdated;  ///< When the data was last edited (0 if not set)
     };
     
