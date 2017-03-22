@@ -82,11 +82,11 @@ namespace PCOE {
             throw std::range_error("Process noise size does not equal number of model states");
         }
 
-        // Check that there are enough input uncertainty parameters
-        if (inputUncertainty.size() != 2 * pModel->getNumInputParameters()) {
+        // Check that there are an even number input uncertainty parameters
+        if (inputUncertainty.size()%2 != 0) {
             // TODO(MD): Assumption here is mean/std, but should generalize this
-            log.WriteLine(LOG_ERROR, MODULE_NAME, "Input uncertainty does not have twice number of input parameters");
-            throw std::range_error("Input uncertainty does not have twice number of input parameters");
+            log.WriteLine(LOG_ERROR, MODULE_NAME, "Input uncertainty needs an even number of variables");
+            throw std::range_error("Input uncertainty needs an even number of variables");
         }
 
         // Check that there are the correct number of predicted outputs
@@ -144,7 +144,7 @@ namespace PCOE {
             // We have a list of pairs (mean,stddev) for each input parameter
             // The order must correspond to the order of the input parameters in the model:
             //   mean_ip1, stddev_ip1, mean_ip2, stddev_ip2, ...
-            std::vector<double> inputParameters(pModel->getNumInputParameters());
+            std::vector<double> inputParameters(inputUncertainty.size()/2);
             for (unsigned int ipIndex = 0; ipIndex < pModel->getNumInputParameters(); ipIndex++) {
                 // Create distribution for this input parameter
                 std::normal_distribution<> inputParameterDistribution(inputUncertainty[2 * ipIndex], inputUncertainty[2 * ipIndex + 1]);
