@@ -56,4 +56,6 @@ void DStoreUse()
     
     Datum<double> d;
     Assert::IsFalse(d.isSet(), "Datum not set");
+    Datum<double> e(1.7);
+    Assert::IsTrue(e.isSet(), "Datum is set");
 }
