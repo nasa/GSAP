@@ -116,6 +116,9 @@ namespace PCOE {
             }
             z[i] = comm.getValue(outputs[i]);
         }
+        
+        // Transform the data using the model's transform function
+        model->transform(u,z);
 
         // If this is the first step, will want to initialize the observer and the predictor
         if (!initialized) {

@@ -185,6 +185,11 @@ class Battery final : public PCOE::PrognosticsModel {
     *   @param      z Output vector
     **/
     void initialize(std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & z);
+    
+    /** @brief      Transform inputs and outputs. Specifically, given current as input
+     *              change it to power.
+     */
+    virtual void transform(std::vector<double> & u, std::vector<double> & z);
 };
 
 
