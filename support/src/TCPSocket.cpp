@@ -269,6 +269,27 @@ namespace PCOE {
             throw std::system_error(ec, "Set receive timeout failed");
         }
     }
+    
+    void TCPSocket::ReceiveTimeout(double value) {
+#ifdef _WIN32
+        timeout_type to = (long int) value * 1e3;
+#else
+        timeout_type to;
+        to.tv_sec = (long int) value;
+        to.tv_usec = (long int) (value - to.tv_sec)*1e6;
+#endif
+        socklen_t len = sizeof(to);
+    
+        int result = setsockopt(sock,
+                                SOL_SOCKET,
+                                SO_RCVTIMEO,
+                                reinterpret_cast<char*>(&to),
+                                len);
+        if (result == -1) {
+            std::error_code ec(sockerr, std::generic_category());
+            throw std::system_error(ec, "Set receive timeout failed");
+        }
+    }
 
     TCPSocket::size_type TCPSocket::SendBufferSize() {
         size_type value = 0;
@@ -319,6 +340,27 @@ namespace PCOE {
                                 SOL_SOCKET,
                                 SO_SNDTIMEO,
                                 reinterpret_cast<char*>(&value),
+                                len);
+        if (result == -1) {
+            std::error_code ec(sockerr, std::generic_category());
+            throw std::system_error(ec, "Set send timeout failed");
+        }
+    }
+    
+    void TCPSocket::SendTimeout(double value) {
+#ifdef _WIN32
+        timeout_type to = (long int) value * 1e3;
+#else
+        timeout_type to;
+        to.tv_sec = (long int) value;
+        to.tv_usec = (long int) (value - to.tv_sec)*1e6;
+#endif
+        socklen_t len = sizeof(to);
+        
+        int result = setsockopt(sock,
+                                SOL_SOCKET,
+                                SO_SNDTIMEO,
+                                reinterpret_cast<char*>(&to),
                                 len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
