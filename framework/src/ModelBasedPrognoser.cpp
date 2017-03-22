@@ -103,9 +103,17 @@ namespace PCOE {
         std::vector<double> u(model->getNumInputs());
         std::vector<double> z(model->getNumOutputs());
         for (unsigned int i = 0; i < model->getNumInputs(); i++) {
+            if (!comm.getValue(inputs[i]).isSet()) {
+                // Do nothing if data not yet available
+                return;
+            }
             u[i] = comm.getValue(inputs[i]);
         }
         for (unsigned int i = 0; i < model->getNumOutputs(); i++) {
+            if (!comm.getValue(outputs[i]).isSet()) {
+                // Do nothing if data not yet available
+                return;
+            }
             z[i] = comm.getValue(outputs[i]);
         }
 

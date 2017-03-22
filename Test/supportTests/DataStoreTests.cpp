@@ -53,4 +53,7 @@ void DStoreUse()
 
     Datum<double> c(1.9);
     Assert::AreEqual(1.9, c, 1e-12, "Incorrect value of c");
+    
+    Datum<double> d;
+    Assert::IsFalse(d.isSet(), "Datum not set");
 }

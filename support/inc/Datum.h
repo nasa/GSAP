@@ -61,6 +61,12 @@ namespace PCOE {
          **/
         ms_rep getTime() const;
         void setTime(time_point tp); ///< Set the time that it was last edited in milliseconds
+        
+        /** isSet
+         *  @brief      Determine if value has been set
+         *  @return     True if value has been set, false ohterwise
+         **/
+        bool isSet() const;
 
     private:
         T data;    ///< The data being stored
@@ -122,6 +128,12 @@ namespace PCOE {
     template <class T>
     void Datum<T>::setTime(typename Datum<T>::time_point lastUpdateIn) {
         lastUpdated = lastUpdateIn;
+    }
+    
+    template <class T>
+    bool Datum<T>::isSet() const {
+        time_point zero(std::chrono::duration<int>(0));
+        return lastUpdated != zero;
     }
 }
 #endif // PCOE_DATUM_H
