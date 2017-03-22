@@ -53,6 +53,8 @@ namespace PCOE {
    const std::string   TAG_KEY = "inTags";
    const std::string   RESET_HIST_KEY = "resetHist";
    const std::string   INTERVAL_DELAY_KEY="intervalDelay";
+    
+    const std::string IMPORT_KEY = "importConfig";
 
    std::string         MODULE_NAME;
 
@@ -60,6 +62,12 @@ namespace PCOE {
        : Thread(), comm(CommManager::instance()),
        saveInterval(DEFAULT_SAVE_INTERVAL),
        usingPlaybackData(false) {
+       if (configParams.includes(IMPORT_KEY)) {
+           for (auto && file : configParams[IMPORT_KEY]) {
+               log.FormatLine(LOG_DEBUG, MODULE_NAME, "Reading configuration file %s", file.c_str());
+               configParams.loadFile(file);
+           }
+       }
        configParams.checkRequiredParams({ NAME_KEY, ID_KEY, TYPE_KEY });
 
        // Handle Required configs
@@ -72,7 +80,7 @@ namespace PCOE {
            configParams.set(INTERVAL_DELAY_KEY,
                DEFAULT_INTERVAL_DELAY);
        }
-      loopInterval=std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str());
+      loopInterval = std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str());
 
        if (!configParams.includes(HIST_PATH_KEY)) {
            configParams.set(HIST_PATH_KEY,
@@ -98,7 +106,7 @@ namespace PCOE {
            + results.getUniqueId() + ".txt";
        moduleName = results.getComponentName() + " " + results.getPrognoserName() + " Prognoser";
        MODULE_NAME = moduleName + "-Common";
-       log.WriteLine(LOG_DEBUG, MODULE_NAME, "Reading configuration file");
+       log.WriteLine(LOG_DEBUG, MODULE_NAME, "Read configuration file");
 
        // Handle History file
        if (configParams.at(RESET_HIST_KEY)[0].compare("true") == 0) {
