@@ -55,7 +55,7 @@ int Listen1() {
 
     listen(sock,3);
     int c = sizeof(struct sockaddr_in);
-    int client_sock = accept(sock, (struct sockaddr *)&client, (socklen_t*)&c);
+    client_sock = accept(sock, (struct sockaddr *)&client, (socklen_t*)&c);
     if (client_sock<0) {
         printf("accept failed \n");
       //  exit(1);
@@ -63,8 +63,16 @@ int Listen1() {
     return client_sock;
 }
 
+void Close() {
+
+
+close(sock);
+close(client_sock);
+
+}
+
 private:
-  int sock;
+  int sock, client_sock;
 
 };
 
@@ -82,6 +90,7 @@ void newServer() {
 
     //close(server);
     close(client);
+    server.Close();
   }
 
 
@@ -95,6 +104,7 @@ void serverReceive() {
     char buf[12];
     int n = read(client,buf,12);
     close(client);
+    server.Close();
 }
 
 void serverSend() {
@@ -112,6 +122,7 @@ void serverSend() {
     mtx3.unlock();
 
     close(client);
+    server.Close();
 }
 
 void testConnect() {
