@@ -32,9 +32,11 @@ set (HEADERS
 	inc/UnscentedKalmanFilter.h
 	inc/Benchmark.h
 	inc/TCPSocket.h
+	inc/TCPServer.h
 )
 
 set(SRCS
+	src/TCPServer.cpp
 	src/TCPSocket.cpp
 	src/ConfigMap.cpp
 	src/DataPoint.cpp

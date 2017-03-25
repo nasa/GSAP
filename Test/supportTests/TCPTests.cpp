@@ -1,105 +1,54 @@
+/**  TCPSocket Class - cpp
+*   @ingroup   GPIC++
+*   @ingroup   support
+*
+*   @brief     Unit tests for TCPSocket Class.
+*
+*   @author    Micah Ricks
+*   @version   0.1.0
+*
+*   @pre       N/A
+*
+*      Contact: Micah Ricks (mricks1@bulldogs.aamu.edu)
+*      Created: 3/7/2017
+       Updated: 3/25/2017
+*
+*   @copyright Copyright (c) 2016 United States Government as represented by
+*     the Administrator of the National Aeronautics and Space Administration.
+*     All Rights Reserved.
+*/
+
+
 #include "TCPTests.h"
+#include "TCPServer.h"
 #include "TCPSocket.h"
 #include "Test.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <thread>
-#include <mutex>
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
+//declaration of mutex
 std::mutex mtx, mtx2, mtx3;
 
-class TCPServer{
 
-public:
-
-
-   TCPServer(int p)
-  {
-    struct sockaddr_in server;
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    int port=p;
-    int enable=1;
-    if (sock == -1) {
-        perror("Socket Creation Failed: The following error occurred");
-        exit(1);
-    }
-
-
-    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
-        throw "Failed to set SO_REUSEADDR";
-    }
-
-    bzero((char *) &server, sizeof(server));
-
-    server.sin_family=AF_INET;
-    server.sin_addr.s_addr= inet_addr("127.0.0.1");
-    server.sin_port= htons(port);
-
-    //bind
-    if(bind(sock, (struct sockaddr *)&server, sizeof(server)) <0) {
-        perror("Bind Failed: The following error occurred");
-        exit(1);
-    }
-}
-
-int Listen1() {
-    struct sockaddr_in client;
-
-    listen(sock,3);
-    int c = sizeof(struct sockaddr_in);
-    client_sock = accept(sock, (struct sockaddr *)&client, (socklen_t*)&c);
-    if (client_sock<0) {
-        printf("accept failed \n");
-      //  exit(1);
-    }
-    return client_sock;
-}
-
-void Close() {
-
-
-close(sock);
-close(client_sock);
-
-}
-
-private:
-  int sock, client_sock;
-
-};
-
+//function to create a server and connect to TCPSocket
 void newServer() {
-
-  //Create socket
-
-    TCPServer server(8887);
-
-    //int server = openServer(8887);
+  TCPServer server=  TCPServer(8887);
 
     mtx.unlock();
-  //listen
-    int client = server.Listen1();
 
-    //close(server);
+  //listen
+    int client = server.Listen();
     close(client);
     server.Close();
   }
 
-
+//creates a TCPServer and receives message from TCPSocket
 void serverReceive() {
-    //Create socket
     TCPServer server(5556);
     //listen
     mtx2.unlock();
-    int client = server.Listen1();
+    int client = server.Listen();
 
     char buf[12];
     int n = read(client,buf,12);
@@ -107,16 +56,14 @@ void serverReceive() {
     server.Close();
 }
 
+
+//creates a TCPServer and sends message to TCPSocket
 void serverSend() {
-    //Create socket
     TCPServer server(8888);
     //listen
     mtx3.unlock();
-    int client = server.Listen1();
-
-    // Sends response
+    int client = server.Listen();
     char message[] = "Hello";
-    //message="hello";
 
     int n = write(client,message,6);
     mtx3.unlock();
@@ -124,6 +71,8 @@ void serverSend() {
     close(client);
     server.Close();
 }
+
+
 
 void testConnect() {
   mtx.lock();
@@ -152,7 +101,7 @@ void testSend() {
      int bar= 12;
      int y = foo.Send(buffer,bar);
 
-     Assert::AreNotEqual(y,0);
+     Test::Assert::AreNotEqual(y,0);
 
 
      first.join();
@@ -171,7 +120,7 @@ void testReceive() {
 
     mtx3.lock();
     foo.Receive(buff,6);
-    Assert::AreEqual(std::string(buff), std::string("Hello"));
+    Test::Assert::AreEqual(std::string(buff), std::string("Hello"));
 
     first.join();
     foo.Close();

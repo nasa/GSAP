@@ -1,8 +1,8 @@
-/**  TCPSocket Class - Header
+/**  TCPServer - Header
 *   @ingroup   GPIC++
 *   @ingroup   support
 *
-*   @brief     Unit tests for TCPSocket Class.
+*   @brief     Server class.
 *
 *   @author    Micah Ricks
 *   @version   0.1.0
@@ -10,13 +10,16 @@
 *   @pre       N/A
 *
 *      Contact: Micah Ricks (mricks1@bulldogs.aamu.edu)
-*      Created: 3/7/2017
-       Updated: 3/25/2017
+*      Created: 3/25/2017
 *
-*   @copyright Copyright (c) 2016 United States Government as represented by
+*   @copyright Copyright (c) 2017 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
+
+#ifndef PCOE_TCPSERVER_H
+#define PCOE_TCPSERVER_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,19 +29,27 @@
 #include <netinet/in.h>
 #include <thread>
 #include <mutex>
+#include <arpa/inet.h>
 
 
-#ifndef TCPTESTS_H
-#define TCPTESTS_H
 
-// TCP tests
+namespace PCOE {
+  class TCPServer {
 
-void testConnect();
-void testReceive();
-void testSend();
-void newSever();
-void serverSend();
-void serverReceive();
-void error(char *msg);
+  public:
 
-#endif // TCPTESTS_H
+    TCPServer(const int);
+    int Listen();
+    void Close();
+
+
+  private:
+    int sock, client_sock;
+
+
+
+  };
+}
+
+
+#endif
