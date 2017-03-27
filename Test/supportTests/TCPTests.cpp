@@ -38,9 +38,9 @@ void newServer() {
     mtx.unlock();
 
   //listen
-    int client = server.Listen();
+    int client = server.listen();
     close(client);
-    server.Close();
+    server.close();
   }
 
 //creates a TCPServer and receives message from TCPSocket
@@ -48,12 +48,12 @@ void serverReceive() {
     TCPServer server(5556);
     //listen
     mtx2.unlock();
-    int client = server.Listen();
+    int client = server.listen();
 
     char buf[12];
     int n = read(client,buf,12);
     close(client);
-    server.Close();
+    server.close();
 }
 
 
@@ -62,14 +62,14 @@ void serverSend() {
     TCPServer server(8888);
     //listen
     mtx3.unlock();
-    int client = server.Listen();
+    int client = server.listen();
     char message[] = "Hello";
 
     int n = write(client,message,6);
     mtx3.unlock();
 
     close(client);
-    server.Close();
+    server.close();
 }
 
 

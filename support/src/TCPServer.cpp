@@ -22,10 +22,15 @@
 namespace PCOE{
 
    //constructor which takes in port number
-   TCPServer::TCPServer(const int p)
-  {
-    struct sockaddr_in server;
-    sock = socket(AF_INET, SOCK_STREAM, 0);
+   TCPServer::TCPServer(const int p) {
+
+     #ifdef _WIN32
+           struct addrinfo server;
+     #else
+           struct sockaddr_in server;
+     #endif
+
+    sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     int port=p;
     int enable=1;
     if (sock == -1) {
@@ -50,12 +55,26 @@ namespace PCOE{
 }
 
 //listens for incoming connection
-int TCPServer::Listen() {
+int TCPServer::listen() {
     struct sockaddr_in client;
+    int iResult;
+    iResult=::listen(sock,3);
+    if (iResult == -1) {
+      #ifdef _WIN32
+      printf("listen failed with error: %d\n", WSAGetLastError());
+      closesocket(sock);
+      WSACleanup();
+      exit (1);
 
-    listen(sock,3);
-    int c = sizeof(struct sockaddr_in);
-    client_sock = accept(sock, (struct sockaddr *)&client, (socklen_t*)&c);
+      #else
+      printf("listen failed ");
+      exit (1);
+      #endif
+
+   }
+
+    socklen_t c = sizeof(struct sockaddr_in);
+    client_sock = accept(sock, NULL,NULL);
     if (client_sock<0) {
         printf("accept failed \n");
         exit(1);
@@ -63,11 +82,13 @@ int TCPServer::Listen() {
     return client_sock;
                             }
 
-void TCPServer::Close() {
+void TCPServer::close() {
 
+#ifdef _WIN32
+        closesocket(sock);
+#else
+        ::close(sock);
+#endif
 
-close(sock);
                         }
-
-
 }
