@@ -21,14 +21,13 @@
 #define PCOE_TCPSERVER_H
 
 
-#include <sys/socket.h>
-#include <netinet/in.h>
+
+
 #include <thread>
 #include <mutex>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/types.h>
 
 
@@ -38,9 +37,13 @@
 #include <io.h>
 #pragma comment(lib, "ws2_32.lib")
 #else
+#include <unistd.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #endif
 
-#include <arpa/inet.h>
+
 
 namespace PCOE {
   class TCPServer {

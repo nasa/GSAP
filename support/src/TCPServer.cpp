@@ -26,6 +26,7 @@ namespace PCOE{
 
      #ifdef _WIN32
            struct addrinfo server;
+		   BOOL bOptVal;
      #else
            struct sockaddr_in server;
      #endif
@@ -37,15 +38,35 @@ namespace PCOE{
         perror("Socket Creation Failed: The following error occurred");
         exit(1);
                     }
-    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
+
+#ifdef _WIN32
+	bOptVal = TRUE;
+	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char *) &bOptVal, sizeof(int)) < 0) {
         throw "Failed to set SO_REUSEADDR";
                                                                               }
+#else
+	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
+		throw "Failed to set SO_REUSEADDR";
+	}
+#endif
 
-    bzero((char *) &server, sizeof(server));
+    
 
-    server.sin_family=AF_INET;
-    server.sin_addr.s_addr= inet_addr("127.0.0.1");
-    server.sin_port= htons(port);
+#ifdef _WIN32
+	ZeroMemory(&server, sizeof(server));
+	server.ai_family = AF_INET;
+	server.ai_socktype = SOCK_STREAM;
+	server.ai_protocol = IPPROTO_TCP;
+	server.ai_flags = AI_PASSIVE;
+#else
+	bzero((char *)&server, sizeof(server));
+	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = inet_addr("127.0.0.1");
+	server.sin_port = htons(port);
+#endif
+   
+
+    
 
     //bind
     if(bind(sock, (struct sockaddr *)&server, sizeof(server)) <0) {
@@ -55,7 +76,7 @@ namespace PCOE{
 }
 
 //listens for incoming connection
-int TCPServer::listen() {
+TCPServer::sock_type TCPServer::listen() {
     struct sockaddr_in client;
     int iResult;
     iResult=::listen(sock,3);

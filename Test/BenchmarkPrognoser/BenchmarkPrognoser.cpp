@@ -17,12 +17,19 @@
  *     All Rights Reserved.
  */
 
+
+#ifdef _WIN32
+#include <time.h>
+#include <windows.h>
+#else
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/wait.h>
+#endif
+
  #include <stdio.h>
  #include <stdlib.h>
  #include <cstddef>
- #include <sys/wait.h>
- #include <sys/time.h>
- #include <sys/resource.h>
 
  #include <memory>
  #include <vector>

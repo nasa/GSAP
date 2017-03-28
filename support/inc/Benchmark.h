@@ -19,10 +19,20 @@
 #include <climits>
 #include <iomanip>
 #include <chrono>
+
+#include <iostream>
+
+
+#ifdef _WIN32
+#include <time.h>
+#include <windows.h>
+#else
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/wait.h>
-#include <iostream>
+#endif
+
+
 
 namespace PCOE {
   using TimeType=unsigned long long;
@@ -163,7 +173,7 @@ namespace PCOE {
      if ( GetProcessTimes( GetCurrentProcess( ),
        &createTime2, &exitTime2, &kernelTime2, &userTime2 ) != -1 )
      {
-       SYSTEMTIME userSystemTime;
+       SYSTEMTIME userSystemTime2;
        if ( FileTimeToSystemTime( &userTime2, &userSystemTime2 ) != -1 )
            end= (TimeType)userSystemTime2.wHour * 3600.0 +
            (TimeType)userSystemTime2.wMinute * 60.0 +
