@@ -20,13 +20,11 @@
 #ifndef PCOE_BENCHMARKPROGNOSER_H
 #define PCOE_BENCHMARKPROGNOSER_H
 
-
 #include "CommonPrognoser.h"
 #include "PrognosticsModel.h"
 #include "Observer.h"
 #include "Predictor.h"
 #include "Benchmark.h"
-
 
 namespace PCOE {
     class BenchmarkPrognoser : public CommonPrognoser

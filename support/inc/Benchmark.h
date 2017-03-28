@@ -1,7 +1,7 @@
 /**Benchmark header file
  *class- Benchmark
  *@author Micah Ricks
- *@Versio 0.1.0
+ *@Version 0.1.0
  *@brief Benchmark testing tool
  *
  *   Contact: Micah Ricks (mricks1@bulldogs.aamu.edu)
@@ -19,20 +19,17 @@
 #include <climits>
 #include <iomanip>
 #include <chrono>
-
 #include <iostream>
 
-
 #ifdef _WIN32
-#include <time.h>
+#include <ctime>
 #include <windows.h>
+#include<tchar.h>
 #else
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/wait.h>
 #endif
-
-
 
 namespace PCOE {
   using TimeType=unsigned long long;
@@ -51,7 +48,6 @@ namespace PCOE {
    long kilo;
    long phrame;
 
-
    // constructor
     Benchmark() {
       counter=INIT_TOTAL;
@@ -66,14 +62,12 @@ namespace PCOE {
         {max = number;}
       if(number < min)
         {min = number;}
-
-   }
+							  }
 
    // getter
-   double getTotal()
-   {
+   double getTotal() {
       return total;
-   }
+					 }
 
    //getter
    int getCounter()
@@ -82,44 +76,38 @@ namespace PCOE {
    }
 
    //getter
-   double getAverage()
-   {
+   double getAverage() {
      average= (total/counter);
      return average;
-   }
+                       }
 
    //getter
-   double getMax()
-   {
+   double getMax(){
      return max;
-   }
+				  }
 
    //getter
    double getMin(){
      return min;
-   }
+				  }
 
    //getter
-   unsigned long long getInit()
-   {
+   unsigned long long getInit() {
      return begin;
-   }
+                                }
 
    //getter
-   unsigned long long getFinal()
-   {
+   unsigned long long getFinal(){
      return end;
-   }
+                                }
 
    //getter
-   unsigned long long getElapsedTime()
-   {
+   unsigned long long getElapsedTime(){
      return elapsed_secs;
-   }
+                                      }
 
    //initialize timer
-   TimeType nanosecondsBegin()
-   {
+   TimeType nanosecondsBegin() {
      #ifdef __linux__
        using std::chrono::high_resolution_clock;
        using std::chrono::nanoseconds;
@@ -127,11 +115,6 @@ namespace PCOE {
      #endif
 
      #if _WIN32
-     
-     #include<windows.h>
-     #include<stdio.h>
-     #include<tchar.h>
-
   FILETIME createTime;
 	FILETIME exitTime;
 	FILETIME kernelTime;
@@ -147,61 +130,51 @@ namespace PCOE {
 				(TimeType)userSystemTime.wMilliseconds / 1000.0;
 	}
  #endif
-   }
+                               }
 
    //end timer
-   void nanosecondsEnd(TimeType begin_)
-   {
-     #ifdef __linux__
-       using std::chrono::high_resolution_clock;
-       using std::chrono::nanoseconds;
-       end= static_cast<TimeType>(high_resolution_clock::now().time_since_epoch() / nanoseconds(1));
-       elapsed_secs = (end-begin_);
-       addNum(elapsed_secs);
-       #endif
+   void nanosecondsEnd(TimeType begin_){
+#ifdef __linux__
+	   using std::chrono::high_resolution_clock;
+	   using std::chrono::nanoseconds;
+	   end = static_cast<TimeType>(high_resolution_clock::now().time_since_epoch() / nanoseconds(1));
+	   elapsed_secs = (end - begin_);
+	   addNum(elapsed_secs);
+#endif
 
-     #if _WIN32
+   #if _WIN32
 
-     #include<windows.h>
-     #include<stdio.h>
-     #include<tchar.h>
-
-     FILETIME createTime2;
-     FILETIME exitTime2;
-     FILETIME kernelTime2;
-     FILETIME userTime2;
-     if ( GetProcessTimes( GetCurrentProcess( ),
-       &createTime2, &exitTime2, &kernelTime2, &userTime2 ) != -1 )
-     {
-       SYSTEMTIME userSystemTime2;
-       if ( FileTimeToSystemTime( &userTime2, &userSystemTime2 ) != -1 )
-           end= (TimeType)userSystemTime2.wHour * 3600.0 +
-           (TimeType)userSystemTime2.wMinute * 60.0 +
-           (TimeType)userSystemTime2.wSecond +
-           (TimeType)userSystemTime2.wMilliseconds / 1000.0;
-           elapsed_secs=(end-begin_);
-           addNum(elapsed_secs);
-     }
-
-     #endif
-
-   }
+	   FILETIME createTime2;
+	   FILETIME exitTime2;
+	   FILETIME kernelTime2;
+	   FILETIME userTime2;
+	   if (GetProcessTimes(GetCurrentProcess(),
+		   &createTime2, &exitTime2, &kernelTime2, &userTime2) != -1)
+	   {
+		   SYSTEMTIME userSystemTime2;
+		   if (FileTimeToSystemTime(&userTime2, &userSystemTime2) != -1)
+			   end = (TimeType)userSystemTime2.wHour * 3600.0 +
+			   (TimeType)userSystemTime2.wMinute * 60.0 +
+			   (TimeType)userSystemTime2.wSecond +
+			   (TimeType)userSystemTime2.wMilliseconds / 1000.0;
+		   elapsed_secs = (end - begin_);
+		   addNum(elapsed_secs);
+	   }
+   #endif
+					                 }
 
    // prints the template to the console
-   void printTemp()
-   {
+   void printTemp() {
      printf("\t\t%-25s%-28s%-25s\n", "Min", "Avg", "Max");
-   }
+                    }
 
    //prints results to console
-   void printScreen()
-   {
+   void printScreen() {
      printf("%-15s%-25llu%-28f%-26llu\n\n", "Timer:", min, getAverage(),max);
-   }
+                      }
 
    //delete file content and resets template
-   void clearFile()
-   {
+   void clearFile() {
      FILE * pFile;
      pFile=fopen("benchmarkResults.txt","w");
      fclose(pFile);
@@ -210,20 +183,18 @@ namespace PCOE {
      qFile=fopen("benchmarkResults.txt","a+");
      fprintf(qFile,"\t\t%-25s%-28s%-25s\n", "Min", "Avg", "Max");
      fclose(qFile);
-   }
+                     }
 
    //Writes results to txt file
-   void writeFile()
-   {
+   void writeFile(){
      FILE * pFile;
      pFile = fopen ("benchmarkResults.txt","a+");
      fprintf(pFile,"%-15s%-25llu%-28f%-26llu\n\n", "Timer:", min, getAverage(),max);
      //std::cout<<kilo;
      fclose (pFile);
-   }
+                   }
 
-   void calRamUsage()
-   {
+   void calRamUsage(){
      #ifdef __linux__
       struct rusage usage;
       getrusage(RUSAGE_SELF, &usage);
@@ -232,10 +203,8 @@ namespace PCOE {
      #endif
 
      #if _WIN32
-      #include<windows.h>
-      #include<stdio.h>
-      #include<tchar.h>
-      #define WIDTH 7
+      
+     #define WIDTH 7
 
      MEMORYSTATUSEX statex;
      statex.dwLength = sizeof (statex);
@@ -243,14 +212,8 @@ namespace PCOE {
       _tprintf (TEXT("There is  %*ld percent of memory in use.\n"),WIDTH, statex.dwMemoryLoad);
 
      #endif
-
-
-   }
-
+					}
   private:
   };
-
 }
-
-
 #endif // PCOE_BENCHMARK_H
