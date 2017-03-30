@@ -56,7 +56,6 @@ void serverReceive() {
     server.close();
 }
 
-
 //creates a TCPServer and sends message to TCPSocket
 void serverSend() {
     TCPServer server(8888);
@@ -72,17 +71,12 @@ void serverSend() {
     server.close();
 }
 
-
-
 void testConnect() {
   mtx.lock();
   std::thread first (newServer);
-
-
   TCPSocket foo;
   mtx.lock();
   foo.Connect("127.0.0.1",8887);
-
   foo.Close();
   first.join();
 
