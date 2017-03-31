@@ -73,6 +73,9 @@ namespace PCOE {
     void close();
     char buf[BUFSIZE];
     int n;
+    struct sockaddr_in client;
+    socklen_t c = sizeof(struct sockaddr_in);
+
   };
 }
 #endif

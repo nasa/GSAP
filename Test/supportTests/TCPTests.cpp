@@ -51,7 +51,7 @@ void serverReceive() {
     int client = server.listen();
 
     char buf[12];
-    int n = read(client,buf,12);
+    read(client,buf,12);
     close(client);
     server.close();
 }
@@ -64,7 +64,7 @@ void serverSend() {
     int client = server.listen();
     char message[] = "Hello";
 
-    int n = write(client,message,6);
+    write(client,message,6);
     mtx3.unlock();
 
     close(client);

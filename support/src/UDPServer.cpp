@@ -16,7 +16,6 @@
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
-
 #include "UDPServer.h"
 
 namespace PCOE{
@@ -50,8 +49,6 @@ namespace PCOE{
 	}
 #endif
 
-
-
 #ifdef _WIN32
 	ZeroMemory(&server, sizeof(server));
 	server.ai_family = AF_INET;
@@ -74,12 +71,9 @@ namespace PCOE{
 
 //listens for incoming connection
   void UDPServer::receive() {
-    struct sockaddr_in client;
-    int iResult;
    /*
    * recvfrom: receive a UDP datagram from a client
    */
-    socklen_t c = sizeof(struct sockaddr_in);
     bzero(buf, BUFSIZE);
     n = recvfrom(sock, buf, BUFSIZE, 0,
     (struct sockaddr *) &client, &c);
@@ -92,11 +86,10 @@ namespace PCOE{
 
 //listens for incoming connection
   void UDPServer::send() {
-    struct sockaddr_in client;
-    int iResult;
-   /*
-   * sendto: send a UDP datagram to a client
-   */
+
+    recvfrom(sock, buf, BUFSIZE, 0,
+    (struct sockaddr *) &client, &c);
+
     socklen_t c = sizeof(struct sockaddr_in);
     bzero(buf, BUFSIZE);
     char buf[]= "Hello World";

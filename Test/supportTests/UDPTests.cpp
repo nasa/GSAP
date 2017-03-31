@@ -65,6 +65,8 @@ void testConnect_UDP() {
   int bar= 12;
   int y = foo.Send(buffer,bar);
 
+  Test::Assert::AreNotEqual(y,0);
+
   foo.Close();
   first.join();
 }
@@ -75,12 +77,14 @@ void testReceive_UDP() {
 
   UDPSocket foo;
   mtx5.lock();
-  //foo.Connect("127.0.0.1",8888);
-
+  foo.Connect("127.0.0.1",8888);
+  char buffer[]= "Hello Server";
+  int  bSize= 13;
   char buff[12]={0};
+  foo.Send(buffer,bSize);
+  foo.Receive(buff,12);
 
-  mtx5.lock();
-  int y = foo.Receive(buff,12);
+  Test::Assert::AreEqual(std::string(buff), std::string("Hello World"));
 
   foo.Close();
   first.join();
