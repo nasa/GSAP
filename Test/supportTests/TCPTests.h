@@ -51,4 +51,4 @@ void serverSend();
 void serverReceive();
 void error(char *msg);
 
-#endif // TCPTESTS_H
+#endif  // TCPTESTS_H

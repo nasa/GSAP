@@ -27,44 +27,44 @@
 using namespace PCOE;
 using namespace PCOE::Test;
 
-//declaration of mutex
+// declaration of mutex
 std::mutex mtx, mtx2, mtx3;
 
 
-//function to create a server and connect to TCPSocket
+// function to create a server and connect to TCPSocket
 void newServer() {
-  TCPServer server=  TCPServer(8887);
+  TCPServer server = TCPServer(8887);
 
     mtx.unlock();
 
-  //listen
+  // listen
     int client = server.listen();
     close(client);
     server.close();
   }
 
-//creates a TCPServer and receives message from TCPSocket
+// creates a TCPServer and receives message from TCPSocket
 void serverReceive() {
     TCPServer server(5556);
-    //listen
+    // listen
     mtx2.unlock();
     int client = server.listen();
 
     char buf[12];
-    read(client,buf,12);
+    read(client, buf, 12);
     close(client);
     server.close();
 }
 
-//creates a TCPServer and sends message to TCPSocket
+// creates a TCPServer and sends message to TCPSocket
 void serverSend() {
     TCPServer server(8888);
-    //listen
+    // listen
     mtx3.unlock();
     int client = server.listen();
     char message[] = "Hello";
 
-    write(client,message,6);
+    write(client, message, 6);
     mtx3.unlock();
 
     close(client);
@@ -73,29 +73,28 @@ void serverSend() {
 
 void testConnect() {
   mtx.lock();
-  std::thread first (newServer);
+  std::thread first(newServer);
   TCPSocket foo;
   mtx.lock();
-  foo.Connect("127.0.0.1",8887);
+  foo.Connect("127.0.0.1", 8887);
   foo.Close();
   first.join();
-
 }
 
 void testSend() {
      mtx2.lock();
-     std::thread first (serverReceive);
+     std::thread first(serverReceive);
 
 
      TCPSocket foo;
      mtx2.lock();
-     foo.Connect("127.0.0.1",5556);
+     foo.Connect("127.0.0.1", 5556);
 
-     char buffer[]="Hello World";
-     int bar= 12;
-     int y = foo.Send(buffer,bar);
+     char buffer[] = "Hello World";
+     int bar = 12;
+     int y = foo.Send(buffer, bar);
 
-     Test::Assert::AreNotEqual(y,0);
+     Test::Assert::AreNotEqual(y, 0);
 
 
      first.join();
@@ -109,11 +108,11 @@ void testReceive() {
     TCPSocket foo;
 
     mtx3.lock();
-    foo.Connect("127.0.0.1",8888);
+    foo.Connect("127.0.0.1", 8888);
     char buff[6]={0};
 
     mtx3.lock();
-    foo.Receive(buff,6);
+    foo.Receive(buff, 6);
     Test::Assert::AreEqual(std::string(buff), std::string("Hello"));
 
     first.join();

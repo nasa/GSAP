@@ -27,22 +27,22 @@
 #include <sys/wait.h>
 #endif
 
- #include <stdio.h>
- #include <stdlib.h>
- #include <cstddef>
+#include <stdio.h>
+#include <stdlib.h>
+#include <cstddef>
 
- #include <memory>
- #include <vector>
+#include <memory>
+#include <vector>
 
- #include "Benchmark.h"
- #include "SharedLib.h"
- #include "BenchmarkPrognoser.h"
- #include "ObserverFactory.h"
- #include "PredictorFactory.h"
- #include "PrognosticsModelFactory.h"
- #include "UData.h"
- #include "CommManager.h"
- #include "GSAPConfigMap.h"
+#include "Benchmark.h"
+#include "SharedLib.h"
+#include "BenchmarkPrognoser.h"
+#include "ObserverFactory.h"
+#include "PredictorFactory.h"
+#include "PrognosticsModelFactory.h"
+#include "UData.h"
+#include "CommManager.h"
+#include "GSAPConfigMap.h"
 
 namespace PCOE {
     // Configuration Keys
@@ -60,7 +60,7 @@ namespace PCOE {
 
     BenchmarkPrognoser::BenchmarkPrognoser(GSAPConfigMap & configMap) : CommonPrognoser(configMap), initialized(false) {
         // Check for required config parameters
-        configMap.checkRequiredParams({ MODEL_KEY,OBSERVER_KEY,PREDICTOR_KEY,EVENT_KEY,NUMSAMPLES_KEY,HORIZON_KEY,PREDICTEDOUTPUTS_KEY,INPUTS_KEY,OUTPUTS_KEY });
+        configMap.checkRequiredParams({ MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY, EVENT_KEY, NUMSAMPLES_KEY, HORIZON_KEY, PREDICTEDOUTPUTS_KEY, INPUTS_KEY, OUTPUTS_KEY });
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
@@ -103,14 +103,11 @@ namespace PCOE {
     }
 
     void BenchmarkPrognoser::step() {
-//      struct rusage usage;
-        //init time in nanoseconds
-         if(t2 != INIT_TIME)
+         if (t2 != INIT_TIME)
           {
            benchmark2.nanosecondsEnd(t2);
-
           }
-         auto t1 =benchmark1.nanosecondsBegin();
+         auto t1 = benchmark1.nanosecondsBegin();
 
         static double initialTime = comm.getValue(outputs[0]).getTime() / 1.0e3;
 
@@ -121,9 +118,6 @@ namespace PCOE {
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
         std::vector<double> u(model->getNumInputs());
-//        kilo=usage.ru_maxrss;
-
-  //      pid_t   wait4(0,WIFEXITED(), WUNTRACED , usage.ru_maxrss);
 
         std::vector<double> z(model->getNumOutputs());
         for (unsigned int i = 0; i < model->getNumInputs(); i++) {
@@ -165,11 +159,10 @@ namespace PCOE {
 
             // Set lastTime
             lastTime = newT;
-
         }
     }
 
-//destructor
+// destructor
 BenchmarkPrognoser::~BenchmarkPrognoser() {
   benchmark1.clearFile();
   benchmark1.printTemp();
@@ -179,10 +172,7 @@ BenchmarkPrognoser::~BenchmarkPrognoser() {
   benchmark2.writeFile();
   benchmark1.calRamUsage();
 
-
-  std::cout<<"RAM"<<benchmark1.kilo<<std::endl;
-  std::cout<<"CPU"<<benchmark1.phrame<<std::endl;
-
+  std::cout << "RAM" << benchmark1.kilo << std::endl;
+  std::cout << "CPU" << benchmark1.phrame << std::endl;
   }
-
-}
+}   // namespace PCOE
