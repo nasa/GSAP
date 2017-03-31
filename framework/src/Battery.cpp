@@ -559,38 +559,53 @@ void Battery::initialize(std::vector<double> & x, const std::vector<double> & u,
 
     // Now, construct the equilibrium potential voltage for each value of xp and xn
     for (size_t i = 0; i < xp.size(); i++) {
+        
         // For xp
+        
+        int firstExp = 0;
+        int secondExp = 0;
+        
         double xpS = xp[i];
-        double Vep0 = parameters.Ap0*(2 * xpS - 1) / parameters.F;
-        double Vep1 = parameters.Ap1*(-2 * xpS*(-xpS + 1) + pow(2 * xpS - 1, 2)) / parameters.F;
-        double Vep2 = parameters.Ap2*(-4 * xpS*(-xpS + 1)*(2 * xpS - 1) + pow(2 * xpS - 1, 3)) / parameters.F;
-        double Vep3 = parameters.Ap3*(-6 * xpS*(-xpS + 1)*pow(2 * xpS - 1, 2) + pow(2 * xpS - 1, 4)) / parameters.F;
-        double Vep4 = parameters.Ap4*(-8 * xpS*(-xpS + 1)*pow(2 * xpS - 1, 3) + pow(2 * xpS - 1, 5)) / parameters.F;
-        double Vep5 = parameters.Ap5*(-10 * xpS*(-xpS + 1)*pow(2 * xpS - 1, 4) + pow(2 * xpS - 1, 6)) / parameters.F;
-        double Vep6 = parameters.Ap6*(-12 * xpS*(-xpS + 1)*pow(2 * xpS - 1, 5) + pow(2 * xpS - 1, 7)) / parameters.F;
-        double Vep7 = parameters.Ap7*(-14 * xpS*(-xpS + 1)*pow(2 * xpS - 1, 6) + pow(2 * xpS - 1, 8)) / parameters.F;
-        double Vep8 = parameters.Ap8*(-16 * xpS*(-xpS + 1)*pow(2 * xpS - 1, 7) + pow(2 * xpS - 1, 9)) / parameters.F;
-        double Vep9 = parameters.Ap9*(-18 * xpS*(-xpS + 1)*pow(2 * xpS - 1, 8) + pow(2 * xpS - 1, 10)) / parameters.F;
-        double Vep10 = parameters.Ap10*(-20 * xpS*(-xpS + 1)*pow(2 * xpS - 1, 9) + pow(2 * xpS - 1, 11)) / parameters.F;
-        double Vep11 = parameters.Ap11*(-22 * xpS*(-xpS + 1)*pow(2 * xpS - 1, 10) + pow(2 * xpS - 1, 12)) / parameters.F;
-        double Vep12 = parameters.Ap12*(-24 * xpS*(-xpS + 1)*pow(2 * xpS - 1, 11) + pow(2 * xpS - 1, 13)) / parameters.F;
-        double Vep = parameters.U0p + Vep0 + Vep1 + Vep10 + Vep11 + Vep12 + Vep2 + Vep3 + Vep4 + Vep5 + Vep6 + Vep7 + Vep8 + Vep9 + parameters.R*Tb*log((-xpS + 1) / xpS) / parameters.F;
+        double Vep0  = parameters.Ap0  * (pow(2 * xpS - 1, ++firstExp) -  0) / parameters.F;
+        double Vep1  = parameters.Ap1  * (pow(2 * xpS - 1, ++firstExp) -  2 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep2  = parameters.Ap2  * (pow(2 * xpS - 1, ++firstExp) -  4 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep3  = parameters.Ap3  * (pow(2 * xpS - 1, ++firstExp) -  6 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep4  = parameters.Ap4  * (pow(2 * xpS - 1, ++firstExp) -  8 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep5  = parameters.Ap5  * (pow(2 * xpS - 1, ++firstExp) - 10 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep6  = parameters.Ap6  * (pow(2 * xpS - 1, ++firstExp) - 12 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep7  = parameters.Ap7  * (pow(2 * xpS - 1, ++firstExp) - 14 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep8  = parameters.Ap8  * (pow(2 * xpS - 1, ++firstExp) - 16 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep9  = parameters.Ap9  * (pow(2 * xpS - 1, ++firstExp) - 18 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep10 = parameters.Ap10 * (pow(2 * xpS - 1, ++firstExp) - 20 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep11 = parameters.Ap11 * (pow(2 * xpS - 1, ++firstExp) - 22 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        double Vep12 = parameters.Ap12 * (pow(2 * xpS - 1, ++firstExp) - 24 * xpS * (1 - xpS) * pow(2 * xpS - 1,  secondExp++)) / parameters.F;
+        
+        double  Vep = parameters.U0p + Vep0 + Vep1 + Vep2 + Vep3 + Vep4 + Vep5 + Vep6 + Vep7 + Vep8 + Vep9 + Vep10 + Vep11 + Vep12
+                Vep += parameters.R*Tb*log((-xpS + 1) / xpS) / parameters.F;
+        
         // For xn
+        
+        firstExp = 0;
+        secondExp = 0;
+        
         double xnS = xn[i];
-        double Ven0 = parameters.An0*(2 * xnS - 1) / parameters.F;
-        double Ven1 = parameters.An1*(-2 * xnS*(-xnS + 1) + pow(2 * xnS - 1, 2)) / parameters.F;
-        double Ven2 = parameters.An2*(-4 * xnS*(-xnS + 1)*(2 * xnS - 1) + pow(2 * xnS - 1, 3)) / parameters.F;
-        double Ven3 = parameters.An3*(-6 * xnS*(-xnS + 1)*pow(2 * xnS - 1, 2) + pow(2 * xnS - 1, 4)) / parameters.F;
-        double Ven4 = parameters.An4*(-8 * xnS*(-xnS + 1)*pow(2 * xnS - 1, 3) + pow(2 * xnS - 1, 5)) / parameters.F;
-        double Ven5 = parameters.An5*(-10 * xnS*(-xnS + 1)*pow(2 * xnS - 1, 4) + pow(2 * xnS - 1, 6)) / parameters.F;
-        double Ven6 = parameters.An6*(-12 * xnS*(-xnS + 1)*pow(2 * xnS - 1, 5) + pow(2 * xnS - 1, 7)) / parameters.F;
-        double Ven7 = parameters.An7*(-14 * xnS*(-xnS + 1)*pow(2 * xnS - 1, 6) + pow(2 * xnS - 1, 8)) / parameters.F;
-        double Ven8 = parameters.An8*(-16 * xnS*(-xnS + 1)*pow(2 * xnS - 1, 7) + pow(2 * xnS - 1, 9)) / parameters.F;
-        double Ven9 = parameters.An9*(-18 * xnS*(-xnS + 1)*pow(2 * xnS - 1, 8) + pow(2 * xnS - 1, 10)) / parameters.F;
-        double Ven10 = parameters.An10*(-20 * xnS*(-xnS + 1)*pow(2 * xnS - 1, 9) + pow(2 * xnS - 1, 11)) / parameters.F;
-        double Ven11 = parameters.An11*(-22 * xnS*(-xnS + 1)*pow(2 * xnS - 1, 10) + pow(2 * xnS - 1, 12)) / parameters.F;
-        double Ven12 = parameters.An12*(-24 * xnS*(-xnS + 1)*pow(2 * xnS - 1, 11) + pow(2 * xnS - 1, 13)) / parameters.F;
-        double Ven = parameters.U0n + Ven0 + Ven1 + Ven10 + Ven11 + Ven12 + Ven2 + Ven3 + Ven4 + Ven5 + Ven6 + Ven7 + Ven8 + Ven9 + parameters.R*Tb*log((-xnS + 1) / xnS) / parameters.F;
+        double Ven0 = parameters.An0   * (pow(2 * xnS - 1, ++firstExp) -  0) / parameters.F;
+        double Ven1 = parameters.An1   * (pow(2 * xnS - 1, ++firstExp) -  2 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven2 = parameters.An2   * (pow(2 * xnS - 1, ++firstExp) -  4 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven3 = parameters.An3   * (pow(2 * xnS - 1, ++firstExp) -  6 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven4 = parameters.An4   * (pow(2 * xnS - 1, ++firstExp) -  8 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven5 = parameters.An5   * (pow(2 * xnS - 1, ++firstExp) - 10 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven6 = parameters.An6   * (pow(2 * xnS - 1, ++firstExp) - 12 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven7 = parameters.An7   * (pow(2 * xnS - 1, ++firstExp) - 14 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven8 = parameters.An8   * (pow(2 * xnS - 1, ++firstExp) - 16 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven9 = parameters.An9   * (pow(2 * xnS - 1, ++firstExp) - 18 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven10 = parameters.An10 * (pow(2 * xnS - 1, ++firstExp) - 20 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven11 = parameters.An11 * (pow(2 * xnS - 1, ++firstExp) - 22 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        double Ven12 = parameters.An12 * (pow(2 * xnS - 1, ++firstExp) - 24 * xnS * (1 - xnS) * pow(2 * xnS - 1,  secondExp++)) / parameters.F;
+        
+        double Ven = parameters.U0n + Ven0 + Ven1 + Ven2 + Ven3 + Ven4 + Ven5 + Ven6 + Ven7 + Ven8 + Ven9 + Ven10 + Ven11 + Ven12
+               Ven += parameters.R*Tb*log((-xnS + 1) / xnS) / parameters.F;
+        
         // Compute equilibrium voltage
         double Ve = Vep - Ven;
         // Compute what voltage would be for this xp,xn
