@@ -317,15 +317,8 @@ void Battery::stateEqn(const double, std::vector<double> & x,
     x[7] = qpS + qpSdot*dt;
 
     // Add process noise
-    x[0] += dt*n[0];
-    x[1] += dt*n[1];
-    x[2] += dt*n[2];
-    x[3] += dt*n[3];
-    x[4] += dt*n[4];
-    x[5] += dt*n[5];
-    x[6] += dt*n[6];
-    x[7] += dt*n[7];
-}
+    for(int i = 0; i <= 7; i++)
+        x[i] += dt * n[i];
 
 // Battery Output Equation
 void Battery::outputEqn(const double, const std::vector<double> & x,
