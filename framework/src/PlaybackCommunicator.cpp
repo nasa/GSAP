@@ -25,7 +25,10 @@
 #include <sstream>
 #include <string>
 #include <chrono> // For timestamps
-#include <boost/algorithm/string.hpp>
+#include <string>
+#include <cctype>
+#include <algorithm>
+
 
 #include "Exceptions.h"
 #include "PlaybackCommunicator.h"
@@ -103,8 +106,9 @@ namespace PCOE {
                     "Playback file not in proper format");
                 throw FormatError("Playback file not in proper format");
             }
-            boost::algorithm::to_lower(s);
+        lower(s);
         }
+
 
         // Parse Header
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Parsing Header");

@@ -58,6 +58,12 @@ namespace PCOE {
         using std::chrono::milliseconds;
         return static_cast<unsigned long long>(system_clock::now().time_since_epoch() / milliseconds(1));
     }
+
+
+    static inline void lower(std::string &s){
+      std::transform(s.begin(), s.end(), s.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
+    }
 }
 
 #endif // PCOE_SHAREDLIB_H
