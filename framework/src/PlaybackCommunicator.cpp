@@ -25,6 +25,7 @@
 #include <sstream>
 #include <string>
 #include <chrono> // For timestamps
+#include <boost/algorithm/string.hpp>
 
 #include "Exceptions.h"
 #include "PlaybackCommunicator.h"
@@ -95,11 +96,14 @@ namespace PCOE {
         std::string s;
         while (s.substr(0, 9).compare("Timestamp") != 0 \
             && s.substr(0, 9).compare("TimeStamp") != 0) {
+        while (s.substr(0, 9).compare("timestamp") != 0 \
+            && s.substr(0, 9).compare("timeStamp") != 0) {
             if (!getline(playbackStream, s)) {
                 log.WriteLine(LOG_ERROR, MODULE_NAME,
                     "Playback file not in proper format");
                 throw FormatError("Playback file not in proper format");
             }
+            boost::algorithm::to_lower(s);
         }
 
         // Parse Header
