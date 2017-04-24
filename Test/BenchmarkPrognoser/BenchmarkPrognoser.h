@@ -16,20 +16,18 @@
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
-
 #ifndef PCOE_BENCHMARKPROGNOSER_H
 #define PCOE_BENCHMARKPROGNOSER_H
-
 
 #include "CommonPrognoser.h"
 #include "PrognosticsModel.h"
 #include "Observer.h"
 #include "Predictor.h"
+#include "Benchmark.h"
 
 namespace PCOE {
-    class BenchmarkPrognoser : public CommonPrognoser
-    {
-    private:
+  class BenchmarkPrognoser : public CommonPrognoser{
+   private:
         std::unique_ptr<PrognosticsModel> model;
         std::unique_ptr<Observer> observer;
         std::unique_ptr<Predictor> predictor;
@@ -38,17 +36,17 @@ namespace PCOE {
         bool initialized;
         double firstTime;
         double lastTime;
-
-    public:
+        Benchmark benchmark1;
+        Benchmark benchmark2;
+        TimeType t2 = INIT_TIME;
+   public:
         /** @brief      Benchmark Prognoser Constructor
          *  @param      config Map of config parameters from the prognoser config file
          */
         BenchmarkPrognoser(GSAPConfigMap & config);
-        ~BenchmarkPrognoser();  //destructor
+        ~BenchmarkPrognoser();  // destructor
         void step();
-    };
-
+                                                   };
     extern bool regModelProg;
 }
-
-#endif // PCOE_BENCHMARKPROGNOSER_H
+#endif  // PCOE_BENCHMARKPROGNOSER_H

@@ -76,7 +76,8 @@ namespace PCOE
         ///          families are supported by this constructor. for other
         ///          families, use the sockaddr constructor.
         ///
-        /// @param af   The address family of the IP protocol. 
+
+        /// @param af   The address family of the IP protocol.
         /// @param port The local port number that the socket will receive data
         ///             on.
         /// @exception std::invalid_argument The specified address family is

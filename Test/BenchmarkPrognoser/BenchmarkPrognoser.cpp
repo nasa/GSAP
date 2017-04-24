@@ -17,22 +17,32 @@
  *     All Rights Reserved.
  */
 
- #include <stdio.h>
- #include <stdlib.h>
- #include <cstddef>
 
- #include <memory>
- #include <vector>
+#ifdef _WIN32
+#include <time.h>
+#include <windows.h>
+#else
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/wait.h>
+#endif
 
- #include "Benchmark.h"
- #include "SharedLib.h"
- #include "BenchmarkPrognoser.h"
- #include "ObserverFactory.h"
- #include "PredictorFactory.h"
- #include "PrognosticsModelFactory.h"
- #include "UData.h"
- #include "CommManager.h"
- #include "GSAPConfigMap.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <cstddef>
+
+#include <memory>
+#include <vector>
+
+#include "Benchmark.h"
+#include "SharedLib.h"
+#include "BenchmarkPrognoser.h"
+#include "ObserverFactory.h"
+#include "PredictorFactory.h"
+#include "PrognosticsModelFactory.h"
+#include "UData.h"
+#include "CommManager.h"
+#include "GSAPConfigMap.h"
 
 namespace PCOE {
     // Configuration Keys
@@ -45,12 +55,12 @@ namespace PCOE {
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
     const std::string INPUTS_KEY = "inputs";
     const std::string OUTPUTS_KEY = "outputs";
-    Benchmark benchmark1,benchmark2;
-    unsigned long long const INIT_TIME=0;
+
+    long kilo;
 
     BenchmarkPrognoser::BenchmarkPrognoser(GSAPConfigMap & configMap) : CommonPrognoser(configMap), initialized(false) {
         // Check for required config parameters
-        configMap.checkRequiredParams({ MODEL_KEY,OBSERVER_KEY,PREDICTOR_KEY,EVENT_KEY,NUMSAMPLES_KEY,HORIZON_KEY,PREDICTEDOUTPUTS_KEY,INPUTS_KEY,OUTPUTS_KEY });
+        configMap.checkRequiredParams({ MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY, EVENT_KEY, NUMSAMPLES_KEY, HORIZON_KEY, PREDICTEDOUTPUTS_KEY, INPUTS_KEY, OUTPUTS_KEY });
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
@@ -93,15 +103,11 @@ namespace PCOE {
     }
 
     void BenchmarkPrognoser::step() {
-
-        //init time in nanoseconds
-         if(benchmark2.begin != INIT_TIME)
+         if (t2 != INIT_TIME)
           {
-            benchmark2.nanosecondsEnd();
-            benchmark2.findElapsedTime();
-
+           benchmark2.nanosecondsEnd(t2);
           }
-         benchmark1.nanosecondsBegin();
+         auto t1 = benchmark1.nanosecondsBegin();
 
         static double initialTime = comm.getValue(outputs[0]).getTime() / 1.0e3;
 
@@ -112,6 +118,7 @@ namespace PCOE {
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
         std::vector<double> u(model->getNumInputs());
+
         std::vector<double> z(model->getNumOutputs());
         for (unsigned int i = 0; i < model->getNumInputs(); i++) {
             u[i] = comm.getValue(inputs[i]);
@@ -133,9 +140,8 @@ namespace PCOE {
             if (newT <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
 
-            benchmark1.nanosecondsEnd();
-            benchmark1.findElapsedTime();
-            benchmark2.nanosecondsBegin();
+            benchmark1.nanosecondsEnd(t1);
+            t2 = benchmark2.nanosecondsBegin();
                 return;
             }
 
@@ -153,11 +159,10 @@ namespace PCOE {
 
             // Set lastTime
             lastTime = newT;
-
         }
     }
 
-//destructor
+// destructor
 BenchmarkPrognoser::~BenchmarkPrognoser() {
   benchmark1.clearFile();
   benchmark1.printTemp();
@@ -165,6 +170,9 @@ BenchmarkPrognoser::~BenchmarkPrognoser() {
   benchmark2.printScreen();
   benchmark1.writeFile();
   benchmark2.writeFile();
-}
+  benchmark1.calRamUsage();
 
-}
+  std::cout << "RAM" << benchmark1.kilo << std::endl;
+  std::cout << "CPU" << benchmark1.phrame << std::endl;
+  }
+}   // namespace PCOE

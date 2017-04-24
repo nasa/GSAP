@@ -23,12 +23,13 @@
 #include "UnscentedKalmanFilter.h"
 #include "MonteCarloPredictor.h"
 #include "Battery.h"
-
+#include "ThreadSafeLog.h"
 using namespace PCOE;
 
 int main() {
     // Specify configuration file directories
     ConfigMap::addSearchPath("../example/cfg/");
+    //Log::SetVerbosity(LOG_VERBOSITY::LOG_TRACE); // Change Verbosity
 
     // Specify Prognosers
     PrognoserFactory & prognoserFactory = PrognoserFactory::instance();
