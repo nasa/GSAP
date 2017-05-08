@@ -8,16 +8,15 @@
  *   @see        CommonCommunicator
  *
  *   @author    Chris Teubert
- *   @version   0.1.0
+ *   @version   1.0.0
  *
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *      Created: March 25, 2016
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2017 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
-
 
 #ifndef PCOE_EMPTYCOMMUNICATOR_H
 #define PCOE_EMPTYCOMMUNICATOR_H
@@ -33,7 +32,11 @@ namespace PCOE {
          **/
         EmptyCommunicator(const ConfigMap & config);
 
-        /** @brief      Publisher callback funciton- used to consume data from the prognostic framework
+        /** @brief      Poll function- see if there is data to read from this communicator
+         **/
+        inline void poll() override;
+
+        /** @brief      Publisher callback function- used to consume data from the prognostic framework
          *  @param      data        Reference to DataStore containing all the input data
          *  @param      progData    Output from each prognoser
          **/
@@ -44,6 +47,10 @@ namespace PCOE {
          *  @return     Updated Datastore with new data
          **/
         DataStore read() override; // Comment out if not needed
+
+        /** @brief      Optional destructor
+         **/
+        //~EmptyCommunicator();
     };
 }
 

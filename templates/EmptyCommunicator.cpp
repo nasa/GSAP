@@ -1,10 +1,22 @@
-//
-//  EmptyCommunicator.cpp
-//  Batt1 Verification Tests
-//
-//  Created by Teubert, Christopher (ARC-TI)[SGT, INC] on 5/27/16.
-//  Copyright © 2016 NASA. All rights reserved.
-//
+/**  Empty Communicator - Body
+ *   @class     EmptyCommunicator EmptyCommunicator.h
+ *   @ingroup   GPIC++
+ *   @ingroup   commCollection
+ *
+ *   @brief     Communicator Template
+ *
+ *   @see        CommonCommunicator
+ *
+ *   @author    Chris Teubert
+ *   @version   1.0.0
+ *
+ *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
+ *      Created: March 25, 2016
+ *
+ *   @copyright Copyright (c) 2013-2017 United States Government as represented by
+ *     the Administrator of the National Aeronautics and Space Administration.
+ *     All Rights Reserved.
+ */
 
 #include <string>
 
@@ -28,28 +40,52 @@ namespace PCOE {
         ///------------------------------------
     }
 
+    inline void EmptyCommunicator::poll() {
+        // setRead(); // <-Call this if there is data to be read
+          // Not calling setRead() in this function will mean that the read()
+          // function will not be called
+    }
+
     void EmptyCommunicator::write(AllData data) {
         ///------------------------------------
         /// HERE IS WHERE YOU SEND DATA
-        ///     Send any of the data in the DataStore data or progData
+        ///     Send any of the data in the DataStore ds or progData pData
         ///
+        ///     The DataStore ds contains the latest received sensor data.
+        ///     Access it by key, for example:
+        ///         double value = ds["SomeKey"];
+        ///         ms_rep timeValeWasSet = ds["SomeKey"].getTime();
+        ///     The DataStoreString dsString contains the latest received sensor strings
+        ///     Access it by key, for example:
+        ///         std::string value = ds["SomeKey"];
+        ///         ms_rep timeValeWasSet = ds["SomeKey"].getTime();
+        ///
+        ///     The ProgDataMap pData contains the results of all prognosers.
+        ///     Access it by prognoser name, for example:
+        ///         ProgData & pdBatt = pData["Battery1"];
+
+        DataStore & ds              = data.doubleDatastore;
+        DataStoreString & dsString  = data.stringDataStore;
+        ProgDataMap & pData         = data.progData;
+
         /// ADD COMMUNICATOR PUBLISHER CODE BELOW:
         ///------------------------------------
-        (void)data; // Supress unused variable warning. Remove when implementing your communicator
 
         ///------------------------------------
+        (void) ds; // Supress unused variable warning. Remove when implementing your communicator
+        (void) dsString;
+        (void) pData;
     }
 
     DataStore EmptyCommunicator::read() {
         ///------------------------------------
         /// HERE IS WHERE YOU RECEIVE DATA
-        ///     Receive data and fill in the DataStor 'data'
-        ///     Example: data["someParam"] = 1.0;
+        ///     Receive data and fill in the DataStore 'ds'
+        ///     Example: ds["someParam"] = 1.0;
         ///
         /// ADD COMMUNICATOR SUBSCRIBER CODE BELOW:
         ///------------------------------------
         DataStore ds;
-
 
         ///------------------------------------
         return ds;

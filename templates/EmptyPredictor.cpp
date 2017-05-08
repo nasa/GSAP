@@ -1,4 +1,4 @@
-/**  EmptyPredictor - Header
+/**  EmptyPredictor - Body
 *   @file      EmptyPredictor Class
 *   @ingroup   GPIC++
 *   @ingroup    Predictors
@@ -51,7 +51,7 @@ namespace PCOE {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "EmptyPredictor does not have a model!");
             throw ConfigurationError("EmptyPredictor does not have a model!");
         }
-        
+
         // Run prediction, and fill in the prog data
         // ...
     }
