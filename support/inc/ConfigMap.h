@@ -54,6 +54,8 @@ namespace PCOE {
         inline bool includes(const std::string &key) const {
             return find(key) != end();
         }
+        
+        bool includes(std::initializer_list<std::string> list) const;
 
         /** @brief      Add a path in which to look for config files.
          *  @param path A string containing a directory which should be searched
