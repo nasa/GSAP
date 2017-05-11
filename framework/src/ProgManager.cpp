@@ -42,18 +42,17 @@ namespace PCOE {
 
     Cmd::Cmd() : command(NONE) {}
 
-    class CommonPrognoser;
     class CommonCommunicator;
 
     static Log &logger = Log::Instance();
 
-    ProgManager::ProgManager() : configValues(), configSet(false) { }
+    ProgManager::ProgManager() : configValues(), configSet(false), theComm(CommManager::instance()) { }
 
     ProgManager::ProgManager(const std::string& path) :
         ProgManager(GSAPConfigMap(path)) { }
 
     ProgManager::ProgManager(const GSAPConfigMap& config)
-        : configValues(config), configSet(true) { }
+        : configValues(config), configSet(true), theComm(CommManager::instance()) { }
 
     void ProgManager::setConfig(const std::string& path) {
         setConfig(GSAPConfigMap(path));
@@ -65,37 +64,11 @@ namespace PCOE {
     }
 
     void ProgManager::run() {
-        /// Setup Log
-        logger.Initialize(PACKAGE_NAME, VERSION, NOTE);
-        logger.WriteLine(LOG_INFO, MODULE_NAME, "Enabling");
-
-        CommManager &theComm = CommManager::instance();
-
-        if (!configSet) {
-            logger.WriteLine(LOG_DEBUG, MODULE_NAME, "No configuration file set - closing progManager");
-            return;
-        }
-
-        /// SETUP PROGNOSERS
-        logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting Up Prognosers");
-        std::vector<std::unique_ptr<CommonPrognoser> > prognosers;
-        if (configValues.includes("Prognosers")) {
-            PrognoserFactory &factory = PrognoserFactory::instance();
-            for (auto & itStrs : configValues.at("Prognosers")) {
-                prognosers.push_back(factory.Create(itStrs));
-                // @todo(CT): Add check that component was made correctly
-            }
-        }
-
-        /// Setup COMMUNICATION
-        // Note: This must be done after the prognosers
-        theComm.configure(configValues);
-        theComm.start();
+        enable();
 
         /// Setup Main Loop
         unsigned int counter = 0;
         Cmd ctrl;
-        logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Enabled");
 
         /// Main Loop- Handle controls for prognosers
         while (ctrl.command != STOP) {
@@ -105,49 +78,89 @@ namespace PCOE {
             ctrl = control();
 
             if (ctrl.command == STOP) {
-                logger.WriteLine(LOG_INFO, MODULE_NAME, "Stopping");
-                /// STOP PROGNOSERS
-                for (auto & prognoser : prognosers) {
-                    prognoser->stop();
-                }
-                break;
+                stop();
             }
             else if (ctrl.command == START || ctrl.command == RESUME) {
-                logger.WriteLine(LOG_INFO, MODULE_NAME, "Starting");
-                /// START PROGNOSERS
-                for (auto & prognoser : prognosers) {
-                    prognoser->start();
-                }
-
-                logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Started");
-
+                start();
             }
             else if (ctrl.command == PAUSE) {
-                logger.WriteLine(LOG_INFO, MODULE_NAME, "Pausing");
-                /// PAUSE PROGNOSERS
-                for (auto & prognoser : prognosers) {
-                    prognoser->pause();
-                }
-
-                logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Paused");
+                pause();
             }
-        }  // End while (command != stop)
-
+        }  // End while (command != stop)w
+    }
+    
+    void ProgManager::enable() {
+        /// Setup Log
+        logger.Initialize(PACKAGE_NAME, VERSION, NOTE);
+        logger.WriteLine(LOG_INFO, MODULE_NAME, "Enabling");
+        
+        //CommManager &theComm = CommManager::instance();
+        
+        if (!configSet) {
+            logger.WriteLine(LOG_DEBUG, MODULE_NAME, "No configuration file set - closing progManager");
+            return;
+        }
+        
+        /// SETUP PROGNOSERS
+        logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting Up Prognosers");
+        if (configValues.includes("Prognosers")) {
+            PrognoserFactory &factory = PrognoserFactory::instance();
+            for (auto & itStrs : configValues.at("Prognosers")) {
+                prognosers.push_back(factory.Create(itStrs));
+                // @todo(CT): Add check that component was made correctly
+            }
+        }
+        
+        /// Setup COMMUNICATION
+        // Note: This must be done after the prognosers
+        theComm.configure(configValues);
+        theComm.start();
+        
+        logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Enabled");
+    }
+    
+    void ProgManager::start() {
+        logger.WriteLine(LOG_INFO, MODULE_NAME, "Starting");
+        /// START PROGNOSERS
+        for (auto & prognoser : prognosers) {
+            prognoser->start();
+        }
+        
+        logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Started");
+    }
+    
+    void ProgManager::pause() {
+        logger.WriteLine(LOG_INFO, MODULE_NAME, "Pausing");
+        /// PAUSE PROGNOSERS
+        for (auto & prognoser : prognosers) {
+            prognoser->pause();
+        }
+        
+        logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Paused");
+    }
+    
+    void ProgManager::stop() {
+        logger.WriteLine(LOG_INFO, MODULE_NAME, "Stopping");
+        /// STOP PROGNOSERS
+        for (auto & prognoser : prognosers) {
+            prognoser->stop();
+        }
+        
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Cleanup");
-
+        
         /// CLEANUP ACTIVITIES
         // End each Prognoser
         for (auto & prognoser : prognosers) {
             logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Waiting for Prognoser thread to stop");
             prognoser->join();// Wait for thread to end
         }
-
+        
         // Stop Communication Manager
         // NOTE: This has to be done after the other threads that used it are stopped
         theComm.stop();
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Waiting for Comm thread to stop");
         theComm.join();
-
+        
         // Stop Log, exit thread
         logger.WriteLine(LOG_INFO, MODULE_NAME, "Stopped");
         logger.Close();

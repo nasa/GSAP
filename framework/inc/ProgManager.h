@@ -25,6 +25,7 @@
 #define PCOE_PROGMANAGER_H
 
 #include <string>
+#include <vector>
 
 #include "GSAPConfigMap.h"
  
@@ -45,6 +46,8 @@ namespace PCOE {
     };
 
     class Log;
+    class CommonPrognoser;
+    class CommManager;
 
     /**
      *  @class      ProgManager
@@ -87,6 +90,16 @@ namespace PCOE {
 
         /** @brief starts the progManager. */
         void run();
+        
+        void enable();
+        
+        void start();
+        
+        void pause();
+        
+        inline void resume() {start();}
+        
+        void stop();
 
     private:
         GSAPConfigMap configValues;
@@ -96,6 +109,10 @@ namespace PCOE {
         /// @brief      Function to receive control commands from terminal
         /// @return     Received Command
         Cmd control();
+        
+        std::vector<std::unique_ptr<CommonPrognoser> > prognosers;
+        
+        CommManager &theComm;
     };
 }
 
