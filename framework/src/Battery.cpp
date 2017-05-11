@@ -26,6 +26,16 @@
 
 using namespace PCOE;
 
+// CONST: Outputs
+enum OUT {
+    TEMP = 0,
+    VOLTS = 1
+};
+
+enum PRED_OUT {
+    SOC = 0
+};
+
 // Configuration Keys
 const std::string QMOBILE_KEY = "Battery.qMobile";
 const std::string VOL_KEY = "Battery.Vol";
@@ -317,8 +327,10 @@ void Battery::stateEqn(const double, std::vector<double> & x,
     x[7] = qpS + qpSdot*dt;
 
     // Add process noise
-    for(int i = 0; i <= 7; i++)
-        x[i] += dt * n[i];
+    for(PCOE::ConfigMap::size_type it = 0; it <= 7; it++) {
+        x[it] += dt * n[it];
+    }
+}
 
 // Battery Output Equation
 void Battery::outputEqn(const double, const std::vector<double> & x,
@@ -374,8 +386,8 @@ void Battery::outputEqn(const double, const std::vector<double> & x,
     double Vm = V;
 
     // Set outputs
-    z[0] = Tbm;
-    z[1] = Vm;
+    z[OUT::TEMP] = Tbm;
+    z[OUT::VOLTS] = Vm;
 
     // Add noise
     z[0] += n[0];
@@ -433,8 +445,7 @@ void Battery::predictedOutputEqn(const double, const std::vector<double> & x, co
     // Compute "nominal" SOC
     double qnS = x[indices.states.qnS];
     double qnB = x[indices.states.qnB];
-    double SOC = (qnS + qnB) / parameters.qnMax;
-    z[0] = SOC;
+    z[PRED_OUT::SOC] = (qnS + qnB) / parameters.qnMax;;
 }
 
 // Set model parameters, given qMobile
@@ -527,7 +538,7 @@ void Battery::setParameters(const double qMobile, const double Vol) {
 }
 
 // Initialize state, given an initial voltage, current, and temperature
-void Battery::initialize(std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & z) {
+void Battery::initialize(std::vector<double> & x /*state*/, const std::vector<double> & u /*input*/, const std::vector<double> & z /*output*/) {
     // This is solved via a search procedure
     // Start by setting up an xp and xn vectors
     std::vector<double> xp, xn;

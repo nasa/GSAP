@@ -40,7 +40,6 @@ namespace PCOE {
         std::vector<std::string> inputs;
         std::vector<std::string> outputs;
         bool initialized;
-        double firstTime;
         double lastTime;
     public:
         /** @brief      Model-based Prognoser Constructor
