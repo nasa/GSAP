@@ -23,8 +23,7 @@
 #include "PrognosticsModel.h"
 #include "Observer.h"
 #include "Predictor.h"
-#include "Benchmark.h"
-
+#include "BenchmarkTimer.h"
 namespace PCOE {
   class BenchmarkPrognoser : public CommonPrognoser{
    private:
@@ -36,9 +35,9 @@ namespace PCOE {
         bool initialized;
         double firstTime;
         double lastTime;
-        Benchmark benchmark1;
-        Benchmark benchmark2;
-        TimeType t2 = INIT_TIME;
+        BenchmarkTimer benchmark1;
+        BenchmarkTimer benchmark2;
+      nanoseconds t2 = nanoseconds::zero();
    public:
         /** @brief      Benchmark Prognoser Constructor
          *  @param      config Map of config parameters from the prognoser config file
@@ -46,7 +45,7 @@ namespace PCOE {
         BenchmarkPrognoser(GSAPConfigMap & config);
         ~BenchmarkPrognoser();  // destructor
         void step();
-                                                   };
+  };
     extern bool regModelProg;
 }
 #endif  // PCOE_BENCHMARKPROGNOSER_H

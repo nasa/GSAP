@@ -34,7 +34,7 @@
 #include <memory>
 #include <vector>
 
-#include "Benchmark.h"
+#include "BenchmarkTimer.h"
 #include "SharedLib.h"
 #include "BenchmarkPrognoser.h"
 #include "ObserverFactory.h"
@@ -103,11 +103,10 @@ namespace PCOE {
     }
 
     void BenchmarkPrognoser::step() {
-         if (t2 != INIT_TIME)
-          {
-           benchmark2.nanosecondsEnd(t2);
-          }
-         auto t1 = benchmark1.nanosecondsBegin();
+        if (benchmark2.isRunning()) {
+            benchmark2.toc();
+        }
+        benchmark1.tic();
 
         static double initialTime = comm.getValue(outputs[0]).getTime() / 1.0e3;
 
@@ -140,10 +139,8 @@ namespace PCOE {
             if (newT <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
 
-            benchmark1.nanosecondsEnd(t1);
-            t2 = benchmark2.nanosecondsBegin();
-                return;
-            }
+            benchmark1.toc();
+            benchmark2.tic();
 
             // Run observer
             log.WriteLine(LOG_DEBUG, moduleName, "Running Observer Step");
@@ -159,20 +156,12 @@ namespace PCOE {
 
             // Set lastTime
             lastTime = newT;
+            }
         }
     }
 
-// destructor
-BenchmarkPrognoser::~BenchmarkPrognoser() {
-  benchmark1.clearFile();
-  benchmark1.printTemp();
-  benchmark1.printScreen();
-  benchmark2.printScreen();
-  benchmark1.writeFile();
-  benchmark2.writeFile();
-  benchmark1.calRamUsage();
-
-  std::cout << "RAM" << benchmark1.kilo << std::endl;
-  std::cout << "CPU" << benchmark1.phrame << std::endl;
-  }
+    // destructor
+    BenchmarkPrognoser::~BenchmarkPrognoser() {
+        // PRINT TO SCREEN/FILE
+    }
 }   // namespace PCOE
