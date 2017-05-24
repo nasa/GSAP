@@ -16,7 +16,7 @@
  *   @note      THIS SOFTWARE IS DESIGNED TO WORK WITH OS X 10.11, and Windows V #####
  *
  *   @author    Chris Teubert
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *   @pre       Prognostic Configuration File and Prognoster Configuration Files
  *
