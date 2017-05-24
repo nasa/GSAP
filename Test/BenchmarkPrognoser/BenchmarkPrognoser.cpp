@@ -104,9 +104,9 @@ namespace PCOE {
 
     void BenchmarkPrognoser::step() {
         if (benchmark2.isRunning()) {
-            benchmark2.toc();
+            benchmark2.stop();
         }
-        benchmark1.tic();
+        benchmark1.start();
 
         static double initialTime = comm.getValue(outputs[0]).getTime() / 1.0e3;
 
@@ -139,8 +139,8 @@ namespace PCOE {
             if (newT <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
 
-            benchmark1.toc();
-            benchmark2.tic();
+            benchmark1.stop();
+            benchmark2.start();
 
             // Run observer
             log.WriteLine(LOG_DEBUG, moduleName, "Running Observer Step");
@@ -162,6 +162,7 @@ namespace PCOE {
 
     // destructor
     BenchmarkPrognoser::~BenchmarkPrognoser() {
-        // PRINT TO SCREEN/FILE
+        printf("Runtime: [%lld, %lld, %lld]\n", benchmark1.getMinStepTime()/nanoseconds(1), benchmark1.getAveStepTime()/nanoseconds(1), benchmark1.getMaxStepTime()/nanoseconds(1));
+        printf("Between Steps: [%lld, %lld, %lld]\n", benchmark2.getMinStepTime()/nanoseconds(1), benchmark2.getAveStepTime()/nanoseconds(1), benchmark2.getMaxStepTime()/nanoseconds(1));
     }
 }   // namespace PCOE
