@@ -33,7 +33,7 @@ set (HEADERS
 	inc/UDataInterfaces.h
 	inc/UDPSocket.h
 	inc/UnscentedKalmanFilter.h
-	inc/Benchmark.h
+	inc/BenchmarkTimer.h
 	inc/TCPSocket.h
 	inc/TCPServer.h
 	inc/UDPSocket.h
