@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 
+#include "CommonPrognoser.h" // Note: This is needed for UniquePointer
 #include "GSAPConfigMap.h"
  
 namespace PCOE {
@@ -46,7 +47,6 @@ namespace PCOE {
     };
 
     class Log;
-    class CommonPrognoser;
     class CommManager;
 
     /**
