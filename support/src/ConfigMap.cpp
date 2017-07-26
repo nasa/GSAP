@@ -104,7 +104,7 @@ namespace PCOE {
 
     void ConfigMap::parseLine(const std::string & line) {
         using size_type = std::string::size_type;
-        if (line.empty() || line[0] == '#' || line[0] == '/') {
+        if (line.empty() || line[0] == '#' || line[0] == '\r' || line[0] == '\n' || line[0] == '/') {
             return; // Comment or empty line
         }
         size_type pos = line.find_first_of(':');
