@@ -136,7 +136,13 @@ namespace PCOE {
                 kv.second.push_back(s);
             }
         }
-        insert(std::move(kv));
+        if (kv.first.compare("importConfig") == 0) {
+            for (auto && file : kv.second) { // If this line is pointing to other files to load
+                loadFile(file);
+            }
+        } else {
+            insert(std::move(kv));
+        }
     }
 
     void ConfigMap::addSearchPath(const std::string& path) {
