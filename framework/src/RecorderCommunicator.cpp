@@ -80,7 +80,7 @@ namespace PCOE {
     const char probFormatString[] = "pData-%s.Events[%s].probMatrix[T+%f], ";
     const char occFormatString[] = "pData-%s.Events[%s].occurrenceMatrix[T+%f], ";
     const char sysTrajFormatString[] = "pData-%s.sysTrajectories[%s][T+%f](%d), ";
-    const char dataWithValidityAndTimeSpace[] = "%f (v=%i; t=%li) ";
+    const char dataWithValidityAndTimeSpace[] = "%f (v=%i; t=%llii) ";
     // TODO (JW): duration representations are platform dependant, so %llu is not always correct
     const char dataWithTime[] = "%f (t=%llu), ";
 

@@ -155,12 +155,6 @@ namespace PCOE {
         DataPoints sysTrajectories;     ///< The SystemTrajectory objects and associated data
 
         // *-----------------------*
-        // |     Future Inputs     |
-        // *-----------------------*
-
-        DataPoints futureInputs;        ///< The future inputs
-
-        // *-----------------------*
         // |       Internals       |
         // *-----------------------*
 

@@ -29,7 +29,8 @@
 #include "ProgDataTests.h"
 #include "ThreadTests.h"
 #include "UDataTests.h"
-
+#include "TCPTests.h"
+#include "UDPTests.h"
 using namespace PCOE::Test;
 
 int main() {
@@ -157,11 +158,11 @@ int main() {
     context.AddTest("UKF Initialization for Battery", testUKFBatteryInitialize, "Observer");
     context.AddTest("UKF Step for Battery", testUKFBatteryStep, "Observer");
     
-    // PF Battery tests
+/*    // PF Battery tests
     context.AddTest("PF Battery Construction from ConfigMap", testPFBatteryFromConfig, "Observer");
     context.AddTest("PF Initialization for Battery", testPFBatteryInitialize, "Observer");
-    context.AddTest("PF Step for Battery", testPFBatteryStep, "Observer");
-    
+    context.AddTest("PF Step for Battery", testPFBatteryStep, "Observer"); */
+
     // PEvent Tests
     context.AddTest("Initialization", testPEventInit, "PEvent");
     context.AddTest("Meta Data", testPEventMeta, "PEvent");
@@ -179,6 +180,22 @@ int main() {
     context.AddCategoryInitializer("Predictor", predictorTestInit);
     context.AddTest("Monte Carlo Predictor Configuration for Battery", testMonteCarloBatteryConfig, "Predictor");
     context.AddTest("Monte Carlo Prediction for Battery", testMonteCarloBatteryPredict, "Predictor");
+
+    // TCP Tests
+   context.AddTest("testConnect",testConnect, "TCP");
+   context.AddTest("testSend",testSend, "TCP");
+   context.AddTest("testReceive",testReceive, "TCP");
+
+   // UDP Tests
+   context.AddTest("testConnect_UDP", testConnect_UDP, "UDP");
+   context.AddTest("testReceive_UDP", testReceive_UDP, "UDP");
+
+ //  context.AddTest("Recieve Buffer Size",testRecieveBufferSize,"TCP");
+ //  context.AddTest("Send Buffer Size",testSendBufferSize,"TCP");
+ //  context.AddTest("Connect",testConnect,"TCP");
+   //    context.AddTest("Send and Receive",testSendAndReceive,"TCP");
+//   context.AddTest("Test", testTest, "TCP");
+ //  context.AddTest("Receive", testReceive, "TCP");
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");

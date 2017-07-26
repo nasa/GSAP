@@ -80,7 +80,7 @@ namespace PCOE {
         
         /** @brief      Performs a transformation on the given inputs/outputs
          **/
-        virtual void transform(std::vector<double> & u, std::vector<double> & z) {}
+        virtual void transform(std::vector<double> &, std::vector<double> &) {}
     };
 }
 

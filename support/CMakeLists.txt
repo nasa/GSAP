@@ -33,10 +33,18 @@ set (HEADERS
 	inc/UDataInterfaces.h
 	inc/UDPSocket.h
 	inc/UnscentedKalmanFilter.h
-	inc/Benchmark.h
+	inc/BenchmarkTimer.h
+	inc/TCPSocket.h
+	inc/TCPServer.h
+	inc/UDPSocket.h
+	inc/UDPServer.h
 )
 
 set(SRCS
+	src/UDPSocket.cpp
+	src/UDPServer.cpp
+	src/TCPServer.cpp
+	src/TCPSocket.cpp
 	src/ConfigMap.cpp
 	src/DataPoint.cpp
 	src/DataPoints.cpp

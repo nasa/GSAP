@@ -101,6 +101,16 @@ namespace PCOE {
     void ConfigMap::set(const std::string & key, const std::string & value) {
         (*this)[key] = { value };
     }
+    
+    bool ConfigMap::includes(std::initializer_list<std::string> list) const {
+        for (auto & elem : list) {
+            // Check if each element is there
+            if (!includes(elem)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     void ConfigMap::parseLine(const std::string & line) {
         using size_type = std::string::size_type;

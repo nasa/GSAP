@@ -13,14 +13,14 @@
 *   prognoser as possible to simplify integrating additional prognosers.
 *
 *   @author    Chris Teubert
-*   @version   0.1.0
+*   @version   1.1.0
 *
 *   @pre       Prognostic Configuration File and Prognoster Configuration Files
 *
 *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
 *      Created: November 11, 2015
 *
-*   @copyright Copyright (c) 2013-2016 United States Government as represented by
+*   @copyright Copyright (c) 2013-2017 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
@@ -42,7 +42,7 @@
 
 namespace PCOE {
    // DEFAULTS
-   const std::string  DEFAULT_INTERVAL_DELAY = "500";  // ms
+   const std::string   DEFAULT_INTERVAL_DELAY = "500";  // ms
    const unsigned int  DEFAULT_SAVE_INTERVAL = 60;   // loops
 
    // CONFIGURATION KEYS
@@ -53,8 +53,8 @@ namespace PCOE {
    const std::string   TAG_KEY = "inTags";
    const std::string   RESET_HIST_KEY = "resetHist";
    const std::string   INTERVAL_DELAY_KEY="intervalDelay";
-    
-    const std::string IMPORT_KEY = "importConfig";
+
+   const std::string   IMPORT_KEY = "importConfig";
 
    std::string         MODULE_NAME;
 
@@ -76,11 +76,11 @@ namespace PCOE {
        results.setUniqueId(configParams.at(ID_KEY)[0]);
 
        // Fill in Defaults
-      if (!configParams.includes(INTERVAL_DELAY_KEY)) {
+       if (!configParams.includes(INTERVAL_DELAY_KEY)) {
            configParams.set(INTERVAL_DELAY_KEY,
                DEFAULT_INTERVAL_DELAY);
        }
-      loopInterval = std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str());
+       loopInterval = std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str());
 
        if (!configParams.includes(HIST_PATH_KEY)) {
            configParams.set(HIST_PATH_KEY,
@@ -122,23 +122,31 @@ namespace PCOE {
    void CommonPrognoser::run() {
        unsigned long loopCounter = 0;
 
-       loadHistory();  // Load prognoser history file
-       // @note(CT): Cannot be in constructor because
-       // derived will not exist yet at that point
+       try {
+           loadHistory();  // Load prognoser history file
+           // @note(CT): Cannot be in constructor because
+           // derived will not exist yet at that point
+       } catch (...) {
+           log.WriteLine(LOG_ERROR, MODULE_NAME, "Error loading prognoser history- skipping");
+       }
 
        log.WriteLine(LOG_TRACE, MODULE_NAME, "Starting Prognostics Loop");
        while (getState() != ThreadState::Stopped) {
            log.FormatLine(LOG_TRACE, MODULE_NAME, "Loop %i", loopCounter);
            if (getState() == ThreadState::Started) {
-               // Run Cycle
-               checkInputValidity();  // SOMETIMES FAILS HERE
-               if (isEnoughData()) {
-                   log.WriteLine(LOG_TRACE, MODULE_NAME,
-                       "Has enough data- starting monitor step");
-                   step();
+               try {
+                   // Run Cycle
+                   checkInputValidity();  // SOMETIMES FAILS HERE
+                   if (isEnoughData()) {
+                       log.WriteLine(LOG_TRACE, MODULE_NAME,
+                           "Has enough data- starting monitor step");
+                       step();
+                   }
+                   checkResultValidity();
+               } catch (...) {
+                   /// @todo(CT): Display more information
+                   log.WriteLine(LOG_ERROR, MODULE_NAME, "Error in Prognoser Loop- Skipping Step");
                }
-               checkResultValidity();
-
                if (0 == loopCounter%saveInterval) {
                    saveState();
                }

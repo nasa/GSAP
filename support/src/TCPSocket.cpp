@@ -269,7 +269,7 @@ namespace PCOE {
             throw std::system_error(ec, "Set receive timeout failed");
         }
     }
-    
+
     void TCPSocket::ReceiveTimeout(double value) {
 #ifdef _WIN32
         timeout_type to = (long int) value * 1e3;

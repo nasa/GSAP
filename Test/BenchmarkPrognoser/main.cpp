@@ -64,5 +64,7 @@ int main() {
 
     ProgManager PM = ProgManager("bench.cfg");
     PM.run();
+
+  
     return 0;
 }

@@ -44,14 +44,12 @@ namespace PCOE {
         // Set uncertainty at each lower level.
         events.setUncertainty(uncertType);
         sysTrajectories.setUncertainty(uncertType);
-        futureInputs.setUncertainty(uncertType);
     }
 
     void ProgData::setPredictions(const double interval, const unsigned int nPredictions) {
         // Set number of predictions at each lower level
         events.setNTimes(nPredictions);
         sysTrajectories.setNTimes(nPredictions);
-        futureInputs.setNTimes(nPredictions);
 
         times.resize(nPredictions + 1);
         for (unsigned int i = 0; i <= nPredictions; i++) {
@@ -63,7 +61,6 @@ namespace PCOE {
         // Set number of predictions at each lower level
         events.setNTimes(static_cast<unsigned int>(pred.size()));
         sysTrajectories.setNTimes(static_cast<unsigned int>(pred.size()));
-        futureInputs.setNTimes(static_cast<unsigned int>(pred.size()));
 
         times.resize(pred.size() + 1);
         for (unsigned int i = 1; i <= pred.size(); i++) {
