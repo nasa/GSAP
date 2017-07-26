@@ -135,20 +135,24 @@ namespace PCOE {
                 return;
             }
 
-            // Run observer
-            log.WriteLine(LOG_DEBUG, moduleName, "Running Observer Step");
-            observer->step(newT, u, z);
-            log.WriteLine(LOG_DEBUG, moduleName, "Done Running Observer Step");
+            try {
+                // Run observer
+                log.WriteLine(LOG_DEBUG, moduleName, "Running Observer Step");
+                observer->step(newT, u, z);
+                log.WriteLine(LOG_DEBUG, moduleName, "Done Running Observer Step");
 
-            // Run predictor
-            log.WriteLine(LOG_DEBUG, moduleName, "Running Prediction Step");
-            // Set up state
-            std::vector<UData> stateEst = observer->getStateEstimate();
-            predictor->predict(newT, stateEst, results);
-            log.WriteLine(LOG_DEBUG, moduleName, "Done Running Prediction Step");
+                // Run predictor
+                log.WriteLine(LOG_DEBUG, moduleName, "Running Prediction Step");
+                // Set up state
+                std::vector<UData> stateEst = observer->getStateEstimate();
+                predictor->predict(newT, stateEst, results);
+                log.WriteLine(LOG_DEBUG, moduleName, "Done Running Prediction Step");
 
-            // Set lastTime
+                // Set lastTime
             lastTime = newT;
+            } catch (...) {
+                log.WriteLine(LOG_ERROR, moduleName, "Error in Step, skipping");
+            }
         }
     }
 }
