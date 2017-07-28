@@ -11,6 +11,7 @@ set (HEADERS
 	inc/PlaybackCommunicator.h
 	inc/RecorderCommunicator.h
 	inc/Battery.h
+    inc/STDINCommunicator.h
 	)
 
 set(SRCS
@@ -23,6 +24,7 @@ set(SRCS
 	src/PlaybackCommunicator.cpp
 	src/RecorderCommunicator.cpp
 	src/Battery.cpp
+    src/STDINCommunicator.cpp
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../support/inc/)
