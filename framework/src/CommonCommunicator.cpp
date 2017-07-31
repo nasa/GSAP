@@ -74,12 +74,18 @@ namespace PCOE {
                 }
                 else if (readWaiting) {
                     DataStore ds = read();
+                    log.WriteLine(LOG_INFO, "CommonComm", "Returned to run()");
+
                     readWaiting = false;
+                    log.WriteLine(LOG_INFO, "CommonComm", "Running Callbacks");
+
                     for (Callback& fn : subscribers) {
                         lock.unlock();
                         fn(ds);
                         lock.lock();
                     }
+                    log.WriteLine(LOG_INFO, "CommonComm", "completed");
+
                 }
             }
         }

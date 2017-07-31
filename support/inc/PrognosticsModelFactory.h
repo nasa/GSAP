@@ -23,6 +23,7 @@
 #define PCOE_PROGNOSTICSMODELFACTORY_H
 
 #include "PrognosticsModel.h"
+#include "Battery.h"
 #include "Factory.h"
 #include "Singleton.h"
 
@@ -37,13 +38,15 @@ namespace PCOE {
     class PrognosticsModelFactory : public Factory<PrognosticsModel>,
         public Singleton<PrognosticsModelFactory> {
         friend class Singleton<PrognosticsModelFactory>;
-
+    private:
         /**
          *  @brief      PrognosticsModelFactory Constructor
          *  @note       Is protected to prevent users from creating a new PrognosticsModelFactory
          *              Consistant with the singleton pattern
          **/
-        PrognosticsModelFactory() {};
+        PrognosticsModelFactory() {
+            //Register("Battery", PrognosticsModelFactory::Create<Battery>);
+        };
     };
 }
 

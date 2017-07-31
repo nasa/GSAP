@@ -22,6 +22,7 @@
 #ifndef PCOE_MODELFACTORY_H
 #define PCOE_MODELFACTORY_H
 
+#include "Battery.h"
 #include "Model.h"
 #include "Factory.h"
 #include "Singleton.h"
@@ -37,13 +38,15 @@ namespace PCOE {
     class ModelFactory : public Factory<Model>,
         public Singleton<ModelFactory> {
         friend class Singleton<ModelFactory>;
-
+     private:
         /**
          *  @brief      ModelFactory Constructor
          *  @note       Is protected to prevent users from creating a new ModelFactory
          *              Consistant with the singleton pattern
          **/
-        ModelFactory() {};
+        ModelFactory() {
+            //Register("Battery", ModelFactory::Create<Battery>);
+        };
     };
 }
 

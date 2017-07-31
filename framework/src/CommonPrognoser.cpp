@@ -59,9 +59,9 @@ namespace PCOE {
 
    CommonPrognoser::CommonPrognoser(GSAPConfigMap & configParams)
        : Thread(), comm(CommManager::instance()),
-       saveInterval(DEFAULT_SAVE_INTERVAL),
+       cWrapper(&comm),
        usingPlaybackData(false),
-       cWrapper(&comm) {
+     saveInterval(DEFAULT_SAVE_INTERVAL) {
        if (configParams.includes(IMPORT_KEY)) {
            for (auto && file : configParams[IMPORT_KEY]) {
                log.FormatLine(LOG_DEBUG, MODULE_NAME, "Reading configuration file %s", file.c_str());

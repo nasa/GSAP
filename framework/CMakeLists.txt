@@ -4,6 +4,7 @@ set (HEADERS
 	inc/CommonPrognoser.h
 	inc/CommunicatorFactory.h
 	inc/ModelBasedPrognoser.h
+    inc/ModelFactory.h
 	inc/ProgManager.h
 	inc/PrognoserFactory.h
 	inc/SharedLib.h

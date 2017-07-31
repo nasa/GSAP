@@ -10,7 +10,6 @@ set (HEADERS
 	inc/GSAPConfigMap.h
 	inc/Matrix.h
 	inc/Model.h
-	inc/ModelFactory.h
 	inc/MonteCarloPredictor.h
 	inc/Observer.h
 	inc/ObserverFactory.h
