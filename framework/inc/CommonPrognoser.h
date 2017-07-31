@@ -38,10 +38,27 @@
 #include "Thread.h"  // For Start, Stop, pause, ... etc.
 #include "ProgData.h"
 #include "DataStore.h"
+#include "CommManager.h"
 
 namespace PCOE {
-    class CommManager;
     class GSAPConfigMap;
+    
+    class CommManagerWrapper {
+     public:
+        CommManagerWrapper(CommManager * cIn) : c(cIn) {
+        }
+        
+        CommManagerWrapper(const CommManagerWrapper & in) {
+            c = in.c;
+        }
+        
+        Datum<double> getValue(const std::string & key) const {
+            return c->getValue(key);
+        }
+        
+     private:
+        CommManager * c;
+    };
 
     class CommonPrognoser : public Thread {
     public:
@@ -124,15 +141,9 @@ namespace PCOE {
 
     protected:
         ProgData results;  ///> Prognostic Results
-
-        /**  @brief     A snapshot of the data used by this prognoser
-         *              in form (commonName, datum).
-         *   @see       getData()
-         */
-        DataStore dataSnapshot;
-
-        CommManager& comm;  ///> Communciations Manager
-
+        
+        Datum<double> getValue(const std::string & key);
+        
     private:
         std::string histFileName;  ///< Name of history file
         std::vector<std::string> histStr;  ///< Current contents of history file
@@ -140,6 +151,11 @@ namespace PCOE {
         unsigned int loopInterval;  ///< Time between prognostic loops (ms)
         unsigned int saveInterval;  ///< Loops between saves
         bool usingPlaybackData;  ///< Using Playback data
+        
+        CommManagerWrapper cWrapper;
+        CommManager& comm;  ///> Communciations Manager
+        
+        std::map<std::string, std::function<Datum<double>(void)> > lookup;
     };
 }
 

@@ -31,7 +31,6 @@
 #include "PredictorFactory.h"
 #include "PrognosticsModelFactory.h"
 #include "UData.h"
-#include "CommManager.h"
 #include "GSAPConfigMap.h"
 
 namespace PCOE {
@@ -43,12 +42,10 @@ namespace PCOE {
     const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
     const std::string HORIZON_KEY = "Predictor.horizon";
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
-    const std::string INPUTS_KEY = "inputs";
-    const std::string OUTPUTS_KEY = "outputs";
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap & configMap) : CommonPrognoser(configMap), initialized(false) {
         // Check for required config parameters
-        configMap.checkRequiredParams({ MODEL_KEY,OBSERVER_KEY,PREDICTOR_KEY,EVENT_KEY,NUMSAMPLES_KEY,HORIZON_KEY,PREDICTEDOUTPUTS_KEY,INPUTS_KEY,OUTPUTS_KEY });
+        configMap.checkRequiredParams({ MODEL_KEY,OBSERVER_KEY,PREDICTOR_KEY,EVENT_KEY,NUMSAMPLES_KEY,HORIZON_KEY,PREDICTEDOUTPUTS_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
@@ -76,10 +73,6 @@ namespace PCOE {
         std::string event = configMap[EVENT_KEY][0];
         std::vector<std::string> predictedOutputs = configMap[PREDICTEDOUTPUTS_KEY];
 
-        // Set inputs and outputs
-        inputs = configMap[INPUTS_KEY];
-        outputs = configMap[OUTPUTS_KEY];
-
         // Create progdata
         results.setUncertainty(UType::Samples);             // @todo(MD): do not force samples representation
         results.addEvent(event);                            // @todo(MD): do not assume only a single event
@@ -92,29 +85,29 @@ namespace PCOE {
 
     void ModelBasedPrognoser::step() {
         // Initialize time (convert to seconds)
-        static double initialTime = comm.getValue(outputs[0]).getTime() / 1.0e3;
+        static double initialTime = getValue(model->outputs[0]).getTime() / 1.0e3;
 
         // Get new relative time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
-        double newT = comm.getValue(outputs[0]).getTime() / 1.0e3 - initialTime;
+        double newT = getValue(model->outputs[0]).getTime() / 1.0e3 - initialTime;
         
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
         std::vector<double> u(model->getNumInputs());
         std::vector<double> z(model->getNumOutputs());
         for (unsigned int i = 0; i < model->getNumInputs(); i++) {
-            if (!comm.getValue(inputs[i]).isSet()) {
+            if (!getValue(model->inputs[i]).isSet()) {
                 // Do nothing if data not yet available
                 return;
             }
-            u[i] = comm.getValue(inputs[i]);
+            u[i] = getValue(model->inputs[i]);
         }
         for (unsigned int i = 0; i < model->getNumOutputs(); i++) {
-            if (!comm.getValue(outputs[i]).isSet()) {
+            if (!getValue(model->outputs[i]).isSet()) {
                 // Do nothing if data not yet available
                 return;
             }
-            z[i] = comm.getValue(outputs[i]);
+            z[i] = getValue(model->outputs[i]);
         }
         
         // Transform the data using the model's transform function

@@ -32,7 +32,6 @@ void progDataTest()
     Assert::AreEqual(0, test.getTimes().size()); // No Times
     Assert::AreEqual(UType::Point, test.events.getUncertainty());
     Assert::AreEqual(UType::Point, test.sysTrajectories.getUncertainty());
-    Assert::AreEqual(UType::Point, test.futureInputs.getUncertainty());
 
     ProgData test2("Example","Example1","5w19fs");
     Assert::AreEqual(0, test2.getComponentName().compare("Example1"));
@@ -44,7 +43,6 @@ void progDataTest()
     Assert::AreEqual(0, test2.getTimes().size()); // No Times
     Assert::AreEqual(UType::Point, test2.events.getUncertainty());
     Assert::AreEqual(UType::Point, test2.sysTrajectories.getUncertainty());
-    Assert::AreEqual(UType::Point, test2.futureInputs.getUncertainty());
 
     // Set names
     test.setComponentName("Test");
@@ -64,7 +62,6 @@ void progDataTest()
     test.setUncertainty(UType::MeanCovar);
     Assert::AreEqual(UType::MeanCovar, test.events.getUncertainty());
     Assert::AreEqual(UType::MeanCovar, test.sysTrajectories.getUncertainty());
-    Assert::AreEqual(UType::MeanCovar, test.futureInputs.getUncertainty());
 
     // Adding events
     test.addEvent("Test Event");

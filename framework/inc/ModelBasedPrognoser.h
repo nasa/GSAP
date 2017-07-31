@@ -37,8 +37,6 @@ namespace PCOE {
         std::unique_ptr<PrognosticsModel> model;
         std::unique_ptr<Observer> observer;
         std::unique_ptr<Predictor> predictor;
-        std::vector<std::string> inputs;
-        std::vector<std::string> outputs;
         bool initialized;
         double lastTime;
     public:

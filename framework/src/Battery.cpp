@@ -99,6 +99,10 @@ Battery::Battery(const ConfigMap & configMap) : Battery::Battery() {
     // Check for arguments to setParameters first, qMobile and Vol
     // There are default values available, so call to setParameters is different depending
     // on which are given in the configMap.
+    inputs.push_back("voltage");
+    outputs.push_back("power");
+    outputs.push_back("temperature");
+    
     if (configMap.includes(QMOBILE_KEY) && configMap.includes(VOL_KEY)) {
         setParameters(std::stod(configMap.at(QMOBILE_KEY)[0]), std::stod(configMap.at(VOL_KEY)[0]));
     }

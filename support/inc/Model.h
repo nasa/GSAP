@@ -21,6 +21,7 @@
 #define PCOE_MODEL_H
 
 #include <vector>
+#include <string>
 
 namespace PCOE {
     class Model {
@@ -73,6 +74,8 @@ namespace PCOE {
         unsigned int getNumStates() const;
         unsigned int getNumInputs() const;
         unsigned int getNumOutputs() const;
+        std::vector<std::string> inputs;
+        std::vector<std::string> outputs;
 
         // Get/set dt
         double getDt() const;

@@ -134,7 +134,7 @@ class Battery final : public PCOE::PrognosticsModel {
         double qMobile;
         double An3;
     } parameters;
-
+        
     /** @brief      Execute state equation. This version of the function uses a given sampling time.
     *   @param      t Time
     *   @param      x Current state vector. This gets updated to the state at the new time.

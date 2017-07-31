@@ -37,7 +37,6 @@
 
 #include "CommonPrognoser.h"
 #include "SharedLib.h"
-#include "CommManager.h"
 #include "GSAPConfigMap.h"
 
 namespace PCOE {
@@ -61,7 +60,8 @@ namespace PCOE {
    CommonPrognoser::CommonPrognoser(GSAPConfigMap & configParams)
        : Thread(), comm(CommManager::instance()),
        saveInterval(DEFAULT_SAVE_INTERVAL),
-       usingPlaybackData(false) {
+       usingPlaybackData(false),
+       cWrapper(&comm) {
        if (configParams.includes(IMPORT_KEY)) {
            for (auto && file : configParams[IMPORT_KEY]) {
                log.FormatLine(LOG_DEBUG, MODULE_NAME, "Reading configuration file %s", file.c_str());
@@ -97,6 +97,7 @@ namespace PCOE {
                std::string commonName = it.substr(0, pos);
                std::string tagName = it.substr(pos + 1, it.length() - pos + 1);
                comm.registerKey(tagName);
+               lookup[commonName] = std::bind(&CommManagerWrapper::getValue, cWrapper, tagName);
            }
        }
        comm.registerProgData(configParams.at(NAME_KEY)[0], &results);
@@ -427,6 +428,10 @@ namespace PCOE {
 
        log.WriteLine(LOG_TRACE, MODULE_NAME, "Loading history from file");
    }
+    
+    Datum<double> CommonPrognoser::getValue(const std::string & key) {
+        return lookup[key]();
+    }
 
    inline void CommonPrognoser::resetHistory() const {
        using std::chrono::system_clock;

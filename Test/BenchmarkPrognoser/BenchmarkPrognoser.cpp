@@ -78,10 +78,6 @@ namespace PCOE {
         PredictorFactory & pPredictorFactory = PredictorFactory::instance();
         predictor = std::unique_ptr<Predictor>(pPredictorFactory.Create(configMap[PREDICTOR_KEY][0], configMap));
 
-        // Set model for observer and predictor
-        observer->setModel(model.get());
-        predictor->setModel(model.get());
-
         // Set configuration parameters
         unsigned int numSamples = static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
         unsigned int horizon = static_cast<unsigned int>(std::stoul(configMap[HORIZON_KEY][0]));
@@ -108,11 +104,11 @@ namespace PCOE {
         }
         benchmark1.start();
 
-        static double initialTime = comm.getValue(outputs[0]).getTime() / 1.0e3;
+        static double initialTime = getValue(model->outputs[0]).getTime() / 1.0e3;
 
         // Get new relative time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
-        double newT = comm.getValue(outputs[0]).getTime() / 1.0e3 - initialTime;
+        double newT = getValue(model->outputs[0]).getTime() / 1.0e3 - initialTime;
 
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
@@ -120,10 +116,10 @@ namespace PCOE {
 
         std::vector<double> z(model->getNumOutputs());
         for (unsigned int i = 0; i < model->getNumInputs(); i++) {
-            u[i] = comm.getValue(inputs[i]);
+            u[i] = getValue(model->inputs[i]);
         }
         for (unsigned int i = 0; i < model->getNumOutputs(); i++) {
-            z[i] = comm.getValue(outputs[i]);
+            z[i] = getValue(model->outputs[i]);
         }
 
         // If this is the first step, will want to initialize the observer and the predictor
