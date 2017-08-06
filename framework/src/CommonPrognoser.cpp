@@ -58,10 +58,10 @@ namespace PCOE {
    std::string         MODULE_NAME;
 
    CommonPrognoser::CommonPrognoser(GSAPConfigMap & configParams)
-       : Thread(), comm(CommManager::instance()),
-       cWrapper(&comm),
-       usingPlaybackData(false),
-     saveInterval(DEFAULT_SAVE_INTERVAL) {
+       : Thread(),
+        saveInterval(DEFAULT_SAVE_INTERVAL),
+        cWrapper(&CommManager::instance()),
+        comm(CommManager::instance()) {
        if (configParams.includes(IMPORT_KEY)) {
            for (auto && file : configParams[IMPORT_KEY]) {
                log.FormatLine(LOG_DEBUG, MODULE_NAME, "Reading configuration file %s", file.c_str());
@@ -80,7 +80,7 @@ namespace PCOE {
            configParams.set(INTERVAL_DELAY_KEY,
                DEFAULT_INTERVAL_DELAY);
        }
-       loopInterval = std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str());
+       loopInterval = static_cast<unsigned int>(std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str()));
 
        if (!configParams.includes(HIST_PATH_KEY)) {
            configParams.set(HIST_PATH_KEY,

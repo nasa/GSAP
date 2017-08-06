@@ -19,25 +19,15 @@
 #ifndef PCOE_BENCHMARKPROGNOSER_H
 #define PCOE_BENCHMARKPROGNOSER_H
 
-#include "CommonPrognoser.h"
+#include "ModelBasedPrognoser.h"
 #include "PrognosticsModel.h"
 #include "Observer.h"
 #include "Predictor.h"
 #include "BenchmarkTimer.h"
 namespace PCOE {
-  class BenchmarkPrognoser : public CommonPrognoser{
+  class BenchmarkPrognoser : public ModelBasedPrognoser {
    private:
-        std::unique_ptr<PrognosticsModel> model;
-        std::unique_ptr<Observer> observer;
-        std::unique_ptr<Predictor> predictor;
-        std::vector<std::string> inputs;
-        std::vector<std::string> outputs;
-        bool initialized;
-        double firstTime;
-        double lastTime;
         BenchmarkTimer benchmark1;
-        BenchmarkTimer benchmark2;
-      nanoseconds t2 = nanoseconds::zero();
    public:
         /** @brief      Benchmark Prognoser Constructor
          *  @param      config Map of config parameters from the prognoser config file
@@ -46,6 +36,5 @@ namespace PCOE {
         ~BenchmarkPrognoser();  // destructor
         void step();
   };
-    extern bool regModelProg;
 }
 #endif  // PCOE_BENCHMARKPROGNOSER_H

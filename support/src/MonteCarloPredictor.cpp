@@ -130,7 +130,7 @@ namespace PCOE {
             // I need to generate a vector of random numbers, size of the state vector
             Matrix xRandom(pModel->getNumStates(), 1);
             // Create standard normal distribution
-            std::normal_distribution<> standardDistribution(0, 1);
+            static std::normal_distribution<> standardDistribution(0, 1);
             for (unsigned int xIndex = 0; xIndex < pModel->getNumStates(); xIndex++) {
                 xRandom[xIndex][0] = standardDistribution(generator);
             }
@@ -144,13 +144,14 @@ namespace PCOE {
             // We have a list of pairs (mean,stddev) for each input parameter
             // The order must correspond to the order of the input parameters in the model:
             //   mean_ip1, stddev_ip1, mean_ip2, stddev_ip2, ...
-            std::vector<double> inputParameters(inputUncertainty.size()/2);
+            std::vector<double> inputParameters(inputUncertainty.size()/2+1);
             for (unsigned int ipIndex = 0; ipIndex < pModel->getNumInputParameters(); ipIndex++) {
                 // Create distribution for this input parameter
                 std::normal_distribution<> inputParameterDistribution(inputUncertainty[2 * ipIndex], inputUncertainty[2 * ipIndex + 1]);
                 // Sample a value for it
                 inputParameters[ipIndex] = inputParameterDistribution(generator);
             }
+            inputParameters[inputUncertainty.size()/2] = 0;
 
             // 3. Simulate until time limit reached
             std::vector<double> u(pModel->getNumInputs());
@@ -167,7 +168,7 @@ namespace PCOE {
                 // and we don't want to overwrite that.
                 auto & theEvent = data.events[event];
                 theEvent.occurrenceMatrix[timeIndex][sample] = pModel->thresholdEqn(t, x, u);
-                if (pModel->thresholdEqn(t, x, u) && theEvent.timeOfEvent[sample] == INFINITY) {
+                if (theEvent.occurrenceMatrix[timeIndex][sample] && theEvent.timeOfEvent[sample] == INFINITY) {
                     theEvent.timeOfEvent[sample] = t;
                     continue;
                 }
@@ -181,7 +182,7 @@ namespace PCOE {
                 // Sample process noise - for now, assuming independent
                 std::vector<double> noise(pModel->getNumStates());
                 for (unsigned int xIndex = 0; xIndex < pModel->getNumStates(); xIndex++) {
-                    std::normal_distribution<> noiseDistribution(0, sqrt(processNoise[xIndex]));
+                    static std::normal_distribution<> noiseDistribution(0, sqrt(processNoise[xIndex]));
                     noise[xIndex] = noiseDistribution(generator);
                 }
 

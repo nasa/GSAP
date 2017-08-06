@@ -56,7 +56,6 @@ namespace PCOE {
             return c->getValue(key);
         }
         
-     private:
         CommManager * c;
     };
 
@@ -150,7 +149,6 @@ namespace PCOE {
 
         unsigned int loopInterval;  ///< Time between prognostic loops (ms)
         unsigned int saveInterval;  ///< Loops between saves
-        bool usingPlaybackData;  ///< Using Playback data
         
         CommManagerWrapper cWrapper;
         CommManager& comm;  ///> Communciations Manager

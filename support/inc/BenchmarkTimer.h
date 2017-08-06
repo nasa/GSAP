@@ -107,6 +107,9 @@ namespace PCOE {
          *  @return     The average step time in nanoseconds
          **/
         inline nanoseconds getAveStepTime() const {
+            if (steps <= 0) {
+                return std::chrono::nanoseconds(-1);
+            }
             return runTime/steps;
         }
         
