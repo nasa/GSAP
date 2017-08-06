@@ -169,6 +169,7 @@ namespace PCOE {
                 theEvent.occurrenceMatrix[timeIndex][sample] = pModel->thresholdEqn(t, x, u);
                 if (pModel->thresholdEqn(t, x, u) && theEvent.timeOfEvent[sample] == INFINITY) {
                     theEvent.timeOfEvent[sample] = t;
+                    continue;
                 }
 
                 // Write to system trajectory (model variables for which we are interested in predicted values)
