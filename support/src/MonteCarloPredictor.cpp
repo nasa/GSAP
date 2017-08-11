@@ -107,35 +107,42 @@ namespace PCOE {
         }
 
         // Create a random number generator
-        std::random_device rDevice;
-        std::mt19937 generator(rDevice());
-
+        static std::random_device rDevice;
+        static std::mt19937 generator(rDevice());
+        
+        Matrix xMean(pModel->getNumStates(), 1);
+        
+        // Assume for now that UData is mean and covariance type, and so we are assuming multivariate normal
+        // NOTE: Can check UData uncertainty type to see what it is and how to handle. Perhaps it would be useful to have general code to deal with this, to get samples from it directly? So don't have to check within here.
+        // First step is to construct the mean vector and covariance matrix from the UDatas
+        Matrix Pxx(pModel->getNumStates(), pModel->getNumStates());
+        for (unsigned int xIndex = 0; xIndex < pModel->getNumStates(); xIndex++) {
+            xMean[xIndex][0] = state[xIndex][MEAN];
+            std::vector<double> covariance = state[xIndex].getVec(COVAR());
+            Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
+        }
+        Matrix xRandom(pModel->getNumStates(), 1);
+        auto PxxChol = Pxx.chol();
+        
+        std::vector<double> inputParameters(inputUncertainty.size()/2+1);
+        
+        std::vector<double> u(pModel->getNumInputs());
+        std::vector<double> z(pModel->getNumPredictedOutputs());
+        std::vector<double> noise(pModel->getNumStates());
+        
         // For each sample
         for (unsigned int sample = 0; sample < numSamples; sample++) {
             // 1. Sample the state
             // Create state vector
-            Matrix xMean(pModel->getNumStates(), 1);
-
-            // Assume for now that UData is mean and covariance type, and so we are assuming multivariate normal
-            // NOTE: Can check UData uncertainty type to see what it is and how to handle. Perhaps it would be useful to have general code to deal with this, to get samples from it directly? So don't have to check within here.
-            // First step is to construct the mean vector and covariance matrix from the UDatas
-            Matrix Pxx(pModel->getNumStates(), pModel->getNumStates());
-            for (unsigned int xIndex = 0; xIndex < pModel->getNumStates(); xIndex++) {
-                xMean[xIndex][0] = state[xIndex][MEAN];
-                std::vector<double> covariance = state[xIndex].getVec(COVAR());
-                Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
-            }
-
             // Now we have mean vector (x) and covariance matrix (Pxx). We can use that to sample a realization of the state.
             // I need to generate a vector of random numbers, size of the state vector
-            Matrix xRandom(pModel->getNumStates(), 1);
             // Create standard normal distribution
             static std::normal_distribution<> standardDistribution(0, 1);
             for (unsigned int xIndex = 0; xIndex < pModel->getNumStates(); xIndex++) {
                 xRandom[xIndex][0] = standardDistribution(generator);
             }
             // Update with mean and covariance
-            xRandom = xMean + Pxx.chol()*xRandom;
+            xRandom = xMean + PxxChol*xRandom;
             std::vector<double> x = static_cast<std::vector<double>>(xRandom.col(0));
 
             // 2. Sample the input parameters
@@ -144,7 +151,6 @@ namespace PCOE {
             // We have a list of pairs (mean,stddev) for each input parameter
             // The order must correspond to the order of the input parameters in the model:
             //   mean_ip1, stddev_ip1, mean_ip2, stddev_ip2, ...
-            std::vector<double> inputParameters(inputUncertainty.size()/2+1);
             for (unsigned int ipIndex = 0; ipIndex < pModel->getNumInputParameters(); ipIndex++) {
                 // Create distribution for this input parameter
                 std::normal_distribution<> inputParameterDistribution(inputUncertainty[2 * ipIndex], inputUncertainty[2 * ipIndex + 1]);
@@ -154,8 +160,6 @@ namespace PCOE {
             inputParameters[inputUncertainty.size()/2] = 0;
 
             // 3. Simulate until time limit reached
-            std::vector<double> u(pModel->getNumInputs());
-            std::vector<double> z(pModel->getNumPredictedOutputs());
             double t = tP;
             unsigned int timeIndex = 0;
             data.events[event].timeOfEvent[sample] = INFINITY;
@@ -180,7 +184,6 @@ namespace PCOE {
                 }
 
                 // Sample process noise - for now, assuming independent
-                std::vector<double> noise(pModel->getNumStates());
                 for (unsigned int xIndex = 0; xIndex < pModel->getNumStates(); xIndex++) {
                     static std::normal_distribution<> noiseDistribution(0, sqrt(processNoise[xIndex]));
                     noise[xIndex] = noiseDistribution(generator);
