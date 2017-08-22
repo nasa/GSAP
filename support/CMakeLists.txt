@@ -34,9 +34,7 @@ set (HEADERS
 	inc/UnscentedKalmanFilter.h
 	inc/BenchmarkTimer.h
 	inc/TCPSocket.h
-	inc/TCPServer.h
 	inc/UDPSocket.h
-	inc/UDPServer.h
 )
 
 set(SRCS
