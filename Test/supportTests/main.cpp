@@ -29,8 +29,6 @@
 #include "ProgDataTests.h"
 #include "ThreadTests.h"
 #include "UDataTests.h"
-#include "TCPTests.h"
-#include "UDPTests.h"
 using namespace PCOE::Test;
 
 int main() {
@@ -180,15 +178,6 @@ int main() {
     context.AddCategoryInitializer("Predictor", predictorTestInit);
     context.AddTest("Monte Carlo Predictor Configuration for Battery", testMonteCarloBatteryConfig, "Predictor");
     context.AddTest("Monte Carlo Prediction for Battery", testMonteCarloBatteryPredict, "Predictor");
-
-    // TCP Tests
-   context.AddTest("testConnect",testConnect, "TCP");
-   context.AddTest("testSend",testSend, "TCP");
-   context.AddTest("testReceive",testReceive, "TCP");
-
-   // UDP Tests
-   context.AddTest("testConnect_UDP", testConnect_UDP, "UDP");
-   context.AddTest("testReceive_UDP", testReceive_UDP, "UDP");
 
  //  context.AddTest("Recieve Buffer Size",testRecieveBufferSize,"TCP");
  //  context.AddTest("Send Buffer Size",testSendBufferSize,"TCP");
