@@ -38,10 +38,6 @@ set (HEADERS
 )
 
 set(SRCS
-	src/UDPSocket.cpp
-	src/UDPServer.cpp
-	src/TCPServer.cpp
-	src/TCPSocket.cpp
 	src/ConfigMap.cpp
 	src/DataPoint.cpp
 	src/DataPoints.cpp
