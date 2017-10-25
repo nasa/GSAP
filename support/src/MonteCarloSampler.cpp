@@ -29,22 +29,28 @@ namespace PCOE {
         
     }
     
-    void MonteCarloSampler::sample(const ustate_vec & state, const uload_vec & load, const size_t nSamples, std::vector<state_vec> & stateSamples, std::vector<load_vec> & loadSamples) {
+    void MonteCarloSampler::sample(const ustate_vec & state, const uload_vec & loads, const size_t nSamples, std::vector<state_vec> & stateSamples, std::vector<load_vec> & loadSamples) {
         const auto nStates = xMean.rows();
+        const auto nLoads = loads.size();
+
+        // Preprocess
         for (unsigned int xIndex = 0; xIndex < nStates; xIndex++) {
             xMean[xIndex][0] = state[xIndex][MEAN];
             Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
         }
         auto PxxChol = Pxx.chol();
-        //std::vector<double> inputParameters(load.size()+1);
-        const auto nLoads = load.size();
-        loadSamples.resize(nSamples, std::vector<double>(nLoads+1));
+        
+        loadSamples.resize(nSamples);
         stateSamples.resize(nSamples);
 
-        std::vector<std::normal_distribution<> > loadDists(nLoads);
-        for (size_t loadIndex = 0; loadIndex < load.size(); loadIndex++) {
+        // Todo Optimize this- we're storing time 3 times
+        std::vector<std::map<ms_rep, std::normal_distribution<> > > loadDists(nLoads); // Created here so we dont have to create it every time
+        for (size_t loadIndex = 0; loadIndex < nLoads; loadIndex++) {
             // Create distribution for this input parameter
-            loadDists[loadIndex] = std::move(std::normal_distribution<>(load[loadIndex][MEAN],load[loadIndex][SD]));
+            for (auto & load : loads[loadIndex]) {
+                auto && tmp = std::pair<PCOE::ms_rep, std::normal_distribution<>>(load.first, std::normal_distribution<>(load.second[MEAN], load.second[SD]));
+                loadDists[loadIndex].insert(tmp);
+            }
         }
         
         // For each sample
@@ -67,9 +73,14 @@ namespace PCOE {
             // We have a list of pairs (mean,stddev) for each input parameter
             // The order must correspond to the order of the input parameters in the model:
             //   mean_ip1, stddev_ip1, mean_ip2, stddev_ip2, ...
+            loadSamples[sample].resize(nLoads);
             for (unsigned int ipIndex = 0; ipIndex < nLoads; ipIndex++) {
                 // Sample a value for distribution
-                loadSamples[sample][ipIndex] = loadDists[ipIndex](generator);
+                auto && loadSample = loadSamples[sample][ipIndex];
+                for (auto & load : loadDists[ipIndex]) {
+                    auto && tmp = std::pair<PCOE::ms_rep, double>(load.first, load.second(generator));
+                    loadSample.insert(tmp);
+                }
             }
         }
     }

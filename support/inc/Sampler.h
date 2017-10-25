@@ -9,6 +9,7 @@
 #ifndef Sampler_h
 #define Sampler_h
 
+#include <chrono>
 #include <vector>
 
 #include "ProgData.h"
@@ -16,12 +17,13 @@
 #include "ThreadSafeLog.h"
 
 namespace PCOE {
-    //using ms_rep = std::chrono::milliseconds::rep;
+    using ms_rep = std::chrono::milliseconds::rep;
     using ustate_vec = std::vector<UData>;
-    using uload_vec = std::vector<UData>;
     using state_vec = std::vector<double>;
-    using load_vec = std::vector<double>;
-    
+    using load_profile = std::map<ms_rep, double>;
+    using load_vec = std::vector<load_profile>;
+    using uload_profile = std::map<ms_rep, UData>;
+    using uload_vec = std::vector<uload_profile>;
     
     class Sampler {
      public:
