@@ -159,13 +159,7 @@ class Battery final : public PCOE::PrognosticsModel {
     *   @param      u Input vector
     **/
     bool thresholdEqn(const double t, const std::vector<double> & x, const std::vector<double> & u);
-    /** @brief      Execute input equation.
-    *               Determines what input (u) should be at the given time for the given input parameters.
-    *   @param      t Time
-    *   @param      inputParameters Vector of input parameters, which are values that specify how to define u for the given time.
-    *   @param      u Input vector. Gets overwritten.
-    **/
-    void inputEqn(const double t, const std::vector<double> & inputParameters, std::vector<double> & u);
+
     /** @brief      Execute predicted output equation.
     *               Predicted outputs are those that are not measured, but are interested in being predicted for prognostics.
     *   @param      t Time
