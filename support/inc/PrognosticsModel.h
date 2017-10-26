@@ -48,7 +48,7 @@ namespace PCOE {
         *   @param      u Input vector. Gets overwritten.
         **/
         virtual void inputEqn(const double t, const std::vector<double> & inputParameters,
-            std::vector<double> & u) = 0;
+                              std::vector<double> & u) { u = inputParameters;}
         /** @brief      Execute predicted output equation.
         *               Predicted outputs are those that are not measured, but are interested in being predicted for prognostics.
         *   @param      t Time
