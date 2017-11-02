@@ -7,8 +7,13 @@
 //
 
 #include <stdio.h>
-#include <unistd.h>
 #include <iostream>
+#ifdef _WIN32
+#include "Windows.h"
+#else
+#include <unistd.h>
+#include <sys/select.h>
+#endif
 
 #include "STDINCommunicator.h"
 
@@ -22,8 +27,34 @@ namespace PCOE {
         timeout.tv_usec = 0;
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Configured");
     }
+
     void STDINCommunicator::poll() {
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Entering Poll");
+#ifdef _WIN32
+        HANDLE stdin_handle = GetStdHandle(STD_INPUT_HANDLE);
+        if (stdin_handle == NULL) {
+            log.WriteLine(LOG_WARN, MODULE_NAME, "No standard input attached");
+        }
+        else if (stdin_handle == INVALID_HANDLE_VALUE) {
+            log.WriteLine(LOG_ERROR, MODULE_NAME, "Unable to retrieve standard input handle");
+        }
+        else {
+            const DWORD nLength = 1;
+            INPUT_RECORD lpBuffer[nLength];
+            LPDWORD lpNumberOfEventsRead;
+            if (!PeekConsoleInput(stdin_handle, lpBuffer, nLength, lpNumberOfEventsRead)) {
+                log.WriteLine(LOG_ERROR, MODULE_NAME, "Unable to read standard input handle");
+            }
+            else if (*lpNumberOfEventsRead > 0) {
+                log.WriteLine(LOG_TRACE, MODULE_NAME, "Data Received");
+                setRead();
+            }
+            else {
+                log.WriteLine(LOG_TRACE, MODULE_NAME, "Nothing on STDIN");
+                // Timeout
+            }
+        }
+#else
         fd_set fds;
         FD_ZERO(&fds);
         FD_SET(STDIN_FILENO, &fds);
@@ -37,5 +68,6 @@ namespace PCOE {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Data Received");
             setRead();
         }
+#endif
     }
 }

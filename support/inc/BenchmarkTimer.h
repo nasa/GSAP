@@ -48,7 +48,7 @@ namespace PCOE {
          **/
         static long getRam() {
 #ifdef _WIN32
-            printf("Currently not supported for windows\n")
+            printf("Currently not supported for windows\n");
             return -1l;
 #else
             struct rusage usage;

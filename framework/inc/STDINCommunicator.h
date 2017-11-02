@@ -9,8 +9,6 @@
 #ifndef STDINCommunicator_h
 #define STDINCommunicator_h
 
-#include <sys/select.h>
-
 #include "CommonCommunicator.h"  ///< Parent Class
 
 namespace PCOE {
