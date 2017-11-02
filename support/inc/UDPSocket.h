@@ -255,8 +255,8 @@ namespace PCOE
     private:
         void CreateSocket(int af);
 
-        int family;
         sock_type sock;
+        int family;
     };
 }
 #endif // PCOE_UDPSOCKET_H

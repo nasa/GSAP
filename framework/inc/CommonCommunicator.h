@@ -19,12 +19,13 @@
 #ifndef PCOE_COMMONCOMMUNICATOR_H
 #define PCOE_COMMONCOMMUNICATOR_H
 
-#include <unordered_map>
-#include <string>
-#include <mutex>
 #include <condition_variable>
-#include <utility>
+#include <functional>
+#include <mutex>
+#include <string>
 #include <queue>
+#include <unordered_map>
+#include <utility>
 
 #include "DataStore.h"
 #include "ProgData.h"

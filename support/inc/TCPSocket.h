@@ -268,8 +268,8 @@ namespace PCOE {
         void CreateSocket(int af);
         bool TryConnect(const sockaddr* address, size_type len, int af);
 
-        int family;
         sock_type sock;
+        int family;
     };
 }
 

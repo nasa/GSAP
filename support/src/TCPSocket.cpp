@@ -82,7 +82,7 @@ namespace PCOE {
     const TCPSocket::sock_type TCPSocket::InvalidSocket = -1;
 #endif
 
-    TCPSocket::TCPSocket(int af) : family(af), sock(InvalidSocket) {
+    TCPSocket::TCPSocket(int af) : sock(InvalidSocket), family(af) {
 #ifdef _WIN32
         WSADATA wsa;
         if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
@@ -275,8 +275,8 @@ namespace PCOE {
         timeout_type to = (long int) value * 1e3;
 #else
         timeout_type to;
-        to.tv_sec = (long int) value;
-        to.tv_usec = (long int) (value - to.tv_sec)*1e6;
+        to.tv_sec = static_cast<long int>(value);
+        to.tv_usec = static_cast<long int>((value - to.tv_sec) * 1e6);
 #endif
         socklen_t len = sizeof(to);
     
@@ -352,8 +352,8 @@ namespace PCOE {
         timeout_type to = (long int) value * 1e3;
 #else
         timeout_type to;
-        to.tv_sec = (long int) value;
-        to.tv_usec = (long int) (value - to.tv_sec)*1e6;
+        to.tv_sec = static_cast<long int>(value);
+        to.tv_usec = static_cast<long int>((value - to.tv_sec) * 1e6);
 #endif
         socklen_t len = sizeof(to);
         
