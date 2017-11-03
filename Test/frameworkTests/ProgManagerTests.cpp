@@ -21,10 +21,6 @@ using namespace PCOE::Test;
 namespace TestProgManager {
     void construct_default() {
         ProgManager pm;
-
-        // ProgManager with no config file set should run and exit without
-        // throwing an exception or hanging.
-        pm.run();
     }
 
     void construct_path() {
