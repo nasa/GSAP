@@ -13,6 +13,11 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 
+#	Build option for enabling compiler and linker flags for gathering coverage data
+#	In command line, set option this way:
+#	cmake -DCoverage=ON <build folder>
+option(Coverage "Coverage" OFF)
+
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 	# -g:                Produce debugging information
 	# -O3:               Optimize as much as possible while remaning standards compliant
@@ -63,6 +68,13 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wcast-qual -Wextra -Wfloat-equal")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat -Wold-style-cast -Wpedantic -Wshadow")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsign-conversion -Wswitch-default -Wno-unknown-pragmas")
+
+if(Coverage)
+		#	If coverage option enabled, set compiler and linker flags to gather coverage data
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+		set(CMAKE_EXE_LINKER_FLAGS "-lgcov")
+endif()
+
 	set(CMAKE_CXX_FLAGS_DEBUG "-g -Og -Winline")
 	set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Werror")
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
