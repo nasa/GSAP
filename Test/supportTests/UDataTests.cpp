@@ -183,25 +183,39 @@ namespace TestUData {
         time_point start = ud.updated();
         Assert::AreEqual(time_point(), ud.updated(), "Default updated time not 0");
 
+        // Need short pause between every updated() call for IDEs that run test too quickly
+        std::chrono::milliseconds ms(1);    // Declare and initialize one millisecond variable
+        std::this_thread::sleep_for(ms);    // Pause for 1 ms
+
         ud.set(7);
         time_point doubleTime = ud.updated();
         Assert::IsTrue(doubleTime > start, "updated not changed after setting double [0]");
+
+        std::this_thread::sleep_for(ms);    // Pause for 1 ms
 
         ud.set(std::make_pair(7, 11));
         time_point pairTime = ud.updated();
         Assert::IsTrue(pairTime > doubleTime, "updated not changed after setting pair [0]");
 
+        std::this_thread::sleep_for(ms);    // Pause for 1 ms
+
         ud.set({ 7, 11, 19 });
         time_point vecTime = ud.updated();
         Assert::IsTrue(vecTime > pairTime, "updated not changed after setting vector [0]");
+
+        std::this_thread::sleep_for(ms);    // Pause for 1 ms
 
         ud[0] = 13;
         doubleTime = ud.updated();
         Assert::IsTrue(doubleTime > vecTime, "updated not changed after setting double [1]");
 
+        std::this_thread::sleep_for(ms);    // Pause for 1 ms
+
         ud[0] = std::make_pair(13, 17);
         pairTime = ud.updated();
         Assert::IsTrue(pairTime > doubleTime, "updated not changed after setting pair [1]");
+
+        std::this_thread::sleep_for(ms);    // Pause for 1 ms
 
         ud[0] = { 13, 17, 23 };
         vecTime = ud.updated();
