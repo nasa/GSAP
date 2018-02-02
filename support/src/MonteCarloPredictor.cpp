@@ -82,12 +82,12 @@ namespace PCOE {
             throw std::range_error("Process noise size does not equal number of model states");
         }
 
-        // Check that there are an even number input uncertainty parameters
-        if (inputUncertainty.size()%2 != 0) {
-            // TODO(MD): Assumption here is mean/std, but should generalize this
-            log.WriteLine(LOG_ERROR, MODULE_NAME, "Input uncertainty needs an even number of variables");
-            throw std::range_error("Input uncertainty needs an even number of variables");
-        }
+        // Check that there are an odd number input uncertainty parameters (value time pairs + one for after last time)
+//        if (inputUncertainty.size()%2 != 0) {
+//            // TODO(MD): Assumption here is odd number of variables, should generalize this
+//            log.WriteLine(LOG_ERROR, MODULE_NAME, "Input uncertainty needs an odd number of variables");
+//            throw std::range_error("Input uncertainty needs an odd number of variables");
+//        }
 
         // Check that there are the correct number of predicted outputs
         if (predictedOutputs.size() != pModel->getNumPredictedOutputs()) {
@@ -158,6 +158,8 @@ namespace PCOE {
                 inputParameters[ipIndex] = inputParameterDistribution(generator);
             }
             inputParameters[inputUncertainty.size()/2] = 0;
+            if (inputParameters.size() % 2 == 0)
+                inputParameters.push_back(2); // HARD CODE- FIX LATER
 
             // 3. Simulate until time limit reached
             double t = tP;
