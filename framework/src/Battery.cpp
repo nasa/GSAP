@@ -417,36 +417,8 @@ bool Battery::thresholdEqn(const double t, const std::vector<double> & x, const 
 }
 
 // Battery Input Equation
-void Battery::inputEqn(const double t, const std::vector<double> & inputParameters, std::vector<double> & u) {
-    // Implements variable loading, consisting of a sequence of segments with specified magnitude and duration. Each segment starts at the current magnitude and ramps up to the second. When the end is reached, the last value is held.
-    
-    // inputParameters must contain an odd number of elements, pairs of (magnitude,duration) with a final magnitude (final duration is infinity)
-    if (inputParameters.size() < 1 || inputParameters.size() % 2 == 0) {
-        throw std::range_error("Battery::inputEqn - Incorrect number of input parameters");
-    }
-
-    // Determine where t lies in the given durations, as this specifies what magnitude to use
-    // Here, it is assumed that t and the durations are "consistent", ie, if t0 is 1000 then
-    // the durations should be specified relative to that. It would be the responsibility of
-    // the user of the battery model to take care of this, since the battery model itself,
-    // i.e., the C++ object, does not have any state.
-    double elapsedTime = 0;
-    for (unsigned int i = 0; i < inputParameters.size()-1; i += 2) {
-        // Update time
-        double previousElapsedTime = elapsedTime;
-        elapsedTime += inputParameters[i + 1];
-        // If t hasn't reached elapsedTime yet, this is the portion to use
-        if (t <= elapsedTime) {
-            // Input is interpolated between this value and next in the list
-            double duration = inputParameters[i+1];
-            double deltaT = t-previousElapsedTime;
-            u[0] = inputParameters[i] + (inputParameters[i+2]-inputParameters[i])*deltaT/duration;
-            return;
-        }
-    }
-
-    // If we get here, we've run out of portions, so just use the last one
-    u[0] = inputParameters.back();
+void Battery::inputEqn(const double, const std::vector<double> & inputParameters, std::vector<double> & u) {
+    u = inputParameters;
 }
 
 // Battery Predicted Outputs Equation

@@ -25,14 +25,24 @@
 #include <string>
 
 #include "Model.h"
+#include "LoadEstimator.h"
+#include "LoadEstimatorFactory.h"
 #include "PrognosticsModel.h"
 #include "ProgData.h"
 #include "ThreadSafeLog.h"
 
 namespace PCOE {
+    
+    const std::string LOAD_ESTIMATOR_KEY = "Predictor.loadEstimator";
+    
     class Predictor {
     public:
-        Predictor() : pModel(NULL), log(Log::Instance()) {}
+        Predictor(GSAPConfigMap & configMap) : pModel(NULL), log(Log::Instance()) {
+            configMap.checkRequiredParams({LOAD_ESTIMATOR_KEY});
+            LoadEstimatorFactory & pLoadEstFact = LoadEstimatorFactory::instance();
+            
+            loadEstimator = std::unique_ptr<LoadEstimator>(pLoadEstFact.Create(configMap[LOAD_ESTIMATOR_KEY][0], configMap));
+        }
 
         virtual ~Predictor() = default;
 
@@ -49,6 +59,7 @@ namespace PCOE {
 
     protected:
         PrognosticsModel * pModel;  // model used for prediction
+        std::unique_ptr<LoadEstimator> loadEstimator;
         double horizon;            // time span of prediction
         std::vector<std::string> predictedOutputs;  // list of variables for which to compute future values of
         Log &log;  ///> Logger (Defined in ThreadSafeLog.h)

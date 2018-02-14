@@ -1,5 +1,6 @@
 set (HEADERS
 	inc/ConfigMap.h
+	inc/ConstLoadEstimator.h
 	inc/DataPoint.h
 	inc/DataPoints.h
 	inc/DataStore.h
@@ -8,6 +9,8 @@ set (HEADERS
 	inc/Factory.h
 	inc/GaussianVariable.h
 	inc/GSAPConfigMap.h
+	inc/LoadEstimator.h
+	inc/LoadEstimatorFactory.h
 	inc/Matrix.h
 	inc/Model.h
 	inc/MonteCarloPredictor.h
@@ -39,6 +42,7 @@ set (HEADERS
 
 set(SRCS
 	src/ConfigMap.cpp
+	src/ConstLoadEstimator.cpp
 	src/DataPoint.cpp
 	src/DataPoints.cpp
 	src/GaussianVariable.cpp

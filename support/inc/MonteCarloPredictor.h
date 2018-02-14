@@ -34,7 +34,6 @@ namespace PCOE {
         unsigned int numSamples;           // number of samples used in prediction
         std::vector<double> processNoise;  // variance vector (zero-mean assumed)
         std::string event;                 // name of event to predict
-        std::vector<double> inputUncertainty;  // uncertainty values associated with inputParameters in model->inputEqn
 
     public:
         /** @brief    Constructor for a MonteCarloPredictor based on a configMap

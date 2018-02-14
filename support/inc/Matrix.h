@@ -92,7 +92,7 @@ namespace PCOE {
         /** @brief Exchanges the underlying data of two Matrices.
          *
          *  @param a The first matrix to swap.
-         *  @param a The second matrix to swap.
+         *  @param b The second matrix to swap.
          */
         friend void swap(Matrix& a, Matrix& b);
 

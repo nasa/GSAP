@@ -22,15 +22,15 @@
 #ifndef PCOE_MODELFACTORY_H
 #define PCOE_MODELFACTORY_H
 
-#include "Battery.h"
 #include "Model.h"
+//#include "Battery.h"
 #include "Factory.h"
 #include "Singleton.h"
 
 namespace PCOE {
     /**
      *  @class      ModelFactory
-     *  @brief      Model Factory Class - Factory pattern. Handles the creation of new prognosers
+     *  @brief      Model Factory Class - Factory pattern. Handles the creation of new models
      *
      *  @see        Factory
      *  @note       Uses Factory template parent class.

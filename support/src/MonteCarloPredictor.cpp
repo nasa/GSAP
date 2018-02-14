@@ -33,13 +33,12 @@ namespace PCOE {
     const std::string PROCESSNOISE_KEY = "Model.processNoise";
     const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
     const std::string HORIZON_KEY = "Predictor.horizon";
-    const std::string INPUTUNCERTAINTY_KEY = "Predictor.inputUncertainty";
 
     // Other string constants
     const std::string MODULE_NAME = "MonteCarloPredictor";
 
     // ConfigMap-based Constructor
-    MonteCarloPredictor::MonteCarloPredictor(GSAPConfigMap & configMap) : Predictor() {
+    MonteCarloPredictor::MonteCarloPredictor(GSAPConfigMap & configMap) : Predictor(configMap) {
         // Check for required parameters:
         // model = model to be used for simulation
         // numSamples = number of samples used for prediction
@@ -47,7 +46,7 @@ namespace PCOE {
         // processNoise = list of variance values for process noise, one for each state (zero-mean assumption)
         // event = name of event to predict
         // inputUncertainty = specification of uncertainty associated with inputParameters in pModel->inputEqn
-        configMap.checkRequiredParams({ EVENT_KEY, NUMSAMPLES_KEY, HORIZON_KEY, PREDICTEDOUTPUTS_KEY, PROCESSNOISE_KEY, INPUTUNCERTAINTY_KEY });
+        configMap.checkRequiredParams({ EVENT_KEY, NUMSAMPLES_KEY, HORIZON_KEY, PREDICTEDOUTPUTS_KEY, PROCESSNOISE_KEY });
 
         // Set configuration parameters
         numSamples = static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
@@ -59,13 +58,7 @@ namespace PCOE {
         for (unsigned int i = 0; i < processNoiseStrings.size(); i++) {
             processNoise.push_back(std::stod(processNoiseStrings[i]));
         }
-
-        // Set up input uncertainty
-        std::vector<std::string> inputUncertaintyStrings = configMap[INPUTUNCERTAINTY_KEY];
-        for (unsigned int i = 0; i < inputUncertaintyStrings.size(); i++) {
-            inputUncertainty.push_back(std::stod(inputUncertaintyStrings[i]));
-        }
-
+        
         // Set up predicted outputs
         predictedOutputs = configMap[PREDICTEDOUTPUTS_KEY];
 
@@ -124,8 +117,6 @@ namespace PCOE {
         Matrix xRandom(pModel->getNumStates(), 1);
         auto PxxChol = Pxx.chol();
         
-        std::vector<double> inputParameters(inputUncertainty.size()/2+1);
-        
         std::vector<double> u(pModel->getNumInputs());
         std::vector<double> z(pModel->getNumPredictedOutputs());
         std::vector<double> noise(pModel->getNumStates());
@@ -145,28 +136,13 @@ namespace PCOE {
             xRandom = xMean + PxxChol*xRandom;
             std::vector<double> x = static_cast<std::vector<double>>(xRandom.col(0));
 
-            // 2. Sample the input parameters
-            // For now, hard-code and assume Gaussian, but these should be specified somehow in the configMap
-            // Assuming that for each input parameter, we have specified mean and standard deviation
-            // We have a list of pairs (mean,stddev) for each input parameter
-            // The order must correspond to the order of the input parameters in the model:
-            //   mean_ip1, stddev_ip1, mean_ip2, stddev_ip2, ...
-            for (unsigned int ipIndex = 0; ipIndex < pModel->getNumInputParameters(); ipIndex++) {
-                // Create distribution for this input parameter
-                std::normal_distribution<> inputParameterDistribution(inputUncertainty[2 * ipIndex], inputUncertainty[2 * ipIndex + 1]);
-                // Sample a value for it
-                inputParameters[ipIndex] = inputParameterDistribution(generator);
-            }
-            inputParameters[inputUncertainty.size()/2] = 0;
-            if (inputParameters.size() % 2 == 0)
-                inputParameters.push_back(2); // HARD CODE- FIX LATER
-
             // 3. Simulate until time limit reached
             double t = tP;
             unsigned int timeIndex = 0;
             data.events[event].timeOfEvent[sample] = INFINITY;
             while (t <= tP + horizon) {
                 // Get inputs for time t
+                std::vector<double> inputParameters = loadEstimator->estimateLoad(t);
                 pModel->inputEqn(t, inputParameters, u);
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time
