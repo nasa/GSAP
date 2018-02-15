@@ -304,13 +304,7 @@ void testBatteryInputEqn()
 
     // Run inputEqn for different time points and check values
     battery.inputEqn(1, inputParameters, u);
-    Assert::AreEqual(2, u[0], 1e-12);
-    battery.inputEqn(3, inputParameters, u);
-    Assert::AreEqual(3.5, u[0], 1e-12);
-    battery.inputEqn(6, inputParameters, u);
-    Assert::AreEqual(5, u[0], 1e-12);
-    battery.inputEqn(7, inputParameters, u);
-    Assert::AreEqual(5, u[0], 1e-12);
+    Assert::AreEqual(1, u[0], 1e-12);
 }
 
 void testBatteryPredictedOutputEqn()

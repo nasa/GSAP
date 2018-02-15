@@ -1,4 +1,7 @@
 
+#ifndef PCOE_CONST_LOAD_EST_H
+#define PCOE_CONST_LOAD_EST_H
+
 #include "LoadEstimator.h"
 
 namespace PCOE {
@@ -15,3 +18,4 @@ namespace PCOE {
 
     };
 }
+#endif //PCOE_CONST_LOAD_EST_H

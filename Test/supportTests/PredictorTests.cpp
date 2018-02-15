@@ -58,12 +58,8 @@ void testMonteCarloBatteryPredict()
         processNoise.push_back("1e-5");
     }
     configMap["Model.processNoise"] = processNoise;
-    // Create a constant loading scenario (single portion)
-    std::vector<std::string> inputUncertainty;
-    inputUncertainty.push_back("8");		// Mean of magnitude
-    inputUncertainty.push_back("0.1");		// Std of mangnitude
-    inputUncertainty.push_back("2");		// Std of mangnitude
-    configMap["Predictor.inputUncertainty"] = inputUncertainty;
+    configMap["Predictor.loadEstimator"] = std::vector<std::string>({"const"});
+    configMap["LoadEstimator.loading"] = std::vector<std::string>({"8"});
    
     // Create a battery model (to help set up inputs for predict)
     Battery battery = Battery();
@@ -151,12 +147,8 @@ void testMonteCarloBatteryConfig()
         processNoise.push_back("1e-5");
     }
     configMap["Model.processNoise"] = processNoise;
-    // Create a constant loading scenario (single portion)
-    std::vector<std::string> inputUncertainty;
-    inputUncertainty.push_back("8");		// Mean of magnitude
-    inputUncertainty.push_back("0.1");		// Std of magnitude
-    inputUncertainty.push_back("2");
-    configMap["Predictor.inputUncertainty"] = inputUncertainty;
+    configMap["Predictor.loadEstimator"] = std::vector<std::string>({"const"});
+    configMap["LoadEstimator.loading"] = std::vector<std::string>({"8"});
     
     // Create MonteCarloPredictor for battery
     MonteCarloPredictor MCP(configMap);

@@ -6,14 +6,16 @@
 //
 //
 
-#ifndef ConstLoadTests_hpp
-#define ConstLoadTests_hpp
+#ifndef LoadTests_hpp
+#define LoadTests_hpp
 
 #include <stdio.h>
 
 namespace PCOE {
+    void LoadTestInit();
     void testConstLoad();
+    void testFactory();
 }
 
 
-#endif /* ConstLoadTests_hpp */
+#endif /* LoadTests_hpp */

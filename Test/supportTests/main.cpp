@@ -27,6 +27,7 @@
 #include "PEventTests.h"
 #include "PredictorTests.h"
 #include "ProgDataTests.h"
+#include "LoadTests.hpp"
 #include "ThreadTests.h"
 #include "UDataTests.h"
 using namespace PCOE::Test;
@@ -185,7 +186,11 @@ int main() {
    //    context.AddTest("Send and Receive",testSendAndReceive,"TCP");
 //   context.AddTest("Test", testTest, "TCP");
  //  context.AddTest("Receive", testReceive, "TCP");
-
+    
+    context.AddCategoryInitializer("LoadEstimator", PCOE::LoadTestInit);
+    context.AddTest("ConstLoadEst", PCOE::testConstLoad, "LoadEstimator");
+    context.AddTest("ConstLoadFact", PCOE::testFactory, "LoadEstimator");
+    
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");
     context.WriteJUnit(junit);

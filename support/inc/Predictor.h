@@ -39,9 +39,9 @@ namespace PCOE {
     public:
         Predictor(GSAPConfigMap & configMap) : pModel(NULL), log(Log::Instance()) {
             configMap.checkRequiredParams({LOAD_ESTIMATOR_KEY});
-            LoadEstimatorFactory & pLoadEstFact = LoadEstimatorFactory::instance();
+            LoadEstimatorFactory & loadEstFact = LoadEstimatorFactory::instance();
             
-            loadEstimator = std::unique_ptr<LoadEstimator>(pLoadEstFact.Create(configMap[LOAD_ESTIMATOR_KEY][0], configMap));
+            loadEstimator = std::unique_ptr<LoadEstimator>(loadEstFact.Create(configMap[LOAD_ESTIMATOR_KEY][0], configMap));
         }
 
         virtual ~Predictor() = default;

@@ -1,6 +1,6 @@
 set(HEADERS
 	ConfigMapTests.h
-    ConstLoadTests.h
+    	LoadTests.hpp
 	DataStoreTests.h
 	DPointsTests.h
 	DPointTests.h
@@ -16,7 +16,7 @@ set(HEADERS
 
 set(SRCS
 	ConfigMapTests.cpp
-    ConstLoadTests.cpp
+    	LoadTests.cpp
 	DataStoreTests.cpp
 	DPointsTests.cpp
 	DPointTests.cpp
