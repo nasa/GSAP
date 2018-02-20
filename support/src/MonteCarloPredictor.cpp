@@ -142,8 +142,8 @@ namespace PCOE {
             data.events[event].timeOfEvent[sample] = INFINITY;
             while (t <= tP + horizon) {
                 // Get inputs for time t
-                std::vector<double> inputParameters = loadEstimator->estimateLoad(t);
-                pModel->inputEqn(t, inputParameters, u);
+                std::vector<double> loadEstimate = loadEstimator->estimateLoad(t, sample);
+                pModel->inputEqn(t, loadEstimate, u);
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time
                 // If timeOfEvent is not set to INFINITY that means we already encountered the event,
