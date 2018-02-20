@@ -50,6 +50,7 @@ namespace PCOE {
 
         // Set configuration parameters
         numSamples = static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
+        loadEstimator->setNSamples(numSamples);
         horizon = std::stoul(configMap[HORIZON_KEY][0]);
         event = configMap[EVENT_KEY][0];
 
@@ -163,7 +164,7 @@ namespace PCOE {
 
                 // Sample process noise - for now, assuming independent
                 for (unsigned int xIndex = 0; xIndex < pModel->getNumStates(); xIndex++) {
-                    static std::normal_distribution<> noiseDistribution(0, sqrt(processNoise[xIndex]));
+                    std::normal_distribution<> noiseDistribution(0, sqrt(processNoise[xIndex]));
                     noise[xIndex] = noiseDistribution(generator);
                 }
 

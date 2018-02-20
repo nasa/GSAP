@@ -29,7 +29,8 @@
 namespace PCOE {
     class ConstLoadEstimator : public LoadEstimator {
      public:
-        static const std::string LOADING_KEY; // Key for config file
+        static const std::string LOADING_KEY; // Key for loading config file
+        static const std::string STDDEV_KEY;  // Optional key for gaussian STDDEV in loading config file
 
         /** ConstLoadEstimator constructor.
          *  @param      configMap   Configuration map of configuration parameters in the prognoser configuration
@@ -39,6 +40,8 @@ namespace PCOE {
          **/
         ConstLoadEstimator(GSAPConfigMap & configMap);
         
+        void setNSamples(const unsigned int);
+        
         /** Estimate Load
          *  @param      t           Time for estimate (s from start)
          *  @param      sample      Sample id (unsigned int)
@@ -47,7 +50,16 @@ namespace PCOE {
         LoadEstimate estimateLoad(const double, const unsigned int);
         
      protected:
-        LoadEstimate profile; // Configured profile
+        std::vector<LoadEstimate> profiles; // Configured profile
+        LoadEstimate raw_profile;
+        LoadEstimate stddev;
+        
+        typedef enum UncertaintyType {
+            NONE,
+            GAUSSIAN
+        } UType;
+        
+        UType uncertaintyMode = NONE;
     };
 }
 #endif //PCOE_CONST_LOAD_EST_H

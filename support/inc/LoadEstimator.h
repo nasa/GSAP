@@ -30,10 +30,14 @@
 
 namespace PCOE {
     typedef std::vector<double> LoadEstimate;
+    const std::string LOAD_EST_SAMPLES_KEY = "LoadEstimator.samples";
     
     /// Load Estimator Abstract Parent Class
     class LoadEstimator {
      public:
+        
+        virtual void setNSamples(const unsigned int) = 0;
+        
         /** Estimate Load
          *  @param      t           Time for estimate (s from start)
          *  @param      sample      Sample id (unsigned int)
