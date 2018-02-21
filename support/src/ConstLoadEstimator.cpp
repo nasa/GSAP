@@ -84,6 +84,10 @@ namespace PCOE {
         }
     }
     
+    ConstLoadEstimator::UType ConstLoadEstimator::getUncertaintyMode() {
+        return uncertaintyMode;
+    }
+    
     LoadEstimate ConstLoadEstimator::estimateLoad(const double, const unsigned int sample) {
         log.WriteLine(LOG_TRACE, DEBUG_TAG, "Sampling...");
         LoadEstimate profileEstimate = raw_profile;

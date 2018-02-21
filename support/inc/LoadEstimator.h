@@ -36,8 +36,10 @@ namespace PCOE {
     /// Load Estimator Abstract Parent Class
     class LoadEstimator {
      public:
-        
-        virtual void setNSamples(const unsigned int) = 0;
+        /** Set the number of samples for the loadEstimator
+         *  @param  nSamples    The number of samples
+         **/
+        virtual void setNSamples(const unsigned int) {};
         
         /** @brief Set model pointer
          *  @param model given model pointer

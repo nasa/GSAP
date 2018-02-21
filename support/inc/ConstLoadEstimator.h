@@ -31,6 +31,11 @@ namespace PCOE {
      public:
         static const std::string LOADING_KEY; // Key for loading config file
         static const std::string STDDEV_KEY;  // Optional key for gaussian STDDEV in loading config file
+        
+        typedef enum UncertaintyType {
+            NONE,
+            GAUSSIAN
+        } UType;
 
         /** ConstLoadEstimator constructor.
          *  @param      configMap   Configuration map of configuration parameters in the prognoser configuration
@@ -40,7 +45,15 @@ namespace PCOE {
          **/
         ConstLoadEstimator(GSAPConfigMap & configMap);
         
+        /** Set the number of samples for the loadEstimator
+         *  @param  nSamples    The number of samples
+         **/
         void setNSamples(const unsigned int);
+        
+        /** Get the mode of uncertainty being used
+         *  @return The uncertainty mode
+         **/
+        UType getUncertaintyMode();
         
         /** Estimate Load
          *  @param      t           Time for estimate (s from start)
@@ -50,16 +63,11 @@ namespace PCOE {
         LoadEstimate estimateLoad(const double, const unsigned int);
         
      protected:
-        std::vector<LoadEstimate> profiles; // Configured profile
-        LoadEstimate raw_profile;
-        LoadEstimate stddev;
+        std::vector<LoadEstimate> profiles; // The profiles to for each sample (used when UncertType != NONE)
+        LoadEstimate raw_profile; // The raw profile
+        LoadEstimate stddev;      // The std of raw_profile
         
-        typedef enum UncertaintyType {
-            NONE,
-            GAUSSIAN
-        } UType;
-        
-        UType uncertaintyMode = NONE;
+        UType uncertaintyMode = NONE;   // The uncertainty mode
     };
 }
 #endif //PCOE_CONST_LOAD_EST_H
