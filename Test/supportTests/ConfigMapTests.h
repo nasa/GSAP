@@ -12,6 +12,9 @@
 void configMapInit();
 void configMapUse();
 void configMapLoad();
+void configMapLoadNonexistent();
+void configMapAddBadSearchPath();
+void configMapTrim();
 void gsapConfigMapInit();
 void gsapConfigMapUse();
 

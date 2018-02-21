@@ -31,6 +31,11 @@ void configMapUse()
     theMap.set("test2","blah");
     Assert::AreEqual(0, theMap["test2"][0].compare("blah"));
 
+    /* Added test cases for incldues() - Julian */
+    Assert::IsTrue(theMap.includes({"test"}));
+    Assert::IsTrue(theMap.includes({"test2"}));
+    Assert::IsFalse(theMap.includes({"test3"}));
+
     //std::string exampleLine("test3:a,b,dslfjs,d");
     //theMap.add(exampleLine);
     //assert(theMap["test3"].size() == 4);
@@ -45,7 +50,45 @@ void configMapUse()
 
 void configMapLoad()
 {
+    /* New test here - Julian */
+    ConfigMap theMap;
+    try {
+        theMap.addSearchPath("../Test/supportTests");
+        theMap = ConfigMap("Test.cfg");
+        Assert::AreNotEqual(0, theMap["test"][0].compare("modelBasedPrognoser"));
+    }
+    catch(...) {}
+}
 
+void configMapLoadNonexistent()
+{
+    /* New test here - Julian */
+    // Add search path with / character
+    ConfigMap theMap;
+    theMap.addSearchPath("../");
+    try {
+        theMap = ConfigMap("Nonexistent.cfg"); // File doesn't exist
+        Assert::Fail("Found file that should not exist.");
+    }
+    catch (...) {}
+}
+
+void configMapAddBadSearchPath()
+{
+    /* New test here - Julian */
+    ConfigMap theMap;
+    try {
+        theMap.addSearchPath("../badPath");
+    }
+    catch (...) {}
+}
+
+void configMapTrim()
+{
+    /* New test here - Julian */
+    ConfigMap theMap;
+    theMap.addSearchPath("../Test/supportTests");
+    theMap = ConfigMap("Test.cfg");
 }
 
 void gsapConfigMapInit()

@@ -37,7 +37,10 @@ int main() {
     // Config Map Tests
     context.AddTest("Init", configMapInit, "Config Map");
     context.AddTest("Use", configMapUse, "Config Map");
-    context.AddTest("Load", configMapLoad, "Config Map");
+    context.AddTest("Load", configMapLoad, "Config Map");   // Filled test case - Julian
+    context.AddTest("Load Nonexistent", configMapLoadNonexistent, "ConfigMap"); // Added test case - Julian
+    context.AddTest("Add Bad Search Path", configMapAddBadSearchPath, "Config Map");    // Added test case - Julian
+    context.AddTest("Trim", configMapTrim, "Config Map");   // Added test case - Julian
     context.AddTest("GSAP Init", gsapConfigMapInit, "Config Map");
     context.AddTest("GSAP Use", gsapConfigMapUse, "Config Map");
 
