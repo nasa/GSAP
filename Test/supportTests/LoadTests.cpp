@@ -38,7 +38,7 @@ namespace PCOE {
         
         ConstLoadEstimator c = ConstLoadEstimator(configMap);
         
-        LoadEstimate test2 = c.estimateLoad(NAN);
+        LoadEstimate test2 = c.estimateLoad(NAN, NAN);
         
         Assert::AreEqual(test, test2, "Sampling not correct");
         
@@ -46,7 +46,7 @@ namespace PCOE {
         
         ConstLoadEstimator c2 = ConstLoadEstimator(configMap);
         
-        LoadEstimate test3 = c2.estimateLoad(NAN);
+        LoadEstimate test3 = c2.estimateLoad(NAN, NAN);
         Assert::IsTrue(test3.empty(), "Empty loading vector sampling doesn't return empty sample");
     }
     
