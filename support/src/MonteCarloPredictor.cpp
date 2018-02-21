@@ -76,13 +76,6 @@ namespace PCOE {
             throw std::range_error("Process noise size does not equal number of model states");
         }
 
-        // Check that there are an odd number input uncertainty parameters (value time pairs + one for after last time)
-//        if (inputUncertainty.size()%2 != 0) {
-//            // TODO(MD): Assumption here is odd number of variables, should generalize this
-//            log.WriteLine(LOG_ERROR, MODULE_NAME, "Input uncertainty needs an odd number of variables");
-//            throw std::range_error("Input uncertainty needs an odd number of variables");
-//        }
-
         // Check that there are the correct number of predicted outputs
         if (predictedOutputs.size() != pModel->getNumPredictedOutputs()) {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "Number of predicted outputs does not equal number of model's predicted outputs");

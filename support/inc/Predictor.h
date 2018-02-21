@@ -47,14 +47,18 @@ namespace PCOE {
         virtual ~Predictor() = default;
 
         /** @brief Set model pointer
-        * @param model given model pointer
-        **/
-        virtual void setModel(PrognosticsModel *model) = 0;
+         *  @param model given model pointer
+         **/
+        virtual void setModel(PrognosticsModel *model) {
+            pModel = model;
+            loadEstimator->setModel(model);
+        }
+        
         /** @brief    Predict future events and values of system variables
-        *   @param    tP Time of prediction
-        *    @param    state state of system at time of prediction
-        *   @param  data ProgData object, in which prediction results are stored
-        **/
+         *  @param    tP Time of prediction
+         *  @param    state state of system at time of prediction
+         *  @param  data ProgData object, in which prediction results are stored
+         **/
         virtual void predict(const double tP, const std::vector<UData> & state, ProgData & data) = 0;
 
     protected:

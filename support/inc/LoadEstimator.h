@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "GSAPConfigMap.h"
+#include "PrognosticsModel.h"
 
 namespace PCOE {
     typedef std::vector<double> LoadEstimate;
@@ -38,12 +39,22 @@ namespace PCOE {
         
         virtual void setNSamples(const unsigned int) = 0;
         
+        /** @brief Set model pointer
+         *  @param model given model pointer
+         **/
+        virtual void setModel(PrognosticsModel *model) {
+            pModel = model;
+        }
+        
         /** Estimate Load
          *  @param      t           Time for estimate (s from start)
          *  @param      sample      Sample id (unsigned int)
          *  @return     Load estimate for time and sample
          **/
         virtual LoadEstimate estimateLoad(const double t, const unsigned int sample) = 0;
+        
+     protected:
+        PrognosticsModel * pModel;  // model used for prediction
     };
 }
 #endif //PCOE_LOAD_ESTIMATOR_H

@@ -37,19 +37,20 @@ namespace PCOE {
 
     public:
         /** @brief    Constructor for a MonteCarloPredictor based on a configMap
-        *   @param  configMap Configuration map specifying predictor parameters
-        **/
+         *  @param  configMap Configuration map specifying predictor parameters
+         **/
         explicit MonteCarloPredictor(GSAPConfigMap & configMap);
+        
         /** @brief Set model pointer
-        *   @param model given model pointer
-        **/
+         *  @param model given model pointer
+         **/
         void setModel(PrognosticsModel * model);
 
         /** @brief    Predict function for a Predictor
-        *   @param    tP Time of prediction
-        *    @param    state state of system at time of prediction
-        *   @param  data ProgData object, in which prediction results are stored
-        **/
+         *  @param    tP Time of prediction
+         *  @param    state state of system at time of prediction
+         *  @param  data ProgData object, in which prediction results are stored
+         **/
         void predict(const double tP, const std::vector<UData> & state, ProgData & data);
     };
 }
