@@ -349,7 +349,7 @@ namespace PCOE {
         Matrix r(len, 1);
         for (size_t i = 0; i < len; i++)
         {
-            r[i][1] = (*this)[i][i];
+            r[i][0] = (*this)[i][i];
         }
         return r;
     }
