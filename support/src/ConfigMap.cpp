@@ -8,7 +8,7 @@
  *   @version   0.1.1
  *   @date      2016-06-22
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -25,7 +25,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "Exceptions.h"
 #include "ConfigMap.h"
 
 namespace PCOE {
@@ -57,12 +56,10 @@ namespace PCOE {
                 str.resize(back - front);
             }
             // No whitespace
-        }
-        else if (back <= front) {
+        } else if (back <= front) {
             // All whitespace
             str.clear();
-        }
-        else {
+        } else {
             // Whitespace on both ends
             diff_type frontDiff = static_cast<diff_type>(front);
             diff_type backDiff = static_cast<diff_type>(back);
@@ -72,6 +69,10 @@ namespace PCOE {
     
     ConfigMap::ConfigMap(const std::string & filename) {
         loadFile(filename);
+    }
+    
+    ConfigMap::ConfigMap(const int argc, char *argv[]) {
+        loadArguments(argc, argv);
     }
 
     void ConfigMap::loadFile(const std::string & filename) {
@@ -97,6 +98,17 @@ namespace PCOE {
             parseLine(line);
         }
     }
+    
+    void ConfigMap::loadArguments(const int argc, char *argv[]) {
+        for (auto i = 1; i < argc; i++) {
+            if ((i < argc) && (argv[i][0] == '-')) {
+                (*this)[argv[i]].push_back(argv[i+1]);
+                i++;
+            } else {
+                (*this)["-NO_KEY"].push_back(argv[i]);
+            }
+        }
+    }
 
     void ConfigMap::set(const std::string & key, const std::string & value) {
         (*this)[key] = { value };
@@ -119,7 +131,7 @@ namespace PCOE {
         }
         size_type pos = line.find_first_of(':');
         if (pos == std::string::npos) {
-            throw FormatError("Invalid Configuration line, missing ':' character.");
+            throw std::runtime_error("Invalid Configuration line, missing ':' character.");
         }
 
         std::pair<std::string, std::vector<std::string>> kv;
@@ -156,8 +168,7 @@ namespace PCOE {
         // directly with a filename later
         if (path.back() != '/' && path.back() != '\\') {
             searchPaths.push_back(path + "/");
-        }
-        else {
+        } else {
             searchPaths.push_back(path);
         }
     }

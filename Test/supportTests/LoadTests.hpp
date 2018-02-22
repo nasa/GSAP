@@ -14,6 +14,7 @@
 namespace PCOE {
     void LoadTestInit();
     void testConstLoad();
+    void testConstLoadWithUncert();
     void testFactory();
 }
 

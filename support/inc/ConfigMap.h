@@ -1,4 +1,4 @@
-/**  Configuration Map - Header
+ /**  Configuration Map - Header
  *   @class     ConfigMap ConfigMap.h
  *   @ingroup   GPIC++
  *   @ingroup   Support
@@ -10,7 +10,7 @@
  *   @version   0.1.1
  *   @date      2016-06-22
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -27,6 +27,7 @@ namespace PCOE {
     public:
         ConfigMap() = default;
         ConfigMap(const std::string & filename);
+        ConfigMap(const int argc, char *argv[]);
         
         /** @function   loadFile
          *  @brief      Load the contents of a file into the configuration map
@@ -36,6 +37,13 @@ namespace PCOE {
          *  @exception std::runtime_error If the file can't be found.
          **/
         void loadFile(const std::string & filename);
+        
+        /** @function   loadArguments
+         *  @brief      Load the command line arguments into the configMap
+         *  @param      argc    Number of Arguments
+         *  @param      argv    Command Line Arguments
+         **/
+        void loadArguments(const int argc, char *argv[]);
 
         /** @function   set
          *  @brief      Set a parameter to a string
