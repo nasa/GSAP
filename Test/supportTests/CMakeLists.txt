@@ -12,7 +12,7 @@ set(HEADERS
 	ProgDataTests.h
 	ThreadTests.h
 	UDataTests.h
-)
+        StatisticalToolsTests.cpp StatisticalToolsTests.h)
 
 set(SRCS
 	ConfigMapTests.cpp
@@ -29,7 +29,7 @@ set(SRCS
 	ProgDataTests.cpp
 	ThreadTests.cpp
 	UDataTests.cpp
-)
+        StatisticalToolsTests.cpp StatisticalToolsTests.h)
 
 include_directories(${CMAKE_SOURCE_DIR}/support/inc/)
 include_directories(${CMAKE_SOURCE_DIR}/framework/inc/)

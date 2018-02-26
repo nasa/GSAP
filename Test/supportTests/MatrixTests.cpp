@@ -350,6 +350,27 @@ namespace TestMatrix {
         Assert::AreEqual(42.3, m2.at(0, 3), 1e-12, "Unexpected value at m2.at(0, 3)");
     }
 
+    void const_at() {
+        const Matrix m1(3, 4, {
+                1, 2, 3, 4,
+                5, 6, 7, 8,
+                4, 3, 2, 1
+        });
+
+        Assert::AreEqual(1, m1.at(0, 0), 1e-12, "Unexpected value at m2.at(0, 0)");
+        Assert::AreEqual(2, m1.at(0, 1), 1e-12, "Unexpected value at m2.at(0, 1)");
+        Assert::AreEqual(3, m1.at(0, 2), 1e-12, "Unexpected value at m2.at(0, 2)");
+        Assert::AreEqual(4, m1.at(0, 3), 1e-12, "Unexpected value at m2.at(0, 3)");
+        Assert::AreEqual(5, m1.at(1, 0), 1e-12, "Unexpected value at m2.at(1, 0)");
+        Assert::AreEqual(6, m1.at(1, 1), 1e-12, "Unexpected value at m2.at(1, 1)");
+        Assert::AreEqual(7, m1.at(1, 2), 1e-12, "Unexpected value at m2.at(1, 2)");
+        Assert::AreEqual(8, m1.at(1, 3), 1e-12, "Unexpected value at m2.at(1, 3)");
+        Assert::AreEqual(4, m1.at(2, 0), 1e-12, "Unexpected value at m2.at(2, 0)");
+        Assert::AreEqual(3, m1.at(2, 1), 1e-12, "Unexpected value at m2.at(2, 1)");
+        Assert::AreEqual(2, m1.at(2, 2), 1e-12, "Unexpected value at m2.at(2, 2)");
+        Assert::AreEqual(1, m1.at(2, 3), 1e-12, "Unexpected value at m2.at(2, 3)");
+    }
+
     void col_get() {
         const std::size_t m = 20;
         const std::size_t n = 10;
@@ -948,6 +969,15 @@ namespace TestMatrix {
                 Assert::AreEqual(det1, det2, e, "Symetric random determinants");
             }
         }
+    }
+
+    void laplaceDet() {
+        Matrix m1(3, 3, {
+                0, 0, 0,
+                0, 4, 5,
+                0, 7, 8
+        });
+        Assert::AreEqual(0, m1.determinant(), "Laplace determinant calculation wrong");
     }
 
     void diagonal() {

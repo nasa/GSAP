@@ -30,6 +30,7 @@
 #include "LoadTests.hpp"
 #include "ThreadTests.h"
 #include "UDataTests.h"
+#include "StatisticalToolsTests.h"
 using namespace PCOE::Test;
 
 int main() {
@@ -106,6 +107,7 @@ int main() {
     context.AddTest("indexer", TestMatrix::indexer, "Matrix");
     context.AddTest("indexer_const", TestMatrix::indexer_const, "Matrix");
     context.AddTest("at", TestMatrix::at, "Matrix");
+    context.AddTest("const_at", TestMatrix::const_at, "Matrix");
     context.AddTest("col_get", TestMatrix::col_get, "Matrix");
     context.AddTest("col_setmatrix", TestMatrix::col_setmatrix, "Matrix");
     context.AddTest("col_setvector", TestMatrix::col_setvector, "Matrix");
@@ -126,6 +128,7 @@ int main() {
     context.AddTest("adjoint", TestMatrix::adjoint, "Matrix");
     context.AddTest("cofactors", TestMatrix::cofactors, "Matrix");
     context.AddTest("determinant", TestMatrix::determinant, "Matrix");
+    context.AddTest("laplace determinant", TestMatrix::laplaceDet, "Matrix");
     context.AddTest("diagonal", TestMatrix::diagonal, "Matrix");
     context.AddTest("inverse", TestMatrix::inverse, "Matrix");
     context.AddTest("minors", TestMatrix::minors, "Matrix");
@@ -186,6 +189,9 @@ int main() {
     context.AddCategoryInitializer("Predictor", predictorTestInit);
     context.AddTest("Monte Carlo Predictor Configuration for Battery", testMonteCarloBatteryConfig, "Predictor");
     context.AddTest("Monte Carlo Prediction for Battery", testMonteCarloBatteryPredict, "Predictor");
+
+    // Statistical Tools Tests
+    context.AddTest("Calculate Mean", calculateMean, "Statistical Tools");
 
  //  context.AddTest("Recieve Buffer Size",testRecieveBufferSize,"TCP");
  //  context.AddTest("Send Buffer Size",testSendBufferSize,"TCP");
