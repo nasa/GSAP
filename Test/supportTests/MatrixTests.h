@@ -64,15 +64,19 @@ namespace TestMatrix {
     void adjoint();
     void cofactors();
     void determinant();
+    void diagonal();
     void inverse();
     void minors();
     void submatrix();
     void transpose();
+    void identity();
 
     // Special operations
     void cholesky();
     void weightedmean();
     void weightedcovariance();
+    // Stream insertion
+    void leftShift();
 
 }
 

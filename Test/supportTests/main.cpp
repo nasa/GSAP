@@ -126,14 +126,18 @@ int main() {
     context.AddTest("adjoint", TestMatrix::adjoint, "Matrix");
     context.AddTest("cofactors", TestMatrix::cofactors, "Matrix");
     context.AddTest("determinant", TestMatrix::determinant, "Matrix");
+    context.AddTest("diagonal", TestMatrix::diagonal, "Matrix");
     context.AddTest("inverse", TestMatrix::inverse, "Matrix");
     context.AddTest("minors", TestMatrix::minors, "Matrix");
     context.AddTest("submatrix", TestMatrix::submatrix, "Matrix");
     context.AddTest("transpose", TestMatrix::transpose, "Matrix");
+    context.AddTest("identity", TestMatrix::identity, "Matrix");
     // Special operations
     context.AddTest("cholesky", TestMatrix::cholesky, "Matrix");
     context.AddTest("weightedmean", TestMatrix::weightedmean, "Matrix");
     context.AddTest("weightedcovariance", TestMatrix::weightedcovariance, "Matrix");
+    // Stream insertion
+    context.AddTest("left bitwise shift", TestMatrix::leftShift, "Matrix");
 
     // Model Tests
     context.AddTest("Tank Initialization", testTankInitialize, "Model Tank");

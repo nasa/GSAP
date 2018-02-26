@@ -205,6 +205,10 @@ namespace TestMatrix {
             // 200 consecutive doubles must be astronomically low
             Assert::IsTrue(m1 != m2, "Matrices compared as equal");
         }
+
+        Matrix m3(m, n);
+        Matrix m4(n, m);
+        Assert::IsTrue(m3 != m4, "Matrices compared as equal");
     }
 
     void issquare() {
@@ -946,6 +950,34 @@ namespace TestMatrix {
         }
     }
 
+    void diagonal() {
+        Matrix m1(2, 2, {
+                1, 0,
+                0, 1
+        });
+        Matrix sol1(2, 1, {
+                1,
+                1
+        });
+        m1 = m1.diagonal();
+        Assert::IsTrue(m1 == sol1, "Column matrix of diagonal not correct");
+
+        Matrix m2(3, 3, {
+                1, 0, 0,
+                0, 1, 0,
+                0, 0, 1
+        });
+
+        Matrix sol2(3, 1, {
+                1,
+                1,
+                1
+        });
+
+        m2 = m2.diagonal();
+        Assert::IsTrue(m2 == sol2, "Column matrix of diagonal not correct");
+    }
+
     void inverse() {
         Matrix matrix(3, 3, {
              3,  5,  7,
@@ -1061,6 +1093,17 @@ namespace TestMatrix {
         }
     }
 
+    void identity() {
+        const std::size_t m = 2;
+        const std::size_t n = 2;
+        Matrix expected(m, n, {
+                1, 0,
+                0, 1
+        });
+        Matrix actual(Matrix::identity(m));
+        Assert::AreEqual(expected, actual, "Actual matrix not an identity");
+    }
+
     void cholesky() {
         Matrix matrix(3, 3, {
             25, 15, -5,
@@ -1127,5 +1170,20 @@ namespace TestMatrix {
             Assert::Fail("Calculated weighted covariance with wrong number of weights");
         }
         catch (std::domain_error) { }
+    }
+
+    void leftShift() {
+        Matrix m1(3, 2, {
+                1, 2,
+                3, 4,
+                5, 6
+        });
+
+        Matrix m2();
+        try {
+            std::cout << m1 << std::endl;
+            std::cout << m2 << std::endl;
+        }
+        catch (...) {}
     }
 }
