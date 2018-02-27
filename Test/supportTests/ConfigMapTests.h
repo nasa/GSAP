@@ -10,6 +10,7 @@
 #define CONFIGMAPTESTS_H
 
 void configMapInit();
+void configMapLoadArgs();
 void configMapUse();
 void configMapLoad();
 void configMapLoadNonexistent();

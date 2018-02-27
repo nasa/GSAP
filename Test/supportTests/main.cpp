@@ -37,6 +37,7 @@ int main() {
     TestContext context;
     // Config Map Tests
     context.AddTest("Init", configMapInit, "Config Map");
+    context.AddTest("Load Arguments", configMapLoadArgs, "Config Map");
     context.AddTest("Use", configMapUse, "Config Map");
     context.AddTest("Load", configMapLoad, "Config Map");   // Filled test case - Julian
     context.AddTest("Load Nonexistent", configMapLoadNonexistent, "ConfigMap"); // Added test case - Julian
