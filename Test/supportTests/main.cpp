@@ -31,6 +31,8 @@
 #include "ThreadTests.h"
 #include "UDataTests.h"
 #include "StatisticalToolsTests.h"
+#include "GaussianVariableTests.h"
+
 using namespace PCOE::Test;
 
 int main() {
@@ -200,7 +202,16 @@ int main() {
    //    context.AddTest("Send and Receive",testSendAndReceive,"TCP");
 //   context.AddTest("Test", testTest, "TCP");
  //  context.AddTest("Receive", testReceive, "TCP");
-    
+
+    // Gaussian Variable Tests
+    context.AddTest("Constructor Specified", ctorSpecified, "Gaussian Variable");
+    context.AddTest("Constructor Unspecified", ctorUnspecified, "Gaussian Variable");
+    context.AddTest("Generate Samples Direct", generateSamplesDirect, "Gaussian Variable");
+    context.AddTest("Generate Samples ICDUR", generateSamplesICDFUR, "Gaussian Variable");
+    context.AddTest("Set Mean Std", setMeanStd, "Gaussian Variable");
+    context.AddTest("Evaluate PDF", evaluatePDF, "Gaussian Variable");
+    context.AddTest("Evaluate CDF", evaluateCDF, "Gaussian Variable");
+
     context.AddCategoryInitializer("LoadEstimator", PCOE::LoadTestInit);
     context.AddTest("ConstLoadEst", PCOE::testConstLoad, "LoadEstimator");
     context.AddTest("ConstLoadFact", PCOE::testFactory, "LoadEstimator");
