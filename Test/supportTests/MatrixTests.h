@@ -42,6 +42,7 @@ namespace TestMatrix {
     void indexer();
     void indexer_const();
     void at();
+    void const_at();
     void col_get();
     void col_setmatrix();
     void col_setvector();
@@ -64,15 +65,20 @@ namespace TestMatrix {
     void adjoint();
     void cofactors();
     void determinant();
+    void laplaceDet();
+    void diagonal();
     void inverse();
     void minors();
     void submatrix();
     void transpose();
+    void identity();
 
     // Special operations
     void cholesky();
     void weightedmean();
     void weightedcovariance();
+    // Stream insertion
+    void leftShift();
 
 }
 

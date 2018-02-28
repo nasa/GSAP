@@ -30,12 +30,16 @@
 #include "LoadTests.hpp"
 #include "ThreadTests.h"
 #include "UDataTests.h"
+#include "StatisticalToolsTests.h"
+#include "GaussianVariableTests.h"
+
 using namespace PCOE::Test;
 
 int main() {
     TestContext context;
     // Config Map Tests
     context.AddTest("Init", configMapInit, "Config Map");
+    context.AddTest("Load Arguments", configMapLoadArgs, "Config Map");
     context.AddTest("Use", configMapUse, "Config Map");
     context.AddTest("Load", configMapLoad, "Config Map");   // Filled test case - Julian
     context.AddTest("Load Nonexistent", configMapLoadNonexistent, "ConfigMap"); // Added test case - Julian
@@ -106,6 +110,7 @@ int main() {
     context.AddTest("indexer", TestMatrix::indexer, "Matrix");
     context.AddTest("indexer_const", TestMatrix::indexer_const, "Matrix");
     context.AddTest("at", TestMatrix::at, "Matrix");
+    context.AddTest("const_at", TestMatrix::const_at, "Matrix");
     context.AddTest("col_get", TestMatrix::col_get, "Matrix");
     context.AddTest("col_setmatrix", TestMatrix::col_setmatrix, "Matrix");
     context.AddTest("col_setvector", TestMatrix::col_setvector, "Matrix");
@@ -126,14 +131,19 @@ int main() {
     context.AddTest("adjoint", TestMatrix::adjoint, "Matrix");
     context.AddTest("cofactors", TestMatrix::cofactors, "Matrix");
     context.AddTest("determinant", TestMatrix::determinant, "Matrix");
+    context.AddTest("laplace determinant", TestMatrix::laplaceDet, "Matrix");
+    context.AddTest("diagonal", TestMatrix::diagonal, "Matrix");
     context.AddTest("inverse", TestMatrix::inverse, "Matrix");
     context.AddTest("minors", TestMatrix::minors, "Matrix");
     context.AddTest("submatrix", TestMatrix::submatrix, "Matrix");
     context.AddTest("transpose", TestMatrix::transpose, "Matrix");
+    context.AddTest("identity", TestMatrix::identity, "Matrix");
     // Special operations
     context.AddTest("cholesky", TestMatrix::cholesky, "Matrix");
     context.AddTest("weightedmean", TestMatrix::weightedmean, "Matrix");
     context.AddTest("weightedcovariance", TestMatrix::weightedcovariance, "Matrix");
+    // Stream insertion
+    context.AddTest("left bitwise shift", TestMatrix::leftShift, "Matrix");
 
     // Model Tests
     context.AddTest("Tank Initialization", testTankInitialize, "Model Tank");
@@ -183,13 +193,25 @@ int main() {
     context.AddTest("Monte Carlo Predictor Configuration for Battery", testMonteCarloBatteryConfig, "Predictor");
     context.AddTest("Monte Carlo Prediction for Battery", testMonteCarloBatteryPredict, "Predictor");
 
+    // Statistical Tools Tests
+    context.AddTest("Calculate Mean", calculateMean, "Statistical Tools");
+
  //  context.AddTest("Recieve Buffer Size",testRecieveBufferSize,"TCP");
  //  context.AddTest("Send Buffer Size",testSendBufferSize,"TCP");
  //  context.AddTest("Connect",testConnect,"TCP");
    //    context.AddTest("Send and Receive",testSendAndReceive,"TCP");
 //   context.AddTest("Test", testTest, "TCP");
  //  context.AddTest("Receive", testReceive, "TCP");
-    
+
+    // Gaussian Variable Tests
+    context.AddTest("Constructor Specified", ctorSpecified, "Gaussian Variable");
+    context.AddTest("Constructor Unspecified", ctorUnspecified, "Gaussian Variable");
+    context.AddTest("Generate Samples Direct", generateSamplesDirect, "Gaussian Variable");
+    context.AddTest("Generate Samples ICDUR", generateSamplesICDFUR, "Gaussian Variable");
+    context.AddTest("Set Mean Std", setMeanStd, "Gaussian Variable");
+    context.AddTest("Evaluate PDF", evaluatePDF, "Gaussian Variable");
+    context.AddTest("Evaluate CDF", evaluateCDF, "Gaussian Variable");
+
     context.AddCategoryInitializer("LoadEstimator", PCOE::LoadTestInit);
     context.AddTest("ConstLoadEst", PCOE::testConstLoad, "LoadEstimator");
     context.AddTest("ConstLoadFact", PCOE::testFactory, "LoadEstimator");
