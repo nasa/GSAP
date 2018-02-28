@@ -193,7 +193,7 @@ int main() {
     context.AddCategoryInitializer("LoadEstimator", PCOE::LoadTestInit);
     context.AddTest("ConstLoadEst", PCOE::testConstLoad, "LoadEstimator");
     context.AddTest("ConstLoadFact", PCOE::testFactory, "LoadEstimator");
-    context.AddTest("ConstLoadUcert", PCOE::testConstLoadWithUncert, "LoadEstimator");
+//    context.AddTest("ConstLoadUcert", PCOE::testConstLoadWithUncert, "LoadEstimator");
     
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");
