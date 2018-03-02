@@ -23,6 +23,4 @@ void calculateMean() {
         arr[i] = i + 1;
     }
     Assert::AreEqual(calculatemean(arr, size), 5.5, "Average incorrectly calculated");
-    double arr2[size];
-    Assert::AreEqual(calculatemean(arr2, size), 0.0, "Empty array doesn't have mean of 0");
 }
