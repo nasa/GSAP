@@ -126,6 +126,18 @@ namespace PCOE {
         const std::vector<double> & getStateMean() const;
         const std::vector<double> & getOutputMean() const;
         std::vector<UData> getStateEstimate() const;
+
+        size_t getNumParticles() const;
+
+        size_t getMinNEffective() const;
+
+        const Particles &getParticles() const;
+
+        const std::vector<double> &getProcessNoiseVariance() const;
+
+        const std::vector<double> &getSensorNoiseVariance() const;
+
+        const Matrix &getR() const;
     };
 }
 

@@ -181,16 +181,6 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initialize completed");
     }
     
-    // Get state mean
-    const std::vector<double> & ParticleFilter::getStateMean() const {
-        return m_xEstimated;
-    }
-    
-    // Get output mean
-    const std::vector<double> & ParticleFilter::getOutputMean() const {
-        return m_zEstimated;
-    }
-    
     // Normalize particle weighs
     void ParticleFilter::normalize() {
         // Compute sum of weights
@@ -356,5 +346,38 @@ namespace PCOE {
         }
         return state;
     }
-    
+
+    size_t ParticleFilter::getNumParticles() const {
+        return numParticles;
+    }
+
+    size_t ParticleFilter::getMinNEffective() const {
+        return minNEffective;
+    }
+
+    const Particles &ParticleFilter::getParticles() const {
+        return particles;
+    }
+
+    const std::vector<double> &ParticleFilter::getProcessNoiseVariance() const {
+        return processNoiseVariance;
+    }
+
+    const std::vector<double> &ParticleFilter::getSensorNoiseVariance() const {
+        return sensorNoiseVariance;
+    }
+
+    const Matrix &ParticleFilter::getR() const {
+        return R;
+    }
+
+    // Get state mean
+    const std::vector<double> & ParticleFilter::getStateMean() const {
+        return m_xEstimated;
+    }
+
+    // Get output mean
+    const std::vector<double> & ParticleFilter::getOutputMean() const {
+        return m_zEstimated;
+    }
 }
