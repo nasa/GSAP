@@ -32,6 +32,7 @@
 #include "UDataTests.h"
 #include "StatisticalToolsTests.h"
 #include "GaussianVariableTests.h"
+#include "ParticleFilterTests.h"
 
 using namespace PCOE::Test;
 
@@ -211,6 +212,11 @@ int main() {
     context.AddTest("Set Mean Std", setMeanStd, "Gaussian Variable");
     context.AddTest("Evaluate PDF", evaluatePDF, "Gaussian Variable");
     context.AddTest("Evaluate CDF", evaluateCDF, "Gaussian Variable");
+
+    context.AddTest("Constructor", ctor, "Particle Filter");
+    context.AddTest("Constructor with Nonempty Vectors", ctorWithNonemptyVectors, "Particle Filter");
+    context.AddTest("GSAPConfigMap Constructor", GSAPConfigMapCtor, "Particle Filter");
+    context.AddTest("Initialize", PFinitialize, "Particle Filter");
 
     context.AddCategoryInitializer("LoadEstimator", PCOE::LoadTestInit);
     context.AddTest("ConstLoadEst", PCOE::testConstLoad, "LoadEstimator");

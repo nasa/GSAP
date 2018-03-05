@@ -12,7 +12,9 @@
 	ProgDataTests.h
 	ThreadTests.h
 	UDataTests.h
-						   StatisticalToolsTests.h GaussianVariableTests.h)
+    StatisticalToolsTests.h
+    GaussianVariableTests.h
+    ParticleFilterTests.h)
 
 
 set(SRCS
@@ -30,7 +32,9 @@ set(SRCS
 	ProgDataTests.cpp
 	ThreadTests.cpp
 	UDataTests.cpp
-        StatisticalToolsTests.cpp GaussianVariableTests.cpp)
+    StatisticalToolsTests.cpp
+    GaussianVariableTests.cpp
+    ParticleFilterTests.cpp)
 
 include_directories(${CMAKE_SOURCE_DIR}/support/inc/)
 include_directories(${CMAKE_SOURCE_DIR}/framework/inc/)
