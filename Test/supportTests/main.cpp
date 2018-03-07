@@ -196,6 +196,8 @@ int main() {
 
     // Statistical Tools Tests
     context.AddTest("Calculate Mean", calculateMean, "Statistical Tools");
+    context.AddTest("Calculate Standard Deviation", calculateStDv, "Statistical Tools");
+    context.AddTest("Calculate CDF", calculateCDF, "Statistical Tools");
 
  //  context.AddTest("Recieve Buffer Size",testRecieveBufferSize,"TCP");
  //  context.AddTest("Send Buffer Size",testSendBufferSize,"TCP");
