@@ -11,19 +11,8 @@
 void ctor();
 void ctorWithNonemptyVectors();
 void GSAPConfigMapCtor();
-void setSensorCovariance();
-void checkNoiseVectors();
 void setModel();
-void setMinEffective();
 void PFinitialize();
-void getStateMean();
-void getOutputMean();
-void normalize();
-void resample();
-void systematicResample();
-void generateProcessNoise();
-void likelihood();
-void weightedMean();
 void step();
 void getStateEstimate();
 

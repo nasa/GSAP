@@ -60,6 +60,7 @@ void ctorWithNonemptyVectors() {
     Assert::AreEqual(0, pf.getNumParticles());
     Assert::AreEqual(3, pf.getProcessNoiseVariance().size());
     Assert::AreEqual(3, pf.getSensorNoiseVariance().size());
+    Assert::AreEqual(3, pf.getOutputMean().size());
 
     std::vector<double> emptySensorNoise;
 
@@ -122,4 +123,86 @@ void PFinitialize() {
         Assert::Fail("initialize() didn't catch null model.");
     }
     catch (...) {}
+}
+
+void step() {
+    // Create Tank3 model
+    Tank3 test = Tank3();
+
+    // Set parameter values
+    test.parameters.K1 = 1;
+    test.parameters.K2 = 2;
+    test.parameters.K3 = 3;
+    test.parameters.R1 = 1;
+    test.parameters.R2 = 2;
+    test.parameters.R3 = 3;
+    test.parameters.R1c2 = 1;
+    test.parameters.R2c3 = 2;
+
+    // Initialize its
+    std::vector<double> x(test.getNumStates());
+    std::vector<double> z(test.getNumOutputs());
+    std::vector<double> u(test.getNumInputs());
+    test.initialize(x, u, z);
+
+    size_t N = 20;
+    std::vector<double> processNoise;
+    std::vector<double> sensorNoise;
+
+    processNoise.push_back(1.0);
+    processNoise.push_back(1.0);
+    processNoise.push_back(2.0);
+    sensorNoise.push_back(1.0);
+    sensorNoise.push_back(1.0);
+    sensorNoise.push_back(2.0);
+
+    ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
+    const double t0 = 0;
+    const double t1 = 1;
+
+    // Test step() with uninitialized Particle Filter
+    try {
+        pf.step(t1, u, z);
+        Assert::Fail("step() did not catch uninitialized ParticleFilter.");
+    }
+    catch (...) {}
+
+    pf.initialize(t0, x, u);
+
+    // Test step() with no change in time
+    try {
+        pf.step(t0, u, z);
+        Assert::Fail("step() did not catch unchanged time.");
+    }
+    catch (...) {}
+
+    pf.setMinNEffective(2000);
+    Assert::AreEqual(2000, pf.getMinNEffective());
+    pf.step(t1, u, z);
+}
+
+void getStateEstimate() {
+    // Create Tank3 model
+    Tank3 test = Tank3();
+
+    // Initialize its
+    std::vector<double> x(test.getNumStates());
+    std::vector<double> z(test.getNumOutputs());
+    std::vector<double> u(test.getNumInputs());
+    test.initialize(x, u, z);
+
+    size_t N = 2000;
+    std::vector<double> processNoise;
+    std::vector<double> sensorNoise;
+
+    processNoise.push_back(1.0);
+    processNoise.push_back(1.0);
+    processNoise.push_back(2.0);
+    sensorNoise.push_back(1.0);
+    sensorNoise.push_back(1.0);
+    sensorNoise.push_back(2.0);
+
+    ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
+    std::vector<UData> stateEstimate = pf.getStateEstimate();
+    Assert::AreEqual(3, stateEstimate.size());
 }

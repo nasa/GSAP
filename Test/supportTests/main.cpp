@@ -217,6 +217,8 @@ int main() {
     context.AddTest("Constructor with Nonempty Vectors", ctorWithNonemptyVectors, "Particle Filter");
     context.AddTest("GSAPConfigMap Constructor", GSAPConfigMapCtor, "Particle Filter");
     context.AddTest("Initialize", PFinitialize, "Particle Filter");
+    context.AddTest("Step", step, "Particle Filter");
+    context.AddTest("Get State Estimate", getStateEstimate, "Particle Filter");
 
     context.AddCategoryInitializer("LoadEstimator", PCOE::LoadTestInit);
     context.AddTest("ConstLoadEst", PCOE::testConstLoad, "LoadEstimator");
