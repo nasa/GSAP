@@ -227,7 +227,7 @@ namespace PCOE {
         for (size_t p=0; p<numParticles; p++) {
             // Move along CDF
             u = u1 + (p-1.0)/numParticles;
-            while (u>cumsum[p]) {
+            while (u>cumsum[i]) {
                 i += 1;
             }
             // Reassign particle
@@ -317,6 +317,7 @@ namespace PCOE {
             
             // Set weight
             particles.w[p] = likelihood(z, zNew);
+            particles.w[p] = likelihood(z, zNew);
         }
         
         // Normalize weights
@@ -355,20 +356,12 @@ namespace PCOE {
         return minNEffective;
     }
 
-    const Particles &ParticleFilter::getParticles() const {
-        return particles;
-    }
-
     const std::vector<double> &ParticleFilter::getProcessNoiseVariance() const {
         return processNoiseVariance;
     }
 
     const std::vector<double> &ParticleFilter::getSensorNoiseVariance() const {
         return sensorNoiseVariance;
-    }
-
-    const Matrix &ParticleFilter::getR() const {
-        return R;
     }
 
     // Get state mean
