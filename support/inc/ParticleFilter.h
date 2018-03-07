@@ -131,13 +131,9 @@ namespace PCOE {
 
         size_t getMinNEffective() const;
 
-        const Particles &getParticles() const;
-
         const std::vector<double> &getProcessNoiseVariance() const;
 
         const std::vector<double> &getSensorNoiseVariance() const;
-
-        const Matrix &getR() const;
     };
 }
 
