@@ -87,6 +87,12 @@ namespace PCOE {
          *  @param config The configuration used by the progManager
          */
         void setConfig(const GSAPConfigMap& config);
+        
+        /** @brief Add a new prognoser
+         *
+         *  @param  path  The path to a configuration file
+         **/
+        void addPrognoser(const std::string & path);
 
         /** @brief starts the progManager. */
         void run();

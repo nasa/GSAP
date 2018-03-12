@@ -89,12 +89,15 @@ namespace PCOE {
         }  // End while (command != stop)w
     }
     
+    void ProgManager::addPrognoser(const std::string & path) {
+        PrognoserFactory &factory = PrognoserFactory::instance();
+        prognosers.push_back(factory.Create(path));
+    }
+    
     void ProgManager::enable() {
         /// Setup Log
         logger.Initialize(PACKAGE_NAME, VERSION, NOTE);
         logger.WriteLine(LOG_INFO, MODULE_NAME, "Enabling");
-        
-        //CommManager &theComm = CommManager::instance();
         
         if (!configSet) {
             logger.WriteLine(LOG_DEBUG, MODULE_NAME, "No configuration file set - closing progManager");
@@ -104,9 +107,8 @@ namespace PCOE {
         /// SETUP PROGNOSERS
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting Up Prognosers");
         if (configValues.includes("Prognosers")) {
-            PrognoserFactory &factory = PrognoserFactory::instance();
             for (auto & itStrs : configValues.at("Prognosers")) {
-                prognosers.push_back(factory.Create(itStrs));
+                addPrognoser(itStrs);
                 // @todo(CT): Add check that component was made correctly
             }
         }
