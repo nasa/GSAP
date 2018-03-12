@@ -12,7 +12,7 @@ using namespace PCOE;
 using namespace PCOE::Test;
 
 void calculateMean() {
-    size_t size = 10;
+    const size_t size = 10;
     double arr[size] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     Assert::AreEqual(0.0, calculatemean(arr, size), "Array of 0s doesn't have mean of 0");
     for (size_t i = 0; i < size; ++i) {
@@ -26,7 +26,7 @@ void calculateMean() {
 }
 
 void calculateStDv() {
-    size_t size = 20;
+    const size_t size = 20;
     double arr[size] = {0};
     Assert::AreEqual(0.0, calculatestdv(arr, size), "Standard deviation of array of 0s is not 0");
 
@@ -42,7 +42,7 @@ void calculateStDv() {
 }
 
 void calculateCDF() {
-    size_t size = 10;
+    const size_t size = 10;
     double arr[size] = {0};
     Assert::AreEqual(0, calculatecdf(arr, size, 0), "CDF calculation incorrect");
     Assert::AreEqual(1, calculatecdf(arr, size, 10), "CDF calculation incorrect");
