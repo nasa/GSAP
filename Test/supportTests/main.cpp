@@ -188,6 +188,8 @@ int main() {
     // Thread Tests
     context.AddTest("treadctrl", tctrltests, "Thread");
     context.AddTest("Exception", exceptiontest, "Thread");
+    context.AddTest("Move Constructor", moveCtor, "Thread");
+    //context.AddTest("Assignment Operator", assignmentOperator, "Thread");
 
     // Predictor Tests
     context.AddCategoryInitializer("Predictor", predictorTestInit);

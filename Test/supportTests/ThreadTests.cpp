@@ -54,9 +54,26 @@ void exceptiontest() {
     TestThreadExceptionClass test;
     try {
         test.enable();
+        test.start();
         test.join();
     }
     catch (std::exception ex) {
         Assert::Fail();
     }
+}
+
+void moveCtor() {
+
+    TestThreadClass test;
+
+    TestThreadClass test2(std::move(test));
+
+    Assert::AreEqual(ThreadState::Created, test.getState());
+    Assert::AreEqual(ThreadState::Created, test2.getState());
+}
+
+void assignmentOperator() {
+    TestThreadClass test;
+    TestThreadClass test2 = (std::move(test));
+    TestThreadClass test3 = std::move(test2);
 }
