@@ -146,7 +146,7 @@ namespace TestMatrix {
         double v = 7.0;
 
         Matrix m1(m, n, v);
-        Matrix m2(m1);
+        Matrix m2(std::move(m1));
         Assert::AreEqual(m, m2.rows(), "Number of rows not equal");
         Assert::AreEqual(n, m2.cols(), "Number of columns not equal");
         for (std::size_t i = 0; i < m; i++) {
