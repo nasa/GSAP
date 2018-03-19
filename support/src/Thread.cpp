@@ -11,7 +11,9 @@
 namespace PCOE {
     Thread::Thread()
         : log(Log::Instance()), moduleName(""), m(), state(ThreadState::Created),
-          thread() {}
+          thread() {
+        log.WriteLine(LOG_DEBUG, moduleName, "Creating");
+    }
 
     Thread::Thread(Thread&& src) : Thread() {
         swap(*this, src);
@@ -37,8 +39,10 @@ namespace PCOE {
         lock_guard guard(m);
         if (thread.joinable()) {
             log.WriteLine(LOG_DEBUG, moduleName, "Joining thread in destructor");
-            state = ThreadState::Stopped;
-            thread.join();
+            //state = ThreadState::Stopped;
+            stop();
+            //thread.join();
+            join();
         }
     }
 
@@ -71,7 +75,10 @@ namespace PCOE {
         case ThreadState::Paused:
             log.WriteLine(LOG_DEBUG, moduleName, "Starting");
             state = ThreadState::Started;
+                // Check to see if thread already created
+                // startThread() should only be run once
             if (thread.get_id() == std::thread::id()) {
+                // Should only run if not enabled first
                 startThread();
             }
             break;
