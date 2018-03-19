@@ -3,7 +3,7 @@
  *   @ingroup    GPIC++
  *   @defgroup   Observer     Observer
  *
- *   @brief      Unscented Kalman filter class. Implements UKF state estimation algorithm for nonlineary models.
+ *   @brief      Particle filter class. Implements Particle Filter state estimation algorithm for nonlineary models.
  *               Uses the Model class.
  *
  *   @author     Matthew Daigle
