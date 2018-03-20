@@ -1,8 +1,8 @@
 // Author: Jason Watkins <jason-watkins@outlook.com>
 // Author: Chris Teubert <christopher.a.teubert@nasa.gov>
-// Date:   2016-06-21
+// Date:   2018-03-19
 //
-//  Copyright (c) 2016 United States Government as represented by
+//  Copyright (c) 2016-2018 United States Government as represented by
 //  the Administrator of the National Aeronautics and Space Administration.
 //  All Rights Reserved.
 
@@ -39,10 +39,14 @@ namespace PCOE {
         lock_guard guard(m);
         if (thread.joinable()) {
             log.WriteLine(LOG_DEBUG, moduleName, "Joining thread in destructor");
-            //state = ThreadState::Stopped;
-            stop();
-            //thread.join();
-            join();
+			// Note (JW): It's not necessary to call this->stop() or
+			//     this->join() here since the object is about to die anyway.
+			//     Setting the state variable and calling thead.join() directly
+			//     is sufficient to cleanly kill the thread. This also avoids
+			//     potential crashes that can occur when calling virtual
+			//     methods in the destructor
+            state = ThreadState::Stopped;
+            thread.join();
         }
     }
 
