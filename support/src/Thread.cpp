@@ -39,12 +39,12 @@ namespace PCOE {
         lock_guard guard(m);
         if (thread.joinable()) {
             log.WriteLine(LOG_DEBUG, moduleName, "Joining thread in destructor");
-			// Note (JW): It's not necessary to call this->stop() or
-			//     this->join() here since the object is about to die anyway.
-			//     Setting the state variable and calling thead.join() directly
-			//     is sufficient to cleanly kill the thread. This also avoids
-			//     potential crashes that can occur when calling virtual
-			//     methods in the destructor
+            // Note (JW): It's not necessary to call this->stop() or
+            //     this->join() here since the object is about to die anyway.
+            //     Setting the state variable and calling thead.join() directly
+            //     is sufficient to cleanly kill the thread. This also avoids
+            //     potential crashes that can occur when calling virtual
+            //     methods in the destructor
             state = ThreadState::Stopped;
             thread.join();
         }
