@@ -192,7 +192,7 @@ int main() {
     context.AddTest("Exception", exceptiontest, "Thread");
     context.AddTest("Move Constructor", moveCtor, "Thread");
     //context.AddTest("Assignment Operator", assignmentOperator, "Thread");
-    context.AddTest("Destructor", testDestructor, "Thread");
+    //context.AddTest("Destructor", testDestructor, "Thread");
 
     // Predictor Tests
     context.AddCategoryInitializer("Predictor", predictorTestInit);
