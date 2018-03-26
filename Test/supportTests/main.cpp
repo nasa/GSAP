@@ -33,6 +33,8 @@
 #include "StatisticalToolsTests.h"
 #include "GaussianVariableTests.h"
 #include "ParticleFilterTests.h"
+#include "TCPSocketTests.h"
+#include "UDPSocketTests.h"
 
 using namespace PCOE::Test;
 
@@ -190,6 +192,7 @@ int main() {
     context.AddTest("Exception", exceptiontest, "Thread");
     context.AddTest("Move Constructor", moveCtor, "Thread");
     //context.AddTest("Assignment Operator", assignmentOperator, "Thread");
+    context.AddTest("Destructor", testDestructor, "Thread");
 
     // Predictor Tests
     context.AddCategoryInitializer("Predictor", predictorTestInit);
@@ -228,7 +231,16 @@ int main() {
     context.AddTest("ConstLoadEst", PCOE::testConstLoad, "LoadEstimator");
     context.AddTest("ConstLoadFact", PCOE::testFactory, "LoadEstimator");
 //    context.AddTest("ConstLoadUcert", PCOE::testConstLoadWithUncert, "LoadEstimator");
-    
+
+    // TCPSocket Tests
+    //context.AddTest("TCP Socket with af", testTCPctor, "TCPSocket");
+
+    // UDPSocket Tests
+    context.AddTest("UDPSocket Constructor", testUDPCtor, "UDPSocket");
+    context.AddTest("UDPSocket Send", testUDPSendandReceive, "UDPSocket");
+    //context.AddTest("UDPSocket Connect", testUDPConnect, "UDPSocket");
+    context.AddTest("UDPSocket Exception Handling", testExceptionHandling, "UDPSocket");
+
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");
     context.WriteJUnit(junit);

@@ -14,7 +14,7 @@
 	UDataTests.h
     StatisticalToolsTests.h
     GaussianVariableTests.h
-    ParticleFilterTests.h)
+    ParticleFilterTests.h TCPSocketTests.h UDPSocketTests.h)
 
 
 set(SRCS
@@ -34,7 +34,7 @@ set(SRCS
 	UDataTests.cpp
     StatisticalToolsTests.cpp
     GaussianVariableTests.cpp
-    ParticleFilterTests.cpp)
+    ParticleFilterTests.cpp TCPSocketTests.cpp UDPSocketTests.cpp)
 
 include_directories(${CMAKE_SOURCE_DIR}/support/inc/)
 include_directories(${CMAKE_SOURCE_DIR}/framework/inc/)
