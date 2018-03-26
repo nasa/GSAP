@@ -947,7 +947,7 @@ namespace TestMatrix {
                 }
                 double det1 = m.determinant();
                 double det2 = laplaceDeterminant(m);
-                double e = std::abs((det1 + det2) / 2e9);
+                double e = std::abs((det1 + det2) / 2e8);
                 Assert::AreEqual(det1, det2, e, "Random determinants");
             }
             for (size_t j = 0; j < ITERATIONS * 2; j++)
