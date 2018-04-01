@@ -7,13 +7,422 @@
 #include "TCPSocketTests.h"
 #include "Test.h"
 #include "TCPSocket.h"
+#include "TCPSocketServer.h"
+#include <thread>
+#include <cstring>
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
 void testTCPctor() {
-    TCPSocket testSocket = TCPSocket(0);
-    TCPSocket testSocket2 = TCPSocket(10);
-    TCPSocket testSocket3 = TCPSocket("127.0.0.1", 10);
+    try {
+        TCPSocket testSocket = TCPSocket(AF_INET);
+    }
+    catch (...) {
+        Assert::Fail("Ctor using AF_INET failed.");
+    }
+    try {
+        TCPSocket testSocket2 = TCPSocket(AF_INET6);
+    }
+    catch (...) {
+        Assert::Fail("Ctor using AF_INET6 failed.");
+    }
 
+    TCPSocket testSocket = TCPSocket(AF_INET);
+    try {
+        TCPSocket testSocket4(std::move(testSocket));
+    }
+    catch (...) {
+        Assert::Fail("Move Ctor failed.");
+    }
+    TCPSocket testSocket4, testSocket5;
+    testSocket4 = TCPSocket(AF_INET);
+    try {
+        testSocket5 = std::move(testSocket4);
+    }
+    catch (...) {
+        Assert::Fail("= operator failed.");
+    }
+}
+
+void testTCPServerCtor() {
+    TCPSocketServer testServer = TCPSocketServer(AF_INET);
+    TCPSocketServer testServer2 = TCPSocketServer(AF_INET, "127.0.0.1", 55555);
+    TCPSocketServer testServer3(std::move(testServer));
+    TCPSocketServer testServer4;
+    testServer4 = std::move(testServer3);
+}
+
+void testTCPSendAndReceive() {
+    TCPSocketServer testServer = TCPSocketServer(AF_INET);
+    testServer.Listen();
+
+    TCPSocket testClient = TCPSocket(AF_INET);
+
+    testClient.Connect("127.0.0.1", 8080);
+
+    char buffer[1024] = "Hello, this is a test message.";
+    testClient.Send(buffer, sizeof(buffer)/ sizeof(buffer[0]));
+    testServer.Accept();
+    char serverBuffer[1024] = {0};
+    testServer.Receive(serverBuffer, sizeof(serverBuffer)/sizeof(serverBuffer[0]));
+
+    Assert::AreEqual(0, strcmp(buffer, serverBuffer));
+
+    char serverReturnMessage[1024] = "Hello from Server.";
+    testServer.Send(0, serverReturnMessage, sizeof(serverReturnMessage)/sizeof(serverReturnMessage[0]));
+
+    char receiveBuffer[1024] = {0};
+    testClient.Receive(receiveBuffer, sizeof(receiveBuffer)/ sizeof(receiveBuffer[0]));
+    std::cout << receiveBuffer << std::endl;
+
+    TCPSocket::size_type result = testClient.Available();
+    Assert::AreEqual(0, result, "Bytes available to read not 0");
+
+    testServer.Listen();
+
+    TCPSocket testClientTwo = TCPSocket("127.0.0.1", 8080);
+
+    char buffer2[] = "Hello, this is a second message from ClientTwo.";
+    testClientTwo.Send(buffer2, strlen(buffer2));
+    testServer.Accept();
+    char serverBuffer2[1024] = {0};
+    testServer.Receive(serverBuffer2, sizeof(serverBuffer2)/ sizeof(serverBuffer2[0]));
+
+    Assert::AreEqual(0, strcmp(buffer2, serverBuffer2));
+
+    testServer.Listen();
+
+    struct sockaddr_in sa = {};
+    sa.sin_port = htons(8080);
+    inet_aton("127.0.0.1", &sa.sin_addr);
+    sa.sin_family = AF_INET;
+
+    TCPSocket testClientThree = TCPSocket(AF_INET);
+    testClientThree.Connect((struct sockaddr*)&sa, sizeof(sa), AF_INET);
+
+    char buffer3[] = "Hello, this is a third message from ClientThree";
+    testClientThree.Send(buffer3, strlen(buffer3));
+    testServer.Accept();
+    char serverBuffer3[1024] = {0};
+    testServer.Receive(2, serverBuffer3, sizeof(serverBuffer3)/ sizeof(serverBuffer3[0]));
+
+    char sendAllMessage[] = "Hello, this is a message from Server to all Clients.";
+    testServer.SendAll(sendAllMessage, strlen(sendAllMessage));
+}
+
+void testTCPClose() {
+    TCPSocketServer testServer(AF_INET);
+
+    TCPSocket testClient1(AF_INET);
+    TCPSocket testClient2(AF_INET);
+    TCPSocket testClient3(AF_INET);
+    TCPSocket testClient4(AF_INET);
+
+    testServer.Listen();
+
+    testClient1.Connect("127.0.0.1", 8080);
+    testServer.Accept();
+
+    testServer.Listen();
+
+    testClient2.Connect("127.0.0.1", 8080);
+    testServer.Accept();
+
+    testServer.Listen();
+
+    testClient3.Connect("127.0.0.1", 8080);
+    testServer.Accept();
+
+    testServer.Close(1);
+
+    testServer.Listen();
+    testClient4.Connect("127.0.0.1", 8080);
+    testServer.Accept();
+
+    testServer.Close(0);
+
+    try {
+        char messageToSend[] = "Hello from Server.";
+        testServer.Send(0, messageToSend, strlen(messageToSend));
+        Assert::Fail("Server sent message to closed  client.");
+    }
+    catch (...) {}
+
+    testServer.CloseAll();
+
+    for (auto i = 1; i <= 3; ++i) {
+        try {
+            char messageToSend[] = "Hello from Server.";
+            testServer.Send(i, messageToSend, strlen(messageToSend));
+            Assert::Fail("Server sent message to closed client.");
+        }
+        catch (...) {}
+    }
+}
+
+void testTCPNoDelay() {
+    TCPSocketServer testServer(AF_INET);
+
+    TCPSocket testSocket(AF_INET);
+
+    Assert::IsFalse(testSocket.NoDelay());
+    testSocket.NoDelay(true);
+    Assert::IsTrue(testSocket.NoDelay());
+}
+
+void testTCPReceiveBufferSize() {
+    TCPSocket testSocket(AF_INET);
+
+    testSocket.ReceiveBufferSize(2048);
+    Assert::AreEqual(4096, testSocket.ReceiveBufferSize());
+}
+
+void testTCPReceiveTimeout() {
+    TCPSocket testSocket(AF_INET);
+
+    testSocket.ReceiveTimeout(100);
+    Assert::AreEqual(testSocket.ReceiveTimeout().tv_sec, 100);
+
+    TCPSocket::timeout_type value = {};
+    value.tv_sec = 200;
+    testSocket.ReceiveTimeout(value);
+    Assert::AreEqual(200, testSocket.ReceiveTimeout().tv_sec);
+}
+
+void testTCPSendBufferSize() {
+    TCPSocket testSocket(AF_INET);
+
+    testSocket.SendBufferSize(4096);
+    Assert::AreEqual(8192, testSocket.SendBufferSize());
+}
+
+void testTCPSendTimeout() {
+    TCPSocket testSocket(AF_INET);
+
+    testSocket.SendTimeout(100);
+    Assert::AreEqual(100, testSocket.SendTimeout().tv_sec);
+
+    TCPSocket::timeout_type value = {};
+    value.tv_sec = 200;
+    testSocket.SendTimeout(value);
+    Assert::AreEqual(200, testSocket.SendTimeout().tv_sec);
+}
+
+void testTCPExceptions() {
+    TCPSocketServer testServer(AF_INET);
+    TCPSocketServer testServer2(AF_INET);
+    TCPSocket testSocket1(AF_INET);
+    TCPSocket testSocket2(AF_INET);
+    TCPSocket testSocket3(AF_INET);
+    char messageFromServer[] = "Hello from Server";
+    char hugeMessage[INT16_MAX] = {0};
+
+    testServer.Listen();
+
+    // Server's Listen() exception
+    try {
+        testServer2.Listen();
+        Assert::Fail("Another server is listening on a used port.");
+    }
+    catch (...) {}
+
+    // Server's Accept() exception tests
+    try {
+        testServer2.Accept();
+        Assert::Fail("Server tried accepting a connection when it's not listening.");
+    }
+    catch (...) {}
+
+    // Server's CreateServer() exception tests
+    try {
+        TCPSocketServer failServer(AF_INET6);
+        Assert::Fail("Created server with unsupported address family.");
+    }
+    catch (...) {}
+
+    try {
+        TCPSocketServer failServer(AF_PACKET);
+        Assert::Fail("Created server with unsupported address family.");
+    }
+    catch (...) {}
+
+    try {
+        TCPSocketServer failServer(1024);
+        Assert::Fail("Created server with unsupported address family.");
+    }
+    catch (...) {}
+
+    try {
+        TCPSocketServer failServer(AF_INET, "bad hostname", 55555);
+        Assert::Fail("Created server with bad hostname.");
+    }
+    catch (...) {}
+
+    try {
+        TCPSocketServer failServer(AF_INET, "127.0.0.1", 80);
+        Assert::Fail("Created server with bad port.");
+    }
+    catch (...) {}
+
+    try {
+        TCPSocketServer failServer(1024, "127.0.0.1", 8080);
+        Assert::Fail("Created server with unsupported address family.");
+    }
+    catch (...) {}
+
+    try {
+        TCPSocketServer failServer(AF_PACKET, "127.0.0.1", 8080);
+        Assert::Fail("Created server with unsupported address family.");
+    }
+    catch (...) {}
+
+    // Client's Connect() exception tests
+    testSocket1.Close();
+    testServer.Listen();
+    try {
+        testSocket1.Connect("127.0.0.1", 8080);
+        Assert::Fail("Socket attempted connection after closing.");
+    }
+    catch (...) {}
+
+    TCPSocket testSocket4(AF_INET);
+    try {
+        testSocket4.Connect("bad hostname", 8080);
+        Assert::Fail("Socket connected to bad hostname.");
+    }
+    catch (...) {}
+
+    // Client's Receive() exception tests
+    testSocket4.Connect("127.0.0.1", 8080);
+    testServer.Accept();
+    try {
+        char recvBuffer[0];
+        testServer.SendAll(messageFromServer, strlen(messageFromServer));
+        testSocket4.ReceiveTimeout(2);
+        testSocket4.Receive(recvBuffer, strlen(messageFromServer));
+        Assert::Fail("Socket received message while having a size 0 buffer.");
+    }
+    catch (...) {}
+
+    // Client-creation exception tests
+    try {
+        TCPSocket failSocket(1024);
+        TCPSocket failSocket2(AF_UNIX);
+        TCPSocket failSocket3(AF_PACKET);
+        Assert::Fail("Socket created with bad address family.");
+    }
+    catch (...) {}
+
+    testServer.CloseAll();
+    testServer.Listen();
+
+    // Client's Connect() with sockaddr exception test
+    testSocket4.Close();
+    struct sockaddr_in sa = {};
+    sa.sin_port = htons(80);
+    inet_aton("bad address", &sa.sin_addr);
+    sa.sin_family = AF_INET;
+    try {
+        testSocket4.Connect((struct sockaddr *) &sa, sizeof(sa), AF_INET);
+        Assert::Fail("Client connected to Server with bad port/address.");
+    }
+    catch (...) {}
+
+    // Client's NoDelay exception tests
+    testSocket4.Close();
+    try {
+        testSocket4.NoDelay();
+        Assert::Fail("Invalid socket got delay value.");
+    }
+    catch (...) {}
+
+    try {
+        testSocket4.NoDelay(true);
+        testSocket4.NoDelay(false);
+        Assert::Fail("Invalid socket set delay value.");
+    }
+    catch (...) {}
+
+    // Client's ReceiveBufferSize exception tests
+    try {
+        testSocket4.ReceiveBufferSize();
+        Assert::Fail("Invalid socket got recv buffer size value.");
+    }
+    catch (...) {}
+
+    try {
+        testSocket4.ReceiveBufferSize(100);
+        Assert::Fail("Invalid socket set recv buffer size value.");
+    }
+    catch (...) {}
+
+    // Client's ReceiveTimeout exception tests
+    try {
+        testSocket4.ReceiveTimeout();
+        Assert::Fail("Invalid socket got timeout value.");
+    }
+    catch (...) {}
+
+    try {
+        testSocket4.ReceiveTimeout(100);
+        Assert::Fail("Invalid socket set timeout value.");
+    }
+    catch (...) {}
+
+    try {
+        TCPSocket::timeout_type val {};
+        val.tv_sec = 100;
+
+        testSocket4.ReceiveTimeout(val);
+    }
+    catch (...) {}
+
+    // Client's SendBufferSize() exception tests
+    try {
+        testSocket4.SendBufferSize();
+        Assert::Fail("Invalid socket got send buffer size value.");
+    }
+    catch (...) {}
+
+    try {
+        testSocket4.SendBufferSize(100);
+        Assert::Fail("Invalid socket set send buffer size value.");
+    }
+    catch (...) {}
+
+    // Client's SendTimeOut() exception tests
+    try {
+        testSocket4.SendTimeout();
+        Assert::Fail("Invalid socket got send timeout value.");
+    }
+    catch (...) {}
+
+    try {
+        testSocket4.SendTimeout(100);
+        Assert::Fail("Invalid socket set send timeout value.");
+    }
+    catch (...) {}
+
+    try {
+        TCPSocket::timeout_type t = {};
+        t.tv_sec = 100;
+        testSocket4.SendTimeout(t);
+        Assert::Fail("Invalid socket set send timeout value.");
+    }
+    catch (...) {}
+
+    // Client's Send() exception test
+    try {
+        char messageToSend[] = "Hello from client. This message should not be able to be sent.";
+        testSocket4.Send(messageToSend, strlen(messageToSend));
+        Assert::Fail("Invalid socket sent message.");
+    }
+    catch (...) {}
+
+    try {
+        testSocket4.Available();
+        Assert::Fail("Invalid socket got bytes available to read.");
+    }
+    catch (...) {}
 }

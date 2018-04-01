@@ -233,7 +233,16 @@ int main() {
 //    context.AddTest("ConstLoadUcert", PCOE::testConstLoadWithUncert, "LoadEstimator");
 
     // TCPSocket Tests
-    //context.AddTest("TCP Socket with af", testTCPctor, "TCPSocket");
+    context.AddTest("TCPSocket Constructor", testTCPctor, "TCPSocket");
+    context.AddTest("TCPSocketServer Constructor", testTCPServerCtor, "TCPSocket");
+    context.AddTest("TCPSocket Send and Receive", testTCPSendAndReceive, "TCPSocket");
+    context.AddTest("TCPSocket Closers", testTCPClose, "TCPSocket");
+    context.AddTest("TCPSocket NoDelay", testTCPNoDelay, "TCPSocket");
+    context.AddTest("TCPSocket ReceiveBufferSize", testTCPReceiveBufferSize, "TCPSocket");
+    context.AddTest("TCPSocket ReceiveTimeout", testTCPReceiveTimeout, "TCPSocket");
+    context.AddTest("TCPSocket SendBufferSize", testTCPSendBufferSize, "TCPSocket");
+    context.AddTest("TCPSocket SendTimeout", testTCPSendTimeout, "TCPSocket");
+    context.AddTest("TCPSocket Exceptions", testTCPExceptions, "TCPSocket");
 
     // UDPSocket Tests
     context.AddTest("UDPSocket Constructor", testUDPCtor, "UDPSocket");

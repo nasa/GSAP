@@ -38,7 +38,7 @@ set (HEADERS
 	inc/BenchmarkTimer.h
 	inc/TCPSocket.h
 	inc/UDPSocket.h
-)
+        inc/TCPSocketServer.h)
 
 set(SRCS
 	src/ConfigMap.cpp
@@ -65,7 +65,7 @@ set(SRCS
 	src/UDataInterfaces.cpp
 	src/UDPSocket.cpp
 	src/UnscentedKalmanFilter.cpp
-)
+        src/TCPSocketServer.cpp)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)
 
