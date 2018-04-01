@@ -16,9 +16,10 @@ void testUDPCtor() {
     try {
         UDPSocket socket1 = UDPSocket(AF_INET, 55555);
         UDPSocket socket2 = UDPSocket(AF_INET, 55556);
-        char port = '5';
-        sockaddr si = {AF_INET, port};
-        UDPSocket socket3 = UDPSocket(&si, sizeof(si));
+        sockaddr_in si = {};
+        si.sin_family = AF_INET;
+        si.sin_port = htons(55557);
+        UDPSocket socket3 = UDPSocket((struct sockaddr*)&si, sizeof(si));
         UDPSocket socket4 = UDPSocket("127.0.0.1", 55558);
         UDPSocket socket5 = std::move(socket4);
         UDPSocket socket6;
@@ -63,10 +64,12 @@ void testUDPSendandReceive() {
     Assert::IsTrue(strcmp(buffer, buffer2) == 0, "Buffers are not the same.");
 
     int port = 55557;
-    sockaddr si = {AF_INET, port};
-    UDPSocket socket3 = UDPSocket(&si, sizeof(si));
-    socket1.Connect(&si, sizeof(si));
-    socket1.Send(buffer, sizeof(buffer)/sizeof(buffer[0]), &si, sizeof(si));
+    sockaddr_in si = {};
+    si.sin_family = AF_INET;
+    si.sin_port = htons(port);
+    UDPSocket socket3 = UDPSocket((struct sockaddr*)&si, sizeof(si));
+    socket1.Connect((struct sockaddr*)&si, sizeof(si));
+    //socket1.Send(buffer, sizeof(buffer)/sizeof(buffer[0]), (struct sockaddr*)&si, sizeof(si));
 
 }
 
@@ -92,9 +95,11 @@ void testExceptionHandling() {
     catch (...) {}
 
     int port = 55555;
-    sockaddr addr = {AF_INET, port};
+    sockaddr_in addr = {};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
     try {
-        UDPSocket socket6 = UDPSocket(&addr, sizeof(addr));
+        UDPSocket socket6 = UDPSocket((struct sockaddr*)&addr, sizeof(addr));
         Assert::Fail("Socket created using taken port.");
     }
     catch  (...) {}
@@ -109,26 +114,66 @@ void testExceptionHandling() {
     Assert::AreEqual(0, result, "Available() returns bytes even though no more bytes are being sent.");
 
     port = 55558;
-    addr = {AF_UNIX, port};
+    addr.sin_family = AF_UNIX;
+    addr.sin_port = htons(port);
     try {
-        socket1.Connect(&addr, sizeof(addr));
+        socket1.Connect((struct sockaddr*)&addr, sizeof(addr));
         Assert::Fail("Connected socket to socket with unsupported address family");
     }
     catch (...) {}
 
-    port = 0;
-    addr = {AF_INET, port};
     try {
-        socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), &addr, sizeof(addr));
+        //socket1.Close();
+        socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), (struct sockaddr*)&addr, sizeof(addr));
+        Assert::Fail("Invalid socket sent data.");
     }
     catch (...) {}
 
     port = 55556;
-    addr = {AF_INET, };
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
+    socket1 = UDPSocket(AF_INET);
+    socket1.Connect((struct sockaddr*)&addr, sizeof(addr));
+    try {
+        socket3.Close();
+        socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), (struct sockaddr*)&addr, sizeof(addr));
+        socket3.Receive(buffer2, 30, (struct sockaddr*)&addr, reinterpret_cast<socklen_t *>(sizeof(addr)));
+        Assert::Fail("Invalid socket received data.");
+    }
+    catch (...) {}
 
     try {
-        socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), &addr, sizeof(addr));
-        socket3.Receive(buffer2, 30, &addr, reinterpret_cast<socklen_t *>(sizeof(addr)));
+        char messageToSend[] = "Hello, this is a test message, not meant to be sent.";
+        UDPSocket failSocket(AF_INET, 55561);
+        UDPSocket failSocket2(AF_INET, 55562);
+        failSocket.Connect("127.0.0.1", 55562);
+        failSocket.Close();
+        failSocket.Send(messageToSend, strlen(messageToSend));
+    }
+    catch (...) {}
+
+    try {
+        char messageToSend[] = "Hello, this is a test message, not meant to be sent.";
+        UDPSocket failSocket(AF_INET, 55561);
+        UDPSocket failSocket2(AF_INET, 55562);
+        failSocket.Close();
+        failSocket.Send(messageToSend, strlen(messageToSend), "127.0.0.1", 55562);
+    }
+    catch (...) {}
+
+    try {
+        UDPSocket failSocket(AF_INET, 55561);
+        UDPSocket failSocket2(AF_INET, 55562);
+        failSocket.Close();
+        failSocket.Connect("127.0.0.1", 55562);
+    }
+    catch (...) {}
+
+    try {
+        UDPSocket failSocket(AF_INET, 55561);
+        UDPSocket failSocket2(AF_INET, 55562);
+        failSocket.Close();
+        failSocket.Available();
     }
     catch (...) {}
 }
