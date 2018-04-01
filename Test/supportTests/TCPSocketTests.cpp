@@ -299,7 +299,7 @@ void testTCPExceptions() {
     try {
         char recvBuffer[0];
         testServer.SendAll(messageFromServer, strlen(messageFromServer));
-        testSocket4.ReceiveTimeout(2);
+        testSocket4.ReceiveTimeout(0.5);
         testSocket4.Receive(recvBuffer, strlen(messageFromServer));
         Assert::Fail("Socket received message while having a size 0 buffer.");
     }
