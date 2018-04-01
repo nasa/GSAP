@@ -191,7 +191,8 @@ int main() {
     context.AddTest("treadctrl", tctrltests, "Thread");
     context.AddTest("Exception", exceptiontest, "Thread");
     context.AddTest("Move Constructor", moveCtor, "Thread");
-    //context.AddTest("Assignment Operator", assignmentOperator, "Thread");
+    context.AddTest("Assignment Operator", assignmentOperator, "Thread");
+    context.AddTest("Get ID", testGetID, "Thread");
     //context.AddTest("Destructor", testDestructor, "Thread");
 
     // Predictor Tests

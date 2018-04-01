@@ -60,6 +60,127 @@ void exceptiontest() {
     catch (std::exception ex) {
         Assert::Fail();
     }
+
+    test = TestThreadExceptionClass();
+    {   // Exceptions associated with enabling
+        test.enable();
+        try {
+            test.enable();
+            Assert::Fail("Thread was enabled twice.");
+        }
+        catch (...) {}
+
+        test.start();
+        try {
+            test.enable();
+            Assert::Fail("Thread was enabled after starting.");
+        }
+        catch (...) {}
+
+        test.pause();
+        try {
+            test.enable();
+            Assert::Fail("Thread was enabled after pausing.");
+        }
+        catch (...) {}
+
+        test.stop();
+        try {
+            test.enable();
+            Assert::Fail("Thread was enabled after stopping.");
+        }
+        catch (...) {}
+
+        test.join();
+        try {
+            test.enable();
+            Assert::Fail("Thread was enabled after joining.");
+        }
+        catch (...) {}
+    }
+
+    test = TestThreadExceptionClass();
+    {   // Exceptions associated with starting
+        test.enable();
+        test.start();
+        try {
+            test.start();
+            Assert::Fail("Thread started twice.");
+        }
+        catch (...) {}
+
+        test.stop();
+        try {
+            test.start();
+            Assert::Fail("Thread started after stopping.");
+        }
+        catch (...) {}
+
+        test.join();
+        try {
+            test.start();
+            Assert::Fail("Thread started after joining.");
+        }
+        catch (...) {}
+    }
+
+    test = TestThreadExceptionClass();
+    {   // Exceptions associated with pausing
+        test.enable();
+        test.start();
+        test.pause();
+        try {
+            test.pause();
+            Assert::Fail("Thread paused twice.");
+        }
+        catch (...) {}
+
+        test.stop();
+        try {
+            test.pause();
+            Assert::Fail("Thread paused after stopping.");
+        }
+        catch (...) {}
+
+        test.join();
+        try {
+            test.pause();
+            Assert::Fail("Thread paused after joining.");
+        }
+        catch (...)  {}
+    }
+
+    test = TestThreadExceptionClass();
+    {   // Exceptions associated with stopping
+        test.enable();
+        test.start();
+        test.stop();
+        try {
+            test.stop();
+            Assert::Fail("Thread stopped twice.");
+        }
+        catch (...) {}
+
+        test.join();
+        try {
+            test.stop();
+            Assert::Fail("Thread stopped after joining.");
+        }
+        catch (...) {}
+    }
+
+    test = TestThreadExceptionClass();
+    {   // Exceptions associated with joining
+        test.enable();
+        test.start();
+        test.stop();
+        test.join();
+        try {
+            test.join();
+            Assert::Fail("Thread joined  twice.");
+        }
+        catch (...) {}
+    }
 }
 
 void moveCtor() {
@@ -73,7 +194,15 @@ void moveCtor() {
 }
 
 void assignmentOperator() {
+    TestThreadClass test, test2;
+    test2 = std::move(test);
+}
+
+void testGetID() {
     TestThreadClass test;
-    TestThreadClass test2 = (std::move(test));
-    TestThreadClass test3 = std::move(test2);
+    test.enable();
+    test.start();
+    test.stop();
+    Assert::IsFalse(test.getID() == std::thread::id());
+    test.join();
 }

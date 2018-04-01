@@ -13,5 +13,9 @@ void tctrltests();
 void exceptiontest();
 void moveCtor();
 void assignmentOperator();
+void testGetID();
+void testDestructor();
+
+
 
 #endif // THREADTESTS_H
