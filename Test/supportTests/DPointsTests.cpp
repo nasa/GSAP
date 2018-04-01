@@ -125,3 +125,17 @@ void testDPointsUpdate()
 
     Assert::IsNaN(test["Test1"][0].get());
 }
+
+void testPEventsIncludes() {
+    ProgEvents test;
+    test.addNew("Test", "Test Desc");
+    Assert::IsTrue(test.includes("Test"));
+    Assert::IsFalse(test.includes("Test2"));
+}
+
+void testDPointsIncludes() {
+    DataPoints test;
+    test.addNew("Test", "Test Desc");
+    Assert::IsTrue(test.includes("Test"));
+    Assert::IsFalse(test.includes("Test2"));
+}
