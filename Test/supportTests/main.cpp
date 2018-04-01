@@ -87,6 +87,8 @@ int main() {
     context.AddTest("DPoint Init", testDPointsInit, "DPoints");
     context.AddTest("P Event Update", testPEventsUpdate, "DPoints");
     context.AddTest("D Point Update", testDPointsUpdate, "DPoints");
+    context.AddTest("P Event Includes", testPEventsIncludes, "DPoints");
+    context.AddTest("D Points Includes", testDPointsIncludes, "DPoints");
 
     // DPoint Tests
     context.AddTest("Initialization", testDPointInit, "DPoint");
