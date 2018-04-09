@@ -22,24 +22,22 @@
 #define _ioctl ioctl
 #endif
 
-
 namespace PCOE {
     /// @brief RAII wrapper around and addrinfo pointer created by getaddrinfo
     class AddressInfo {
     public:
-        AddressInfo() : result(nullptr) { }
+        AddressInfo() : result(nullptr) {}
         AddressInfo(const AddressInfo&) = delete;
         AddressInfo(AddressInfo&& other) : AddressInfo() {
             std::swap(result, other.result);
         }
         AddressInfo& operator=(const AddressInfo&) = delete;
-        AddressInfo& operator= (AddressInfo&& other) {
+        AddressInfo& operator=(AddressInfo&& other) {
             std::swap(result, other.result);
             return *this;
         }
 
-        AddressInfo(const char* hostname, const char* port, addrinfo* hints)
-            : AddressInfo() {
+        AddressInfo(const char* hostname, const char* port, addrinfo* hints) : AddressInfo() {
             int status = getaddrinfo(hostname, port, hints, &result);
             if (status) {
                 std::error_code ec(sockerr, std::generic_category());
@@ -53,22 +51,24 @@ namespace PCOE {
             }
         }
 
-        operator addrinfo() { return *result; }
-        addrinfo* operator&() { return result; }
+        operator addrinfo() {
+            return *result;
+        }
+        addrinfo* operator&() {
+            return result;
+        }
 
     private:
         addrinfo* result;
     };
 
-    static AddressInfo GetAddressInfo(const std::string& hostname,
-                                      unsigned short port,
-                                      int af) {
+    static AddressInfo GetAddressInfo(const std::string& hostname, unsigned short port, int af) {
         // Try to resolve the given host using the address family specified in
         // the constructor. after calling getaddrinfo, result is a singly
         // linked list of zero or more valid addresses for the host.
         // Note: freeaddrinfo must be called on result before exiting
         std::string portStr = std::to_string(port);
-        addrinfo hints = { };
+        addrinfo hints = {};
         hints.ai_family = af;
         hints.ai_protocol = IPPROTO_TCP;
         hints.ai_socktype = SOCK_STREAM;
@@ -91,7 +91,8 @@ namespace PCOE {
         }
         if (wsa.wVersion != MAKEWORD(2, 2)) {
             std::error_code ec(sockerr, std::generic_category());
-            throw std::system_error(ec, "Not using Winsock 2.2. How did you even get this code to run on Windows 3.1?");
+            throw std::system_error(
+                ec, "Not using Winsock 2.2. How did you even get this code to run on Windows 3.1?");
         }
 #endif
         if (af != AF_UNSPEC) {
@@ -99,13 +100,11 @@ namespace PCOE {
         }
     }
 
-    TCPSocket::TCPSocket(const std::string& hostname, const unsigned short port)
-        : TCPSocket() {
+    TCPSocket::TCPSocket(const std::string& hostname, const unsigned short port) : TCPSocket() {
         Connect(hostname, port);
     }
 
-    TCPSocket::TCPSocket(TCPSocket&& other)
-        : sock(other.sock), family(other.family) {
+    TCPSocket::TCPSocket(TCPSocket&& other) : sock(other.sock), family(other.family) {
         other.sock = InvalidSocket;
         other.family = AF_UNSPEC;
     }
@@ -188,11 +187,8 @@ namespace PCOE {
     bool TCPSocket::NoDelay() {
         int value = 0;
         socklen_t len = sizeof(value);
-        int result = getsockopt(sock,
-                                IPPROTO_TCP,
-                                TCP_NODELAY,
-                                reinterpret_cast<char*>(&value),
-                                &len);
+        int result =
+            getsockopt(sock, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&value), &len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Get NoDelay failed");
@@ -203,11 +199,8 @@ namespace PCOE {
     void TCPSocket::NoDelay(bool value) {
         int nval = value ? 1 : 0;
         socklen_t len = sizeof(nval);
-        int result = setsockopt(sock,
-                                IPPROTO_TCP,
-                                TCP_NODELAY,
-                                reinterpret_cast<char*>(&nval),
-                                len);
+        int result =
+            setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nval), len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Set NoDelay failed");
@@ -217,11 +210,7 @@ namespace PCOE {
     TCPSocket::size_type TCPSocket::ReceiveBufferSize() {
         size_type value = 0;
         socklen_t len = sizeof(value);
-        int result = getsockopt(sock,
-                                SOL_SOCKET,
-                                SO_RCVBUF,
-                                reinterpret_cast<char*>(&value),
-                                &len);
+        int result = getsockopt(sock, SOL_SOCKET, SO_RCVBUF, reinterpret_cast<char*>(&value), &len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Get receive buffer size failed");
@@ -231,11 +220,7 @@ namespace PCOE {
 
     void TCPSocket::ReceiveBufferSize(size_type value) {
         socklen_t len = sizeof(value);
-        int result = setsockopt(sock,
-                                SOL_SOCKET,
-                                SO_RCVBUF,
-                                reinterpret_cast<char*>(&value),
-                                len);
+        int result = setsockopt(sock, SOL_SOCKET, SO_RCVBUF, reinterpret_cast<char*>(&value), len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Set receive buffer size failed");
@@ -245,11 +230,8 @@ namespace PCOE {
     TCPSocket::timeout_type TCPSocket::ReceiveTimeout() {
         timeout_type value;
         socklen_t len = sizeof(value);
-        int result = getsockopt(sock,
-                                SOL_SOCKET,
-                                SO_RCVTIMEO,
-                                reinterpret_cast<char*>(&value),
-                                &len);
+        int result =
+            getsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char*>(&value), &len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Get receive tiemout failed");
@@ -259,11 +241,8 @@ namespace PCOE {
 
     void TCPSocket::ReceiveTimeout(timeout_type value) {
         socklen_t len = sizeof(value);
-        int result = setsockopt(sock,
-                                SOL_SOCKET,
-                                SO_RCVTIMEO,
-                                reinterpret_cast<char*>(&value),
-                                len);
+        int result =
+            setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char*>(&value), len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Set receive timeout failed");
@@ -272,19 +251,15 @@ namespace PCOE {
 
     void TCPSocket::ReceiveTimeout(double value) {
 #ifdef _WIN32
-        timeout_type to = (long int) value * 1e3;
+        timeout_type to = (long int)value * 1e3;
 #else
         timeout_type to;
         to.tv_sec = static_cast<long int>(value);
         to.tv_usec = static_cast<long int>((value - to.tv_sec) * 1e6);
 #endif
         socklen_t len = sizeof(to);
-    
-        int result = setsockopt(sock,
-                                SOL_SOCKET,
-                                SO_RCVTIMEO,
-                                reinterpret_cast<char*>(&to),
-                                len);
+
+        int result = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char*>(&to), len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Set receive timeout failed");
@@ -294,11 +269,7 @@ namespace PCOE {
     TCPSocket::size_type TCPSocket::SendBufferSize() {
         size_type value = 0;
         socklen_t len = sizeof(value);
-        int result = getsockopt(sock,
-                                SOL_SOCKET,
-                                SO_SNDBUF,
-                                reinterpret_cast<char*>(&value),
-                                &len);
+        int result = getsockopt(sock, SOL_SOCKET, SO_SNDBUF, reinterpret_cast<char*>(&value), &len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Get send buffer size failed");
@@ -308,11 +279,7 @@ namespace PCOE {
 
     void TCPSocket::SendBufferSize(size_type value) {
         socklen_t len = sizeof(value);
-        int result = setsockopt(sock,
-                                SOL_SOCKET,
-                                SO_SNDBUF,
-                                reinterpret_cast<char*>(&value),
-                                len);
+        int result = setsockopt(sock, SOL_SOCKET, SO_SNDBUF, reinterpret_cast<char*>(&value), len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Set send buffer size failed");
@@ -322,11 +289,8 @@ namespace PCOE {
     TCPSocket::timeout_type TCPSocket::SendTimeout() {
         timeout_type value;
         socklen_t len = sizeof(value);
-        int result = getsockopt(sock,
-                                SOL_SOCKET,
-                                SO_SNDTIMEO,
-                                reinterpret_cast<char*>(&value),
-                                &len);
+        int result =
+            getsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char*>(&value), &len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Get send tiemout failed");
@@ -336,32 +300,25 @@ namespace PCOE {
 
     void TCPSocket::SendTimeout(timeout_type value) {
         socklen_t len = sizeof(value);
-        int result = setsockopt(sock,
-                                SOL_SOCKET,
-                                SO_SNDTIMEO,
-                                reinterpret_cast<char*>(&value),
-                                len);
+        int result =
+            setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char*>(&value), len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Set send timeout failed");
         }
     }
-    
+
     void TCPSocket::SendTimeout(double value) {
 #ifdef _WIN32
-        timeout_type to = (long int) value * 1e3;
+        timeout_type to = (long int)value * 1e3;
 #else
         timeout_type to;
         to.tv_sec = static_cast<long int>(value);
         to.tv_usec = static_cast<long int>((value - to.tv_sec) * 1e6);
 #endif
         socklen_t len = sizeof(to);
-        
-        int result = setsockopt(sock,
-                                SOL_SOCKET,
-                                SO_SNDTIMEO,
-                                reinterpret_cast<char*>(&to),
-                                len);
+
+        int result = setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char*>(&to), len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Set send timeout failed");

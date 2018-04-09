@@ -60,7 +60,7 @@ namespace PCOE {
 #endif
         /// @brief Initializes a new instance of the @see{TCPSocket} class.
         ///        This constructor is equivalent to @code{TCPSocket(AF_UNSPEC)}.
-        TCPSocket() : TCPSocket(AF_UNSPEC) { }
+        TCPSocket() : TCPSocket(AF_UNSPEC) {}
 
         /// @brief   Initializes a new instance of the @see{TCPSocket} class
         ///          with the specified address family.
@@ -118,7 +118,9 @@ namespace PCOE {
         ///          the TCPSocket was constructed, or the address family used
         ///          to open the connection if AF_UNSPEC was set at
         ///          construction and the socket has subsequently been opened.
-        inline int AddressFamily() { return family; }
+        inline int AddressFamily() {
+            return family;
+        }
 
         /// @brief Gets the amount of data that has been received from the
         ///        network and is available to be read.
@@ -206,8 +208,9 @@ namespace PCOE {
         ///        DWORD representing milliseconds on windows and a timeval
         ///        on *NIX platforms.
         void ReceiveTimeout(timeout_type value);
-        
-        /// @brief Cross platform way of setting the  amount of time a TcpClient will wait in seconds to receive
+
+        /// @brief Cross platform way of setting the  amount of time a TcpClient will wait in
+        ///        seconds to receive
         ///        data once a read operation is initiated.
         void ReceiveTimeout(double value);
 
@@ -240,8 +243,9 @@ namespace PCOE {
         /// @exception std::system_error An error occurred when
         ///            attempting to access the socket.
         void SendTimeout(timeout_type value);
-        
-        /// @brief Cross platform way of setting the  amount of time a TcpClient will wait in seconds for the send operation to finish successfully
+
+        /// @brief Cross platform way of setting the  amount of time a TcpClient will wait in
+        ///        seconds for the send operation to finish successfully
         void SendTimeout(double value);
 
         /// Sends the given data.
@@ -254,7 +258,9 @@ namespace PCOE {
         size_type Send(const char buffer[], size_type len);
 
         /// @brief Gets the underlying socket.
-        inline sock_type Socket() noexcept { return sock; }
+        inline sock_type Socket() noexcept {
+            return sock;
+        }
 
         /// @brief Sets the underlying socket.
         inline void Socket(sock_type s) {
