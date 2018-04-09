@@ -18,15 +18,15 @@
 #ifndef GSAP_TCPSOCKETSERVER_H
 #define GSAP_TCPSOCKETSERVER_H
 
-#include <stdexcept>
-#include <string>
-#include <system_error>
-#include <map>
-#include <sys/types.h>
 #include <arpa/inet.h>
+#include <map>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <stdexcept>
+#include <string>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <system_error>
 #include <unistd.h>
 
 namespace PCOE {
@@ -100,7 +100,9 @@ namespace PCOE {
         ///          the TCPSocketServer was constructed, or the address family used
         ///          to open the connection if AF_UNSPEC was set at
         ///          construction and the socket has subsequently been opened.
-        inline int AddressFamily() { return family; }
+        inline int AddressFamily() {
+            return family;
+        }
 
         /// @brief Closes the underlying TCP connection and releases the
         ///        resources used by the @see{TCPSocketServer}.
@@ -153,7 +155,9 @@ namespace PCOE {
         size_type Receive(int socketKey, char buffer[], const size_type len);
 
         /// @brief Gets the underlying socket.
-        inline sock_type Socket() noexcept { return sock; }
+        inline sock_type Socket() noexcept {
+            return sock;
+        }
 
         /// @brief Sets the underlying socket.
         inline void Socket(sock_type s) {
@@ -165,7 +169,7 @@ namespace PCOE {
 
     private:
         void CreateServer(int af);
-        void CreateServer(int af, const std::string &hostname, const unsigned short port);
+        void CreateServer(int af, const std::string& hostname, const unsigned short port);
         int clientKeys;
         std::map<int, sock_type> mapOfClients;
         sock_type sock;
@@ -173,4 +177,4 @@ namespace PCOE {
     };
 }
 
-#endif //GSAP_TCPSOCKETSERVER_H
+#endif

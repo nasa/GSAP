@@ -3,18 +3,25 @@
 ///            the Administrator of the National Aeronautics and Space
 ///            Administration. All Rights Reserved.
 
-#include <iostream>
+#include "TCPSocketServer.h"
 #include <cstdio>
 #include <cstring>
-#include <netinet/tcp.h>
+#include <iostream>
 #include <thread>
-#include <sys/ioctl.h>
-#include "TCPSocketServer.h"
 
+#ifdef _WIN32
+#define _EAFNOSUPPORT WSAEAFNOSUPPORT
+#define sockerr WSAGetLastError()
+#define _close closesocket
+#define _ioctl ioctlsocket
+#else
 #define _EAFNOSUPPORT EAFNOSUPPORT
+#include <netinet/tcp.h>
+#include <sys/ioctl.h>
 #define sockerr errno
-#define _close  close
-#define _ioctl  ioctl
+#define _close close
+#define _ioctl ioctl
+#endif
 #define SERVER_PORT 8080
 
 namespace PCOE {
@@ -22,19 +29,18 @@ namespace PCOE {
     /// @brief RAII wrapper around and addrinfo pointer created by getaddrinfo
     class AddressInfo {
     public:
-        AddressInfo() : result(nullptr) { }
-            AddressInfo(const AddressInfo&) = delete;
-            AddressInfo(AddressInfo&& other) : AddressInfo() {
-                std::swap(result, other.result);
-            }
-            AddressInfo& operator=(const AddressInfo&) = delete;
-            AddressInfo& operator= (AddressInfo&& other) {
-                std::swap(result, other.result);
-                return *this;
+        AddressInfo() : result(nullptr) {}
+        AddressInfo(const AddressInfo&) = delete;
+        AddressInfo(AddressInfo&& other) : AddressInfo() {
+            std::swap(result, other.result);
+        }
+        AddressInfo& operator=(const AddressInfo&) = delete;
+        AddressInfo& operator=(AddressInfo&& other) {
+            std::swap(result, other.result);
+            return *this;
         }
 
-        AddressInfo(const char* hostname, const char* port, addrinfo* hints)
-                : AddressInfo() {
+        AddressInfo(const char* hostname, const char* port, addrinfo* hints) : AddressInfo() {
             int status = getaddrinfo(hostname, port, hints, &result);
             if (status) {
                 std::error_code ec(sockerr, std::generic_category());
@@ -48,20 +54,24 @@ namespace PCOE {
             }
         }
 
-        operator addrinfo() { return *result; }
-        addrinfo* operator&() { return result; }
+        operator addrinfo() {
+            return *result;
+        }
+        addrinfo* operator&() {
+            return result;
+        }
 
     private:
         addrinfo* result;
     };
 
-    static AddressInfo GetAddressInfo(const std::string &hostname, unsigned short port, int af) {
+    static AddressInfo GetAddressInfo(const std::string& hostname, unsigned short port, int af) {
         // Try to resolve the given host using the address family specified in
         // the constructor. after calling getaddrinfo, result is a singly
         // linked list of zero or more valid addresses for the host.
         // Note: freeaddrinfo must be called on result before exiting
         std::string portStr = std::to_string(port);
-        addrinfo hints = { };
+        addrinfo hints = {};
         hints.ai_family = af;
         hints.ai_protocol = IPPROTO_TCP;
         hints.ai_socktype = SOCK_STREAM;
@@ -77,13 +87,16 @@ namespace PCOE {
         }
     }
 
-    TCPSocketServer::TCPSocketServer(int af, const std::string &hostname, const unsigned short port) {
+    TCPSocketServer::TCPSocketServer(int af,
+                                     const std::string& hostname,
+                                     const unsigned short port) {
         if (af != AF_UNSPEC) {
             CreateServer(af, hostname, port);
         }
     }
 
-    TCPSocketServer::TCPSocketServer(TCPSocketServer &&other) : sock(other.sock), family(other.family) {
+    TCPSocketServer::TCPSocketServer(TCPSocketServer&& other)
+        : sock(other.sock), family(other.family) {
         other.sock = InvalidSocket;
         other.family = AF_UNSPEC;
     }
@@ -93,7 +106,7 @@ namespace PCOE {
         Close();
     }
 
-    TCPSocketServer &TCPSocketServer::operator=(TCPSocketServer &&other) {
+    TCPSocketServer& TCPSocketServer::operator=(TCPSocketServer&& other) {
         Close();
         sock = other.sock;
         family = other.family;
@@ -145,7 +158,9 @@ namespace PCOE {
         return socketToAccept;
     }
 
-    TCPSocketServer::size_type TCPSocketServer::Send(int socketKey, const char *buffer, TCPSocketServer::size_type len) {
+    TCPSocketServer::size_type TCPSocketServer::Send(int socketKey,
+                                                     const char* buffer,
+                                                     TCPSocketServer::size_type len) {
         sock_type socketToSend = mapOfClients.at(socketKey);
         ssize_type result = send(socketToSend, buffer, len, 0);
         if (result < 0) {
@@ -155,13 +170,15 @@ namespace PCOE {
         return static_cast<size_type>(result);
     }
 
-    TCPSocketServer::size_type TCPSocketServer::SendAll(const char *buffer, TCPSocketServer::size_type len) {
+    TCPSocketServer::size_type TCPSocketServer::SendAll(const char* buffer,
+                                                        TCPSocketServer::size_type len) {
         for (auto& sock : mapOfClients) {
             Send(sock.first, buffer, len);
         }
     }
 
-    TCPSocketServer::size_type TCPSocketServer::Receive(char *buffer, const TCPSocketServer::size_type len) {
+    TCPSocketServer::size_type TCPSocketServer::Receive(char* buffer,
+                                                        const TCPSocketServer::size_type len) {
         ssize_type result = recv(mapOfClients.at(mapOfClients.size() - 1), buffer, len, 0);
         if (result < 0) {
             std::error_code ec(sockerr, std::generic_category());
@@ -170,7 +187,9 @@ namespace PCOE {
         return static_cast<size_type>(result);
     }
 
-    TCPSocketServer::size_type TCPSocketServer::Receive(int socketKey, char *buffer, const TCPSocketServer::size_type len) {
+    TCPSocketServer::size_type TCPSocketServer::Receive(int socketKey,
+                                                        char* buffer,
+                                                        const TCPSocketServer::size_type len) {
         ssize_type result = recv(mapOfClients.at(socketKey), buffer, len, 0);
         if (result < 0) {
             std::error_code ec(sockerr, std::generic_category());
@@ -194,7 +213,9 @@ namespace PCOE {
         family = af;
 
         size_type value = 1;
-        if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&value), sizeof(int)) == -1) {
+        if (setsockopt(
+                sock, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&value), sizeof(int)) ==
+            -1) {
             int err = sockerr;
             std::error_code ec(err, std::generic_category());
             throw std::system_error(ec, "Socket creation failed--setsockopt.");
@@ -211,7 +232,9 @@ namespace PCOE {
         clientKeys = 0;
     }
 
-    void TCPSocketServer::CreateServer(int af, const std::string &hostname, const unsigned short port) {
+    void TCPSocketServer::CreateServer(int af,
+                                       const std::string& hostname,
+                                       const unsigned short port) {
         if ((sock = socket(af, SOCK_STREAM, IPPROTO_TCP)) == InvalidSocket) {
             int err = sockerr;
             if (err == _EAFNOSUPPORT) {
@@ -226,7 +249,9 @@ namespace PCOE {
         family = af;
 
         size_type value = 1;
-        if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&value), sizeof(int)) == -1) {
+        if (setsockopt(
+                sock, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&value), sizeof(int)) ==
+            -1) {
             int err = sockerr;
             std::error_code ec(err, std::generic_category());
             throw std::system_error(ec, "Socket creation failed--setsockopt.");
@@ -242,8 +267,4 @@ namespace PCOE {
 
         clientKeys = 0;
     }
-
-
 }
-
-
