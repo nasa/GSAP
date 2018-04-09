@@ -18,16 +18,25 @@
 #ifndef GSAP_TCPSOCKETSERVER_H
 #define GSAP_TCPSOCKETSERVER_H
 
-#include <arpa/inet.h>
 #include <map>
-#include <netdb.h>
-#include <netinet/in.h>
 #include <stdexcept>
 #include <string>
-#include <sys/socket.h>
 #include <sys/types.h>
 #include <system_error>
+
+#include <sys/types.h>
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#pragma comment(lib, "ws2_32.lib")
+using ssize_t = intptr_t;
+#else
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 #include <unistd.h>
+#endif
 
 namespace PCOE {
     class TCPSocketServer {
