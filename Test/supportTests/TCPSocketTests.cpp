@@ -263,7 +263,7 @@ void testTCPExceptions() {
     catch (...) {
     }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     // AF_PACKET doesn't exist on Windows
     try {
         TCPSocketServer failServer(AF_PACKET);
@@ -301,7 +301,7 @@ void testTCPExceptions() {
     catch (...) {
     }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     // AF_PACKET doesn't exist on Windows
     try {
         TCPSocketServer failServer(AF_PACKET, "127.0.0.1", 8080);
@@ -348,7 +348,7 @@ void testTCPExceptions() {
     try {
         TCPSocket failSocket(1024);
         TCPSocket failSocket2(AF_UNIX);
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
         TCPSocket failSocket3(AF_PACKET);
 #endif
         Assert::Fail("Socket created with bad address family.");
