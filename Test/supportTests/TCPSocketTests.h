@@ -18,4 +18,4 @@ void testTCPSendBufferSize();
 void testTCPSendTimeout();
 void testTCPExceptions();
 
-#endif //GSAP_TCPSOCKETTESTS_H
+#endif // GSAP_TCPSOCKETTESTS_H
