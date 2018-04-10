@@ -1,29 +1,29 @@
 /**  MatrixTests - Body
-*   @file      Unit tests for Matrix class
-*   @ingroup   GPIC++
-*
-*   @brief     Unit tests for Matrix classes
-*
-*   @author    Matthew Daigle
-*   @version   0.1.0
-*
-*   @pre       N/A
-*
-*      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
-*      Created: April 7, 2016
-*
-*   @copyright Copyright (c) 2016 United States Government as represented by
-*     the Administrator of the National Aeronautics and Space Administration.
-*     All Rights Reserved.
-*/
+ *   @file      Unit tests for Matrix class
+ *   @ingroup   GPIC++
+ *
+ *   @brief     Unit tests for Matrix classes
+ *
+ *   @author    Matthew Daigle
+ *   @version   0.1.0
+ *
+ *   @pre       N/A
+ *
+ *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
+ *      Created: April 7, 2016
+ *
+ *   @copyright Copyright (c) 2016 United States Government as represented by
+ *     the Administrator of the National Aeronautics and Space Administration.
+ *     All Rights Reserved.
+ */
 
 #include <iostream>
 #include <random>
 #include <sstream>
 
-#include "Test.h"
-#include "MatrixTests.h"
 #include "Matrix.h"
+#include "MatrixTests.h"
+#include "Test.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -46,8 +46,7 @@ namespace TestMatrix {
 
     void construct_size() {
         std::uniform_int_distribution<std::size_t> sdist(0, 100);
-        for (size_t i = 0; i < ITERATIONS; ++i)
-        {
+        for (size_t i = 0; i < ITERATIONS; ++i) {
             std::size_t m = sdist(rng);
             std::size_t n = sdist(rng);
             try {
@@ -55,8 +54,7 @@ namespace TestMatrix {
             }
             catch (...) {
                 std::stringstream ss;
-                ss << "Constructor threw an exception with size (" <<
-                    m << ", " << n << ")";
+                ss << "Constructor threw an exception with size (" << m << ", " << n << ")";
                 Assert::Fail(ss.str());
             }
         }
@@ -64,8 +62,7 @@ namespace TestMatrix {
 
     void construct_initialvalue() {
         std::uniform_int_distribution<std::size_t> sdist(0, 100);
-        for (size_t i = 0; i < ITERATIONS; ++i)
-        {
+        for (size_t i = 0; i < ITERATIONS; ++i) {
             std::size_t m = sdist(rng);
             std::size_t n = sdist(rng);
             double v = dist(rng);
@@ -74,8 +71,8 @@ namespace TestMatrix {
             }
             catch (...) {
                 std::stringstream ss;
-                ss << "Constructor threw an exception with size (" <<
-                    m << ", " << n << ") and IV " << v;
+                ss << "Constructor threw an exception with size (" << m << ", " << n << ") and IV "
+                   << v;
                 Assert::Fail(ss.str());
             }
         }
@@ -85,13 +82,7 @@ namespace TestMatrix {
         try {
             std::size_t m = 4;
             std::size_t n = 4;
-            Matrix matrix(4, 4,
-            {
-                0, 1, 2, 3,
-                1, 2, 3, 4,
-                2, 3, 4, 5,
-                3, 4, 5, 6
-            });
+            Matrix matrix(4, 4, {0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 5, 3, 4, 5, 6});
             for (std::size_t i = 0; i < m; i++) {
                 for (std::size_t j = 0; j < n; j++) {
                     Assert::AreEqual(i + j, matrix[i][j], 1e-15, "Unexpected element value");
@@ -105,8 +96,7 @@ namespace TestMatrix {
 
     void construct_vector() {
         std::uniform_int_distribution<std::size_t> sdist(0, 500);
-        for (size_t i = 0; i < ITERATIONS; ++i)
-        {
+        for (size_t i = 0; i < ITERATIONS; ++i) {
             std::size_t m = sdist(rng);
             std::vector<double> v(m);
             for (std::size_t j = 0; i < m; i++) {
@@ -251,16 +241,13 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     values[j][k] = dist(rng);
                     matrix[j][k] = values[j][k];
-                    Assert::AreEqual(values[j][k], matrix[j][k], 1e-12, "Unexpected value in random part");
+                    Assert::AreEqual(
+                        values[j][k], matrix[j][k], 1e-12, "Unexpected value in random part");
                 }
             }
         }
 
-        Matrix m2(3, 4, {
-            1, 2, 3, 4,
-            5, 6, 7, 8,
-            4, 3, 2, 1
-        });
+        Matrix m2(3, 4, {1, 2, 3, 4, 5, 6, 7, 8, 4, 3, 2, 1});
 
         Assert::AreEqual(1, m2[0][0], 1e-12, "Unexpected value at m2[0][0]");
         Assert::AreEqual(2, m2[0][1], 1e-12, "Unexpected value at m2[0][1]");
@@ -286,11 +273,7 @@ namespace TestMatrix {
     }
 
     void indexer_const() {
-        const Matrix m2(3, 4, {
-            1, 2, 3, 4,
-            5, 6, 7, 8,
-            4, 3, 2, 1
-        });
+        const Matrix m2(3, 4, {1, 2, 3, 4, 5, 6, 7, 8, 4, 3, 2, 1});
 
         Assert::AreEqual(1, m2[0][0], 1e-12, "Unexpected value at m2[0][0]");
         Assert::AreEqual(2, m2[0][1], 1e-12, "Unexpected value at m2[0][1]");
@@ -316,16 +299,13 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     values[j][k] = dist(rng);
                     matrix[j][k] = values[j][k];
-                    Assert::AreEqual(values[j][k], matrix.at(j, k), 1e-12, "Unexpected value in random part");
+                    Assert::AreEqual(
+                        values[j][k], matrix.at(j, k), 1e-12, "Unexpected value in random part");
                 }
             }
         }
 
-        Matrix m2(3, 4, {
-            1, 2, 3, 4,
-            5, 6, 7, 8,
-            4, 3, 2, 1
-        });
+        Matrix m2(3, 4, {1, 2, 3, 4, 5, 6, 7, 8, 4, 3, 2, 1});
 
         Assert::AreEqual(1, m2.at(0, 0), 1e-12, "Unexpected value at m2.at(0, 0)");
         Assert::AreEqual(2, m2.at(0, 1), 1e-12, "Unexpected value at m2.at(0, 1)");
@@ -351,11 +331,7 @@ namespace TestMatrix {
     }
 
     void const_at() {
-        const Matrix m1(3, 4, {
-                1, 2, 3, 4,
-                5, 6, 7, 8,
-                4, 3, 2, 1
-        });
+        const Matrix m1(3, 4, {1, 2, 3, 4, 5, 6, 7, 8, 4, 3, 2, 1});
 
         Assert::AreEqual(1, m1.at(0, 0), 1e-12, "Unexpected value at m2.at(0, 0)");
         Assert::AreEqual(2, m1.at(0, 1), 1e-12, "Unexpected value at m2.at(0, 1)");
@@ -385,7 +361,8 @@ namespace TestMatrix {
 
                 Matrix c = matrix.col(k);
                 for (std::size_t j = 0; j < m; ++j) {
-                    Assert::AreEqual(values[j][k], c.at(j, 0), 1e-12, "Unexpected value in column vector");
+                    Assert::AreEqual(
+                        values[j][k], c.at(j, 0), 1e-12, "Unexpected value in column vector");
                 }
             }
         }
@@ -395,7 +372,8 @@ namespace TestMatrix {
             m2.col(n + 1);
             Assert::Fail("Got column that doesn't exist.");
         }
-    catch (...) { }
+        catch (...) {
+        }
     }
 
     void col_setmatrix() {
@@ -426,18 +404,21 @@ namespace TestMatrix {
             m3.row(m + 1, c1);
             Assert::Fail("Set column that doesn't exist.");
         }
-        catch (std::out_of_range) { }
+        catch (std::out_of_range) {
+        }
         try {
             m3.row(0, c2);
             m3.row(0, c3);
             Assert::Fail("Set column with invalid size.");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
         try {
             m3.row(0, c4);
             Assert::Fail("Set column with matrix that isn't a column vector.");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
     }
 
     void col_setvector() {
@@ -467,13 +448,15 @@ namespace TestMatrix {
             m3.row(m + 1, v1);
             Assert::Fail("Set column that doesn't exist.");
         }
-        catch (std::out_of_range) { }
+        catch (std::out_of_range) {
+        }
         try {
             m3.row(0, v2);
             m3.row(0, v3);
             Assert::Fail("Set column with invalid size.");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
     }
 
     void row_get() {
@@ -490,7 +473,8 @@ namespace TestMatrix {
 
                 Matrix r = matrix.row(j);
                 for (std::size_t k = 0; k < n; ++k) {
-                    Assert::AreEqual(values[j][k], r.at(0, k), 1e-12, "Unexpected value in column vector");
+                    Assert::AreEqual(
+                        values[j][k], r.at(0, k), 1e-12, "Unexpected value in column vector");
                 }
             }
         }
@@ -500,7 +484,8 @@ namespace TestMatrix {
             m2.row(m + 1);
             Assert::Fail("Got row that doesn't exist.");
         }
-        catch (std::out_of_range) { }
+        catch (std::out_of_range) {
+        }
     }
 
     void row_setmatrix() {
@@ -531,18 +516,21 @@ namespace TestMatrix {
             m3.row(m + 1, r1);
             Assert::Fail("Set row that doesn't exist.");
         }
-    catch (...) { }
+        catch (...) {
+        }
         try {
             m3.row(0, r2);
             m3.row(0, r3);
             Assert::Fail("Set row with invalid size.");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
         try {
             m3.row(0, r4);
             Assert::Fail("Set row with matrix that isn't a row vector.");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
     }
 
     void row_setvector() {
@@ -572,13 +560,15 @@ namespace TestMatrix {
             m3.row(m + 1, v1);
             Assert::Fail("Set row that doesn't exist.");
         }
-        catch (std::out_of_range) { }
+        catch (std::out_of_range) {
+        }
         try {
             m3.row(0, v2);
             m3.row(0, v3);
             Assert::Fail("Set row with invalid size.");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
     }
 
     void operator_vector() {
@@ -595,7 +585,8 @@ namespace TestMatrix {
 
                 std::vector<double> r = static_cast<std::vector<double>>(matrix.row(j));
                 for (std::size_t k = 0; k < n; ++k) {
-                    Assert::AreEqual(values[j][k], r.at(k), 1e-12, "Unexpected value in column vector");
+                    Assert::AreEqual(
+                        values[j][k], r.at(k), 1e-12, "Unexpected value in column vector");
                 }
             }
 
@@ -607,7 +598,8 @@ namespace TestMatrix {
 
                 std::vector<double> c = static_cast<std::vector<double>>(matrix.col(k));
                 for (std::size_t j = 0; j < m; ++j) {
-                    Assert::AreEqual(values[j][k], c.at(j), 1e-12, "Unexpected value in column vector");
+                    Assert::AreEqual(
+                        values[j][k], c.at(j), 1e-12, "Unexpected value in column vector");
                 }
             }
         }
@@ -635,7 +627,8 @@ namespace TestMatrix {
         Assert::AreEqual(n2, matrix.cols(), "Unexpected number of columns shrinking");
         for (std::size_t i = 0; i < m2; ++i) {
             for (std::size_t j = 0; j < n2; ++j) {
-                Assert::AreEqual(expected.at(i, j), matrix.at(i, j), 1e-12, "Unexpected value after shrinking");
+                Assert::AreEqual(
+                    expected.at(i, j), matrix.at(i, j), 1e-12, "Unexpected value after shrinking");
             }
         }
 
@@ -645,7 +638,8 @@ namespace TestMatrix {
         Assert::AreEqual(n3, matrix.cols(), "Unexpected number of columns expansion");
         for (std::size_t i = 0; i < m2; ++i) {
             for (std::size_t j = 0; j < n2; ++j) {
-                Assert::AreEqual(expected.at(i, j), matrix.at(i, j), 1e-12, "Unexpected value after expansion");
+                Assert::AreEqual(
+                    expected.at(i, j), matrix.at(i, j), 1e-12, "Unexpected value after expansion");
             }
         }
     }
@@ -669,8 +663,10 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] + m2[j][k];
                     double e2 = e1 + m2[j][k];
-                    Assert::AreEqual(e1, result1[j][k], 1e-12, "Unexpected value after adition [+]");
-                    Assert::AreEqual(e2, result2[j][k], 1e-12, "Unexpected value after adition [+=]");
+                    Assert::AreEqual(
+                        e1, result1[j][k], 1e-12, "Unexpected value after adition [+]");
+                    Assert::AreEqual(
+                        e2, result2[j][k], 1e-12, "Unexpected value after adition [+=]");
                 }
             }
         }
@@ -681,7 +677,8 @@ namespace TestMatrix {
             m3 + m4;
             Assert::Fail("Added matrices of different sizes");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
     }
 
     void add_scalar() {
@@ -703,9 +700,12 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] + s;
                     double e3 = e1 + s;
-                    Assert::AreEqual(e1, result1[j][k], 1e-12, "Unexpected value after adition [s + m1]");
-                    Assert::AreEqual(e1, result2[j][k], 1e-12, "Unexpected value after adition [m1 + s]");
-                    Assert::AreEqual(e3, result3[j][k], 1e-12, "Unexpected value after adition [+=]");
+                    Assert::AreEqual(
+                        e1, result1[j][k], 1e-12, "Unexpected value after adition [s + m1]");
+                    Assert::AreEqual(
+                        e1, result2[j][k], 1e-12, "Unexpected value after adition [m1 + s]");
+                    Assert::AreEqual(
+                        e3, result3[j][k], 1e-12, "Unexpected value after adition [+=]");
                 }
             }
         }
@@ -730,8 +730,10 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] - m2[j][k];
                     double e2 = e1 - m2[j][k];
-                    Assert::AreEqual(e1, result1[j][k], 1e-12, "Unexpected value after subtraction [-]");
-                    Assert::AreEqual(e2, result2[j][k], 1e-12, "Unexpected value after subtraction [-=]");
+                    Assert::AreEqual(
+                        e1, result1[j][k], 1e-12, "Unexpected value after subtraction [-]");
+                    Assert::AreEqual(
+                        e2, result2[j][k], 1e-12, "Unexpected value after subtraction [-=]");
                 }
             }
         }
@@ -742,7 +744,8 @@ namespace TestMatrix {
             m3 - m4;
             Assert::Fail("Subtracted matrices of different sizes");
         }
-        catch (std::domain_error) {}
+        catch (std::domain_error) {
+        }
     }
 
     void subtract_salar() {
@@ -763,31 +766,19 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] - s;
                     double e2 = e1 - s;
-                    Assert::AreEqual(e1, result1[j][k], 1e-12, "Unexpected value after subtraction [-]");
-                    Assert::AreEqual(e2, result2[j][k], 1e-12, "Unexpected value after subtraction [-=]");
+                    Assert::AreEqual(
+                        e1, result1[j][k], 1e-12, "Unexpected value after subtraction [-]");
+                    Assert::AreEqual(
+                        e2, result2[j][k], 1e-12, "Unexpected value after subtraction [-=]");
                 }
             }
         }
     }
 
     void multiply_matrix() {
-        Matrix m1(3, 5, {
-            59, 59, 100, 94,  2,
-            89, 54,  31, 55, 96,
-            59, 36,  19, 51, 45
-        });
-        Matrix m2(5, 3, {
-            33,  84, 31,
-            10,  75, 33,
-            87,  85,  6,
-            20, 100, 71,
-            17,  85, 92
-        });
-        Matrix e(3, 3, {
-            13151, 27451, 11234,
-             8906, 27821, 17464,
-             5745, 18196, 10892
-        });
+        Matrix m1(3, 5, {59, 59, 100, 94, 2, 89, 54, 31, 55, 96, 59, 36, 19, 51, 45});
+        Matrix m2(5, 3, {33, 84, 31, 10, 75, 33, 87, 85, 6, 20, 100, 71, 17, 85, 92});
+        Matrix e(3, 3, {13151, 27451, 11234, 8906, 27821, 17464, 5745, 18196, 10892});
         Matrix r = m1 * m2;
         for (std::size_t i = 0; i < 3; ++i) {
             for (std::size_t j = 0; j < 3; ++j) {
@@ -815,9 +806,12 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] * s;
                     double e3 = e1 * s;
-                    Assert::AreEqual(e1, result1[j][k], 1e-12, "Unexpected value after multiplication [s * m1]");
-                    Assert::AreEqual(e1, result2[j][k], 1e-12, "Unexpected value after multiplication [m1 * s]");
-                    Assert::AreEqual(e3, result3[j][k], 1e-12, "Unexpected value after multiplication [*=]");
+                    Assert::AreEqual(
+                        e1, result1[j][k], 1e-12, "Unexpected value after multiplication [s * m1]");
+                    Assert::AreEqual(
+                        e1, result2[j][k], 1e-12, "Unexpected value after multiplication [m1 * s]");
+                    Assert::AreEqual(
+                        e3, result3[j][k], 1e-12, "Unexpected value after multiplication [*=]");
                 }
             }
         }
@@ -841,8 +835,10 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] / s;
                     double e2 = e1 / s;
-                    Assert::AreEqual(e1, result1[j][k], 1e-12, "Unexpected value after division [/]");
-                    Assert::AreEqual(e2, result2[j][k], 1e-12, "Unexpected value after division [/=]");
+                    Assert::AreEqual(
+                        e1, result1[j][k], 1e-12, "Unexpected value after division [/]");
+                    Assert::AreEqual(
+                        e2, result2[j][k], 1e-12, "Unexpected value after division [/=]");
                 }
             }
         }
@@ -869,7 +865,8 @@ namespace TestMatrix {
             matrix.adjoint();
             Assert::Fail("Failed to throw on non-square matrix.");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
     }
 
     void cofactors() {
@@ -895,13 +892,13 @@ namespace TestMatrix {
             matrix.cofactors();
             Assert::Fail("Failed to throw on non-square matrix.");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
     }
 
     // Slow recursive function to compute determinants using laplace expansion.
     // Used to verify the correctness of more complex determinant algorithms.
-    double laplaceDeterminant(const Matrix& m)
-    {
+    double laplaceDeterminant(const Matrix& m) {
         if (!m.isSquare()) {
             throw std::domain_error("Matrix must be square");
         }
@@ -913,8 +910,7 @@ namespace TestMatrix {
         }
 
         double r = 0;
-        for (size_t i = 0; i < m.rows(); i++)
-        {
+        for (size_t i = 0; i < m.rows(); i++) {
             double f = std::pow(-1.0, i) * m[i][0];
             Matrix sub = m.submatrix(i, 0);
             double d = laplaceDeterminant(sub);
@@ -924,16 +920,9 @@ namespace TestMatrix {
     }
 
     void determinant() {
-        Matrix m1(2, 2, {
-            1, 0,
-            0, 1
-        });
+        Matrix m1(2, 2, {1, 0, 0, 1});
         Assert::AreEqual(1, m1.determinant(), 1e-12, "2x2 Matrix");
-        Matrix m2(3, 3, {
-            1, 0, 0,
-            0, 3, 1,
-            0, 2, 4
-        });
+        Matrix m2(3, 3, {1, 0, 0, 0, 3, 1, 0, 2, 4});
         Assert::AreEqual(10, m2.determinant(), 1e-12, "3x3 Matrix");
 
         for (std::size_t i = 2; i < 8; ++i) {
@@ -950,8 +939,7 @@ namespace TestMatrix {
                 double e = std::abs((det1 + det2) / 2e8);
                 Assert::AreEqual(det1, det2, e, "Random determinants");
             }
-            for (size_t j = 0; j < ITERATIONS * 2; j++)
-            {
+            for (size_t j = 0; j < ITERATIONS * 2; j++) {
                 // Test some symetric matrices to excercise cholesky code
                 Matrix m(i, i);
                 for (std::size_t a = 0; a < i; ++a) {
@@ -972,60 +960,45 @@ namespace TestMatrix {
     }
 
     void laplaceDet() {
-        Matrix m1(3, 3, {
-                0, 0, 0,
-                0, 4, 5,
-                0, 7, 8
-        });
+        Matrix m1(3, 3, {0, 0, 0, 0, 4, 5, 0, 7, 8});
         Assert::AreEqual(0, m1.determinant(), "Laplace determinant calculation wrong");
     }
 
     void diagonal() {
-        Matrix m1(2, 2, {
-                1, 0,
-                0, 1
-        });
-        Matrix sol1(2, 1, {
-                1,
-                1
-        });
+        Matrix m1(2, 2, {1, 0, 0, 1});
+        Matrix sol1(2, 1, {1, 1});
         m1 = m1.diagonal();
         Assert::IsTrue(m1 == sol1, "Column matrix of diagonal not correct");
 
-        Matrix m2(3, 3, {
-                1, 0, 0,
-                0, 1, 0,
-                0, 0, 1
-        });
+        Matrix m2(3, 3, {1, 0, 0, 0, 1, 0, 0, 0, 1});
 
-        Matrix sol2(3, 1, {
-                1,
-                1,
-                1
-        });
+        Matrix sol2(3, 1, {1, 1, 1});
 
         m2 = m2.diagonal();
         Assert::IsTrue(m2 == sol2, "Column matrix of diagonal not correct");
     }
 
     void inverse() {
-        Matrix matrix(3, 3, {
-             3,  5,  7,
-            19, 17, 13,
-            11,  3,  1
-        });
+        Matrix matrix(3, 3, {3, 5, 7, 19, 17, 13, 11, 3, 1});
 
-        Matrix expected(3, 3, {
-             11.0/178.0,  -4.0/89.0,   27.0/178.0,
-            -31.0/89.0,   37.0/178.0, -47.0/178.0,
-             65.0/178.0, -23.0/178.0,  11.0/89.0
-        });
+        Matrix expected(3,
+                        3,
+                        {11.0 / 178.0,
+                         -4.0 / 89.0,
+                         27.0 / 178.0,
+                         -31.0 / 89.0,
+                         37.0 / 178.0,
+                         -47.0 / 178.0,
+                         65.0 / 178.0,
+                         -23.0 / 178.0,
+                         11.0 / 89.0});
 
         Matrix result = matrix.inverse();
 
         for (std::size_t j = 0; j < 3; ++j) {
             for (std::size_t k = 0; k < 3; ++k) {
-                Assert::AreEqual(expected.at(j, k), result.at(j, k), 1e-12, "Invalid inverse value");
+                Assert::AreEqual(
+                    expected.at(j, k), result.at(j, k), 1e-12, "Invalid inverse value");
             }
         }
 
@@ -1034,7 +1007,8 @@ namespace TestMatrix {
             matrix.inverse();
             Assert::Fail("Failed to throw on non-square matrix.");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
     }
 
     void minors() {
@@ -1060,45 +1034,38 @@ namespace TestMatrix {
             matrix.minors();
             Assert::Fail("Failed to throw on non-square matrix.");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
     }
 
     void submatrix() {
-        Matrix matrix(3, 3, {
-            3,  5,  7,
-            19, 17, 13,
-            11,  3,  1
-        });
+        Matrix matrix(3, 3, {3, 5, 7, 19, 17, 13, 11, 3, 1});
 
-        Matrix expected(2, 2, {
-            3,  5,
-            19, 17
-        });
-        Assert::AreEqual(expected, matrix.submatrix(2, 2), "Unexpected submatrix removing last row/col");
+        Matrix expected(2, 2, {3, 5, 19, 17});
+        Assert::AreEqual(
+            expected, matrix.submatrix(2, 2), "Unexpected submatrix removing last row/col");
 
-        expected = Matrix(2, 2, {
-            17, 13,
-            3,  1
-        });
-        Assert::AreEqual(expected, matrix.submatrix(0, 0), "Unexpected submatrix removing first row/col");
+        expected = Matrix(2, 2, {17, 13, 3, 1});
+        Assert::AreEqual(
+            expected, matrix.submatrix(0, 0), "Unexpected submatrix removing first row/col");
 
-        expected = Matrix(2, 2, {
-             3, 7,
-            11, 1
-        });
-        Assert::AreEqual(expected, matrix.submatrix(1, 1), "Unexpected submatrix removing middle row/col");
+        expected = Matrix(2, 2, {3, 7, 11, 1});
+        Assert::AreEqual(
+            expected, matrix.submatrix(1, 1), "Unexpected submatrix removing middle row/col");
 
         try {
             matrix.submatrix(3, 1);
             Assert::Fail("Succesfully removed non-existant row.");
         }
-        catch (std::out_of_range) { }
+        catch (std::out_of_range) {
+        }
 
         try {
             matrix.submatrix(1, 3);
             Assert::Fail("Succesfully removed non-existant column.");
         }
-        catch (std::out_of_range) { }
+        catch (std::out_of_range) {
+        }
     }
 
     void transpose() {
@@ -1126,26 +1093,15 @@ namespace TestMatrix {
     void identity() {
         const std::size_t m = 2;
         const std::size_t n = 2;
-        Matrix expected(m, n, {
-                1, 0,
-                0, 1
-        });
+        Matrix expected(m, n, {1, 0, 0, 1});
         Matrix actual(Matrix::identity(m));
         Assert::AreEqual(expected, actual, "Actual matrix not an identity");
     }
 
     void cholesky() {
-        Matrix matrix(3, 3, {
-            25, 15, -5,
-            15, 18,  0,
-            -5,  0, 11
-        });
+        Matrix matrix(3, 3, {25, 15, -5, 15, 18, 0, -5, 0, 11});
 
-        Matrix e(3, 3, {
-             5, 0, 0,
-             3, 3, 0,
-            -1, 1, 3
-        });
+        Matrix e(3, 3, {5, 0, 0, 3, 3, 0, -1, 1, 3});
 
         Matrix a = matrix.chol();
 
@@ -1153,67 +1109,54 @@ namespace TestMatrix {
     }
 
     void weightedmean() {
-        Matrix matrix(3, 2, {
-            1, 2,
-            3, 4,
-            5, 6
-        });
-        Matrix w(2, 1, { 0.2, 0.8 });
+        Matrix matrix(3, 2, {1, 2, 3, 4, 5, 6});
+        Matrix w(2, 1, {0.2, 0.8});
 
-        Matrix e(3, 1, { 1.8, 3.8, 5.8 });
+        Matrix e(3, 1, {1.8, 3.8, 5.8});
         Matrix a = matrix.weightedMean(w);
 
         Assert::AreEqual(e, a, "Unexpected values");
 
-        Matrix w2(3, 1, { 0.2, 0.8, 0.1 });
-        Matrix w3(1, 1, { 0.2 });
+        Matrix w2(3, 1, {0.2, 0.8, 0.1});
+        Matrix w3(1, 1, {0.2});
         try {
             matrix.weightedMean(w2);
             matrix.weightedMean(w3);
             Assert::Fail("Calculated weighted mean with wrong number of weights");
         }
-    catch (...) { }
+        catch (...) {
+        }
     }
 
     void weightedcovariance() {
-        Matrix matrix(3, 2, {
-            1, 2,
-            3, 4,
-            5, 6
-        });
-        Matrix w(2, 1, { 0.2, 0.8 });
+        Matrix matrix(3, 2, {1, 2, 3, 4, 5, 6});
+        Matrix w(2, 1, {0.2, 0.8});
 
-        Matrix e(3, 3, {
-            0.16, 0.16, 0.16,
-            0.16, 0.16, 0.16,
-            0.16, 0.16, 0.16
-        });
+        Matrix e(3, 3, {0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16});
         Matrix a = matrix.weightedCovariance(w, 1);
 
         Assert::AreEqual(e, a, "Unexpected value");
 
-        Matrix w2(3, 1, { 0.2, 0.8, 0 });
-        Matrix w3(1, 1, { 0.2 });
+        Matrix w2(3, 1, {0.2, 0.8, 0});
+        Matrix w3(1, 1, {0.2});
         try {
             matrix.weightedCovariance(w2, 1);
             matrix.weightedCovariance(w3, 1);
             Assert::Fail("Calculated weighted covariance with wrong number of weights");
         }
-        catch (std::domain_error) { }
+        catch (std::domain_error) {
+        }
     }
 
     void leftShift() {
-        Matrix m1(3, 2, {
-                1, 2,
-                3, 4,
-                5, 6
-        });
+        Matrix m1(3, 2, {1, 2, 3, 4, 5, 6});
 
         Matrix m2();
         try {
             std::cout << m1 << std::endl;
             std::cout << m2 << std::endl;
         }
-        catch (...) {}
+        catch (...) {
+        }
     }
 }
