@@ -4,10 +4,10 @@
 // Created by Julian Vu on 3/23/18.
 //
 
-#include <cstring>
 #include "UDPSocketTests.h"
-#include "UDPSocket.h"
 #include "Test.h"
+#include "UDPSocket.h"
+#include <cstring>
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -33,12 +33,14 @@ void testUDPCtor() {
         UDPSocket socket9 = UDPSocket(AF_UNIX, 55560);
         Assert::Fail("Socket created with unsupported address family.");
     }
-    catch (...) {}
+    catch (...) {
+    }
     try {
         UDPSocket socket10 = UDPSocket(0, 55561);
         Assert::Fail("Socket created with unsupported address family.");
     }
-    catch (...) {}
+    catch (...) {
+    }
 }
 
 void testUDPSendandReceive() {
@@ -69,8 +71,7 @@ void testUDPSendandReceive() {
     si.sin_port = htons(port);
     UDPSocket socket3 = UDPSocket((struct sockaddr*)&si, sizeof(si));
     socket1.Connect((struct sockaddr*)&si, sizeof(si));
-    //socket1.Send(buffer, sizeof(buffer)/sizeof(buffer[0]), (struct sockaddr*)&si, sizeof(si));
-
+    // socket1.Send(buffer, sizeof(buffer)/sizeof(buffer[0]), (struct sockaddr*)&si, sizeof(si));
 }
 
 void testExceptionHandling() {
@@ -79,20 +80,23 @@ void testExceptionHandling() {
         UDPSocket socket2 = UDPSocket(AF_INET, 55555);
         Assert::Fail("Socket created using taken port.");
     }
-    catch (...) {}
+    catch (...) {
+    }
 
     UDPSocket socket3 = UDPSocket(AF_INET6, 55556);
     try {
         UDPSocket socket4 = UDPSocket(AF_INET6, 55556);
         Assert::Fail("Socket created using taken port.");
     }
-    catch (...) {}
+    catch (...) {
+    }
 
     try {
         UDPSocket socket5 = UDPSocket(-1, 55557);
         Assert::Fail("Socket created with unsupported address family.");
     }
-    catch (...) {}
+    catch (...) {
+    }
 
     int port = 55555;
     sockaddr_in addr = {};
@@ -102,16 +106,18 @@ void testExceptionHandling() {
         UDPSocket socket6 = UDPSocket((struct sockaddr*)&addr, sizeof(addr));
         Assert::Fail("Socket created using taken port.");
     }
-    catch  (...) {}
+    catch (...) {
+    }
 
     char buffer[] = "Hello, this is a test message.";
-    socket1.Send(buffer, sizeof(buffer)/ sizeof(buffer[0]), "127.0.0.1", 55556);
+    socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), "127.0.0.1", 55556);
     char buffer2[128];
     UDPSocket::size_type result = socket3.Available();
     Assert::AreEqual(31, result, "Bytes available to read is not same as bytes sent.");
-    socket3.Receive(buffer2, sizeof(buffer)/ sizeof(buffer[0]));
+    socket3.Receive(buffer2, sizeof(buffer) / sizeof(buffer[0]));
     result = socket3.Available();
-    Assert::AreEqual(0, result, "Available() returns bytes even though no more bytes are being sent.");
+    Assert::AreEqual(
+        0, result, "Available() returns bytes even though no more bytes are being sent.");
 
     port = 55558;
     addr.sin_family = AF_UNIX;
@@ -120,14 +126,17 @@ void testExceptionHandling() {
         socket1.Connect((struct sockaddr*)&addr, sizeof(addr));
         Assert::Fail("Connected socket to socket with unsupported address family");
     }
-    catch (...) {}
+    catch (...) {
+    }
 
     try {
-        //socket1.Close();
-        socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), (struct sockaddr*)&addr, sizeof(addr));
+        // socket1.Close();
+        socket1.Send(
+            buffer, sizeof(buffer) / sizeof(buffer[0]), (struct sockaddr*)&addr, sizeof(addr));
         Assert::Fail("Invalid socket sent data.");
     }
-    catch (...) {}
+    catch (...) {
+    }
 
     port = 55556;
     addr.sin_family = AF_INET;
@@ -136,11 +145,14 @@ void testExceptionHandling() {
     socket1.Connect((struct sockaddr*)&addr, sizeof(addr));
     try {
         socket3.Close();
-        socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), (struct sockaddr*)&addr, sizeof(addr));
-        socket3.Receive(buffer2, 30, (struct sockaddr*)&addr, reinterpret_cast<socklen_t *>(sizeof(addr)));
+        socket1.Send(
+            buffer, sizeof(buffer) / sizeof(buffer[0]), (struct sockaddr*)&addr, sizeof(addr));
+        socket3.Receive(
+            buffer2, 30, (struct sockaddr*)&addr, reinterpret_cast<socklen_t*>(sizeof(addr)));
         Assert::Fail("Invalid socket received data.");
     }
-    catch (...) {}
+    catch (...) {
+    }
 
     try {
         char messageToSend[] = "Hello, this is a test message, not meant to be sent.";
@@ -150,7 +162,8 @@ void testExceptionHandling() {
         failSocket.Close();
         failSocket.Send(messageToSend, strlen(messageToSend));
     }
-    catch (...) {}
+    catch (...) {
+    }
 
     try {
         char messageToSend[] = "Hello, this is a test message, not meant to be sent.";
@@ -159,7 +172,8 @@ void testExceptionHandling() {
         failSocket.Close();
         failSocket.Send(messageToSend, strlen(messageToSend), "127.0.0.1", 55562);
     }
-    catch (...) {}
+    catch (...) {
+    }
 
     try {
         UDPSocket failSocket(AF_INET, 55561);
@@ -167,7 +181,8 @@ void testExceptionHandling() {
         failSocket.Close();
         failSocket.Connect("127.0.0.1", 55562);
     }
-    catch (...) {}
+    catch (...) {
+    }
 
     try {
         UDPSocket failSocket(AF_INET, 55561);
@@ -175,6 +190,6 @@ void testExceptionHandling() {
         failSocket.Close();
         failSocket.Available();
     }
-    catch (...) {}
+    catch (...) {
+    }
 }
-
