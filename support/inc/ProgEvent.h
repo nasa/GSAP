@@ -3,16 +3,23 @@
  *   @ingroup   GPIC++
  *   @ingroup   ProgData
  *
- *   @brief     Prognostic Event Class used to handle storage, access, and updating of the data associated with a specific prognostic event (Example: End of life, end of discharge). This data includes the following:
+ *   @brief     Prognostic Event Class used to handle storage, access, and updating of the data
+ *associated with a specific prognostic event (Example: End of life, end of discharge). This data
+ *includes the following:
  *              1. Meta Information from ProgMeta
  *              2. timeOfEvent with uncertainty: When the event occurs
- *              3. probMatrix with uncertainty: The probability that the event has occured at different timestamps
- *              4. occurrenceMatrix: A collection of samples in a simulation for different timestamps- if the event has occured for each sample. This is the most detailed representation of uncertainty. probMatrix can be calculated from this
+ *              3. probMatrix with uncertainty: The probability that the event has occured at
+ *different timestamps
+ *              4. occurrenceMatrix: A collection of samples in a simulation for different
+ *timestamps- if the event has occured for each sample. This is the most detailed representation of
+ *uncertainty. probMatrix can be calculated from this
  *
- *   @note      In many cases there will be only one event (End of life). 
- *   @note      In many cases timeOfEvent will be the only parameter that is used. probMatrix and occurrenceMatrix is for advanced users.
+ *   @note      In many cases there will be only one event (End of life).
+ *   @note      In many cases timeOfEvent will be the only parameter that is used. probMatrix and
+ *occurrenceMatrix is for advanced users.
  *
  *   @author    Chris Teubert
+ *   @author    Jason Watkins
  *   @version   0.1.0
  *
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
@@ -43,7 +50,7 @@ namespace PCOE {
      *  @brief      Used to store data about a specific Prognostic Event (ex: EOL)
      */
     class ProgEvent : public ProgMeta {
-        friend class ProgEvents;    // Container class for ProgEvent
+        friend class ProgEvents; // Container class for ProgEvent
 
     public:
         /// @brief      Constructor - Set defaults
@@ -57,30 +64,34 @@ namespace PCOE {
         /** @brief      Get the number of samples in the occurrence matrix
          *  @return     The number of samples that the occurrence matrix uses
          **/
-        unsigned int  getNumOccurrenceSamples() const;
+        unsigned int getNumOccurrenceSamples() const;
 
         /// @brief      The Time the Event will occur with uncertainty
         UData timeOfEvent;
-        
+
         /// @brief      The probability of event occuring within the prediction horizon
         double eventProb;
 
         /// @brief      The probability the the event will occur at each time stamp
-        std::vector<double> probMatrix;     // 1-dim: Time
+        std::vector<double> probMatrix; // 1-dim: Time
 
-        /** @brief      A two dimentional matrix storing wether the event has occured for each sample. The matrix has the dimensions time x unweighted samples so that:
-         *              occurrenceMatrix[0][7]  represents wether the event has occured for sample 7 at time 0.
+        /** @brief      A two dimentional matrix storing wether the event has occured for each
+         *sample. The matrix has the dimensions time x unweighted samples so that:
+         *              occurrenceMatrix[0][7]  represents wether the event has occured for sample 7
+         *at time 0.
          *  @see        setNumOccurrenceSamples
          *  @note       probMatrix can be calculated from this
          **/
-        std::vector< std::vector<bool> > occurrenceMatrix;  // 2-dim: Time x samples
+        std::vector<std::vector<bool>> occurrenceMatrix; // 2-dim: Time x samples
 
-        /** @brief      Set the number of timestamps for which prognostic relevant prognostic data will be recorded
+        /** @brief      Set the number of timestamps for which prognostic relevant prognostic data
+         *will be recorded
          *  @param      nTimesIn        Number of timestamps
          **/
         void setNumTimes(const unsigned int nTimesIn);
 
-        /** @brief      Get the number of timestamps for which prognostic relevant prognostic data will be recorded
+        /** @brief      Get the number of timestamps for which prognostic relevant prognostic data
+         *will be recorded
          *  @return     Number of timestamps
          **/
         unsigned int getNumTimes() const;
@@ -97,14 +108,15 @@ namespace PCOE {
          **/
         UType getUncertainty() const;
 
-        std::string timeOfEventUnit;    ///< Unit of the ToE
-        bool isEventDriven;     ///< Event is event driven
+        std::string timeOfEventUnit; ///< Unit of the ToE
+        bool isEventDriven; ///< Event is event driven
 
     private:
-        unsigned int nSamples;      ///< Number of samples in the occurrence matrix
+        unsigned int nSamples; ///< Number of samples in the occurrence matrix
         ///@todo(CT): IS THIS NECESSARY?
 
-        /** @brief      Set the number of points in the events uncertainty representation (could be samples or number of events)
+        /** @brief      Set the number of points in the events uncertainty representation (could be
+         *samples or number of events)
          *  @param      nPoints      The number of points
          *
          *  @note       This is handled by ProgEvents, the ProgEvent container class
