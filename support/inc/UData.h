@@ -4,7 +4,8 @@
  *   @ingroup   ProgData
  *   @defgroup  UData   Uncertain Data
  *
- *   @brief     Uncertain Data Structure Classes - Classes used for storing, distributing, and manipulation data with uncertainty
+ *   @brief     Uncertain Data Structure Classes - Classes used for storing,
+ *              distributing, and manipulation data with uncertainty
  *
  *   @author    Chris Teubert <christopher.a.teubert@nasa.gov>
  *   @author    Jason Watkins <jason-watkins@outlook.com>
@@ -19,11 +20,11 @@
 #ifndef PCOE_UDATA_H
 #define PCOE_UDATA_H
 
-#include <vector>
+#include <chrono> // For last updated
 #include <cmath>
-#include <chrono>  // For last updated
+#include <vector>
 
-#include "UDataInterfaces.h"  // The interfaces
+#include "UDataInterfaces.h" // The interfaces
 
 using namespace PCOE;
 
@@ -43,7 +44,7 @@ namespace PCOE {
         WSamples,
         Percentiles = WSamples,
         WeightedSamples = WSamples,
-        UnweightedSamples = Samples
+        UnweightedSamples = Samples,
     };
 
     /** @enum       DIST
@@ -54,7 +55,7 @@ namespace PCOE {
         DIST_GAUSSIAN,
         DIST_NORMAL,
         DIST_EXPONENTIAL,
-        DIST_UNIFORM
+        DIST_UNIFORM,
     };
 
     // *------------------------*
@@ -123,7 +124,7 @@ namespace PCOE {
 
         /** @brief Releases resources used by the current UData object. */
         ~UData();
-        
+
         /** @brief Swaps the data contained by two UData objects.
          *
          *  @param a The first object to swap.
@@ -141,7 +142,7 @@ namespace PCOE {
          *
          *  @example    if (u == s) // u and s are of type UData
          **/
-        bool operator==(const UData &other) const;
+        bool operator==(const UData& other) const;
 
         /** @brief      Uncertain data not equals operator
          *  @param      other       The other UData type to be compared
@@ -149,7 +150,7 @@ namespace PCOE {
          *
          *  @example    if (u != s) // u and s are of type UData
          **/
-        bool operator!=(const UData &other) const;
+        bool operator!=(const UData& other) const;
 
         //*------------------------------*
         //|         Properties           |
@@ -198,7 +199,7 @@ namespace PCOE {
 
         /** @brief Gets the validity of the current object. */
         inline bool valid() const {
-            return m_valid && !std::isnan(m_interface->get(0, m_data));;
+            return m_valid && !std::isnan(m_interface->get(0, m_data));
         }
 
         /** @brief Gets the validity of the current object. */
@@ -329,30 +330,30 @@ namespace PCOE {
         //*------------------------------*
 
         /** @brief Get a pair of values in the current object's data.
-        *
-        *  @param key The index of the first data elmeent to get. Should be a
-        *             value obtained from one of the helper methods in the
-        *             UDataInterfaces.h header. If this parameter is omitted,
-        *             a pair starting at the first element is returned.
-        *  @returns   The requested data element pair.
-        **/
+         *
+         *  @param key The index of the first data elmeent to get. Should be a
+         *             value obtained from one of the helper methods in the
+         *             UDataInterfaces.h header. If this parameter is omitted,
+         *             a pair starting at the first element is returned.
+         *  @returns   The requested data element pair.
+         **/
         std::pair<double, double> getPair(const size_type key = 0) const;
 
         /** @brief Set a pair of values in the current object's data.
-        *
-        *  @param key   The index of the first elmeent to set. Should be a
-        *               value obtained from one of the helper methods in the
-        *               UDataInterfaces.h header.
-        *  @param value The values to set.
-        **/
-        void setPair(const size_type key, const std::pair<double, double> & value);
+         *
+         *  @param key   The index of the first elmeent to set. Should be a
+         *               value obtained from one of the helper methods in the
+         *               UDataInterfaces.h header.
+         *  @param value The values to set.
+         **/
+        void setPair(const size_type key, const std::pair<double, double>& value);
 
         /** @brief Set a pair of values in the current object's data, starting
-        *         at the first value.
-        *
-        *  @param value The values to set.
-        **/
-        inline void setPair(const std::pair<double, double> &value) {
+         *         at the first value.
+         *
+         *  @param value The values to set.
+         **/
+        inline void setPair(const std::pair<double, double>& value) {
             setPair(0, value);
         }
 
@@ -421,7 +422,7 @@ namespace PCOE {
          *               UDataInterfaces.h header.
          *  @param value The values to set.
          **/
-        inline void set(const size_type key, const std::pair<double, double> & value) {
+        inline void set(const size_type key, const std::pair<double, double>& value) {
             setPair(key, value);
         }
 
@@ -432,10 +433,9 @@ namespace PCOE {
          *
          *  @param value The values to set.
          **/
-        inline void set(const std::pair<double, double> & value) {
+        inline void set(const std::pair<double, double>& value) {
             setPair(value);
         }
-
 
     private:
         //*------------------------------*
@@ -452,13 +452,20 @@ namespace PCOE {
     public:
         struct ConstProxy {
             friend class UData;
+
         public:
-            inline operator double() { return data->get(i); }
-            inline operator std::vector<double>() { return data->getVec(i); }
-            inline operator std::pair<double, double>() { return data->getPair(i); }
+            inline operator double() {
+                return data->get(i);
+            }
+            inline operator std::vector<double>() {
+                return data->getVec(i);
+            }
+            inline operator std::pair<double, double>() {
+                return data->getPair(i);
+            }
 
         protected:
-            ConstProxy(const UData* source, size_type index) : data(source), i(index) { }
+            ConstProxy(const UData* source, size_type index) : data(source), i(index) {}
 
             const UData* data;
             size_type i;
@@ -466,6 +473,7 @@ namespace PCOE {
 
         struct Proxy final : public ConstProxy {
             friend class UData;
+
         public:
             inline double operator=(double value) {
                 mut_data->set(i, value);
@@ -481,14 +489,14 @@ namespace PCOE {
             }
 
         protected:
-            Proxy(UData* source, size_type index) : ConstProxy(source, index),
-                mut_data(source) { }
+            Proxy(UData* source, size_type index) : ConstProxy(source, index), mut_data(source) {}
 
             UData* mut_data;
         };
 
         class iterator {
             friend class UData;
+
         public:
             using difference_type = std::vector<double>::iterator::difference_type;
 
@@ -577,8 +585,7 @@ namespace PCOE {
             }
 
         private:
-            iterator(UData* s, std::vector<double>::iterator b)
-                : source(s), base(b) { }
+            iterator(UData* s, std::vector<double>::iterator b) : source(s), base(b) {}
 
             UData* source;
             std::vector<double>::iterator base;
