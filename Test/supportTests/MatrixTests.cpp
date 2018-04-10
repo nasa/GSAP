@@ -1151,7 +1151,7 @@ namespace TestMatrix {
     void leftShift() {
         Matrix m1(3, 2, {1, 2, 3, 4, 5, 6});
 
-        Matrix m2();
+        Matrix m2;
         try {
             std::cout << m1 << std::endl;
             std::cout << m2 << std::endl;

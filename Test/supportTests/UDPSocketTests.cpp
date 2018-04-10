@@ -36,7 +36,7 @@ void testUDPCtor() {
     catch (...) {
     }
     try {
-        UDPSocket socket10 = UDPSocket(0, 55561);
+        UDPSocket socket10 = UDPSocket(65000, 55561);
         Assert::Fail("Socket created with unsupported address family.");
     }
     catch (...) {

@@ -171,8 +171,7 @@ namespace PCOE {
         return static_cast<size_type>(result);
     }
 
-    TCPSocketServer::size_type TCPSocketServer::SendAll(const char* buffer,
-                                                        TCPSocketServer::size_type len) {
+    void TCPSocketServer::SendAll(const char* buffer, TCPSocketServer::size_type len) {
         for (auto& sock : mapOfClients) {
             Send(sock.first, buffer, len);
         }

@@ -96,7 +96,7 @@ void testTCPSendAndReceive() {
 
     struct sockaddr_in sa = {};
     sa.sin_port = htons(8080);
-    inet_aton("127.0.0.1", &sa.sin_addr);
+    inet_pton(AF_INET, "127.0.0.1", &sa.sin_addr);
     sa.sin_family = AF_INET;
 
     TCPSocket testClientThree = TCPSocket(AF_INET);
@@ -184,13 +184,21 @@ void testTCPReceiveBufferSize() {
 void testTCPReceiveTimeout() {
     TCPSocket testSocket(AF_INET);
 
-    testSocket.ReceiveTimeout(100);
+    testSocket.ReceiveTimeout(100.0);
+#ifdef WIN32
+    Assert::AreEqual(testSocket.ReceiveTimeout(), 100 * 1e3);
+
+    TCPSocket::timeout_type value = 200;
+    testSocket.ReceiveTimeout(value);
+    Assert::AreEqual(200, testSocket.ReceiveTimeout());
+#else
     Assert::AreEqual(testSocket.ReceiveTimeout().tv_sec, 100);
 
     TCPSocket::timeout_type value = {};
     value.tv_sec = 200;
     testSocket.ReceiveTimeout(value);
     Assert::AreEqual(200, testSocket.ReceiveTimeout().tv_sec);
+#endif
 }
 
 void testTCPSendBufferSize() {
@@ -203,13 +211,21 @@ void testTCPSendBufferSize() {
 void testTCPSendTimeout() {
     TCPSocket testSocket(AF_INET);
 
-    testSocket.SendTimeout(100);
+    testSocket.SendTimeout(100.0);
+#ifdef WIN32
+    Assert::AreEqual(testSocket.SendTimeout(), 100 * 1e3);
+
+    TCPSocket::timeout_type value = 200;
+    testSocket.SendTimeout(value);
+    Assert::AreEqual(200, testSocket.SendTimeout());
+#else
     Assert::AreEqual(100, testSocket.SendTimeout().tv_sec);
 
     TCPSocket::timeout_type value = {};
     value.tv_sec = 200;
     testSocket.SendTimeout(value);
     Assert::AreEqual(200, testSocket.SendTimeout().tv_sec);
+#endif
 }
 
 void testTCPExceptions() {
@@ -247,12 +263,15 @@ void testTCPExceptions() {
     catch (...) {
     }
 
+#ifndef WIN32
+    // AF_PACKET doesn't exist on Windows
     try {
         TCPSocketServer failServer(AF_PACKET);
         Assert::Fail("Created server with unsupported address family.");
     }
     catch (...) {
     }
+#endif
 
     try {
         TCPSocketServer failServer(1024);
@@ -282,12 +301,15 @@ void testTCPExceptions() {
     catch (...) {
     }
 
+#ifndef WIN32
+    // AF_PACKET doesn't exist on Windows
     try {
         TCPSocketServer failServer(AF_PACKET, "127.0.0.1", 8080);
         Assert::Fail("Created server with unsupported address family.");
     }
     catch (...) {
     }
+#endif
 
     // Client's Connect() exception tests
     testSocket1.Close();
@@ -307,6 +329,7 @@ void testTCPExceptions() {
     catch (...) {
     }
 
+#ifndef WIN32
     // Client's Receive() exception tests
     testSocket4.Connect("127.0.0.1", 8080);
     testServer.Accept();
@@ -319,12 +342,15 @@ void testTCPExceptions() {
     }
     catch (...) {
     }
+#endif
 
     // Client-creation exception tests
     try {
         TCPSocket failSocket(1024);
         TCPSocket failSocket2(AF_UNIX);
+#ifndef WIN32
         TCPSocket failSocket3(AF_PACKET);
+#endif
         Assert::Fail("Socket created with bad address family.");
     }
     catch (...) {
@@ -337,7 +363,7 @@ void testTCPExceptions() {
     testSocket4.Close();
     struct sockaddr_in sa = {};
     sa.sin_port = htons(80);
-    inet_aton("bad address", &sa.sin_addr);
+    inet_pton(AF_INET, "bad address", &sa.sin_addr);
     sa.sin_family = AF_INET;
     try {
         testSocket4.Connect((struct sockaddr*)&sa, sizeof(sa), AF_INET);
@@ -387,15 +413,19 @@ void testTCPExceptions() {
     }
 
     try {
-        testSocket4.ReceiveTimeout(100);
+        testSocket4.ReceiveTimeout(100.0);
         Assert::Fail("Invalid socket set timeout value.");
     }
     catch (...) {
     }
 
     try {
+#ifdef WIN32
+        TCPSocket::timeout_type val = 100;
+#else
         TCPSocket::timeout_type val{};
         val.tv_sec = 100;
+#endif
 
         testSocket4.ReceiveTimeout(val);
     }
@@ -426,15 +456,19 @@ void testTCPExceptions() {
     }
 
     try {
-        testSocket4.SendTimeout(100);
+        testSocket4.SendTimeout(100.0);
         Assert::Fail("Invalid socket set send timeout value.");
     }
     catch (...) {
     }
 
     try {
+#ifdef WIN32
+        TCPSocket::timeout_type t = 100;
+#else
         TCPSocket::timeout_type t = {};
         t.tv_sec = 100;
+#endif
         testSocket4.SendTimeout(t);
         Assert::Fail("Invalid socket set send timeout value.");
     }

@@ -148,7 +148,7 @@ namespace PCOE {
         /// @param buffer   A pointer to the data to send
         /// @param len      The number of bytes to send
         /// @return         The number of bytes sent
-        size_type SendAll(const char buffer[], size_type len);
+        void SendAll(const char buffer[], size_type len);
 
         /// Receives the specified amount of data from the last connected client.
         /// @param buffer   A buffer to hold the data received
