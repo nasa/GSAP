@@ -49,6 +49,7 @@ FixNamespaceComments: false
 IndentCaseLabels: false
 KeepEmptyLinesAtTheStartOfBlocks: false
 NamespaceIndentation: All
+PenaltyBreakBeforeFirstCallParameter: 160
 PenaltyReturnTypeOnItsOwnLine: 80
 PointerAlignment: Left
 ReflowComments: true
