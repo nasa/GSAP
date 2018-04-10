@@ -207,11 +207,19 @@ namespace PCOE {
         ///        data once a read operation is initiated. The value is a
         ///        DWORD representing milliseconds on windows and a timeval
         ///        on *NIX platforms.
+        ///
+        /// @exception std::system_error An error occurred when
+        ///            attempting to access the socket.
         void ReceiveTimeout(timeout_type value);
 
-        /// @brief Cross platform way of setting the  amount of time a TcpClient will wait in
-        ///        seconds to receive
+        /// @brief Sets the amount of time the TcpSocket will wait to receive
         ///        data once a read operation is initiated.
+        ///
+        /// @param value The number of seconds to wait for data before timing
+        ///              out.
+        ///
+        /// @exception std::system_error An error occurred when
+        ///            attempting to access the socket.
         void ReceiveTimeout(double value);
 
         /// @brief Gets the size of the send buffer.

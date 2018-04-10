@@ -251,19 +251,13 @@ namespace PCOE {
 
     void TCPSocket::ReceiveTimeout(double value) {
 #ifdef _WIN32
-        timeout_type to = (long int)value * 1e3;
+        timeout_type to = static_cast<DWORD>(value * 1e3);
 #else
         timeout_type to;
         to.tv_sec = static_cast<long int>(value);
         to.tv_usec = static_cast<long int>((value - to.tv_sec) * 1e6);
 #endif
-        socklen_t len = sizeof(to);
-
-        int result = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char*>(&to), len);
-        if (result == -1) {
-            std::error_code ec(sockerr, std::generic_category());
-            throw std::system_error(ec, "Set receive timeout failed");
-        }
+        ReceiveTimeout(to);
     }
 
     TCPSocket::size_type TCPSocket::SendBufferSize() {
