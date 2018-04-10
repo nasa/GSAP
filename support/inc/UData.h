@@ -187,9 +187,21 @@ namespace PCOE {
             return m_uncertainty;
         }
 
-        /** @brief Gets the time that the current object was last updated. */
-        inline time_point updated() const {
+        /**
+         * @brief Gets the time that the current object was last updated.
+         */
+        inline size_type updated() const {
             return m_updated;
+        }
+
+        /**
+         * @brief Sets the time that the current object was last updated. The
+         *        time last updated is automatically changed when setting data,
+         *        so this is only necessary when the use of externally generated
+         *        timestamps is desired.
+         */
+        inline void updated(size_type value) {
+            m_updated = value;
         }
 
         /** @brief Marks the current UData as invalid. */
@@ -446,7 +458,7 @@ namespace PCOE {
         UDataInterface* m_interface;
         size_type m_npoints;
         UType m_uncertainty;
-        time_point m_updated;
+        size_type m_updated;
         bool m_valid;
 
     public:

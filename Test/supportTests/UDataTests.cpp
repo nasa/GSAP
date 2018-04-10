@@ -196,30 +196,30 @@ namespace TestUData {
     }
 
     void updated() {
-        using time_point = UData::time_point;
+        using size_type = UData::size_type;
 
         UData ud;
-        time_point start = ud.updated();
-        Assert::AreEqual(time_point(), ud.updated(), "Default updated time not 0");
+        size_type start = ud.updated();
+        Assert::AreEqual(0, ud.updated(), "Default updated time not 0");
 
         // Need short pause between every updated() call for IDEs that run test too quickly
         std::chrono::milliseconds ms(1); // Declare and initialize one millisecond variable
         std::this_thread::sleep_for(ms); // Pause for 1 ms
 
         ud.set(7);
-        time_point doubleTime = ud.updated();
+        size_type doubleTime = ud.updated();
         Assert::IsTrue(doubleTime > start, "updated not changed after setting double [0]");
 
         std::this_thread::sleep_for(ms); // Pause for 1 ms
 
         ud.set(std::make_pair(7, 11));
-        time_point pairTime = ud.updated();
+        size_type pairTime = ud.updated();
         Assert::IsTrue(pairTime > doubleTime, "updated not changed after setting pair [0]");
 
         std::this_thread::sleep_for(ms); // Pause for 1 ms
 
         ud.set({7, 11, 19});
-        time_point vecTime = ud.updated();
+        size_type vecTime = ud.updated();
         Assert::IsTrue(vecTime > pairTime, "updated not changed after setting vector [0]");
 
         std::this_thread::sleep_for(ms); // Pause for 1 ms
@@ -364,15 +364,15 @@ namespace TestUData {
         Assert::AreEqual(1, ud.npoints(), "Unexpected npoints");
 
         ud[VALUE] = 3.433;
-        UData::time_point update1 = ud.updated();
+        UData::size_type update1 = ud.updated();
         Assert::AreEqual(3.433, ud.get(VALUE), 1e-12, "Unexpected value using indexer");
-        Assert::IsTrue(update1.time_since_epoch().count() > 0, "Time not updated on first insert");
+        Assert::IsTrue(update1 > 0, "Time not updated on first insert");
         Assert::IsTrue(ud.valid(), "Not valid after first insert");
 
         ud.set(7.35);
-        UData::time_point update2 = ud.updated();
+        UData::size_type update2 = ud.updated();
         Assert::AreEqual(7.35, ud.get(VALUE), 1e-12, "Unexpected value using set");
-        Assert::IsTrue((update2 - update1).count() > 0, "Time not updated on second insert");
+        Assert::IsTrue(update2 - update1 > 0, "Time not updated on second insert");
         Assert::IsTrue(ud.valid(), "Not valid after second insert");
 
         // Setting another value should reset valid to true

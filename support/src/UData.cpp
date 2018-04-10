@@ -165,8 +165,9 @@ namespace PCOE {
     }
 
     void UData::set(const size_type key, const double value) {
+        using namespace std::chrono;
         m_interface->set(key, value, m_data);
-        m_updated = clock::now();
+        m_updated = time_point_cast<milliseconds>(clock::now()).time_since_epoch().count();
         m_valid = true;
     }
 
@@ -182,8 +183,9 @@ namespace PCOE {
     }
 
     void UData::setPair(const size_type key, const std::pair<double, double>& value) {
+        using namespace std::chrono;
         m_interface->setPair(key, value, m_data);
-        m_updated = clock::now();
+        m_updated = time_point_cast<milliseconds>(clock::now()).time_since_epoch().count();
         m_valid = true;
     }
 
@@ -196,8 +198,9 @@ namespace PCOE {
     }
 
     void UData::setVec(const size_type key, const std::vector<double>& value) {
+        using namespace std::chrono;
         m_interface->setVec(key, value, m_data);
-        m_updated = clock::now();
+        m_updated = time_point_cast<milliseconds>(clock::now()).time_since_epoch().count();
         m_valid = true;
     }
 }

@@ -329,7 +329,7 @@ namespace PCOE {
                             dataWithValidityAndTimeSpace,
                             vec[it],
                             timeofEventValidity,
-                            timeofEventLastUpdate.time_since_epoch().count());
+                            timeofEventLastUpdate);
                 }
                 fprintf(theFile, "], ");
 
@@ -371,7 +371,7 @@ namespace PCOE {
                                     dataWithValidityAndTimeSpace,
                                     it,
                                     trajValidity,
-                                    trajLastUpdate.time_since_epoch().count());
+                                    trajLastUpdate);
                         }
                         fprintf(theFile, "], ");
                     }
