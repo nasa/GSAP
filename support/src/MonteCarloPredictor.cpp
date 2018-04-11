@@ -145,7 +145,7 @@ namespace PCOE {
             // 3. Simulate until time limit reached
             double t = tP;
             unsigned int timeIndex = 0;
-            data.events[event].timeOfEvent[sample] = INFINITY;
+            data.events[event].getTOE()[sample] = INFINITY;
             while (t <= tP + horizon) {
                 // Get inputs for time t
                 std::vector<double> loadEstimate = loadEstimator->estimateLoad(t, sample);
@@ -157,8 +157,8 @@ namespace PCOE {
                 auto& theEvent = data.events[event];
                 theEvent.occurrenceMatrix[timeIndex][sample] = pModel->thresholdEqn(t, x, u);
                 if (theEvent.occurrenceMatrix[timeIndex][sample] &&
-                    theEvent.timeOfEvent[sample] == INFINITY) {
-                    theEvent.timeOfEvent[sample] = t;
+                    theEvent.getTOE()[sample] == INFINITY) {
+                    theEvent.getTOE()[sample] = t;
                     continue;
                 }
 

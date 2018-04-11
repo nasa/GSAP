@@ -4,35 +4,36 @@
 //  ProgEventUnit
 //
 //  Created by Chris Teubert on 3/5/16.
-//  Copyright © 2016 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
+//  Copyright © 2016 United States Government as represented by the Administrator of the National
+//  Aeronautics and Space Administration.  All Rights Reserved.
 //
 
-#include "Test.h"
 #include "PEventTests.h"
 #include "ProgEvent.h"
+#include "Test.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
-void testPEventInit()
-{
+void testPEventInit() {
     ProgEvent test;
 
     test.setNumTimes(0);
 
     // Test Defaults
     Assert::AreEqual(UType::Point, test.getUncertainty());
-    Assert::AreEqual(UType::Point, test.timeOfEvent.uncertainty()); // Default
+    Assert::AreEqual(UType::Point, test.getTOE().uncertainty()); // Default
     Assert::AreEqual(0, test.getNumOccurrenceSamples());
     Assert::AreEqual(0, test.getNumTimes());
-    Assert::AreEqual(1, test.occurrenceMatrix.size()); // Should not change until there is a number of times (only now)
+    Assert::AreEqual(1,
+                     test.occurrenceMatrix
+                         .size()); // Should not change until there is a number of times (only now)
     Assert::AreEqual(0, test.occurrenceMatrix[0].size());
     Assert::AreEqual(1, test.probMatrix.size());
     Assert::IsNaN(test.probMatrix[0]);
 }
 
-void testPEventUpdate()
-{
+void testPEventUpdate() {
     ProgEvent test;
 
     // Test changing parameters
@@ -51,12 +52,14 @@ void testPEventUpdate()
 
     test.setUncertainty(UType::MeanSD);
     Assert::AreEqual(UType::MeanSD, test.getUncertainty());
-    Assert::AreEqual(UType::MeanSD, test.timeOfEvent.uncertainty()); // Changes for both
+    Assert::AreEqual(UType::MeanSD, test.getTOE().uncertainty()); // Changes for both
 
     test.setNumOccurrenceSamples(10);
     Assert::AreEqual(10, test.getNumOccurrenceSamples());
     Assert::AreEqual(0, test.getNumTimes());
-    Assert::AreEqual(1, test.occurrenceMatrix.size()); // Should not change until there is a number of times (only now)
+    Assert::AreEqual(1,
+                     test.occurrenceMatrix
+                         .size()); // Should not change until there is a number of times (only now)
     Assert::AreEqual(10, test.occurrenceMatrix[0].size());
     Assert::IsFalse(test.occurrenceMatrix[0][0]);
 
@@ -67,16 +70,15 @@ void testPEventUpdate()
     Assert::AreEqual(6, test.probMatrix.size());
     Assert::AreEqual(10, test.occurrenceMatrix[0].size());
 
-//    test.setNPoints(3); // Usually private
-//    Assert::AreEqual(3, test.timeOfEvent.getNPoints());
-//    Assert::AreEqual(2, test.timeOfEvent.size());
-//    test.setUncertainty(WSAMPLES);
-//    Assert::AreEqual(3, test.timeOfEvent.getNPoints());
-//    Assert::AreEqual(6, test.timeOfEvent.size());
+    //    test.setNPoints(3); // Usually private
+    //    Assert::AreEqual(3, test.timeOfEvent.getNPoints());
+    //    Assert::AreEqual(2, test.timeOfEvent.size());
+    //    test.setUncertainty(WSAMPLES);
+    //    Assert::AreEqual(3, test.timeOfEvent.getNPoints());
+    //    Assert::AreEqual(6, test.timeOfEvent.size());
 }
 
-void testPEventMeta()
-{
+void testPEventMeta() {
     ProgEvent test;
     Assert::AreEqual(0, test.getName().compare("")); // Test Default
     Assert::AreEqual(0, test.getDesc().compare("")); // Test Default

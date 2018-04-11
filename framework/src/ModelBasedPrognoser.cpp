@@ -91,7 +91,7 @@ namespace PCOE {
         results.addSystemTrajectories(predictedOutputs); // predicted outputs
         results.setPredictions(1, horizon); // interval, number of predictions
         results.setupOccurrence(numSamples);
-        results.events[event].timeOfEvent.npoints(numSamples);
+        results.events[event].getTOE().npoints(numSamples);
         results.sysTrajectories.setNSamples(numSamples);
     }
 

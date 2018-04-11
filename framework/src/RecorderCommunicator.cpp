@@ -232,7 +232,7 @@ namespace PCOE {
                             toeFormatString,
                             progName,
                             eventName,
-                            static_cast<int>(event.timeOfEvent.uncertainty()));
+                            static_cast<int>(event.getTOE().uncertainty()));
 
                     // Probability of Occurrence
                     if (writeProbOccur) {
@@ -316,14 +316,14 @@ namespace PCOE {
                 const auto& event = itPD.second->events[itEvents];
 
                 // timeOfEvent
-                const auto vec = event.timeOfEvent.getVec(0);
+                const auto vec = event.getTOE().getVec(0);
                 // @note(CT): For one character put is more efficient (doesn't have to scan for
                 //      endstring character)
                 fputc('[', theFile);
 
                 // Below values do not change inside loop, so there are accessed here for efficiency
-                const auto&& timeofEventLastUpdate = event.timeOfEvent.updated();
-                const auto&& timeofEventValidity = event.timeOfEvent.valid();
+                const auto&& timeofEventLastUpdate = event.getTOE().updated();
+                const auto&& timeofEventValidity = event.getTOE().valid();
                 for (unsigned long it = 0; it < vec.size(); ++it) {
                     fprintf(theFile,
                             dataWithValidityAndTimeSpace,

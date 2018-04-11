@@ -7,32 +7,31 @@
 
 #include <iostream>
 
-#include "Test.h"
+#include "Battery.h"
 #include "BatteryPrognoserTests.h"
-#include "ModelBasedPrognoser.h"
+#include "CommManager.h"
+#include "CommunicatorFactory.h"
 #include "GSAPConfigMap.h"
 #include "ModelBasedPrognoser.h"
-#include "PrognosticsModelFactory.h"
 #include "ModelFactory.h"
-#include "ObserverFactory.h"
-#include "PredictorFactory.h"
-#include "CommunicatorFactory.h"
-#include "Battery.h"
-#include "UnscentedKalmanFilter.h"
 #include "MonteCarloPredictor.h"
+#include "ObserverFactory.h"
 #include "PlaybackCommunicator.h"
-#include "CommManager.h"
+#include "PredictorFactory.h"
+#include "PrognosticsModelFactory.h"
+#include "Test.h"
+#include "UnscentedKalmanFilter.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
 void batteryPrognoserInit() {
     // Create the needed factories
-    ModelFactory & pModelFactory = ModelFactory::instance();
-    PrognosticsModelFactory & pProgModelFactory = PrognosticsModelFactory::instance();
-    ObserverFactory & pObserverFactory = ObserverFactory::instance();
-    PredictorFactory & pPredictorFactory = PredictorFactory::instance();
-    CommunicatorFactory & pCommFactory = CommunicatorFactory::instance();
+    ModelFactory& pModelFactory = ModelFactory::instance();
+    PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
+    ObserverFactory& pObserverFactory = ObserverFactory::instance();
+    PredictorFactory& pPredictorFactory = PredictorFactory::instance();
+    CommunicatorFactory& pCommFactory = CommunicatorFactory::instance();
 
     // Register battery model
     pModelFactory.Register("Battery", ModelFactory::Create<Battery>);
@@ -48,16 +47,16 @@ void batteryPrognoserInit() {
     pCommFactory.Register("playback", CommunicatorFactory::Create<PlaybackCommunicator>);
 
     // Set up comm manager
-    CommManager & pTheComm = CommManager::instance();
+    CommManager& pTheComm = CommManager::instance();
     GSAPConfigMap paramMap;
     paramMap.set("Communicators", "../cfg/BatteryPlayback.cfg");
-    //paramMap.set("commmanager.step_size", "1000");
+    // paramMap.set("commmanager.step_size", "1000");
     pTheComm.configure(paramMap);
 }
 
-PCOE::ModelBasedPrognoser* createBatteryPrognoser()
-{
-    // A battery prognoser is constructed as a ModelBasedPrognoser with a Battery, a UKF, and a MonteCarloPredictor
+PCOE::ModelBasedPrognoser* createBatteryPrognoser() {
+    // A battery prognoser is constructed as a ModelBasedPrognoser with a Battery, a UKF, and a
+    // MonteCarloPredictor
     GSAPConfigMap paramMap;
     paramMap.set("model", "Battery");
     paramMap.set("Battery.qMobile", "7600");
@@ -115,28 +114,28 @@ PCOE::ModelBasedPrognoser* createBatteryPrognoser()
     paramMap["Model.processNoise"] = processNoise;
     // Create a constant loading scenario (single portion)
     std::vector<std::string> inputUncertainty;
-    inputUncertainty.push_back("8");		// Mean of magnitude
-    inputUncertainty.push_back("0.1");		// Std of mangnitude
-    inputUncertainty.push_back("5000");		// Mean of duration
-    inputUncertainty.push_back("1");		// Std of duration
+    inputUncertainty.push_back("8"); // Mean of magnitude
+    inputUncertainty.push_back("0.1"); // Std of mangnitude
+    inputUncertainty.push_back("5000"); // Mean of duration
+    inputUncertainty.push_back("1"); // Std of duration
     paramMap["Predictor.inputUncertainty"] = inputUncertainty;
 
     // Prognoser parameters
     paramMap.set("type", "mytype");
     paramMap.set("name", "myname");
     paramMap.set("id", "myid");
-    std::vector<std::string> inTags({ "voltage", "power", "temperature" });
+    std::vector<std::string> inTags({"voltage", "power", "temperature"});
     paramMap["inTags"] = inTags;
     paramMap.set("inputs", "power");
-    std::vector<std::string> outputs({ "voltage", "temperature" });
+    std::vector<std::string> outputs({"voltage", "temperature"});
     paramMap["outputs"] = outputs;
 
     // Construct prognoser
-    ModelBasedPrognoser * prognoser = NULL;
+    ModelBasedPrognoser* prognoser = NULL;
     try {
         prognoser = new ModelBasedPrognoser(paramMap);
     }
-    catch (std::exception &e) {
+    catch (std::exception& e) {
         std::cout << e.what() << std::endl;
         Assert::Fail();
     }
@@ -145,8 +144,7 @@ PCOE::ModelBasedPrognoser* createBatteryPrognoser()
     return prognoser;
 }
 
-void testBatteryPrognoserConstruction()
-{
+void testBatteryPrognoserConstruction() {
     ModelBasedPrognoser* p = createBatteryPrognoser();
     Assert::IsNotNull(p);
     p->stop();
@@ -154,8 +152,7 @@ void testBatteryPrognoserConstruction()
     delete p;
 }
 
-void testBatteryPrognoserStep()
-{
+void testBatteryPrognoserStep() {
     // Create prognoser
     ModelBasedPrognoser* p = createBatteryPrognoser();
 
@@ -171,18 +168,21 @@ void testBatteryPrognoserStep()
     double meanEOD = 0;
     double meanSOCAt1 = 0;
     double meanSOCAt500 = 0;
-    for (unsigned int i = 0; i < pData.events["EOD"].timeOfEvent.npoints(); i++) {
-        meanEOD += pData.events["EOD"].timeOfEvent[i] / pData.events["EOD"].timeOfEvent.npoints();
+    for (unsigned int i = 0; i < pData.events["EOD"].getTOE().npoints(); i++) {
+        meanEOD += pData.events["EOD"].getTOE()[i] / pData.events["EOD"].getTOE().npoints();
     }
     for (unsigned int i = 0; i < pData.sysTrajectories["SOC"].getNPoints(); i++) {
-        meanSOCAt1 += pData.sysTrajectories["SOC"][1][i] / pData.sysTrajectories["SOC"].getNPoints();
-        meanSOCAt500 += pData.sysTrajectories["SOC"][500][i] / pData.sysTrajectories["SOC"].getNPoints();
+        meanSOCAt1 +=
+            pData.sysTrajectories["SOC"][1][i] / pData.sysTrajectories["SOC"].getNPoints();
+        meanSOCAt500 +=
+            pData.sysTrajectories["SOC"][500][i] / pData.sysTrajectories["SOC"].getNPoints();
     }
 
-    // Check results (NOTE: These are lower than for PredictorTests since the data file is being run very fast)
-    //assert(meanEOD > 2200 && meanEOD < 2600);
-//    assert(meanSOCAt1 > 0.75 && meanSOCAt1 <= 0.85);
-//    assert(meanSOCAt500 > 0.60 && meanSOCAt500 < 0.70);
+    // Check results (NOTE: These are lower than for PredictorTests since the data file is being run
+    // very fast)
+    // assert(meanEOD > 2200 && meanEOD < 2600);
+    //    assert(meanSOCAt1 > 0.75 && meanSOCAt1 <= 0.85);
+    //    assert(meanSOCAt500 > 0.60 && meanSOCAt500 < 0.70);
     p->stop();
     p->join();
     delete p;

@@ -4,26 +4,26 @@
  *   @ingroup   ProgData
  *
  *   @brief     Prognostic Event Class used to handle storage, access, and updating of the data
- *associated with a specific prognostic event (Example: End of life, end of discharge). This data
- *includes the following:
+ *              associated with a specific prognostic event (Example: End of life, end of
+ *              discharge). This data includes the following:
  *              1. Meta Information from ProgMeta
  *              2. timeOfEvent with uncertainty: When the event occurs
  *              3. probMatrix with uncertainty: The probability that the event has occured at
- *different timestamps
+ *                 different timestamps
  *              4. occurrenceMatrix: A collection of samples in a simulation for different
- *timestamps- if the event has occured for each sample. This is the most detailed representation of
- *uncertainty. probMatrix can be calculated from this
+ *                 timestamps- if the event has occured for each sample. This is the most detailed
+ *                 representation of uncertainty. probMatrix can be calculated from this
  *
  *   @note      In many cases there will be only one event (End of life).
  *   @note      In many cases timeOfEvent will be the only parameter that is used. probMatrix and
- *occurrenceMatrix is for advanced users.
+ *              occurrenceMatrix is for advanced users.
  *
  *   @author    Chris Teubert
  *   @author    Jason Watkins
  *   @version   0.1.0
  *
- *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
- *      Created: March 3, 2016
+ *   Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
+ *   Created: March 3, 2016
  *
  *   @copyright Copyright (c) 2013-2016 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
@@ -39,6 +39,7 @@
 namespace PCOE {
     namespace TOE_Unit {
         const std::string S = "seconds";
+        const std::string US = "microseconds";
         const std::string CYCLES = "cycles";
     }
 
@@ -66,8 +67,20 @@ namespace PCOE {
          **/
         unsigned int getNumOccurrenceSamples() const;
 
-        /// @brief      The Time the Event will occur with uncertainty
-        UData timeOfEvent;
+        /// @brief Sets the time the event will occur.
+        inline void setTOE(const UData& value) {
+            timeOfEvent = value;
+        }
+
+        /// @brief Gets the time the event will occur.
+        const UData& getTOE() const {
+            return timeOfEvent;
+        }
+
+        /// @brief Gets the time the event will occur.
+        UData& getTOE() {
+            return timeOfEvent;
+        }
 
         /// @brief      The probability of event occuring within the prediction horizon
         double eventProb;
@@ -75,24 +88,24 @@ namespace PCOE {
         /// @brief      The probability the the event will occur at each time stamp
         std::vector<double> probMatrix; // 1-dim: Time
 
-        /** @brief      A two dimentional matrix storing wether the event has occured for each
-         *sample. The matrix has the dimensions time x unweighted samples so that:
-         *              occurrenceMatrix[0][7]  represents wether the event has occured for sample 7
-         *at time 0.
-         *  @see        setNumOccurrenceSamples
-         *  @note       probMatrix can be calculated from this
+        /** @brief A two dimentional matrix storing wether the event has occured for each
+         *         sample. The matrix has the dimensions time x unweighted samples so that:
+         *         occurrenceMatrix[0][7]  represents wether the event has occured for sample 7
+         *         at time 0.
+         *  @see   setNumOccurrenceSamples
+         *  @note  probMatrix can be calculated from this
          **/
         std::vector<std::vector<bool>> occurrenceMatrix; // 2-dim: Time x samples
 
-        /** @brief      Set the number of timestamps for which prognostic relevant prognostic data
-         *will be recorded
-         *  @param      nTimesIn        Number of timestamps
+        /** @brief Set the number of timestamps for which prognostic relevant prognostic data
+         *         will be recorded
+         *  @param nTimesIn Number of timestamps
          **/
         void setNumTimes(const unsigned int nTimesIn);
 
-        /** @brief      Get the number of timestamps for which prognostic relevant prognostic data
-         *will be recorded
-         *  @return     Number of timestamps
+        /** @brief  Get the number of timestamps for which prognostic relevant prognostic data
+         *          will be recorded
+         *  @return Number of timestamps
          **/
         unsigned int getNumTimes() const;
 
@@ -123,6 +136,8 @@ namespace PCOE {
          *  @see        ProgEvents
          **/
         void setNPoints(const unsigned int nPoints);
+
+        UData timeOfEvent;
     };
 }
 
