@@ -90,6 +90,16 @@ namespace PCOE {
         }
     }
 
+    UData::size_type getLowestTimestamp(const std::vector<UData>& data) {
+        UData::size_type result = std::numeric_limits<UData::size_type>::max();
+        for (const UData& entry : data) {
+            if (entry.updated() < result) {
+                result = entry.updated();
+            }
+        }
+        return result;
+    }
+
     // Predict function
     void MonteCarloPredictor::predict(const double tP,
                                       const std::vector<UData>& state,
@@ -102,6 +112,8 @@ namespace PCOE {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "MonteCarloPredictor does not have a model!");
             throw ConfigurationError("MonteCarloPredictor does not have a model!");
         }
+
+        auto stateTimestamp = getLowestTimestamp(state);
 
         // Create a random number generator
         static std::random_device rDevice;
@@ -159,6 +171,7 @@ namespace PCOE {
                 if (theEvent.occurrenceMatrix[timeIndex][sample] &&
                     theEvent.getTOE()[sample] == INFINITY) {
                     theEvent.getTOE()[sample] = t;
+                    theEvent.getTOE().updated(stateTimestamp);
                     continue;
                 }
 
