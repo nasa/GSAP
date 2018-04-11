@@ -6,14 +6,8 @@
 //
 //
 
-#include <stdio.h>
 #include <iostream>
-#ifdef _WIN32
-#include "Windows.h"
-#else
-#include <unistd.h>
-#include <sys/select.h>
-#endif
+#include <stdio.h>
 
 #include "STDINCommunicator.h"
 
@@ -23,8 +17,12 @@ namespace PCOE {
     STDINCommunicator::STDINCommunicator() {
         log.WriteLine(LOG_INFO, MODULE_NAME, "Configuring");
 
+#ifdef _WIN32
+        timeout = 0;
+#else
         timeout.tv_sec = 0;
         timeout.tv_usec = 0;
+#endif
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Configured");
     }
 
@@ -61,10 +59,12 @@ namespace PCOE {
         int rc = select(1, &fds, nullptr, nullptr, &timeout);
         if (rc < 0) {
             perror("select");
-        } else if (rc == 0 || (feof(stdin))) {
+        }
+        else if (rc == 0 || (feof(stdin))) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Nothing on STDIN");
             // Timeout
-        } else {
+        }
+        else {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Data Received");
             setRead();
         }
