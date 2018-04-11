@@ -178,7 +178,11 @@ void testTCPReceiveBufferSize() {
     TCPSocket testSocket(AF_INET);
 
     testSocket.ReceiveBufferSize(2048);
-    Assert::AreEqual(4096, testSocket.ReceiveBufferSize());
+#if !defined(_WIN32) && !defined(__APPLE__)
+    Assert::AreEqual(4096, testSocket.ReceiveBufferSize(), "Size of receive buffer not equal to set value.");
+#else
+    Assert::AreEqual(2048, testSocket.ReceiveBufferSize(), "Size of receive buffer not equal to set value.");
+#endif
 }
 
 void testTCPReceiveTimeout() {
@@ -205,7 +209,11 @@ void testTCPSendBufferSize() {
     TCPSocket testSocket(AF_INET);
 
     testSocket.SendBufferSize(4096);
-    Assert::AreEqual(8192, testSocket.SendBufferSize());
+#if !defined(_WIN32) && !defined(__APPLE__)
+    Assert::AreEqual(8192, testSocket.SendBufferSize(), "Size of send buffer not equal to set value.");
+#else
+    Assert::AreEqual(4096, testSocket.SendBufferSize(), "Size of send buffer not equal to set value.");
+#endif
 }
 
 void testTCPSendTimeout() {
@@ -263,7 +271,7 @@ void testTCPExceptions() {
     catch (...) {
     }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     // AF_PACKET doesn't exist on Windows
     try {
         TCPSocketServer failServer(AF_PACKET);
@@ -301,7 +309,7 @@ void testTCPExceptions() {
     catch (...) {
     }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     // AF_PACKET doesn't exist on Windows
     try {
         TCPSocketServer failServer(AF_PACKET, "127.0.0.1", 8080);
@@ -348,7 +356,7 @@ void testTCPExceptions() {
     try {
         TCPSocket failSocket(1024);
         TCPSocket failSocket2(AF_UNIX);
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
         TCPSocket failSocket3(AF_PACKET);
 #endif
         Assert::Fail("Socket created with bad address family.");
