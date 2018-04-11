@@ -4,7 +4,8 @@
  *   @ingroup   ProgData
  *   @ingroup   UData
  *
- *   @brief     Uncertain Data Structure Classes - Classes used for storing, distributing, and manipulation data with uncertainty
+ *   @brief     Uncertain Data Structure Classes - Classes used for storing,
+ *              distributing, and manipulation data with uncertainty
  *
  *   @author    Chris Teubert <christopher.a.teubert@nasa.gov>
  *   @author    Jason Watkins <jason-watkins@outlook.com>
@@ -16,8 +17,8 @@
  *     All Rights Reserved.
  **/
 
-#include <cmath>  // For isnan
-#include <chrono>  // For lastUpdated
+#include <chrono>
+#include <cmath>
 #include <stdexcept>
 #include <unordered_map>
 
@@ -45,12 +46,16 @@ namespace PCOE {
     //|        Constructors          |
     //*------------------------------*
 
-    UData::UData() : UData(UType::Point) { }
+    UData::UData() : UData(UType::Point) {}
 
-    UData::UData(const UType ut) : m_data(), m_dist(DIST_UNKNOWN),
-        m_interface(nullptr), m_npoints(1), m_uncertainty(ut), m_updated(),
-        m_valid(false) {
-
+    UData::UData(const UType ut)
+        : m_data(),
+          m_dist(DIST_UNKNOWN),
+          m_interface(nullptr),
+          m_npoints(1),
+          m_uncertainty(ut),
+          m_updated(),
+          m_valid(false) {
         // Set Uncertainty. Initializes uType and interface
         uncertainty(ut);
     }
@@ -93,8 +98,7 @@ namespace PCOE {
     //|         Comparison           |
     //*------------------------------*
 
-    bool UData::operator==(const UData &other) const
-    {
+    bool UData::operator==(const UData& other) const {
         // Check Type
         if (m_dist != other.m_dist || m_uncertainty != other.m_uncertainty ||
             m_npoints != other.m_npoints || m_valid != other.m_valid) {
@@ -121,9 +125,8 @@ namespace PCOE {
         return true;
     }
 
-    bool UData::operator!=(const UData &other) const
-    {
-        return !(other == *this);  // Is not equal
+    bool UData::operator!=(const UData& other) const {
+        return !(other == *this);
     }
 
     //*------------------------------*
@@ -162,8 +165,9 @@ namespace PCOE {
     }
 
     void UData::set(const size_type key, const double value) {
+        using namespace std::chrono;
         m_interface->set(key, value, m_data);
-        m_updated = clock::now();
+        m_updated = time_point_cast<microseconds>(clock::now()).time_since_epoch().count();
         m_valid = true;
     }
 
@@ -178,9 +182,10 @@ namespace PCOE {
         return m_interface->getPair(key, m_data);
     }
 
-    void UData::setPair(const size_type key, const std::pair<double, double> & value) {
+    void UData::setPair(const size_type key, const std::pair<double, double>& value) {
+        using namespace std::chrono;
         m_interface->setPair(key, value, m_data);
-        m_updated = clock::now();
+        m_updated = time_point_cast<microseconds>(clock::now()).time_since_epoch().count();
         m_valid = true;
     }
 
@@ -192,9 +197,10 @@ namespace PCOE {
         return m_interface->getVec(key, m_data);
     }
 
-    void UData::setVec(const size_type key, const std::vector<double> & value) {
+    void UData::setVec(const size_type key, const std::vector<double>& value) {
+        using namespace std::chrono;
         m_interface->setVec(key, value, m_data);
-        m_updated = clock::now();
+        m_updated = time_point_cast<microseconds>(clock::now()).time_since_epoch().count();
         m_valid = true;
     }
 }

@@ -113,7 +113,11 @@ void testExceptionHandling() {
     socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), "127.0.0.1", 55556);
     char buffer2[128];
     UDPSocket::size_type result = socket3.Available();
+#if !defined(_WIN32) && !defined(__APPLE__)
     Assert::AreEqual(31, result, "Bytes available to read is not same as bytes sent.");
+#else
+    Assert::AreEqual(59, result, "Bytes available to read is not same as bytes sent.");
+#endif
     socket3.Receive(buffer2, sizeof(buffer) / sizeof(buffer[0]));
     result = socket3.Available();
     Assert::AreEqual(

@@ -1,7 +1,8 @@
 /**  Unit Test functions for UData- Header
  *   @file      Unit Testing functions for UData
  *
- *   @brief     A set of functions to be used with UnitTester. These functions test all the aspects of UData
+ *   @brief     A set of functions to be used with UnitTester. These functions
+ *              test all the aspects of UData
  *
  *   @ingroup   UData
  *
