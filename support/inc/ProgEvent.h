@@ -67,6 +67,12 @@ namespace PCOE {
          **/
         unsigned int getNumOccurrenceSamples() const;
 
+        /// @brief the time the event will occur.
+        /// @deprecated getter/setter methods getTOE/setTOE should be used
+        ///             instead. This field may be made private in future
+        ///             releases.
+        UData timeOfEvent;
+
         /// @brief Sets the time the event will occur.
         inline void setTOE(const UData& value) {
             timeOfEvent = value;
@@ -136,8 +142,6 @@ namespace PCOE {
          *  @see        ProgEvents
          **/
         void setNPoints(const unsigned int nPoints);
-
-        UData timeOfEvent;
     };
 }
 
