@@ -92,7 +92,7 @@ void testTCPSendAndReceive() {
 
     Assert::AreEqual(0, strcmp(buffer2, serverBuffer2));
 
-    testServer.Listen();
+    //testServer.Listen();
 
     struct sockaddr_in sa = {};
     sa.sin_port = htons(8080);
@@ -331,16 +331,21 @@ void testTCPExceptions() {
 
 #ifndef WIN32
     // Client's Receive() exception tests
-    testSocket4.Connect("127.0.0.1", 8080);
-    testServer.Accept();
+    testServer.Close();
+    TCPSocketServer testReceiveExceptionServer(AF_INET);
+    testReceiveExceptionServer.Listen();
+    TCPSocket testSocket5("127.0.0.1", 8080);
+    testReceiveExceptionServer.Accept();
     try {
-        char recvBuffer[0];
-        testServer.SendAll(messageFromServer, strlen(messageFromServer));
-        testSocket4.ReceiveTimeout(0.5);
-        testSocket4.Receive(recvBuffer, strlen(messageFromServer));
-        Assert::Fail("Socket received message while having a size 0 buffer.");
+
+        char recvBuffer[1024];
+        testReceiveExceptionServer.Send(0, messageFromServer, strlen(messageFromServer));
+        testSocket5.Close();
+        testSocket5.Receive(recvBuffer, strlen(messageFromServer));
+        Assert::Fail("Socket received message after closing.");
     }
-    catch (...) {
+    catch (std::system_error ec) {
+        testReceiveExceptionServer.Close();
     }
 #endif
 
@@ -356,8 +361,8 @@ void testTCPExceptions() {
     catch (...) {
     }
 
-    testServer.CloseAll();
-    testServer.Listen();
+    TCPSocketServer testConnectExceptionServer(AF_INET);
+    testConnectExceptionServer.Listen();
 
     // Client's Connect() with sockaddr exception test
     testSocket4.Close();
