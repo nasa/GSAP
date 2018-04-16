@@ -27,7 +27,11 @@ namespace PCOE {
 #endif
 
         STDINCommunicator();
+
         void poll() override;
+
+    protected:
+        void setTimeout(double seconds);
 
     protected:
         timeout_type timeout;

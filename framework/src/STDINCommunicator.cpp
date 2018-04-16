@@ -18,9 +18,9 @@ namespace PCOE {
         log.WriteLine(LOG_INFO, MODULE_NAME, "Configuring");
 
 #ifdef _WIN32
-        timeout = 0;
+        timeout = 1000;
 #else
-        timeout.tv_sec = 0;
+        timeout.tv_sec = 1;
         timeout.tv_usec = 0;
 #endif
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Configured");
@@ -68,6 +68,17 @@ namespace PCOE {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Data Received");
             setRead();
         }
+#endif
+    }
+
+    void STDINCommunicator::setTimeout(double seconds) {
+#ifdef _WIN32
+        timeout = static_cast<DWORD>(seconds * 1000);
+#else
+        struct timeval to;
+        to.tv_sec = static_cast<time_t>(seconds);
+        to.tv_usec = static_cast<long int>(seconds * 1000000);
+        timeout = to;
 #endif
     }
 }
