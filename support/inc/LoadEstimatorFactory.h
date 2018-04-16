@@ -23,6 +23,7 @@
 
 #include "LoadEstimator.h"
 #include "ConstLoadEstimator.h"
+#include "MovingAverageLoadEstimator.h"
 #include "Factory.h"
 #include "Singleton.h"
 
@@ -45,6 +46,7 @@ namespace PCOE {
          **/
         LoadEstimatorFactory() {
             Register("const", LoadEstimatorFactory::Create<ConstLoadEstimator>);
+            Register("movingAverage", LoadEstimatorFactory::Create<MovingAverageLoadEstimator>);
         };
     };
 }

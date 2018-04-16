@@ -14,6 +14,7 @@ set (HEADERS
 	inc/Matrix.h
 	inc/Model.h
 	inc/MonteCarloPredictor.h
+        inc/MovingAverageLoadEstimator.h
 	inc/Observer.h
 	inc/ObserverFactory.h
 	inc/ParticleFilter.h
@@ -50,6 +51,7 @@ set(SRCS
 	src/Matrix.cpp
 	src/Model.cpp
 	src/MonteCarloPredictor.cpp
+        src/MovingAverageLoadEstimator.cpp
 	src/Observer.cpp
 	src/ParticleFilter.cpp
 	src/ProgContainers.cpp
