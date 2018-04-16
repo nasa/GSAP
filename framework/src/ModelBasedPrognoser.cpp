@@ -5,7 +5,8 @@
  *
  *   @brief     Model-based Prognoser Class
  *
- *   General model-based prognoser class. It gets created for a specified model, observer, and predictor.
+ *   General model-based prognoser class. It gets created for a specified model,
+ *   observer, and predictor.
  *
  *   @author    Matthew Daigle
  *   @version   0.1.0
@@ -25,13 +26,13 @@
 
 #include <iostream>
 
-#include "SharedLib.h"
+#include "GSAPConfigMap.h"
 #include "ModelBasedPrognoser.h"
 #include "ObserverFactory.h"
 #include "PredictorFactory.h"
 #include "PrognosticsModelFactory.h"
+#include "SharedLib.h"
 #include "UData.h"
-#include "GSAPConfigMap.h"
 
 namespace PCOE {
     // Configuration Keys
@@ -43,43 +44,54 @@ namespace PCOE {
     const std::string HORIZON_KEY = "Predictor.horizon";
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
 
-    ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap & configMap) : CommonPrognoser(configMap), initialized(false) {
+    ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
+        : CommonPrognoser(configMap), initialized(false) {
         // Check for required config parameters
-        configMap.checkRequiredParams({ MODEL_KEY,OBSERVER_KEY,PREDICTOR_KEY,EVENT_KEY,NUMSAMPLES_KEY,HORIZON_KEY,PREDICTEDOUTPUTS_KEY});
+        configMap.checkRequiredParams({MODEL_KEY,
+                                       OBSERVER_KEY,
+                                       PREDICTOR_KEY,
+                                       EVENT_KEY,
+                                       NUMSAMPLES_KEY,
+                                       HORIZON_KEY,
+                                       PREDICTEDOUTPUTS_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Model");
-        PrognosticsModelFactory & pProgModelFactory = PrognosticsModelFactory::instance();
-        model = std::unique_ptr<PrognosticsModel>(pProgModelFactory.Create(configMap[MODEL_KEY][0], configMap));
+        PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
+        model = std::unique_ptr<PrognosticsModel>(
+            pProgModelFactory.Create(configMap[MODEL_KEY][0], configMap));
 
         // Create Observer
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Observer");
-        ObserverFactory & pObserverFactory = ObserverFactory::instance();
-        observer = std::unique_ptr<Observer>(pObserverFactory.Create(configMap[OBSERVER_KEY][0], configMap));
+        ObserverFactory& pObserverFactory = ObserverFactory::instance();
+        observer = std::unique_ptr<Observer>(
+            pObserverFactory.Create(configMap[OBSERVER_KEY][0], configMap));
 
         // Create Predictor
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
-        PredictorFactory & pPredictorFactory = PredictorFactory::instance();
-        predictor = std::unique_ptr<Predictor>(pPredictorFactory.Create(configMap[PREDICTOR_KEY][0], configMap));
+        PredictorFactory& pPredictorFactory = PredictorFactory::instance();
+        predictor = std::unique_ptr<Predictor>(
+            pPredictorFactory.Create(configMap[PREDICTOR_KEY][0], configMap));
 
         // Set model for observer and predictor
         observer->setModel(model.get());
         predictor->setModel(model.get());
 
         // Set configuration parameters
-        unsigned int numSamples = static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
+        unsigned int numSamples =
+            static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
         unsigned int horizon = static_cast<unsigned int>(std::stoul(configMap[HORIZON_KEY][0]));
         std::string event = configMap[EVENT_KEY][0];
         std::vector<std::string> predictedOutputs = configMap[PREDICTEDOUTPUTS_KEY];
 
         // Create progdata
-        results.setUncertainty(UType::Samples);             // @todo(MD): do not force samples representation
-        results.addEvent(event);                            // @todo(MD): do not assume only a single event
-        results.addSystemTrajectories(predictedOutputs);    // predicted outputs
-        results.setPredictions(1, horizon);                 // interval, number of predictions
+        results.setUncertainty(UType::Samples); // @todo(MD): do not force samples representation
+        results.addEvent(event); // @todo(MD): do not assume only a single event
+        results.addSystemTrajectories(predictedOutputs); // predicted outputs
+        results.setPredictions(1, horizon); // interval, number of predictions
         results.setupOccurrence(numSamples);
-        results.events[event].timeOfEvent.npoints(numSamples);
+        results.events[event].getTOE().npoints(numSamples);
         results.sysTrajectories.setNSamples(numSamples);
     }
 
@@ -90,7 +102,7 @@ namespace PCOE {
         // Get new relative time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
         double newT = getValue(model->outputs[0]).getTime() / 1.0e3 - initialTime;
-        
+
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
         std::vector<double> u(model->getNumInputs());
@@ -109,9 +121,9 @@ namespace PCOE {
             }
             z[i] = getValue(model->outputs[i]);
         }
-        
+
         // Transform the data using the model's transform function
-        model->transform(u,z);
+        model->transform(u, z);
 
         // If this is the first step, will want to initialize the observer and the predictor
         if (!initialized) {
@@ -121,7 +133,8 @@ namespace PCOE {
             observer->initialize(newT, x, u);
             initialized = true;
             lastTime = newT;
-        } else {
+        }
+        else {
             // If time has not advanced, skip this step
             if (newT <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
@@ -142,8 +155,9 @@ namespace PCOE {
                 log.WriteLine(LOG_DEBUG, moduleName, "Done Running Prediction Step");
 
                 // Set lastTime
-            lastTime = newT;
-            } catch (...) {
+                lastTime = newT;
+            }
+            catch (...) {
                 log.WriteLine(LOG_ERROR, moduleName, "Error in Step, skipping");
             }
         }
