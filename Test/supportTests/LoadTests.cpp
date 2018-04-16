@@ -26,7 +26,7 @@ namespace PCOE {
         try {
             ConstLoadEstimator c = ConstLoadEstimator(configMap);
             Assert::Fail("Accepted missiong loading key");
-        } catch (...) {
+        } catch (std::range_error) {
         }
         
         LoadEstimate test = {1, 2, 3};
