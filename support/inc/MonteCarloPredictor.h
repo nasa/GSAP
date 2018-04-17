@@ -30,12 +30,12 @@
 
 namespace PCOE {
     class MonteCarloPredictor final : public Predictor {
-    private:
+     private:
         unsigned int numSamples;           // number of samples used in prediction
         std::vector<double> processNoise;  // variance vector (zero-mean assumed)
         std::string event;                 // name of event to predict
 
-    public:
+     public:
         /** @brief    Constructor for a MonteCarloPredictor based on a configMap
          *  @param  configMap Configuration map specifying predictor parameters
          **/
@@ -49,10 +49,9 @@ namespace PCOE {
         /** @brief    Predict function for a Predictor
          *  @param    tP Time of prediction
          *  @param    state state of system at time of prediction
-         *  @param  data ProgData object, in which prediction results are stored
+         *  @param  data ProgData object, in which prediction results \re stored
          **/
         void predict(const double tP, const std::vector<UData> & state, ProgData & data);
     };
 }
-
 #endif  // PCOE_MONTECARLOPREDICTOR_H

@@ -51,7 +51,6 @@ namespace PCOE {
 
         // Set configuration parameters
         numSamples = static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
-        loadEstimator->setNSamples(numSamples);
         horizon = std::stoul(configMap[HORIZON_KEY][0]);
         event = configMap[EVENT_KEY][0];
 
@@ -67,7 +66,6 @@ namespace PCOE {
         log.WriteLine(LOG_INFO, MODULE_NAME, "MonteCarloPredictor created");
     }
 
-    // Set model
     void MonteCarloPredictor::setModel(PrognosticsModel* model) {
         pModel = model;
 
@@ -89,7 +87,7 @@ namespace PCOE {
                 "Number of predicted outputs does not equal number of model's predicted outputs");
         }
     }
-
+    
     UData::size_type getLowestTimestamp(const std::vector<UData>& data) {
         UData::size_type result = std::numeric_limits<UData::size_type>::max();
         for (const UData& entry : data) {
@@ -160,7 +158,7 @@ namespace PCOE {
             data.events[event].getTOE()[sample] = INFINITY;
             while (t <= tP + horizon) {
                 // Get inputs for time t
-                std::vector<double> loadEstimate = loadEstimator->estimateLoad(t, sample);
+                std::vector<double> loadEstimate = loadEstFcn(t, sample);
                 pModel->inputEqn(t, loadEstimate, u);
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time

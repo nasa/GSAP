@@ -33,13 +33,14 @@
 namespace PCOE {
     class ModelBasedPrognoser : public CommonPrognoser
     {
-    private:
+     private:
         std::unique_ptr<PrognosticsModel> model;
         std::unique_ptr<Observer> observer;
         std::unique_ptr<Predictor> predictor;
+        std::unique_ptr<LoadEstimator> loadEstimator;
         bool initialized;
         double lastTime;
-    public:
+     public:
         /** @brief      Model-based Prognoser Constructor
          *  @param      config Map of config parameters from the prognoser config file
          */

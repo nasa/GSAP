@@ -81,7 +81,7 @@ namespace PCOE {
             
             // Add new Data to buffer
             estimateBuffer[currentElement] = newLoads;
-            currentElement++;
+            currentElement = (currentElement+1)%windowSize;
         }
         log.WriteLine(LOG_TRACE, DEBUG_TAG, "Completed load estimate update");
     }

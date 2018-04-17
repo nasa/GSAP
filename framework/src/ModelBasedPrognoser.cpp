@@ -31,6 +31,7 @@
 #include "ObserverFactory.h"
 #include "PredictorFactory.h"
 #include "PrognosticsModelFactory.h"
+#include "LoadEstimatorFactory.h"
 #include "SharedLib.h"
 #include "UData.h"
 
@@ -42,6 +43,7 @@ namespace PCOE {
     const std::string EVENT_KEY = "Model.event";
     const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
     const std::string HORIZON_KEY = "Predictor.horizon";
+    const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
@@ -53,8 +55,10 @@ namespace PCOE {
                                        EVENT_KEY,
                                        NUMSAMPLES_KEY,
                                        HORIZON_KEY,
-                                       PREDICTEDOUTPUTS_KEY});
+                                       PREDICTEDOUTPUTS_KEY,
+                                       LOAD_EST_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
+        
 
         // Create Model
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Model");
@@ -73,9 +77,18 @@ namespace PCOE {
         PredictorFactory& pPredictorFactory = PredictorFactory::instance();
         predictor = std::unique_ptr<Predictor>(
             pPredictorFactory.Create(configMap[PREDICTOR_KEY][0], configMap));
+        
+        // Create Load Estimator
+        log.WriteLine(LOG_DEBUG, moduleName, "Creating Load Estimator");
+        LoadEstimatorFactory & loadEstFact = LoadEstimatorFactory::instance();
+        loadEstimator = std::unique_ptr<LoadEstimator>(loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap));
+        using std::placeholders::_1;
+        using std::placeholders::_2;
+        predictor->setLoadEst(std::bind( &LoadEstimator::estimateLoad, loadEstimator.get(), _1, _2));
 
         // Set model for observer and predictor
         observer->setModel(model.get());
+        loadEstimator->setModel(model.get());
         predictor->setModel(model.get());
 
         // Set configuration parameters
@@ -113,6 +126,7 @@ namespace PCOE {
                 return;
             }
             u[i] = getValue(model->inputs[i]);
+            loadEstimator->addLoad(u);
         }
         for (unsigned int i = 0; i < model->getNumOutputs(); i++) {
             if (!getValue(model->outputs[i]).isSet()) {

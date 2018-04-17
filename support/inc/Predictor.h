@@ -22,6 +22,7 @@
 #define PCOE_PREDICTOR_H
 
 #include <vector>
+#include <functional>
 #include <string>
 
 #include "Model.h"
@@ -32,26 +33,37 @@
 #include "ThreadSafeLog.h"
 
 namespace PCOE {
-    
-    const std::string LOAD_ESTIMATOR_KEY = "Predictor.loadEstimator";
-    
     class Predictor {
-    public:
-        Predictor(GSAPConfigMap & configMap) : pModel(NULL), log(Log::Instance()) {
-            configMap.checkRequiredParams({LOAD_ESTIMATOR_KEY});
-            LoadEstimatorFactory & loadEstFact = LoadEstimatorFactory::instance();
-            
-            loadEstimator = std::unique_ptr<LoadEstimator>(loadEstFact.Create(configMap[LOAD_ESTIMATOR_KEY][0], configMap));
-        }
+     protected:
+        typedef std::function<LoadEstimate(const double, const unsigned int)> LoadEstFcn;
+        LoadEstFcn loadEstFcn;
+        PrognosticsModel * pModel;  // model used for prediction
+        double horizon;            // time span of prediction
+        std::vector<std::string> predictedOutputs;  // list of variables for which to compute future values of
+        Log &log;  ///> Logger (Defined in ThreadSafeLog.h)
+        
+     public:
+        /** Constructor
+         *  @param  configMap   Map of configuration parameters
+         **/
+        Predictor(GSAPConfigMap & configMap) : pModel(NULL), log(Log::Instance()) {}
 
+        /** Destructor
+         **/
         virtual ~Predictor() = default;
+        
+        /** @brief Set Load Estimation Function
+         *  @param  fcn  load estimation function
+         **/
+        virtual void setLoadEst(LoadEstFcn fcn) {
+            loadEstFcn = fcn;
+        }
 
         /** @brief Set model pointer
          *  @param model given model pointer
          **/
         virtual void setModel(PrognosticsModel *model) {
             pModel = model;
-            loadEstimator->setModel(model);
         }
         
         /** @brief    Predict future events and values of system variables
@@ -60,13 +72,6 @@ namespace PCOE {
          *  @param  data ProgData object, in which prediction results are stored
          **/
         virtual void predict(const double tP, const std::vector<UData> & state, ProgData & data) = 0;
-
-    protected:
-        PrognosticsModel * pModel;  // model used for prediction
-        std::unique_ptr<LoadEstimator> loadEstimator;
-        double horizon;            // time span of prediction
-        std::vector<std::string> predictedOutputs;  // list of variables for which to compute future values of
-        Log &log;  ///> Logger (Defined in ThreadSafeLog.h)
     };
 }
 
