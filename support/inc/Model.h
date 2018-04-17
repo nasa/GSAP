@@ -25,13 +25,11 @@
 
 namespace PCOE {
     class Model {
-    protected:
+     protected:
         unsigned int numStates;
-        unsigned int numInputs;
-        unsigned int numOutputs;
         double m_dt;  // Sampling time
 
-    public:
+     public:
         virtual ~Model() = default;
 
         /** @brief      Execute state equation. This version of the function uses the default sampling time.

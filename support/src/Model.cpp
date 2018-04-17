@@ -33,11 +33,11 @@ namespace PCOE {
     }
 
     unsigned int Model::getNumInputs() const {
-        return numInputs;
+        return inputs.size();
     }
 
     unsigned int Model::getNumOutputs() const {
-        return numOutputs;
+        return outputs.size();
     }
 
     double Model::getDt() const {

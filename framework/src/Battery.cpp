@@ -85,11 +85,11 @@ const std::string XPMIN_KEY = "Battery.xpMin";
 
 Battery::Battery() {
     numStates = 8;
-    numInputs = 1;
-    numOutputs = 2;
     numInputParameters = 1;
     numPredictedOutputs = 1;
     m_dt = 1;
+    inputs = {"power"};
+    outputs = {"voltage", "temperature"};
     // Set some default parameters
     setParameters();
 }
@@ -99,9 +99,6 @@ Battery::Battery(const ConfigMap & configMap) : Battery::Battery() {
     // Check for arguments to setParameters first, qMobile and Vol
     // There are default values available, so call to setParameters is different depending
     // on which are given in the configMap.
-    inputs.push_back("power");
-    outputs.push_back("voltage");
-    outputs.push_back("temperature");
     
     if (configMap.includes(QMOBILE_KEY) && configMap.includes(VOL_KEY)) {
         setParameters(std::stod(configMap.at(QMOBILE_KEY)[0]), std::stod(configMap.at(VOL_KEY)[0]));
