@@ -29,6 +29,8 @@
 #include "MovingAverageLoadEstimator.h"
 
 namespace PCOE {
+    const size_t DEFAULT_WINDOW_SIZE = 10;
+    
     const std::string DEBUG_TAG = "Moving Average Load Estimator";
     // TODO(CT): Add noise/uncertainty
     
@@ -36,8 +38,12 @@ namespace PCOE {
     const std::string MovingAverageLoadEstimator::WINDOW_SIZE_KEY = "LoadEstimator.window_size";
     MovingAverageLoadEstimator::MovingAverageLoadEstimator(GSAPConfigMap & configMap) {
         log.WriteLine(LOG_INFO, DEBUG_TAG, "Configuring");
-        configMap.checkRequiredParams({WINDOW_SIZE_KEY});
-        windowSize = std::stoul(configMap[WINDOW_SIZE_KEY][0]);
+        if (configMap.includes(WINDOW_SIZE_KEY)) {
+            windowSize = std::stoul(configMap[WINDOW_SIZE_KEY][0]);
+        } else {
+            // Not included- use default
+            windowSize = DEFAULT_WINDOW_SIZE;
+        }
         
         log.WriteLine(LOG_TRACE, DEBUG_TAG, "Completed configuration");
     }

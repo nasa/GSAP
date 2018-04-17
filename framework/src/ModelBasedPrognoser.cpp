@@ -45,6 +45,8 @@ namespace PCOE {
     const std::string HORIZON_KEY = "Predictor.horizon";
     const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
+    
+    const std::string DEFAULT_LOAD_EST = "movingAverage";
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
         : CommonPrognoser(configMap), initialized(false) {
@@ -55,8 +57,7 @@ namespace PCOE {
                                        EVENT_KEY,
                                        NUMSAMPLES_KEY,
                                        HORIZON_KEY,
-                                       PREDICTEDOUTPUTS_KEY,
-                                       LOAD_EST_KEY});
+                                       PREDICTEDOUTPUTS_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
         
 
@@ -81,7 +82,13 @@ namespace PCOE {
         // Create Load Estimator
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Load Estimator");
         LoadEstimatorFactory & loadEstFact = LoadEstimatorFactory::instance();
-        loadEstimator = std::unique_ptr<LoadEstimator>(loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap));
+        if (configMap.includes(LOAD_EST_KEY)) {
+            loadEstimator = std::unique_ptr<LoadEstimator>(loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap));
+        } else {
+            // If not specified, use default
+            loadEstimator = std::unique_ptr<LoadEstimator>(loadEstFact.Create(DEFAULT_LOAD_EST, configMap));
+        }
+        
         using std::placeholders::_1;
         using std::placeholders::_2;
         predictor->setLoadEst(std::bind( &LoadEstimator::estimateLoad, loadEstimator.get(), _1, _2));
