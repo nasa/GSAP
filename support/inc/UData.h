@@ -62,8 +62,6 @@ namespace PCOE {
     // |        Classes         |
     // *------------------------*
 
-    class UDatum;
-
     /** @class      UData
      *  @brief      A class for representing and manipulating data with uncertainty
      *  @see        UTYPE
