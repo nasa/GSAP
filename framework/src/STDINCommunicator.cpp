@@ -56,8 +56,10 @@ namespace PCOE {
         fd_set fds;
         FD_ZERO(&fds);
         FD_SET(STDIN_FILENO, &fds);
-        int rc = select(1, &fds, nullptr, nullptr, &timeout);
+        struct timeval to = timeout; // select may modify timeout, so give it a copy
+        int rc = select(STDIN_FILENO + 1, &fds, nullptr, nullptr, &to);
         if (rc < 0) {
+            log.WriteLine(LOG_ERROR, MODULE_NAME, "Select failed");
             perror("select");
         }
         else if (rc == 0 || (feof(stdin))) {
