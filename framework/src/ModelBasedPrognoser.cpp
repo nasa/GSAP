@@ -123,36 +123,45 @@ namespace PCOE {
 
         // Get new relative time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
-        log.WriteLine(LOG_TRACE, "PROG-MBP", "Initializing time");
-        Datum<double> output_0 = getValue(model->outputs[0]);
-        log.FormatLine(LOG_TRACE,
-                       "PROG-MBP",
-                       "Got output_0 with value %f and time %d",
-                       output_0.get(),
-                       output_0.getTime());
-        double newT = output_0.getTime() / 1.0e3 - initialTime;
+        double newT = getValue(model->outputs[0]).getTime() / 1.0e3 - initialTime;
 
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
         std::vector<double> u(model->getNumInputs());
         std::vector<double> z(model->getNumOutputs());
         for (unsigned int i = 0; i < model->getNumInputs(); i++) {
-            if (!getValue(model->inputs[i]).isSet()) {
+            log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %u", i);
+            const std::string& input_name = model->inputs[i];
+            log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %s", input_name.c_str());
+            Datum<double> input = getValue(input_name);
+            log.FormatLine(LOG_TRACE,
+                           "PROG-MBP",
+                           "Got input (%f, %ul)",
+                           input.get(),
+                           input.getTime());
+            log.WriteLine(LOG_TRACE, "PROG-MBP", "Checking whether input is set");
+            if (!input.isSet()) {
                 // Do nothing if data not yet available
+                log.WriteLine(LOG_TRACE, "PROG-MBP", "Data not yet available. Returning.");
                 return;
             }
+            log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
             u[i] = getValue(model->inputs[i]);
+            log.WriteLine(LOG_TRACE, "PROG-MBP", "Adding load");
             loadEstimator->addLoad(u);
         }
         for (unsigned int i = 0; i < model->getNumOutputs(); i++) {
+            log.WriteLine(LOG_TRACE, "PROG-MBP", "Checking whether output is set");
             if (!getValue(model->outputs[i]).isSet()) {
                 // Do nothing if data not yet available
                 return;
             }
+            log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
             z[i] = getValue(model->outputs[i]);
         }
 
         // Transform the data using the model's transform function
+        log.WriteLine(LOG_TRACE, "PROG-MBP", "Running transform");
         model->transform(u, z);
 
         // If this is the first step, will want to initialize the observer and the predictor

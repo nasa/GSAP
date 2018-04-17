@@ -10,8 +10,8 @@ public:
     // Constructor
     Tank3() {
         numStates = 3;
-        numInputs = 3;
-        numOutputs = 3;
+        inputs = {"u1","u2","u3"};
+        outputs = {"p1m","p2m","p3m"};
         m_dt = 1;
     }
 

@@ -148,6 +148,13 @@ namespace PCOE {
                     }
                     checkResultValidity();
                 }
+                catch (std::system_error ex) {
+                    log.WriteLine(LOG_ERROR, MODULE_NAME, "Error in Prognoser Loop- Skipping Step");
+                    log.WriteLine(LOG_ERROR, MODULE_NAME, std::string("    ") + ex.what());
+                    log.WriteLine(LOG_ERROR,
+                                  MODULE_NAME,
+                                  std::string("    EC: ") + ex.code().message());
+                }
                 catch (std::exception& ex) {
                     log.WriteLine(LOG_ERROR, MODULE_NAME, "Error in Prognoser Loop- Skipping Step");
                     log.WriteLine(LOG_ERROR, MODULE_NAME, std::string("    ") + ex.what());
@@ -454,7 +461,12 @@ namespace PCOE {
     }
 
     Datum<double> CommonPrognoser::getValue(const std::string& key) {
-        return lookup[key]();
+        log.FormatLine(LOG_TRACE, "PROG-COM", "Getting lookup function for key %s", key.c_str());
+        std::function<Datum<double>()> fn = lookup[key];
+        log.FormatLine(LOG_TRACE, "PROG-COM", "Getting value for key %s", key.c_str());
+        Datum<double> result = fn();
+        log.FormatLine(LOG_TRACE, "PROG-COM", "Getting value ", result.get());
+        return result;
     }
 
     inline void CommonPrognoser::resetHistory() const {
