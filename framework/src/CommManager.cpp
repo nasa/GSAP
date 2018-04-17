@@ -133,9 +133,7 @@ namespace PCOE {
         auto it = lookup.find(tagName);
         if (it != lookup.end()) {
             // tagName Exists
-            Datum<double> result = it->second;
-            log.FormatLine(LOG_TRACE, "COMM-MAN", "Got value %s", result.get());
-            return result;
+            return it->second;
         }
 
         log.FormatLine(LOG_WARN, moduleName, "Requested tag '%s' does not exist", tagName.c_str());
