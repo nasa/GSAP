@@ -27,11 +27,11 @@
 #include <iostream>
 
 #include "GSAPConfigMap.h"
+#include "LoadEstimatorFactory.h"
 #include "ModelBasedPrognoser.h"
 #include "ObserverFactory.h"
 #include "PredictorFactory.h"
 #include "PrognosticsModelFactory.h"
-#include "LoadEstimatorFactory.h"
 #include "SharedLib.h"
 #include "UData.h"
 
@@ -45,7 +45,7 @@ namespace PCOE {
     const std::string HORIZON_KEY = "Predictor.horizon";
     const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
-    
+
     const std::string DEFAULT_LOAD_EST = "movingAverage";
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
@@ -59,7 +59,6 @@ namespace PCOE {
                                        HORIZON_KEY,
                                        PREDICTEDOUTPUTS_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
-        
 
         // Create Model
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Model");
@@ -78,20 +77,23 @@ namespace PCOE {
         PredictorFactory& pPredictorFactory = PredictorFactory::instance();
         predictor = std::unique_ptr<Predictor>(
             pPredictorFactory.Create(configMap[PREDICTOR_KEY][0], configMap));
-        
+
         // Create Load Estimator
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Load Estimator");
-        LoadEstimatorFactory & loadEstFact = LoadEstimatorFactory::instance();
+        LoadEstimatorFactory& loadEstFact = LoadEstimatorFactory::instance();
         if (configMap.includes(LOAD_EST_KEY)) {
-            loadEstimator = std::unique_ptr<LoadEstimator>(loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap));
-        } else {
-            // If not specified, use default
-            loadEstimator = std::unique_ptr<LoadEstimator>(loadEstFact.Create(DEFAULT_LOAD_EST, configMap));
+            loadEstimator = std::unique_ptr<LoadEstimator>(
+                loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap));
         }
-        
+        else {
+            // If not specified, use default
+            loadEstimator =
+                std::unique_ptr<LoadEstimator>(loadEstFact.Create(DEFAULT_LOAD_EST, configMap));
+        }
+
         using std::placeholders::_1;
         using std::placeholders::_2;
-        predictor->setLoadEst(std::bind( &LoadEstimator::estimateLoad, loadEstimator.get(), _1, _2));
+        predictor->setLoadEst(std::bind(&LoadEstimator::estimateLoad, loadEstimator.get(), _1, _2));
 
         // Set model for observer and predictor
         observer->setModel(model.get());
@@ -121,7 +123,14 @@ namespace PCOE {
 
         // Get new relative time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
-        double newT = getValue(model->outputs[0]).getTime() / 1.0e3 - initialTime;
+        log.WriteLine(LOG_TRACE, "PROG-MBP", "Initializing time");
+        Datum<double> output_0 = getValue(model->outputs[0]);
+        log.FormatLine(LOG_TRACE,
+                       "PROG-MBP",
+                       "Got output_0 with value %f and time %d",
+                       output_0.get(),
+                       output_0.getTime());
+        double newT = output_0.getTime() / 1.0e3 - initialTime;
 
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
