@@ -130,9 +130,17 @@ namespace PCOE {
         std::vector<double> u(model->getNumInputs());
         std::vector<double> z(model->getNumOutputs());
         for (unsigned int i = 0; i < model->getNumInputs(); i++) {
+            log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %u", i);
+            Datum<double> input = getValue(model->inputs[i]);
+            log.FormatLine(LOG_TRACE,
+                           "PROG-MBP",
+                           "Got input (%f, %ul)",
+                           input.get(),
+                           input.getTime());
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Checking whether input is set");
-            if (!getValue(model->inputs[i]).isSet()) {
+            if (!input.isSet()) {
                 // Do nothing if data not yet available
+                log.WriteLine(LOG_TRACE, "PROG-MBP", "Data not yet available. Returning.");
                 return;
             }
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
