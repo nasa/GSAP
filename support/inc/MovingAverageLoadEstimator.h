@@ -32,6 +32,9 @@ namespace PCOE {
     class MovingAverageLoadEstimator : public LoadEstimator {
      public:
         static const std::string WINDOW_SIZE_KEY; // Key for window size (number of steps in average window)
+        static const size_t DEFAULT_WINDOW_SIZE;
+        
+        MovingAverageLoadEstimator() = default;
         
         /** MovingAverageLoadEstimator constructor.
          *  @param      configMap   Configuration map of configuration parameters in the prognoser configuration
@@ -57,7 +60,7 @@ namespace PCOE {
         // Estimate buffer for single sample
         std::vector<LoadEstimate>  estimateBuffer;
         size_t currentElement = 0;
-        size_t windowSize;
+        size_t windowSize = DEFAULT_WINDOW_SIZE;
         LoadEstimate lastEstimate;
     };
 }

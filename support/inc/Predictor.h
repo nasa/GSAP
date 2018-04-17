@@ -37,6 +37,7 @@ namespace PCOE {
      protected:
         typedef std::function<LoadEstimate(const double, const unsigned int)> LoadEstFcn;
         LoadEstFcn loadEstFcn;
+        MovingAverageLoadEstimator defaultLoadEst;
         PrognosticsModel * pModel;  // model used for prediction
         double horizon;            // time span of prediction
         std::vector<std::string> predictedOutputs;  // list of variables for which to compute future values of
@@ -46,7 +47,11 @@ namespace PCOE {
         /** Constructor
          *  @param  configMap   Map of configuration parameters
          **/
-        Predictor(GSAPConfigMap & configMap) : pModel(NULL), log(Log::Instance()) {}
+        Predictor(GSAPConfigMap & configMap) : pModel(NULL), log(Log::Instance()) {
+            using std::placeholders::_1;
+            using std::placeholders::_2;
+            loadEstFcn = std::bind( &LoadEstimator::estimateLoad, defaultLoadEst, _1, _2);
+        }
 
         /** Destructor
          **/

@@ -91,8 +91,8 @@ namespace PCOE {
         
         try {
             MovingAverageLoadEstimator c = MovingAverageLoadEstimator(configMap);
-            Assert::Fail("Accepted missiong loading key");
-        } catch (std::range_error) {
+        } catch (...) {
+            Assert::Fail("Did not accept missing loading key (Should use default)");
         }
         
         configMap[MovingAverageLoadEstimator::WINDOW_SIZE_KEY] = std::vector<std::string>({"2"}); // Set window size key;
