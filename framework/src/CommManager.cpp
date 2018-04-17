@@ -21,8 +21,8 @@
  *     All Rights Reserved.
  */
 
-#include <string>
 #include <sstream>
+#include <string>
 #include <thread>
 
 #include "CommManager.h"
@@ -37,15 +37,14 @@ namespace PCOE {
     const std::string STEP_SIZE_KEY = "commmanger.step_size";
     const std::string COMM_KEY = "Communicators";
 
-    CommManager::CommManager() : Thread(), threadStarted(false),
-        stepSize(DEFAULT_STEP_SIZE) {
+    CommManager::CommManager() : Thread(), threadStarted(false), stepSize(DEFAULT_STEP_SIZE) {
         moduleName = "CommManager";
         log.WriteLine(LOG_INFO, moduleName, "Enabling");
     }
 
-    void CommManager::configure(const GSAPConfigMap & params) {
-        CommunicatorFactory &Factory = CommunicatorFactory::instance();
-        for (auto & it : params.at(COMM_KEY)) {
+    void CommManager::configure(const GSAPConfigMap& params) {
+        CommunicatorFactory& Factory = CommunicatorFactory::instance();
+        for (auto& it : params.at(COMM_KEY)) {
             comms.push_back(Factory.Create(it));
             comms.back()->subscribe([this](DataStore& ds) { this->updateLookup(ds); });
         }
@@ -60,11 +59,11 @@ namespace PCOE {
     void CommManager::run() {
         static std::chrono::high_resolution_clock::time_point nextTime;
         while (getState() != ThreadState::Stopped) {
-            nextTime = std::chrono::high_resolution_clock::now()
-                + std::chrono::milliseconds(stepSize);
+            nextTime =
+                std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(stepSize);
             log.WriteLine(LOG_TRACE, moduleName, "Updating Lookup Table");
 
-            for (auto & it : comms) {
+            for (auto& it : comms) {
                 // Poll each communicator. For some communicators, this
                 // triggers a read, for others it is a no-op.
                 it->poll();
@@ -78,9 +77,9 @@ namespace PCOE {
                 std::lock(lookupMutex, progDataMutex);
                 lock_guard lookuplock(lookupMutex, std::adopt_lock);
                 lock_guard proglock(progDataMutex, std::adopt_lock);
-                
+
                 AllData data(lookup, stringLookup, progData);
-                for (auto & it : comms) {
+                for (auto& it : comms) {
                     it->enqueue(data);
                 }
             }
@@ -93,40 +92,42 @@ namespace PCOE {
         }
     }
 
-    void CommManager::registerKey(const std::string & tagName) {
+    void CommManager::registerKey(const std::string& tagName) {
         lock_guard lock(lookupMutex);
         std::stringstream a;
 
         if (lookup.find(tagName) == lookup.end()) {
             // TagName doesn't exist
             // if New Tagname - create
-            log.FormatLine(LOG_DEBUG, moduleName,
-                "Registering new tag: %s", tagName.c_str());
+            log.FormatLine(LOG_DEBUG, moduleName, "Registering new tag: %s", tagName.c_str());
             lookup[tagName] = Datum<double>();
         }
         else {
-            log.FormatLine(LOG_DEBUG, moduleName,
-                "Tag already registered, skipping: %s", tagName.c_str());
+            log.FormatLine(LOG_DEBUG,
+                           moduleName,
+                           "Tag already registered, skipping: %s",
+                           tagName.c_str());
         }
     }
 
-    bool CommManager::registerProgData(const std::string & componentName, ProgData * pDataIn) {
+    bool CommManager::registerProgData(const std::string& componentName, ProgData* pDataIn) {
         lock_guard lock(progDataMutex);
         if (progData.find(componentName) == progData.end()) {
             // A new component
             progData[componentName] = pDataIn;
         }
         else {
-            log.WriteLine(LOG_ERROR, moduleName,
-                "Attemped to register prognoser under the name"
-                " of a previously registered prognoser, skipping");
+            log.WriteLine(LOG_ERROR,
+                          moduleName,
+                          "Attemped to register prognoser under the name"
+                          " of a previously registered prognoser, skipping");
             return false;
         }
 
         return true;
     }
 
-    Datum<double> CommManager::getValue(const std::string & tagName) const {
+    Datum<double> CommManager::getValue(const std::string& tagName) const {
         lock_guard lock(lookupMutex);
         log.FormatLine(LOG_DEBUG, moduleName, "Requesting value for %s", tagName.c_str());
         auto it = lookup.find(tagName);
@@ -138,8 +139,8 @@ namespace PCOE {
         log.FormatLine(LOG_WARN, moduleName, "Requested tag '%s' does not exist", tagName.c_str());
         throw std::out_of_range("Requested tag does not exist");
     }
-    
-    Datum<std::string> CommManager::getString(const std::string & tagName) const {
+
+    Datum<std::string> CommManager::getString(const std::string& tagName) const {
         lock_guard lock(lookupMutex);
         log.FormatLine(LOG_DEBUG, moduleName, "Requesting value for %s", tagName.c_str());
         auto it = stringLookup.find(tagName);
@@ -147,7 +148,7 @@ namespace PCOE {
             // tagName Exists
             return it->second;
         }
-        
+
         log.FormatLine(LOG_WARN, moduleName, "Requested tag '%s' does not exist", tagName.c_str());
         throw std::out_of_range("Requested tag does not exist");
     }
