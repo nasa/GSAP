@@ -461,7 +461,12 @@ namespace PCOE {
     }
 
     Datum<double> CommonPrognoser::getValue(const std::string& key) {
-        return lookup[key]();
+        log.FormatLine(LOG_TRACE, "PROG-COM", "Getting lookup function for key %s", key.c_str());
+        std::function<Datum<double>()> fn = lookup[key];
+        log.FormatLine(LOG_TRACE, "PROG-COM", "Getting value for key %s", key.c_str());
+        Datum<double> result = fn();
+        log.FormatLine(LOG_TRACE, "PROG-COM", "Getting value ", result.get());
+        return result;
     }
 
     inline void CommonPrognoser::resetHistory() const {
