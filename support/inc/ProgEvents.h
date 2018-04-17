@@ -24,19 +24,20 @@
 
 #include <unordered_map>
 
-#include "ProgEvent.h"
 #include "ProgContainers.h"
+#include "ProgEvent.h"
 
 namespace PCOE {
     /** @class      ProgEvents
-     *  @brief      Container class to store 'ProgEvents's, allows operation on all ProgEvent's at once
+     *  @brief      Container class to store 'ProgEvents's, allows operation on
+     *              all ProgEvent's at once
      **/
     class ProgEvents : public PContainer {
     public:
         using iterator = std::unordered_map<std::string, ProgEvent>::iterator;
         using const_iterator = std::unordered_map<std::string, ProgEvent>::const_iterator;
 
-        ProgEvents() : PContainer() {}   ///< Standard Constructor
+        ProgEvents() : PContainer() {} ///< Standard Constructor
 
         virtual ~ProgEvents() = default;
 
@@ -52,24 +53,26 @@ namespace PCOE {
          *  @param      name Name of desired element
          *  @return     Desired element
          **/
-        inline ProgEvent& operator[](const std::string & name) {
+        inline ProgEvent& operator[](const std::string& name) {
             return dataPts[name];
         }
-        inline ProgEvent operator[](const std::string & name) const {
+        inline ProgEvent operator[](const std::string& name) const {
             return dataPts.at(name);
         }
         /** @brief      Add a new datapoint or progevent
          *  @param      name The name of the new element
          *  @param      description A description of the element
          **/
-        void addNew(const std::string & name, const std::string & description);
+        void addNew(const std::string& name, const std::string& description);
 
-        /** @brief      Get a list of the labels used in the DataPoints object (Events, SystemTrajectories, etc.)
+        /** @brief      Get a list of the labels used in the DataPoints object (Events,
+         *SystemTrajectories, etc.)
          *  @return     Vector of labels
          **/
         std::vector<std::string> getLabels() const;
 
-        /** @brief      Set the number of timestamps for which prognostic relevant prognostic data will be recorded
+        /** @brief      Set the number of timestamps for which prognostic relevant prognostic data
+         *will be recorded
          *  @param      nTimesIn        Number of timestamps
          **/
         void setNTimes(const unsigned int nTimesIn);
@@ -79,21 +82,28 @@ namespace PCOE {
          **/
         unsigned int size() const;
 
-        bool includes(const std::string & key) const;
+        bool includes(const std::string& key) const;
 
-        inline iterator begin() { return dataPts.begin(); }
+        inline iterator begin() {
+            return dataPts.begin();
+        }
 
-        inline iterator end() { return dataPts.end(); }
+        inline iterator end() {
+            return dataPts.end();
+        }
 
-        inline const_iterator cbegin() const { return dataPts.cbegin(); }
+        inline const_iterator cbegin() const {
+            return dataPts.cbegin();
+        }
 
-        inline const_iterator cend() const { return dataPts.cend(); }
+        inline const_iterator cend() const {
+            return dataPts.cend();
+        }
 
     private:
         /// @brief      Map of saved elements (ProgEvent)
-        std::unordered_map<std::string, ProgEvent> dataPts;  // Note: Data duplication (name, name)
+        std::unordered_map<std::string, ProgEvent> dataPts; // Note: Data duplication (name, name)
     };
 }
-
 
 #endif // PCOE_PROGEVENTS_H

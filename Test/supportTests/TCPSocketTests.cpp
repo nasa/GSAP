@@ -92,7 +92,7 @@ void testTCPSendAndReceive() {
 
     Assert::AreEqual(0, strcmp(buffer2, serverBuffer2));
 
-    testServer.Listen();
+    //testServer.Listen();
 
     struct sockaddr_in sa = {};
     sa.sin_port = htons(8080);
@@ -178,7 +178,11 @@ void testTCPReceiveBufferSize() {
     TCPSocket testSocket(AF_INET);
 
     testSocket.ReceiveBufferSize(2048);
-    Assert::AreEqual(4096, testSocket.ReceiveBufferSize());
+#if !defined(_WIN32) && !defined(__APPLE__)
+    Assert::AreEqual(4096, testSocket.ReceiveBufferSize(), "Size of receive buffer not equal to set value.");
+#else
+    Assert::AreEqual(2048, testSocket.ReceiveBufferSize(), "Size of receive buffer not equal to set value.");
+#endif
 }
 
 void testTCPReceiveTimeout() {
@@ -205,7 +209,11 @@ void testTCPSendBufferSize() {
     TCPSocket testSocket(AF_INET);
 
     testSocket.SendBufferSize(4096);
-    Assert::AreEqual(8192, testSocket.SendBufferSize());
+#if !defined(_WIN32) && !defined(__APPLE__)
+    Assert::AreEqual(8192, testSocket.SendBufferSize(), "Size of send buffer not equal to set value.");
+#else
+    Assert::AreEqual(4096, testSocket.SendBufferSize(), "Size of send buffer not equal to set value.");
+#endif
 }
 
 void testTCPSendTimeout() {
@@ -263,7 +271,7 @@ void testTCPExceptions() {
     catch (...) {
     }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     // AF_PACKET doesn't exist on Windows
     try {
         TCPSocketServer failServer(AF_PACKET);
@@ -301,7 +309,7 @@ void testTCPExceptions() {
     catch (...) {
     }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     // AF_PACKET doesn't exist on Windows
     try {
         TCPSocketServer failServer(AF_PACKET, "127.0.0.1", 8080);
@@ -331,16 +339,21 @@ void testTCPExceptions() {
 
 #ifndef WIN32
     // Client's Receive() exception tests
-    testSocket4.Connect("127.0.0.1", 8080);
-    testServer.Accept();
+    testServer.Close();
+    TCPSocketServer testReceiveExceptionServer(AF_INET);
+    testReceiveExceptionServer.Listen();
+    TCPSocket testSocket5("127.0.0.1", 8080);
+    testReceiveExceptionServer.Accept();
     try {
-        char recvBuffer[0];
-        testServer.SendAll(messageFromServer, strlen(messageFromServer));
-        testSocket4.ReceiveTimeout(0.5);
-        testSocket4.Receive(recvBuffer, strlen(messageFromServer));
-        Assert::Fail("Socket received message while having a size 0 buffer.");
+
+        char recvBuffer[1024];
+        testReceiveExceptionServer.Send(0, messageFromServer, strlen(messageFromServer));
+        testSocket5.Close();
+        testSocket5.Receive(recvBuffer, strlen(messageFromServer));
+        Assert::Fail("Socket received message after closing.");
     }
-    catch (...) {
+    catch (std::system_error ec) {
+        testReceiveExceptionServer.Close();
     }
 #endif
 
@@ -348,7 +361,7 @@ void testTCPExceptions() {
     try {
         TCPSocket failSocket(1024);
         TCPSocket failSocket2(AF_UNIX);
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
         TCPSocket failSocket3(AF_PACKET);
 #endif
         Assert::Fail("Socket created with bad address family.");
@@ -356,8 +369,8 @@ void testTCPExceptions() {
     catch (...) {
     }
 
-    testServer.CloseAll();
-    testServer.Listen();
+    TCPSocketServer testConnectExceptionServer(AF_INET);
+    testConnectExceptionServer.Listen();
 
     // Client's Connect() with sockaddr exception test
     testSocket4.Close();

@@ -16,6 +16,7 @@ namespace PCOE {
     void testConstLoad();
     void testConstLoadWithUncert();
     void testFactory();
+    void testMovingAverage();
 }
 
 

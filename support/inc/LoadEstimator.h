@@ -48,6 +48,11 @@ namespace PCOE {
             pModel = model;
         }
         
+        /** @brief Set the load for that timestep
+         *  @param  loadEstimate    Load estimate for the current timestep
+         **/
+        virtual void addLoad(const LoadEstimate & ) {}
+        
         /** Estimate Load
          *  @param      t           Time for estimate (s from start)
          *  @param      sample      Sample id (unsigned int)

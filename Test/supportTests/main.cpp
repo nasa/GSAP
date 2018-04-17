@@ -233,7 +233,8 @@ int main() {
     context.AddCategoryInitializer("LoadEstimator", PCOE::LoadTestInit);
     context.AddTest("ConstLoadEst", PCOE::testConstLoad, "LoadEstimator");
     context.AddTest("ConstLoadFact", PCOE::testFactory, "LoadEstimator");
-//    context.AddTest("ConstLoadUcert", PCOE::testConstLoadWithUncert, "LoadEstimator");
+    context.AddTest("MovingAverageLoadEst", PCOE::testMovingAverage, "LoadEstimator");
+    context.AddTest("ConstLoadUcert", PCOE::testConstLoadWithUncert, "LoadEstimator");
 
     // TCPSocket Tests
     context.AddTest("TCPSocket Constructor", testTCPctor, "TCPSocket");

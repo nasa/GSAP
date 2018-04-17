@@ -9,6 +9,7 @@
 #include "LoadTests.hpp"
 #include "Test.h"
 #include "ConstLoadEstimator.h"
+#include "MovingAverageLoadEstimator.h"
 #include "LoadEstimatorFactory.h"
 #include "GSAPConfigMap.h"
 
@@ -26,7 +27,7 @@ namespace PCOE {
         try {
             ConstLoadEstimator c = ConstLoadEstimator(configMap);
             Assert::Fail("Accepted missiong loading key");
-        } catch (...) {
+        } catch (std::range_error) {
         }
         
         LoadEstimate test = {1, 2, 3};
@@ -67,20 +68,68 @@ namespace PCOE {
         ConstLoadEstimator c = ConstLoadEstimator(configMap);
         Assert::AreEqual(c.getUncertaintyMode(), ConstLoadEstimator::GAUSSIAN);
         
-        LoadEstimate test2 = c.estimateLoad(NAN, 0);
-        size_t nSame = 0;
-        for (size_t i = 0; i < test.size(); i++) {
-            Assert::IsTrue(test2[i] > test[i] - 1 && test2[i] < test[i] + 1); // EXTREMELY UNLIKELY TO FAIL
-            if (test2[i] == test[i]) {
-                nSame++;
-            }
-        }
-        Assert::IsTrue(nSame < test.size(), "Data with "); // Extremely unlikely to fail
+        //      TODO(CT): test uncertainty sampling in some meaningful way
+//
+//        LoadEstimate test2 = c.estimateLoad(NAN, 0);
+//        size_t nSame = 0;
+//        for (size_t i = 0; i < test.size(); i++) {
+//            Assert::IsTrue(test2[i] > test[i] - 1 && test2[i] < test[i] + 1); // EXTREMELY UNLIKELY TO FAIL
+//            if (test2[i] == test[i]) {
+//                nSame++;
+//            }
+//        }
+//        Assert::IsTrue(nSame < test.size(), "Data with "); // Extremely unlikely to fail
+//
+//        // Test unequal numbers
+//        configMap[ConstLoadEstimator::LOADING_KEY].push_back("4");
+//        ConstLoadEstimator c2 = ConstLoadEstimator(configMap);
+//        Assert::AreEqual(c2.getUncertaintyMode(), ConstLoadEstimator::NONE, "Did not revert to no uncertainty when given unequal mean and std vector lengths");
+    }
+    
+    void testMovingAverage() {
+        GSAPConfigMap configMap;
         
-        // Test unequal numbers
-        configMap[ConstLoadEstimator::LOADING_KEY].push_back("4");
-        ConstLoadEstimator c2 = ConstLoadEstimator(configMap);
-        Assert::AreEqual(c2.getUncertaintyMode(), ConstLoadEstimator::NONE, "Did not revert to no uncertainty when given unequal mean and std vector lengths");
+        try {
+            MovingAverageLoadEstimator c = MovingAverageLoadEstimator(configMap);
+            Assert::Fail("Accepted missiong loading key");
+        } catch (std::range_error) {
+        }
+        
+        configMap[MovingAverageLoadEstimator::WINDOW_SIZE_KEY] = std::vector<std::string>({"2"}); // Set window size key;
+        // TODO(CT): Negative window size
+        MovingAverageLoadEstimator c = MovingAverageLoadEstimator(configMap);
+        
+        LoadEstimate test2 = c.estimateLoad(NAN, 0);
+        Assert::IsTrue(test2.empty(), "Estimate not empty with no data yet provided");
+        
+        LoadEstimate exampleLoad = LoadEstimate({5.0, 1e10, -5e10});
+        c.addLoad(exampleLoad);
+        test2 = c.estimateLoad(NAN, 0);
+        Assert::IsFalse(test2.empty(), "Estimate empty with data provided");
+        Assert::AreEqual(test2.size(), exampleLoad.size(), "Load estimate wrong size");
+        for (size_t i = 0; i < test2.size(); i++) {
+            Assert::AreEqual(exampleLoad[i], test2[i], std::numeric_limits<double>::epsilon(), "single sample test");
+        }
+        
+        LoadEstimate exampleLoad2 = LoadEstimate({4.5, 5e9, -4e10});
+        c.addLoad(exampleLoad2);
+        test2 = c.estimateLoad(NAN, 0);
+        Assert::IsFalse(test2.empty(), "Estimate empty with data provided");
+        Assert::AreEqual(test2.size(), exampleLoad.size(), "Load estimate wrong size");
+        for (size_t i = 0; i < test2.size(); i++) {
+            Assert::AreEqual((exampleLoad[i]+exampleLoad2[i])/2.0, test2[i], 2*std::numeric_limits<double>::epsilon(), "Two sample test");
+        }
+        
+        c.addLoad(exampleLoad2);
+        test2 = c.estimateLoad(NAN, 0);
+        Assert::IsFalse(test2.empty(), "Estimate empty with data provided");
+        Assert::AreEqual(test2.size(), exampleLoad.size(), "Load estimate wrong size");
+        for (size_t i = 0; i < test2.size(); i++) {
+            Assert::AreEqual(exampleLoad2[i], test2[i], std::numeric_limits<double>::epsilon(), "Full buffer test");
+        }
+        
+        // TODO(CT): Uniform distribution with many samples
+        // TODO(CT): multiple add loads per generate sample
     }
     
     void testFactory() {
