@@ -98,6 +98,11 @@ namespace PCOE {
                 size_t pos = it.find_first_of(':');
                 std::string commonName = it.substr(0, pos);
                 std::string tagName = it.substr(pos + 1, it.length() - pos + 1);
+                log.FormatLine(LOG_TRACE,
+                               "PROG-COM",
+                               "Registering tag common=%s, tag=%s",
+                               commonName.c_str(),
+                               tagName.c_str());
                 comm.registerKey(tagName);
                 lookup[commonName] = std::bind(&CommManagerWrapper::getValue, cWrapper, tagName);
             }
