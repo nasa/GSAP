@@ -132,7 +132,7 @@ namespace PCOE {
         for (unsigned int i = 0; i < model->getNumInputs(); i++) {
             log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %u", i);
             const std::string& input_name = model->inputs[i];
-            log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %s", input_name);
+            log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %s", input_name.c_str());
             Datum<double> input = getValue(input_name);
             log.FormatLine(LOG_TRACE,
                            "PROG-MBP",
