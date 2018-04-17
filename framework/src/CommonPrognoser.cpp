@@ -148,6 +148,13 @@ namespace PCOE {
                     }
                     checkResultValidity();
                 }
+                catch (std::system_error ex) {
+                    log.WriteLine(LOG_ERROR, MODULE_NAME, "Error in Prognoser Loop- Skipping Step");
+                    log.WriteLine(LOG_ERROR, MODULE_NAME, std::string("    ") + ex.what());
+                    log.WriteLine(LOG_ERROR,
+                                  MODULE_NAME,
+                                  std::string("    EC: ") + ex.code().message());
+                }
                 catch (std::exception& ex) {
                     log.WriteLine(LOG_ERROR, MODULE_NAME, "Error in Prognoser Loop- Skipping Step");
                     log.WriteLine(LOG_ERROR, MODULE_NAME, std::string("    ") + ex.what());
