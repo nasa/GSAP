@@ -26,7 +26,6 @@
 #include "PrognosticsModel.h"
 #include "ConfigMap.h"
 #include "ModelFactory.h"
-#include "PrognosticsModelFactory.h"
 
 // Default parameter values
 static const double QMOBILE_DEFAULT_VALUE = 7600;
@@ -191,6 +190,4 @@ class Battery final : public PCOE::PrognosticsModel {
      */
     virtual void transform(std::vector<double> & u, std::vector<double> & z);
 };
-
-
 #endif

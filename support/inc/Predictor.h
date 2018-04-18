@@ -26,8 +26,7 @@
 #include <string>
 
 #include "Model.h"
-#include "LoadEstimator.h"
-#include "LoadEstimatorFactory.h"
+#include "MovingAverageLoadEstimator.h"
 #include "PrognosticsModel.h"
 #include "ProgData.h"
 #include "ThreadSafeLog.h"

@@ -26,6 +26,7 @@
 #include "Factory.h"
 #include "Singleton.h"
 #include "UnscentedKalmanFilter.h"
+#include "ParticleFilter.h"
 
 namespace PCOE {
     /**
@@ -46,6 +47,7 @@ namespace PCOE {
          **/
         ObserverFactory() {
             Register("UKF", ObserverFactory::Create<UnscentedKalmanFilter>);
+            Register("PF", ObserverFactory::Create<ParticleFilter>);
         }
     };
 }

@@ -21,9 +21,12 @@
 #ifndef PCOE_COMMUNICATORFACTORY_H
 #define PCOE_COMMUNICATORFACTORY_H
 
+#include "CommonCommunicator.h"
+#include "PlaybackCommunicator.h"
+#include "RecorderCommunicator.h"
+#include "RandomCommunicator.h"
 #include "Factory.h"
 #include "Singleton.h"
-#include "CommonCommunicator.h"
 
 namespace PCOE {
     /**
@@ -42,7 +45,11 @@ namespace PCOE {
          *  @note       Is protected to prevent users from creating a new PrognoserFactory
          *              Consistent with the singleton pattern
          **/
-        CommunicatorFactory() {};
+        CommunicatorFactory() {
+            Register("playback", CommunicatorFactory::Create<PlaybackCommunicator>);
+            Register("recorder", CommunicatorFactory::Create<RecorderCommunicator>);
+            Register("random", CommunicatorFactory::Create<RandomCommunicator>);
+        };
     };
 }
 

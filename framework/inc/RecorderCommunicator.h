@@ -57,7 +57,6 @@
 #define PCOE_RECORDERCOMMUNICATOR_H
 
 #include "CommonCommunicator.h"
-#include "CommunicatorFactory.h"
 #include "DataStore.h"
 
 namespace PCOE {

@@ -26,7 +26,6 @@
 #define PCOE_RANDOMCOMMUNICATOR_H
 
 #include "CommonCommunicator.h"  ///< Parent Class
-#include "CommunicatorFactory.h"
 
 namespace PCOE {
     class RandomCommunicator : public CommonCommunicator {

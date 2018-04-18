@@ -45,7 +45,7 @@ namespace PCOE {
          *              Consistant with the singleton pattern
          **/
         PrognosticsModelFactory() {
-            //Register("Battery", PrognosticsModelFactory::Create<Battery>);
+            Register("Battery", PrognosticsModelFactory::Create<Battery>);
         };
     };
 }

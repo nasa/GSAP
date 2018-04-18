@@ -29,7 +29,6 @@
 #include <vector>
 
 #include "CommonCommunicator.h"  ///< Parent Class
-#include "CommunicatorFactory.h"
 
 namespace PCOE {
     class PlaybackCommunicator : public CommonCommunicator {
