@@ -24,10 +24,8 @@ void testTCPctor() {
     try {
         TCPSocket testSocket2 = TCPSocket(AF_INET6);
     }
-    catch (std::system_error ec) {
-        if (ec.code().value() != EAFNOSUPPORT) {
-            Assert::Fail("Ctor using AF_INET6 failed.");
-        }
+    catch (...) {
+        Assert::Fail("Ctor using AF_INET6 failed.");
     }
 
     TCPSocket testSocket = TCPSocket(AF_INET);
