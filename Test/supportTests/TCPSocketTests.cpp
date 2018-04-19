@@ -238,29 +238,33 @@ void testTCPSendTimeout() {
 
 void testTCPExceptions() {
     TCPSocketServer testServer(AF_INET);
-    TCPSocketServer testServer2(AF_INET);
     TCPSocket testSocket1(AF_INET);
     TCPSocket testSocket2(AF_INET);
     TCPSocket testSocket3(AF_INET);
     char messageFromServer[] = "Hello from Server";
     char hugeMessage[INT16_MAX] = {0};
 
-    testServer.Listen();
+    //testServer.Listen();
 
     // Server's Listen() exception
     try {
+        TCPSocketServer testServer2(AF_INET, "0.0.0.0", 8080);
+        testServer2.Close();
         testServer2.Listen();
-        Assert::Fail("Another server is listening on a used port.");
+        Assert::Fail("Server attempted to listen for connections after closing.");
     }
-    catch (...) {
+    catch (std::system_error ec) {
     }
+    printf("hi!");
 
     // Server's Accept() exception tests
     try {
+        TCPSocketServer testServer2(AF_INET, "0.0.0.0", 8080);
         testServer2.Accept();
         Assert::Fail("Server tried accepting a connection when it's not listening.");
     }
-    catch (...) {
+    catch (std::system_error ec) {
+        
     }
 
     // Server's CreateServer() exception tests
@@ -268,8 +272,8 @@ void testTCPExceptions() {
         TCPSocketServer failServer(AF_INET6);
         Assert::Fail("Created server with unsupported address family.");
     }
-    catch (...) {
-    }
+    catch (std::system_error ec) {}
+    catch (std::invalid_argument) {}
 
 #if !defined(WIN32) && !defined(__APPLE__)
     // AF_PACKET doesn't exist on Windows
@@ -277,37 +281,38 @@ void testTCPExceptions() {
         TCPSocketServer failServer(AF_PACKET);
         Assert::Fail("Created server with unsupported address family.");
     }
-    catch (...) {
-    }
+    catch (std::system_error ec) {}
+    catch (std::invalid_argument) {}
 #endif
 
     try {
         TCPSocketServer failServer(1024);
         Assert::Fail("Created server with unsupported address family.");
     }
-    catch (...) {
-    }
+    catch (std::system_error ec) {}
+    catch (std::invalid_argument) {}
 
     try {
         TCPSocketServer failServer(AF_INET, "bad hostname", 55555);
         Assert::Fail("Created server with bad hostname.");
     }
-    catch (...) {
+    catch (std::system_error ec) {
     }
 
     try {
         TCPSocketServer failServer(AF_INET, "127.0.0.1", 80);
         Assert::Fail("Created server with bad port.");
     }
-    catch (...) {
+    catch (std::system_error ec) {
     }
 
     try {
         TCPSocketServer failServer(1024, "127.0.0.1", 8080);
         Assert::Fail("Created server with unsupported address family.");
     }
-    catch (...) {
+    catch (std::system_error) {
     }
+    catch (std::invalid_argument) {}
 
 #if !defined(WIN32) && !defined(__APPLE__)
     // AF_PACKET doesn't exist on Windows
@@ -315,18 +320,19 @@ void testTCPExceptions() {
         TCPSocketServer failServer(AF_PACKET, "127.0.0.1", 8080);
         Assert::Fail("Created server with unsupported address family.");
     }
-    catch (...) {
+    catch (std::system_error) {
     }
+    catch (std::invalid_argument) {}
 #endif
 
     // Client's Connect() exception tests
     testSocket1.Close();
-    testServer.Listen();
     try {
+        TCPSocketServer testServer2(AF_INET);
         testSocket1.Connect("127.0.0.1", 8080);
         Assert::Fail("Socket attempted connection after closing.");
     }
-    catch (...) {
+    catch (std::system_error) {
     }
 
     TCPSocket testSocket4(AF_INET);
