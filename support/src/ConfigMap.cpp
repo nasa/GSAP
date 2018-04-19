@@ -5,7 +5,7 @@
  *
  *   @author    Chris Teubert <christopher.a.teubert@nasa.gov>
  *   @author    Jason Watkins <jason-watkins@outlook.com>
- *   @version   0.1.1
+ *   @version   1.1.1
  *   @date      2016-06-22
  *
  *   @copyright Copyright (c) 2013-2018 United States Government as represented by

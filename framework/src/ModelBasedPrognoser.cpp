@@ -9,14 +9,14 @@
  *   observer, and predictor.
  *
  *   @author    Matthew Daigle
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *   @pre       Prognostic Configuration File and Prognoster Configuration Files
  *
  *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
  *      Created: March 16, 2016
  *
- *   @copyright Copyright (c) 2016 United States Government as represented by
+ *   @copyright Copyright (c) 2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -99,6 +99,13 @@ namespace PCOE {
         observer->setModel(model.get());
         loadEstimator->setModel(model.get());
         predictor->setModel(model.get());
+            
+        for (auto && input : model->inputs) {
+            comm.registerKey(input);
+        }
+        for (auto && output : model->outputs) {
+            comm.registerKey(output);
+        }
 
         // Set configuration parameters
         unsigned int numSamples =
@@ -134,6 +141,7 @@ namespace PCOE {
             const std::string& input_name = model->inputs[i];
             log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %s", input_name.c_str());
             Datum<double> input = getValue(input_name);
+            
             log.FormatLine(LOG_TRACE,
                            "PROG-MBP",
                            "Got input (%f, %ul)",
@@ -159,11 +167,7 @@ namespace PCOE {
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
             z[i] = getValue(model->outputs[i]);
         }
-
-        // Transform the data using the model's transform function
-        log.WriteLine(LOG_TRACE, "PROG-MBP", "Running transform");
-        model->transform(u, z);
-
+        
         // If this is the first step, will want to initialize the observer and the predictor
         if (!initialized) {
             log.WriteLine(LOG_DEBUG, moduleName, "Initializing ModelBasedPrognoser");

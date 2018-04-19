@@ -142,6 +142,7 @@ namespace PCOE {
         ProgData results;  ///> Prognostic Results
         
         Datum<double> getValue(const std::string & key);
+        CommManager& comm;  ///> Communciations Manager
         
     private:
         std::string histFileName;  ///< Name of history file
@@ -151,7 +152,6 @@ namespace PCOE {
         unsigned int saveInterval;  ///< Loops between saves
         
         CommManagerWrapper cWrapper;
-        CommManager& comm;  ///> Communciations Manager
         
         std::map<std::string, std::function<Datum<double>(void)> > lookup;
     };

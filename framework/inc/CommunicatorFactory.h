@@ -7,14 +7,14 @@
  *   Handles the creation of new communicators
  *
  *   @author    Chris Teubert
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *   @pre       Prognostic Configuration File and Communicator Configuration Files
  *
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *      Created: November 11, 2015
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
