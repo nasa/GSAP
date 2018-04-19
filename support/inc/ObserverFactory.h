@@ -7,14 +7,14 @@
  *   Handles the creation of new observers
  *
  *   @author    Matthew Daigle
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *   @pre       Prognostic Configuration File and Prognoser Configuration Files
  *
  *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
  *      Created: March 21, 2016
  *
- *   @copyright Copyright (c) 2016 United States Government as represented by
+ *   @copyright Copyright (c) 2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -26,6 +26,7 @@
 #include "Factory.h"
 #include "Singleton.h"
 #include "UnscentedKalmanFilter.h"
+#include "ParticleFilter.h"
 
 namespace PCOE {
     /**
@@ -46,6 +47,7 @@ namespace PCOE {
          **/
         ObserverFactory() {
             Register("UKF", ObserverFactory::Create<UnscentedKalmanFilter>);
+            Register("PF", ObserverFactory::Create<ParticleFilter>);
         }
     };
 }

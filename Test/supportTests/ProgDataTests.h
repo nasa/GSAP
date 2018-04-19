@@ -3,7 +3,7 @@
 //  ProgDataUnit
 //
 //  Created by Chris Teubert on 3/7/16.
-//  Copyright © 2016 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
+//  Copyright © 2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
 //
 
 #ifndef PROGDATATESTS_H

@@ -43,12 +43,12 @@
  *   @see        CommonCommunicator
  *
  *   @author    Chris Teubert
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *      Created: March 25, 2016
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -57,7 +57,6 @@
 #define PCOE_RECORDERCOMMUNICATOR_H
 
 #include "CommonCommunicator.h"
-#include "CommunicatorFactory.h"
 #include "DataStore.h"
 
 namespace PCOE {

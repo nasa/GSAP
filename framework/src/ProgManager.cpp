@@ -7,7 +7,7 @@
 *    This class creates the ProgMonitors and Communication Manager.
 *
 *   @author    Chris Teubert
-*   @version   0.1.0
+*   @version   1.1.0
 *
 *   @pre       Prognostic Configuration File and Prognoster Configuration Files
 *
@@ -16,7 +16,7 @@
 *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
 *      Created: November 11, 2015
 *
-*   @copyright Copyright (c) 2013-2016 United States Government as represented by
+*   @copyright Copyright (c) 2013-2018 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
@@ -35,7 +35,7 @@
 namespace PCOE {
     /// CONFIGURABLE PARAMETERS
     const std::string PACKAGE_NAME = "C++ Generic Prognostic Infrastructure";
-    const std::string VERSION = "0.1.0";
+    const std::string VERSION = "1.1.0";
     const std::string NOTE = "If you have technical issues with the plugin, "
         "please report them by \nemailing Christopher Teubert (christopher.a.teubert@nasa.gov).";
     const std::string MODULE_NAME = "PrognosticManager";

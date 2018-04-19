@@ -12,7 +12,7 @@
 *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
 *      Created: March 5, 2016
 *
-*   @copyright Copyright (c) 2016 United States Government as represented by
+*   @copyright Copyright (c) 2018 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
@@ -26,7 +26,6 @@
 #include "PrognosticsModel.h"
 #include "ConfigMap.h"
 #include "ModelFactory.h"
-#include "PrognosticsModelFactory.h"
 
 // Default parameter values
 static const double QMOBILE_DEFAULT_VALUE = 7600;
@@ -191,6 +190,4 @@ class Battery final : public PCOE::PrognosticsModel {
      */
     virtual void transform(std::vector<double> & u, std::vector<double> & z);
 };
-
-
 #endif

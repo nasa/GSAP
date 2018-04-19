@@ -12,7 +12,7 @@
  *   @version   0.2.0
  *   @date      March 3, 2016
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  **/
@@ -61,8 +61,6 @@ namespace PCOE {
     // *------------------------*
     // |        Classes         |
     // *------------------------*
-
-    class UDatum;
 
     /** @class      UData
      *  @brief      A class for representing and manipulating data with uncertainty

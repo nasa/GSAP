@@ -1,4 +1,4 @@
-/// Copyright (c) 2013-2016 United States Government as represented by the
+/// Copyright (c) 2013-2018 United States Government as represented by the
 /// Administrator of the National Aeronautics and Space Administration.
 /// All Rights Reserved.
 
@@ -125,7 +125,7 @@ namespace PCOE {
             std::lock_guard<std::mutex> guard(*m);
             std::fprintf(fd.get(), "%s [Version %s]\n", name.c_str(), version.c_str());
             std::fprintf(fd.get(), "Compiled %s %s\n", __DATE__, __TIME__);
-            std::fprintf(fd.get(), "Copyright (c) 2013-2016 United States Government as represented by the\n");
+            std::fprintf(fd.get(), "Copyright (c) 2013-2018 United States Government as represented by the\n");
             std::fprintf(fd.get(), "Administrator of the National Aeronautics and Space Administration.\n");
             std::fprintf(fd.get(), "All Rights Reserved.\n\n");
 

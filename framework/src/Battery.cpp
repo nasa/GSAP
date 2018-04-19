@@ -12,7 +12,7 @@
 *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
 *      Created: March 5, 2016
 *
-*   @copyright Copyright (c) 2016 United States Government as represented by
+*   @copyright Copyright (c) 2018 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
@@ -415,6 +415,11 @@ bool Battery::thresholdEqn(const double t, const std::vector<double> & x, const 
 
 // Battery Input Equation
 void Battery::inputEqn(const double, const std::vector<double> & inputParameters, std::vector<double> & u) {
+//    if (u[0] == NAN) {
+//        u[0] = inputParameters[1];
+//    } else {
+//        u[0] = inputParameters[0];
+//    }
     u = inputParameters;
 }
 

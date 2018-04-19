@@ -6,13 +6,13 @@
 *   BenchmarkPrognoser class.
 *
 *   @author    Micah Ricks
-*   @version   0.1.0
+*   @version   1.1.0
 *
 *
 *      Contact: Micah Ricks (mricks1@bulldogs.aamu.edu)
 *      Created: March 16, 2016
 *
-*   @copyright Copyright (c) 2017 United States Government as represented by
+*   @copyright Copyright (c) 2018 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */

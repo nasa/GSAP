@@ -6,14 +6,14 @@
  *   @brief     Predictor Interface Class - Class defining the Predictor interface (model-based predictor)
  *
  *   @author    Matthew Daigle
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *   @pre       N/A
  *
  *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
  *      Created: March 16, 2016
  *
- *   @copyright Copyright (c) 2016 United States Government as represented by
+ *   @copyright Copyright (c) 2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
 **/
@@ -26,8 +26,7 @@
 #include <string>
 
 #include "Model.h"
-#include "LoadEstimator.h"
-#include "LoadEstimatorFactory.h"
+#include "MovingAverageLoadEstimator.h"
 #include "PrognosticsModel.h"
 #include "ProgData.h"
 #include "ThreadSafeLog.h"
