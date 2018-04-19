@@ -33,6 +33,9 @@ void testUDPCtor() {
     }
     catch (std::system_error ec) {
         if (ec.code().value() != EAFNOSUPPORT) {
+            std::cout << ec.code() << std::endl;
+            std::cout << ec.code().value() << std::endl;
+            std::cout << EAFNOSUPPORT << std::endl;
             Assert::Fail("Ctor using AF_INET6 failed.");
         }
     }
