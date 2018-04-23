@@ -84,6 +84,8 @@ namespace PCOE {
 
     TCPSocket::TCPSocket(int af) : sock(InvalidSocket), family(af) {
 #ifdef _WIN32
+        // After the first call to WSAStartup by the current application, this just increments a ref
+        // count.
         WSADATA wsa;
         if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
             std::error_code ec(sockerr, std::generic_category());
@@ -111,6 +113,7 @@ namespace PCOE {
     TCPSocket::~TCPSocket() noexcept {
         Close();
 #ifdef _WIN32
+        // This just decrements a ref count unless this is the last object using WSA.
         WSACleanup();
 #endif
     }
