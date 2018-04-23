@@ -5,8 +5,8 @@
 
 #include "UDPSocket.h"
 
-#include <cstring>
 #include <cstdio>
+#include <cstring>
 
 #ifdef _WIN32
 #define _EAFNOSUPPORT WSAEAFNOSUPPORT
@@ -21,24 +21,22 @@
 #define _ioctl ioctl
 #endif
 
-namespace PCOE
-{
+namespace PCOE {
     /// @brief RAII wrapper around and addrinfo pointer created by getaddrinfo
     class AddressInfo {
     public:
-        AddressInfo() : result(nullptr) { }
+        AddressInfo() : result(nullptr) {}
         AddressInfo(const AddressInfo&) = delete;
         AddressInfo(AddressInfo&& other) : AddressInfo() {
             std::swap(result, other.result);
         }
         AddressInfo& operator=(const AddressInfo&) = delete;
-        AddressInfo& operator= (AddressInfo&& other) {
+        AddressInfo& operator=(AddressInfo&& other) {
             std::swap(result, other.result);
             return *this;
         }
 
-        AddressInfo(const char* hostname, const char* port, addrinfo* hints)
-            : AddressInfo() {
+        AddressInfo(const char* hostname, const char* port, addrinfo* hints) : AddressInfo() {
             int status = getaddrinfo(hostname, port, hints, &result);
             if (status) {
                 std::error_code ec(sockerr, std::generic_category());
@@ -52,22 +50,24 @@ namespace PCOE
             }
         }
 
-        operator addrinfo() { return *result; }
-        addrinfo* operator&() { return result; }
+        operator addrinfo() {
+            return *result;
+        }
+        addrinfo* operator&() {
+            return result;
+        }
 
     private:
         addrinfo* result;
     };
 
-    static AddressInfo GetAddressInfo(const std::string& hostname,
-                                      unsigned short port,
-                                      int af) {
+    static AddressInfo GetAddressInfo(const std::string& hostname, unsigned short port, int af) {
         // Try to resolve the given host using the address family specified in
         // the constructor. after calling getaddrinfo, result is a singly
         // linked list of zero or more valid addresses for the host.
         // Note: freeaddrinfo must be called on result before exiting
         std::string portStr = std::to_string(port);
-        addrinfo hints = { };
+        addrinfo hints = {};
         hints.ai_family = af;
         hints.ai_protocol = IPPROTO_UDP;
         hints.ai_socktype = SOCK_DGRAM;
@@ -90,18 +90,17 @@ namespace PCOE
         }
         if (wsa.wVersion != MAKEWORD(2, 2)) {
             std::error_code ec(sockerr, std::generic_category());
-            throw std::system_error(ec, "Not using Winsock 2.2. How did you even get this code to run on Windows 3.1?");
+            throw std::system_error(
+                ec, "Not using Winsock 2.2. How did you even get this code to run on Windows 3.1?");
         }
 #endif
         CreateSocket(af);
     }
 
     UDPSocket::UDPSocket(int af, unsigned short port) : UDPSocket(af) {
-        switch (af)
-        {
-        case AF_INET:
-        {
-            sockaddr_in si = { };
+        switch (af) {
+        case AF_INET: {
+            sockaddr_in si = {};
             si.sin_family = AF_INET;
             si.sin_port = htons(port);
             if (bind(sock, reinterpret_cast<sockaddr*>(&si), sizeof(si))) {
@@ -110,9 +109,8 @@ namespace PCOE
             }
             break;
         }
-        case AF_INET6:
-        {
-            sockaddr_in6 si = { };
+        case AF_INET6: {
+            sockaddr_in6 si = {};
             si.sin6_family = AF_INET6;
             si.sin6_port = htons(port);
             if (bind(sock, reinterpret_cast<sockaddr*>(&si), sizeof(si))) {
@@ -122,27 +120,25 @@ namespace PCOE
             break;
         }
         default:
-            std::string what = "Address family " + std::to_string(af) + " not supported.";
-            what += " Please use the sockaddr constructor for families other than AF_INET and AF_INET6.";
+            std::string what = "Address family " + std::to_string(af) +
+                               " not supported. Please use the sockaddr constructor for families "
+                               "other than AF_INET and AF_INET6.";
             throw std::invalid_argument(what);
         }
     }
 
-    UDPSocket::UDPSocket(sockaddr* addr, socklen_t addrlen)
-        : UDPSocket(addr->sa_family) {
+    UDPSocket::UDPSocket(sockaddr* addr, socklen_t addrlen) : UDPSocket(addr->sa_family) {
         if (bind(sock, addr, addrlen)) {
             std::error_code ec(sockerr, std::generic_category());
             throw std::system_error(ec, "Socket bind failed");
         }
     }
 
-    UDPSocket::UDPSocket(const std::string& hostname, unsigned short port)
-        : UDPSocket() {
+    UDPSocket::UDPSocket(const std::string& hostname, unsigned short port) : UDPSocket() {
         Connect(hostname, port);
     }
 
-    UDPSocket::UDPSocket(UDPSocket&& other)
-        : sock(other.sock), family(other.family) {
+    UDPSocket::UDPSocket(UDPSocket&& other) : sock(other.sock), family(other.family) {
         other.sock = InvalidSocket;
         other.family = AF_UNSPEC;
     }
@@ -156,8 +152,7 @@ namespace PCOE
         return *this;
     }
 
-    UDPSocket::~UDPSocket()
-    {
+    UDPSocket::~UDPSocket() {
         Close();
 #ifdef _WIN32
         WSACleanup();
@@ -216,15 +211,14 @@ namespace PCOE
         }
     }
 
-    UDPSocket::size_type UDPSocket::Receive(char buffer[],
-                                                size_type len) const {
+    UDPSocket::size_type UDPSocket::Receive(char buffer[], size_type len) const {
         return Receive(buffer, len, nullptr, nullptr);
     }
 
     UDPSocket::size_type UDPSocket::Receive(char buffer[],
-                                                size_type len,
-                                                sockaddr* remoteAddr,
-                                                socklen_t* addrLen) const {
+                                            size_type len,
+                                            sockaddr* remoteAddr,
+                                            socklen_t* addrLen) const {
         ssize_type status = recvfrom(sock, buffer, len, 0, remoteAddr, addrLen);
         if (status < 0) {
             std::error_code ec(sockerr, std::generic_category());
