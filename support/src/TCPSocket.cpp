@@ -106,7 +106,6 @@ namespace PCOE {
 
     TCPSocket::TCPSocket(TCPSocket&& other) : sock(other.sock), family(other.family) {
         other.sock = InvalidSocket;
-        other.family = AF_UNSPEC;
     }
 
     TCPSocket::~TCPSocket() noexcept {
@@ -121,7 +120,6 @@ namespace PCOE {
         sock = other.sock;
         family = other.family;
         other.sock = InvalidSocket;
-        other.family = AF_UNSPEC;
         return *this;
     }
 
@@ -145,6 +143,9 @@ namespace PCOE {
     }
 
     void TCPSocket::Close() noexcept {
+        if (sock == InvalidSocket) {
+            return;
+        }
         // close/closesocket can produce errors, but there isn't anything we
         // can really do about them and we are done with the socket anyway, so
         // ignore them.
