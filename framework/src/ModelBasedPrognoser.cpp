@@ -41,12 +41,14 @@ namespace PCOE {
     const std::string OBSERVER_KEY = "observer";
     const std::string PREDICTOR_KEY = "predictor";
     const std::string EVENT_KEY = "Model.event";
+    const std::string STEPSIZE_KEY = "Model.stepSize";
     const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
     const std::string HORIZON_KEY = "Predictor.horizon";
     const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
 
     const std::string DEFAULT_LOAD_EST = "movingAverage";
+    const double DEFAULT_STEPSIZE = 100; // ms
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
         : CommonPrognoser(configMap), initialized(false) {
@@ -84,13 +86,20 @@ namespace PCOE {
         if (configMap.includes(LOAD_EST_KEY)) {
             loadEstimator = std::unique_ptr<LoadEstimator>(
                 loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap));
-        }
-        else {
+        } else {
             // If not specified, use default
             loadEstimator =
                 std::unique_ptr<LoadEstimator>(loadEstFact.Create(DEFAULT_LOAD_EST, configMap));
         }
+            
+        // Set model stepsize
+        if (configMap.includes(STEPSIZE_KEY)) {
+            model->setDt(std::stod(configMap[STEPSIZE_KEY][0]));
+        } else {
+            model->setDt(DEFAULT_STEPSIZE);
+        }
 
+        // Set load estimator
         using std::placeholders::_1;
         using std::placeholders::_2;
         predictor->setLoadEst(std::bind(&LoadEstimator::estimateLoad, loadEstimator.get(), _1, _2));
