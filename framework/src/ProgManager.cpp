@@ -70,20 +70,31 @@ namespace PCOE {
         unsigned int counter = 0;
         Cmd ctrl;
 
-        while (ctrl.command != STOP) {
+        /// Main Loop- Handle controls for prognosers
+        do {
             counter++;
+            
+            // Handle commands
             ctrl = control();
 
-            if (ctrl.command == STOP) {
-                stop();
-            }
-            else if (ctrl.command == START || ctrl.command == RESUME) {
-                start();
-            }
-            else if (ctrl.command == PAUSE) {
-                pause();
+            switch (ctrl.command) {
+                case STOP:
+                    stop();
+                    break;
+                case START:
+                case RESUME:
+                    start();
+                    break;
+                case PAUSE:
+                    pause();
+                    break;
+                case NONE:
+                    break;
+                default:
+                    throw std::domain_error("Invalid/unknown command");
             }
         }
+        while (ctrl.command != STOP);
     }
 
     void ProgManager::addPrognoser(const std::string& path) {
