@@ -201,6 +201,7 @@ namespace PCOE {
     }
 
     void CommonPrognoser::saveState() const {
+        using namespace std::chrono;
         // @todo(CT): Make more efficient- right now it copies every udata vector
 
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Saving state to file");
@@ -217,9 +218,8 @@ namespace PCOE {
         }
 
         // Time
-        fdHist
-            << "time:"
-            << std::chrono::milliseconds(std::chrono::system_clock::now().time_since_epoch).count();
+        fdHist << "time:"
+               << duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 
         // For each Event
         for (auto&& itEvents : results.getEventNames()) {

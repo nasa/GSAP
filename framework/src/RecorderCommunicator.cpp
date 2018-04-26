@@ -207,6 +207,7 @@ namespace PCOE {
     }
 
     void RecorderCommunicator::write(AllData dataIn) {
+        using namespace std::chrono;
         DataStore& data          = dataIn.doubleDatastore;
         ProgDataMap& progDataMap = dataIn.progData;
         if (!init) {
@@ -382,8 +383,7 @@ namespace PCOE {
         // Print Timestamp
         fprintf(theFile,
                 "%llul\n",
-                std::chrono::milliseconds(std::chrono::system_clock::now().time_since_epoch)
-                    .count());
+                duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count());
         std::fflush(theFile); // Flush (update file)
         log.WriteLine(LOG_TRACE, MODULE_NAME, "End Print Line");
     }
