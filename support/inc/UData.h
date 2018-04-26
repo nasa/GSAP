@@ -42,8 +42,8 @@ namespace PCOE {
         MeanCovar,
         Samples,
         WSamples,
-        Percentiles = WSamples,
-        WeightedSamples = WSamples,
+        Percentiles       = WSamples,
+        WeightedSamples   = WSamples,
         UnweightedSamples = Samples,
     };
 
@@ -73,13 +73,18 @@ namespace PCOE {
         //*------------------------------*
         struct Proxy;
         struct ConstProxy;
-        using clock = std::chrono::steady_clock;
+
+        using clock      = std::chrono::steady_clock;
         using time_point = clock::time_point;
+        using time_ticks = time_point::rep;
+
         using difference_type = std::vector<double>::difference_type;
+
         using size_type = std::vector<double>::size_type;
+
         class iterator;
-        using const_iterator = std::vector<double>::const_iterator;
-        using reverse_iterator = std::vector<double>::reverse_iterator;
+        using const_iterator         = std::vector<double>::const_iterator;
+        using reverse_iterator       = std::vector<double>::reverse_iterator;
         using const_reverse_iterator = std::vector<double>::const_reverse_iterator;
 
         //*------------------------------*
@@ -456,7 +461,7 @@ namespace PCOE {
         UDataInterface* m_interface;
         size_type m_npoints;
         UType m_uncertainty;
-        size_type m_updated;
+        time_ticks m_updated;
         bool m_valid;
 
     public:
