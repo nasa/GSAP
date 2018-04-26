@@ -17,18 +17,17 @@
  *     All Rights Reserved.
  */
 
-#include <stdio.h>
+#include <iostream>
 
-#include "BenchmarkTimer.h"
 #include "BenchmarkPrognoser.h"
+#include "BenchmarkTimer.h"
 #include "GSAPConfigMap.h"
 
 namespace PCOE {
     // Configuration Keys
 
-    BenchmarkPrognoser::BenchmarkPrognoser(GSAPConfigMap & configMap) : ModelBasedPrognoser(configMap) {
-
-    }
+    BenchmarkPrognoser::BenchmarkPrognoser(GSAPConfigMap& configMap)
+        : ModelBasedPrognoser(configMap) {}
 
     void BenchmarkPrognoser::step() {
         benchmark1.start();
@@ -38,6 +37,12 @@ namespace PCOE {
 
     // destructor
     BenchmarkPrognoser::~BenchmarkPrognoser() {
-        printf("Runtime: [%lld, %lld, %lld] ns\n", benchmark1.getMinStepTime()/nanoseconds(1), benchmark1.getAveStepTime()/nanoseconds(1), benchmark1.getMaxStepTime()/nanoseconds(1));
+        std::cout << "Runtime: [";
+        std::cout << benchmark1.getMinStepTime().count();
+        std::cout << ", ";
+        std::cout << benchmark1.getAveStepTime().count();
+        std::cout << ", ";
+        std::cout << benchmark1.getMaxStepTime().count();
+        std::cout << "] ns" << std::endl;
     }
-}   // namespace PCOE
+} // namespace PCOE
