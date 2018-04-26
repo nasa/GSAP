@@ -21,7 +21,6 @@
  *     All Rights Reserved.
  */
 
-#include <algorithm> // For tolower
 #include <exception>
 #include <iostream>
 #include <string>
@@ -30,7 +29,7 @@
 #include "CommManager.h"
 #include "ProgManager.h"
 #include "PrognoserFactory.h"
-#include "SharedLib.h" // for trim
+#include "StringUtils.h"
 
 namespace PCOE {
     /// CONFIGURABLE PARAMETERS
@@ -73,28 +72,27 @@ namespace PCOE {
         /// Main Loop- Handle controls for prognosers
         do {
             counter++;
-            
+
             // Handle commands
             ctrl = control();
 
             switch (ctrl.command) {
-                case STOP:
-                    stop();
-                    break;
-                case START:
-                case RESUME:
-                    start();
-                    break;
-                case PAUSE:
-                    pause();
-                    break;
-                case NONE:
-                    break;
-                default:
-                    throw std::domain_error("Invalid/unknown command");
+            case STOP:
+                stop();
+                break;
+            case START:
+            case RESUME:
+                start();
+                break;
+            case PAUSE:
+                pause();
+                break;
+            case NONE:
+                break;
+            default:
+                throw std::domain_error("Invalid/unknown command");
             }
-        }
-        while (ctrl.command != STOP);
+        } while (ctrl.command != STOP);
     }
 
     void ProgManager::addPrognoser(const std::string& path) {
@@ -187,7 +185,7 @@ namespace PCOE {
         std::cout << "prg $ ";
         std::cin >> input; // Receive input
         logger.FormatLine(LOG_TRACE, MODULE_NAME, "Control Command received- %s", input.c_str());
-        trim(input);
+        trimSpace(input);
 
         if (input.length() == 0) {
             c.command = NONE;
@@ -196,7 +194,7 @@ namespace PCOE {
 
         const auto marker   = input.find_first_of(" \t");
         std::string command = (input.substr(0, marker));
-        std::transform(command.begin(), command.end(), command.begin(), ::tolower);
+        toLower(command);
 
         // Fill out Command Structure
         if (command.compare("start") == 0) {

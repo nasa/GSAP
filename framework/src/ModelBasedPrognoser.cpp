@@ -32,23 +32,22 @@
 #include "ObserverFactory.h"
 #include "PredictorFactory.h"
 #include "PrognosticsModelFactory.h"
-#include "SharedLib.h"
 #include "UData.h"
 
 namespace PCOE {
     // Configuration Keys
-    const std::string MODEL_KEY = "model";
-    const std::string OBSERVER_KEY = "observer";
-    const std::string PREDICTOR_KEY = "predictor";
-    const std::string EVENT_KEY = "Model.event";
-    const std::string STEPSIZE_KEY = "Model.stepSize";
-    const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
-    const std::string HORIZON_KEY = "Predictor.horizon";
-    const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
+    const std::string MODEL_KEY            = "model";
+    const std::string OBSERVER_KEY         = "observer";
+    const std::string PREDICTOR_KEY        = "predictor";
+    const std::string EVENT_KEY            = "Model.event";
+    const std::string STEPSIZE_KEY         = "Model.stepSize";
+    const std::string NUMSAMPLES_KEY       = "Predictor.numSamples";
+    const std::string HORIZON_KEY          = "Predictor.horizon";
+    const std::string LOAD_EST_KEY         = "Predictor.loadEstimator";
     const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
 
     const std::string DEFAULT_LOAD_EST = "movingAverage";
-    const double DEFAULT_STEPSIZE = 100; // ms
+    const double DEFAULT_STEPSIZE      = 100; // ms
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
         : CommonPrognoser(configMap), initialized(false) {
@@ -65,19 +64,19 @@ namespace PCOE {
         // Create Model
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Model");
         PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
-        model = std::unique_ptr<PrognosticsModel>(
+        model                                      = std::unique_ptr<PrognosticsModel>(
             pProgModelFactory.Create(configMap[MODEL_KEY][0], configMap));
 
         // Create Observer
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Observer");
         ObserverFactory& pObserverFactory = ObserverFactory::instance();
-        observer = std::unique_ptr<Observer>(
+        observer                          = std::unique_ptr<Observer>(
             pObserverFactory.Create(configMap[OBSERVER_KEY][0], configMap));
 
         // Create Predictor
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
         PredictorFactory& pPredictorFactory = PredictorFactory::instance();
-        predictor = std::unique_ptr<Predictor>(
+        predictor                           = std::unique_ptr<Predictor>(
             pPredictorFactory.Create(configMap[PREDICTOR_KEY][0], configMap));
 
         // Create Load Estimator
@@ -86,16 +85,18 @@ namespace PCOE {
         if (configMap.includes(LOAD_EST_KEY)) {
             loadEstimator = std::unique_ptr<LoadEstimator>(
                 loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap));
-        } else {
+        }
+        else {
             // If not specified, use default
             loadEstimator =
                 std::unique_ptr<LoadEstimator>(loadEstFact.Create(DEFAULT_LOAD_EST, configMap));
         }
-            
+
         // Set model stepsize
         if (configMap.includes(STEPSIZE_KEY)) {
             model->setDt(std::stod(configMap[STEPSIZE_KEY][0]));
-        } else {
+        }
+        else {
             model->setDt(DEFAULT_STEPSIZE);
         }
 
@@ -108,11 +109,11 @@ namespace PCOE {
         observer->setModel(model.get());
         loadEstimator->setModel(model.get());
         predictor->setModel(model.get());
-            
-        for (auto && input : model->inputs) {
+
+        for (auto&& input : model->inputs) {
             comm.registerKey(input);
         }
-        for (auto && output : model->outputs) {
+        for (auto&& output : model->outputs) {
             comm.registerKey(output);
         }
 
@@ -120,7 +121,7 @@ namespace PCOE {
         unsigned int numSamples =
             static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
         unsigned int horizon = static_cast<unsigned int>(std::stoul(configMap[HORIZON_KEY][0]));
-        std::string event = configMap[EVENT_KEY][0];
+        std::string event    = configMap[EVENT_KEY][0];
         std::vector<std::string> predictedOutputs = configMap[PREDICTEDOUTPUTS_KEY];
 
         // Create progdata
@@ -150,7 +151,7 @@ namespace PCOE {
             const std::string& input_name = model->inputs[i];
             log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %s", input_name.c_str());
             Datum<double> input = getValue(input_name);
-            
+
             log.FormatLine(LOG_TRACE,
                            "PROG-MBP",
                            "Got input (%f, %ul)",
@@ -176,7 +177,7 @@ namespace PCOE {
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
             z[i] = getValue(model->outputs[i]);
         }
-        
+
         // If this is the first step, will want to initialize the observer and the predictor
         if (!initialized) {
             log.WriteLine(LOG_DEBUG, moduleName, "Initializing ModelBasedPrognoser");
@@ -184,7 +185,7 @@ namespace PCOE {
             model->initialize(x, u, z);
             observer->initialize(newT, x, u);
             initialized = true;
-            lastTime = newT;
+            lastTime    = newT;
         }
         else {
             // If time has not advanced, skip this step
