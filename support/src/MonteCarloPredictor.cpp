@@ -132,12 +132,7 @@ namespace PCOE {
             std::vector<double> covariance = state[xIndex].getVec(COVAR());
             Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
         }
-        Matrix xRandom(pModel->getNumStates(), 1);
         auto PxxChol = Pxx.chol();
-
-        std::vector<double> u(pModel->getNumInputs());
-        std::vector<double> z(pModel->getNumPredictedOutputs());
-        std::vector<double> noise(pModel->getNumStates());
 
         /* OpenMP info
         * If the application is built with OpenMP, the predictor below operates in parallel.
@@ -156,13 +151,14 @@ namespace PCOE {
             #ifdef USING_OPENMP
               std::random_device rDevice;
               std::mt19937 generator(rDevice());
-						#endif
+            #endif
 
             // 1. Sample the state
             // Create state vector
             // Now we have mean vector (x) and covariance matrix (Pxx). We can use that to sample a
             // realization of the state. I need to generate a vector of random numbers, size of the
             // state vector Create standard normal distribution
+            Matrix xRandom(pModel->getNumStates(), 1);
             static std::normal_distribution<> standardDistribution(0, 1);
             for (unsigned int xIndex = 0; xIndex < pModel->getNumStates(); xIndex++) {
                 xRandom[xIndex][0] = standardDistribution(generator);
@@ -172,6 +168,8 @@ namespace PCOE {
             std::vector<double> x = static_cast<std::vector<double>>(xRandom.col(0));
 
             // 3. Simulate until time limit reached
+            std::vector<double> u(pModel->getNumInputs());
+            std::vector<double> z(pModel->getNumPredictedOutputs());
             double t = tP;
             unsigned int timeIndex = 0;
             data.events[event].getTOE()[sample] = INFINITY;
@@ -200,6 +198,7 @@ namespace PCOE {
                 }
 
                 // Sample process noise - for now, assuming independent
+                std::vector<double> noise(pModel->getNumStates());
                 for (unsigned int xIndex = 0; xIndex < pModel->getNumStates(); xIndex++) {
                     std::normal_distribution<> noiseDistribution(0, sqrt(processNoise[xIndex]));
                     noise[xIndex] = noiseDistribution(generator);
