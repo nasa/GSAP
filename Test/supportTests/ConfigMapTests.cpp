@@ -56,7 +56,6 @@ void configMapUse()
 
 void configMapLoad()
 {
-    /* New test here - Julian */
     ConfigMap theMap;
     try {
         theMap.addSearchPath("../Test/supportTests");
@@ -76,22 +75,21 @@ void configMapLoadNonexistent()
         theMap = ConfigMap("Nonexistent.cfg"); // File doesn't exist
         Assert::Fail("Found file that should not exist.");
     }
-    catch (...) {}
+    catch (std::ios_base::failure) {}
 }
 
 void configMapAddBadSearchPath()
 {
-    /* New test here - Julian */
     ConfigMap theMap;
     try {
         theMap.addSearchPath("../badPath");
+        Assert::Fail("ConfigMap added invalid search path.");
     }
-    catch (...) {}
+    catch (std::domain_error) {}
 }
 
 void configMapTrim()
 {
-    /* New test here - Julian */
     ConfigMap theMap;
     theMap.addSearchPath("../Test/supportTests");
     theMap = ConfigMap("Test.cfg");

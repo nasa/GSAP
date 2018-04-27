@@ -64,64 +64,58 @@ void exceptiontest() {
     test = TestThreadExceptionClass();
     {   // Exceptions associated with enabling
         test.enable();
-        try {
-            test.enable();
-            Assert::Fail("Thread was enabled twice.");
-        }
-        catch (...) {}
+        
+        test.enable(); // Enabling twice should trigger log warning
 
         test.start();
         try {
             test.enable();
             Assert::Fail("Thread was enabled after starting.");
         }
-        catch (...) {}
+        catch (std::domain_error) {}
 
         test.pause();
         try {
             test.enable();
             Assert::Fail("Thread was enabled after pausing.");
         }
-        catch (...) {}
+        catch (std::domain_error) {}
 
         test.stop();
         try {
             test.enable();
             Assert::Fail("Thread was enabled after stopping.");
         }
-        catch (...) {}
+        catch (std::domain_error) {}
 
         test.join();
         try {
             test.enable();
             Assert::Fail("Thread was enabled after joining.");
         }
-        catch (...) {}
+        catch (std::domain_error) {}
     }
 
     test = TestThreadExceptionClass();
     {   // Exceptions associated with starting
         test.enable();
         test.start();
-        try {
-            test.start();
-            Assert::Fail("Thread started twice.");
-        }
-        catch (...) {}
+        
+        test.start(); // Starting twice should trigger log warning
 
         test.stop();
         try {
             test.start();
             Assert::Fail("Thread started after stopping.");
         }
-        catch (...) {}
+        catch (std::domain_error) {}
 
         test.join();
         try {
             test.start();
             Assert::Fail("Thread started after joining.");
         }
-        catch (...) {}
+        catch (std::domain_error) {}
     }
 
     test = TestThreadExceptionClass();
@@ -129,25 +123,22 @@ void exceptiontest() {
         test.enable();
         test.start();
         test.pause();
-        try {
-            test.pause();
-            Assert::Fail("Thread paused twice.");
-        }
-        catch (...) {}
+        
+        test.pause(); // Pausing twice should trigger log warning.
 
         test.stop();
         try {
             test.pause();
             Assert::Fail("Thread paused after stopping.");
         }
-        catch (...) {}
+        catch (std::domain_error) {}
 
         test.join();
         try {
             test.pause();
             Assert::Fail("Thread paused after joining.");
         }
-        catch (...)  {}
+        catch (std::domain_error)  {}
     }
 
     test = TestThreadExceptionClass();
@@ -155,18 +146,15 @@ void exceptiontest() {
         test.enable();
         test.start();
         test.stop();
-        try {
-            test.stop();
-            Assert::Fail("Thread stopped twice.");
-        }
-        catch (...) {}
+        
+        test.stop(); // Stopping twice should trigger log warning.
 
         test.join();
         try {
             test.stop();
             Assert::Fail("Thread stopped after joining.");
         }
-        catch (...) {}
+        catch (std::domain_error) {}
     }
 
     test = TestThreadExceptionClass();
@@ -175,11 +163,7 @@ void exceptiontest() {
         test.start();
         test.stop();
         test.join();
-        try {
-            test.join();
-            Assert::Fail("Thread joined  twice.");
-        }
-        catch (...) {}
+        test.join();
     }
 }
 
