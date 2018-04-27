@@ -87,7 +87,7 @@ namespace PCOE {
                 "Number of predicted outputs does not equal number of model's predicted outputs");
         }
     }
-    
+
     UData::size_type getLowestTimestamp(const std::vector<UData>& data) {
         UData::size_type result = std::numeric_limits<UData::size_type>::max();
         for (const UData& entry : data) {
@@ -113,9 +113,11 @@ namespace PCOE {
 
         auto stateTimestamp = getLowestTimestamp(state);
 
-        // Create a random number generator
-        static std::random_device rDevice;
-        static std::mt19937 generator(rDevice());
+        // Create a random number generator if operating sequentially
+        #ifndef USING_OPENMP
+          static std::random_device rDevice;
+          static std::mt19937 generator(rDevice());
+        #endif
 
         Matrix xMean(pModel->getNumStates(), 1);
 
@@ -137,8 +139,25 @@ namespace PCOE {
         std::vector<double> z(pModel->getNumPredictedOutputs());
         std::vector<double> noise(pModel->getNumStates());
 
+        /* OpenMP info
+        * If the application is built with OpenMP, the predictor below operates in parallel.
+        * The only shared memory between threads is data (ProgData). Writebacks are only done
+        * on a per-sample basis (which each have their own thread) so there are no race
+        * conditions presently. Future updates to the predict method will need to consider
+        * if data must be updated atomically.
+        *
+        * std::mt19937 is not thread safe, so when OpenMP is used the generator is found
+        * inside the loop, otherwise it can be left outside.
+        */
         // For each sample
+        #pragma omp parallel for shared(data)
         for (unsigned int sample = 0; sample < numSamples; sample++) {
+            // 0. Create random number generator if operating in parallel
+            #ifdef USING_OPENMP
+              std::random_device rDevice;
+              std::mt19937 generator(rDevice());
+						#endif
+
             // 1. Sample the state
             // Create state vector
             // Now we have mean vector (x) and covariance matrix (Pxx). We can use that to sample a
