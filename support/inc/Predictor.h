@@ -38,13 +38,11 @@ namespace PCOE {
         typedef std::function<LoadEstimate(const double, const unsigned int)> LoadEstFcn;
         LoadEstFcn loadEstFcn;
         MovingAverageLoadEstimator defaultLoadEst;
-        PrognosticsModel* pModel; // model used for prediction
-        double horizon; // time span of prediction
-        std::vector<std::string>
-            predictedOutputs; // list of variables for which to compute future values of
-        Log& log; ///> Logger (Defined in ThreadSafeLog.h)
-
-    public:
+        PrognosticsModel * pModel;  // model used for prediction
+        double horizon;            // time span of prediction
+        Log &log;  ///> Logger (Defined in ThreadSafeLog.h)
+        
+     public:
         /** Constructor
          *  @param  configMap   Map of configuration parameters
          **/

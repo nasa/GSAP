@@ -86,6 +86,8 @@ Battery::Battery() {
 
     inputs  = {"power"};
     outputs = {"voltage", "temperature"};
+    events = {"EOD"};
+    predictedOutputs = {"SOC"};
     // Set some default parameters
     setParameters();
 }

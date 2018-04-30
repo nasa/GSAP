@@ -28,8 +28,6 @@
 
 namespace PCOE {
     // Configuration Keys
-    const std::string EVENT_KEY = "Model.event";
-    const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
     const std::string PROCESSNOISE_KEY = "Model.processNoise";
     const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
     const std::string HORIZON_KEY = "Predictor.horizon";
@@ -46,22 +44,17 @@ namespace PCOE {
         // processNoise = list of variance values for process noise, one for each state (zero-mean
         // assumption) event = name of event to predict inputUncertainty = specification of
         // uncertainty associated with inputParameters in pModel->inputEqn
-        configMap.checkRequiredParams(
-            {EVENT_KEY, NUMSAMPLES_KEY, HORIZON_KEY, PREDICTEDOUTPUTS_KEY, PROCESSNOISE_KEY});
+        configMap.checkRequiredParams({NUMSAMPLES_KEY, HORIZON_KEY, PROCESSNOISE_KEY});
 
         // Set configuration parameters
         numSamples = static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
         horizon = std::stoul(configMap[HORIZON_KEY][0]);
-        event = configMap[EVENT_KEY][0];
 
         // Set up process noise
         std::vector<std::string> processNoiseStrings = configMap[PROCESSNOISE_KEY];
         for (unsigned int i = 0; i < processNoiseStrings.size(); i++) {
             processNoise.push_back(std::stod(processNoiseStrings[i]));
         }
-
-        // Set up predicted outputs
-        predictedOutputs = configMap[PREDICTEDOUTPUTS_KEY];
 
         log.WriteLine(LOG_INFO, MODULE_NAME, "MonteCarloPredictor created");
     }
@@ -75,16 +68,6 @@ namespace PCOE {
                           MODULE_NAME,
                           "Process noise size does not equal number of model states");
             throw std::range_error("Process noise size does not equal number of model states");
-        }
-
-        // Check that there are the correct number of predicted outputs
-        if (predictedOutputs.size() != pModel->getNumPredictedOutputs()) {
-            log.WriteLine(
-                LOG_ERROR,
-                MODULE_NAME,
-                "Number of predicted outputs does not equal number of model's predicted outputs");
-            throw std::range_error(
-                "Number of predicted outputs does not equal number of model's predicted outputs");
         }
     }
 
@@ -172,6 +155,7 @@ namespace PCOE {
             std::vector<double> z(pModel->getNumPredictedOutputs());
             double t = tP;
             unsigned int timeIndex = 0;
+            std::string event = pModel->events[0];
             data.events[event].getTOE()[sample] = INFINITY;
             while (t <= tP + horizon) {
                 // Get inputs for time t
@@ -194,7 +178,7 @@ namespace PCOE {
                 // predicted values)
                 pModel->predictedOutputEqn(t, x, u, z);
                 for (unsigned int p = 0; p < pModel->getNumPredictedOutputs(); p++) {
-                    data.sysTrajectories[predictedOutputs[p]][timeIndex][sample] = z[p];
+                    data.sysTrajectories[pModel->predictedOutputs[p]][timeIndex][sample] = z[p];
                 }
 
                 // Sample process noise - for now, assuming independent

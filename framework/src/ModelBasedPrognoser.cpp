@@ -36,15 +36,13 @@
 
 namespace PCOE {
     // Configuration Keys
-    const std::string MODEL_KEY            = "model";
-    const std::string OBSERVER_KEY         = "observer";
-    const std::string PREDICTOR_KEY        = "predictor";
-    const std::string EVENT_KEY            = "Model.event";
-    const std::string STEPSIZE_KEY         = "Model.stepSize";
-    const std::string NUMSAMPLES_KEY       = "Predictor.numSamples";
-    const std::string HORIZON_KEY          = "Predictor.horizon";
-    const std::string LOAD_EST_KEY         = "Predictor.loadEstimator";
-    const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
+    const std::string MODEL_KEY = "model";
+    const std::string OBSERVER_KEY = "observer";
+    const std::string PREDICTOR_KEY = "predictor";
+    const std::string STEPSIZE_KEY = "Model.stepSize";
+    const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
+    const std::string HORIZON_KEY = "Predictor.horizon";
+    const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
 
     const std::string DEFAULT_LOAD_EST = "movingAverage";
     const double DEFAULT_STEPSIZE      = 100; // ms
@@ -55,10 +53,8 @@ namespace PCOE {
         configMap.checkRequiredParams({MODEL_KEY,
                                        OBSERVER_KEY,
                                        PREDICTOR_KEY,
-                                       EVENT_KEY,
                                        NUMSAMPLES_KEY,
-                                       HORIZON_KEY,
-                                       PREDICTEDOUTPUTS_KEY});
+                                       HORIZON_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
@@ -121,16 +117,16 @@ namespace PCOE {
         unsigned int numSamples =
             static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
         unsigned int horizon = static_cast<unsigned int>(std::stoul(configMap[HORIZON_KEY][0]));
-        std::string event    = configMap[EVENT_KEY][0];
-        std::vector<std::string> predictedOutputs = configMap[PREDICTEDOUTPUTS_KEY];
 
         // Create progdata
         results.setUncertainty(UType::Samples); // @todo(MD): do not force samples representation
-        results.addEvent(event); // @todo(MD): do not assume only a single event
-        results.addSystemTrajectories(predictedOutputs); // predicted outputs
+        for (std::string & event : model->events) {
+            results.addEvent(event);
+            results.events[event].getTOE().npoints(numSamples);
+        }
+        results.addSystemTrajectories(model->predictedOutputs); // predicted outputs
         results.setPredictions(1, horizon); // interval, number of predictions
         results.setupOccurrence(numSamples);
-        results.events[event].getTOE().npoints(numSamples);
         results.sysTrajectories.setNSamples(numSamples);
     }
 
