@@ -36,16 +36,16 @@
 
 namespace PCOE {
     // Configuration Keys
-    const std::string MODEL_KEY = "model";
-    const std::string OBSERVER_KEY = "observer";
-    const std::string PREDICTOR_KEY = "predictor";
-    const std::string STEPSIZE_KEY = "Model.stepSize";
-    const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
-    const std::string HORIZON_KEY = "Predictor.horizon";
-    const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
+    const std::string MODEL_KEY         = "model";
+    const std::string OBSERVER_KEY      = "observer";
+    const std::string PREDICTOR_KEY     = "predictor";
+    const std::string STEPSIZE_KEY      = "Model.stepSize";
+    const std::string NUMSAMPLES_KEY    = "Predictor.numSamples";
+    const std::string HORIZON_KEY       = "Predictor.horizon";
+    const std::string LOAD_EST_KEY      = "Predictor.loadEstimator";
 
-    const std::string DEFAULT_LOAD_EST = "movingAverage";
-    const double DEFAULT_STEPSIZE      = 100; // ms
+    const std::string DEFAULT_LOAD_EST  = "movingAverage";
+    const double DEFAULT_STEPSIZE_S     = 1; // seconds
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
         : CommonPrognoser(configMap), initialized(false) {
@@ -93,7 +93,7 @@ namespace PCOE {
             model->setDt(std::stod(configMap[STEPSIZE_KEY][0]));
         }
         else {
-            model->setDt(DEFAULT_STEPSIZE);
+            model->setDt(DEFAULT_STEPSIZE_S);
         }
 
         // Set load estimator
@@ -132,11 +132,11 @@ namespace PCOE {
 
     void ModelBasedPrognoser::step() {
         // Initialize time (convert to seconds)
-        static double initialTime = getValue(model->outputs[0]).getTime() / 1.0e3;
+        static double initialTime_s = getValue(model->outputs[0]).getTime() / 1.0e3;
 
         // Get new relative time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
-        double newT = getValue(model->outputs[0]).getTime() / 1.0e3 - initialTime;
+        double newT_s = getValue(model->outputs[0]).getTime() / 1.0e3 - initialTime_s;
 
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
@@ -179,13 +179,13 @@ namespace PCOE {
             log.WriteLine(LOG_DEBUG, moduleName, "Initializing ModelBasedPrognoser");
             std::vector<double> x(model->getNumStates());
             model->initialize(x, u, z);
-            observer->initialize(newT, x, u);
+            observer->initialize(newT_s, x, u);
             initialized = true;
-            lastTime    = newT;
+            lastTime    = newT_s;
         }
         else {
             // If time has not advanced, skip this step
-            if (newT <= lastTime) {
+            if (newT_s <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
                 return;
             }
@@ -193,18 +193,18 @@ namespace PCOE {
             try {
                 // Run observer
                 log.WriteLine(LOG_DEBUG, moduleName, "Running Observer Step");
-                observer->step(newT, u, z);
+                observer->step(newT_s, u, z);
                 log.WriteLine(LOG_DEBUG, moduleName, "Done Running Observer Step");
 
                 // Run predictor
                 log.WriteLine(LOG_DEBUG, moduleName, "Running Prediction Step");
                 // Set up state
                 std::vector<UData> stateEst = observer->getStateEstimate();
-                predictor->predict(newT, stateEst, results);
+                predictor->predict(newT_s, stateEst, results);
                 log.WriteLine(LOG_DEBUG, moduleName, "Done Running Prediction Step");
 
                 // Set lastTime
-                lastTime = newT;
+                lastTime = newT_s;
             }
             catch (...) {
                 log.WriteLine(LOG_ERROR, moduleName, "Error in Step, skipping");

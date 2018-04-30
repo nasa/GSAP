@@ -82,7 +82,7 @@ namespace PCOE {
     }
 
     // Predict function
-    void MonteCarloPredictor::predict(const double tP,
+    void MonteCarloPredictor::predict(const double time_s,
                                       const std::vector<UData>& state,
                                       ProgData& data) {
         // @todo(MD): This is setup for only a single event to predict, need to extend to multiple
@@ -153,29 +153,28 @@ namespace PCOE {
             // 3. Simulate until time limit reached
             std::vector<double> u(pModel->getNumInputs());
             std::vector<double> z(pModel->getNumPredictedOutputs());
-            double t = tP;
             unsigned int timeIndex = 0;
             std::string event = pModel->events[0];
             data.events[event].getTOE()[sample] = INFINITY;
-            while (t <= tP + horizon) {
+            for (double t_s = time_s; t_s <= time_s + horizon; t_s += pModel->getDt()) {
                 // Get inputs for time t
-                std::vector<double> loadEstimate = loadEstFcn(t, sample);
-                pModel->inputEqn(t, loadEstimate, u);
+                std::vector<double> loadEstimate = loadEstFcn(t_s, sample);
+                pModel->inputEqn(t_s, loadEstimate, u);
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
                 auto& theEvent = data.events[event];
-                theEvent.occurrenceMatrix[timeIndex][sample] = pModel->thresholdEqn(t, x, u);
+                theEvent.occurrenceMatrix[timeIndex][sample] = pModel->thresholdEqn(t_s, x, u);
                 if (theEvent.occurrenceMatrix[timeIndex][sample]) {
-                    theEvent.getTOE()[sample] = t;
+                    theEvent.getTOE()[sample] = t_s;
                     theEvent.getTOE().updated(stateTimestamp);
                     break;
                 }
 
                 // Write to system trajectory (model variables for which we are interested in
                 // predicted values)
-                pModel->predictedOutputEqn(t, x, u, z);
+                pModel->predictedOutputEqn(t_s, x, u, z);
                 for (unsigned int p = 0; p < pModel->getNumPredictedOutputs(); p++) {
                     data.sysTrajectories[pModel->predictedOutputs[p]][timeIndex][sample] = z[p];
                 }
@@ -188,10 +187,9 @@ namespace PCOE {
                 }
 
                 // Update state for t to t+dt
-                pModel->stateEqn(t, x, u, noise);
+                pModel->stateEqn(t_s, x, u, noise, pModel->getDt());
 
-                // Update time
-                t += pModel->getDt();
+                // Update time index
                 timeIndex++;
             }
         }
