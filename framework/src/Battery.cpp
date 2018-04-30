@@ -12,6 +12,8 @@
  *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
  *      Created: March 5, 2016
  *
+ *   https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20140009120.pdf
+ *
  *   @copyright Copyright (c) 2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
@@ -249,12 +251,12 @@ void Battery::stateEqn(const double,
     // Extract states
     double Tb  = x[0];
     double Vo  = x[1];
-    double Vsn = x[2];
-    double Vsp = x[3];
-    double qnB = x[4];
-    double qnS = x[5];
-    double qpB = x[6];
-    double qpS = x[7];
+    double Vsn = x[2]; // Surface voltage negative
+    double Vsp = x[3]; // Surface voltage positive
+    double qnB = x[4]; // Amount of negative lithium ions in the bulk
+    double qnS = x[5]; // Amount of negative lithium ions in the surface
+    double qpB = x[6]; // Amount of positive lithium ions in the bulk
+    double qpS = x[7]; // Amount of positive lithium ions in the surface
 
     // Extract inputs
     double P = u[0];
@@ -266,18 +268,26 @@ void Battery::stateEqn(const double,
     double CnSurface = qnS / parameters.VolS;
     double xSn       = qnS / parameters.qSMax;
     double xnS       = qnS / parameters.qSMax;
-    auto xnS2        = xnS * xnS;
-    auto xnS2_1      = 2 * xnS - 1;
-    auto xnS2_xnS    = xnS2 - xnS;
+    
+    // Cached values (for efficiency)
+    double xnS2        = xnS * xnS;
+    double xnS2_1      = 2 * xnS - 1;
+    double xnS2_xnS    = xnS2 - xnS;
+    
+    // State estimation
     double Ven11 =
         parameters.An11 * (22 * xnS2_1 * pow(xnS2_1, 10) + pow(xnS2_1, 12)) / parameters.F;
     double Ven1   = parameters.An1 * (2 * xnS2_1 + pow(xnS2_1, 2)) / parameters.F;
     double CnBulk = qnB / parameters.VolB;
     double Ven6   = parameters.An6 * (12 * xnS2_1 * pow(xnS2_1, 5) + pow(xnS2_1, 7)) / parameters.F;
     double xpS    = qpS / parameters.qSMax;
+    
+    // Cached values
     auto xpS2     = xpS * xpS;
     auto xpS2_1   = 2 * xpS - 1;
     auto xpS2_xpS = xpS2 - xpS;
+    
+    // Continue state estimation
     double xSp    = qpS / parameters.qBMax;
     double qdotDiffusionBSp = (CpBulk - CpSurface) / parameters.tDiffusion;
     double Ven8 = parameters.An8 * (16 * xnS2_xnS * pow(xnS2_1, 7) + pow(xnS2_1, 9)) / parameters.F;
