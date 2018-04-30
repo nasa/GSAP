@@ -131,12 +131,9 @@ namespace PCOE {
     }
 
     void ModelBasedPrognoser::step() {
-        // Initialize time (convert to seconds)
-        static double initialTime_s = getValue(model->outputs[0]).getTime() / 1.0e3;
-
-        // Get new relative time (convert to seconds)
+        // Get new time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
-        double newT_s = getValue(model->outputs[0]).getTime() / 1.0e3 - initialTime_s;
+        double newT_s = getValue(model->outputs[0]).getTime() / 1.0e3;
 
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
