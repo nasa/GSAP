@@ -167,11 +167,10 @@ namespace PCOE {
                 // event, and we don't want to overwrite that.
                 auto& theEvent = data.events[event];
                 theEvent.occurrenceMatrix[timeIndex][sample] = pModel->thresholdEqn(t, x, u);
-                if (theEvent.occurrenceMatrix[timeIndex][sample] &&
-                    theEvent.getTOE()[sample] == INFINITY) {
+                if (theEvent.occurrenceMatrix[timeIndex][sample]) {
                     theEvent.getTOE()[sample] = t;
                     theEvent.getTOE().updated(stateTimestamp);
-                    continue;
+                    break;
                 }
 
                 // Write to system trajectory (model variables for which we are interested in
