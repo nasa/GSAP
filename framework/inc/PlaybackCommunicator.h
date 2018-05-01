@@ -60,6 +60,7 @@ namespace PCOE {
         std::vector<std::string> header;    ///< The input parameters to be played back (from the header)
         char delim;                         ///< Delimiter
         bool timestampFromFile;
+        bool timestampAddAbsolute;
     };
 }
 
