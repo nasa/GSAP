@@ -41,17 +41,18 @@ namespace PCOE {
     const bool DEFAULT_ADD_ABSOLUTE     = false;
 
     // Configuration Keys
-    const std::string FILE_KEY      = "file";
-    const std::string DELIM_KEY     = "delim";
-    const std::string TIMESTAMP_KEY = "timestampFromFile";
-    const std::string TIMESTAMP_BASE= "timestampAddAbsolute";
+    const std::string FILE_KEY       = "file";
+    const std::string DELIM_KEY      = "delim";
+    const std::string TIMESTAMP_KEY  = "timestampFromFile";
+    const std::string TIMESTAMP_BASE = "timestampAddAbsolute";
 
     // Log Parameters
     const std::string MODULE_NAME = "playbackComm";
 
     PlaybackCommunicator::PlaybackCommunicator(const ConfigMap& config)
-        : delim(DEFAULT_DELIM), timestampFromFile(DEFAULT_TIMESTAMP),
-        timestampAddAbsolute(DEFAULT_ADD_ABSOLUTE) {
+        : delim(DEFAULT_DELIM),
+          timestampFromFile(DEFAULT_TIMESTAMP),
+          timestampAddAbsolute(DEFAULT_ADD_ABSOLUTE) {
         std::string playbackFile = DEFAULT_FILE_NAME;
 
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
@@ -82,15 +83,15 @@ namespace PCOE {
         if (config.includes(TIMESTAMP_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Timestamp key received");
 
-            timestampFromFile = ((config.at(TIMESTAMP_KEY)[0].compare("true")==0) ||
-                                 (config.at(TIMESTAMP_KEY)[0].compare("1")==0));
+            timestampFromFile = ((config.at(TIMESTAMP_KEY)[0].compare("true") == 0) ||
+                                 (config.at(TIMESTAMP_KEY)[0].compare("1") == 0));
         }
-            
+
         if (config.includes(TIMESTAMP_BASE)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Timestamp add absolute key received");
-            
-            timestampAddAbsolute = ((config.at(TIMESTAMP_BASE)[0].compare("true")==0) ||
-                                 (config.at(TIMESTAMP_BASE)[0].compare("1")==0));
+
+            timestampAddAbsolute = ((config.at(TIMESTAMP_BASE)[0].compare("true") == 0) ||
+                                    (config.at(TIMESTAMP_BASE)[0].compare("1") == 0));
         }
 
         log.FormatLine(LOG_INFO, MODULE_NAME, "Opening playback file %s", playbackFile.c_str());
@@ -175,11 +176,12 @@ namespace PCOE {
 
         // Otherwise- received timestamp
         static std::chrono::time_point<std::chrono::system_clock> startingTime =
-            timestampAddAbsolute ? std::chrono::system_clock::now(): std::chrono::time_point<std::chrono::system_clock>::time_point();
+            timestampAddAbsolute ? std::chrono::system_clock::now()
+                                 : std::chrono::time_point<std::chrono::system_clock>();
         ;
 
         const auto step =
-        std::chrono::milliseconds(static_cast<unsigned long long>(std::stold(s2) * 1000));
+            std::chrono::milliseconds(static_cast<unsigned long long>(std::stold(s2) * 1000));
         std::chrono::time_point<std::chrono::system_clock> theTime = startingTime + step;
 
         for (const auto& it : header) {
@@ -200,7 +202,7 @@ namespace PCOE {
                 if (timestampFromFile) {
                     ds[it].setTime(theTime);
                 }
-            
+
                 continue;
             }
             ds[it] = std::stof(s3);
