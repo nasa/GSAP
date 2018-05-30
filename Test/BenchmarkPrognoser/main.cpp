@@ -11,18 +11,7 @@
 #include "PrognoserFactory.h"
 #include "BenchmarkPrognoser.h"
 
-#include "CommunicatorFactory.h"
-#include "RandomCommunicator.h"
-#include "RecorderCommunicator.h"
-#include "PlaybackCommunicator.h"
 #include "ConfigMap.h"
-#include "ModelFactory.h"
-#include "PrognosticsModelFactory.h"
-#include "ObserverFactory.h"
-#include "PredictorFactory.h"
-#include "UnscentedKalmanFilter.h"
-#include "MonteCarloPredictor.h"
-#include "Battery.h"
 #include <ctime>
 #include <fstream>
 #include <iostream>
@@ -36,25 +25,6 @@ int main() {
     // Specify Prognosers
     PrognoserFactory & prognoserFactory = PrognoserFactory::instance();
     prognoserFactory.Register("BenchmarkPrognoser", PrognoserFactory::Create<BenchmarkPrognoser>);
-
-    // Specify Communicators
-    CommunicatorFactory & commFactory = CommunicatorFactory::instance();
-    commFactory.Register("recorder",  CommunicatorFactory::Create<RecorderCommunicator>);
-    commFactory.Register("playback",  CommunicatorFactory::Create<PlaybackCommunicator>);
-
-    // Register battery model
-    ModelFactory & pModelFactory = ModelFactory::instance();
-    PrognosticsModelFactory & pProgModelFactory = PrognosticsModelFactory::instance();
-    pModelFactory.Register("Battery", ModelFactory::Create<Battery>);
-    pProgModelFactory.Register("Battery", PrognosticsModelFactory::Create<Battery>);
-
-    // Register UKF
-    ObserverFactory & pObserverFactory = ObserverFactory::instance();
-    pObserverFactory.Register("UKF", ObserverFactory::Create<UnscentedKalmanFilter>);
-
-    // Register MonteCarloPredictor
-    PredictorFactory & pPredictorFactory = PredictorFactory::instance();
-    pPredictorFactory.Register("MC", PredictorFactory::Create<MonteCarloPredictor>);
 
     ProgManager PM = ProgManager("bench.cfg");
     
