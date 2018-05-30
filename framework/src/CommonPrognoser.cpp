@@ -41,8 +41,9 @@
 
 namespace PCOE {
     // DEFAULTS
-    const std::string DEFAULT_INTERVAL_DELAY = "500"; // ms
+    const unsigned int DEFAULT_INTERVAL_DELAY = 100; // ms
     const unsigned int DEFAULT_SAVE_INTERVAL = 60; // loops
+    const bool DEFAULT_SAVE_ENABLE = false;
 
     // CONFIGURATION KEYS
     const std::string TYPE_KEY           = "type";
@@ -52,6 +53,8 @@ namespace PCOE {
     const std::string TAG_KEY            = "inTags";
     const std::string RESET_HIST_KEY     = "resetHist";
     const std::string INTERVAL_DELAY_KEY = "intervalDelay";
+    const std::string SAVE_INTERVAL_KEY  = "saveInterval";
+    const std::string SAVE_ENABLE_KEY    = "saveEnable";
 
     const std::string IMPORT_KEY = "importConfig";
 
@@ -59,7 +62,9 @@ namespace PCOE {
 
     CommonPrognoser::CommonPrognoser(GSAPConfigMap& configParams)
         : Thread(),
+          loopInterval(DEFAULT_INTERVAL_DELAY),
           saveInterval(DEFAULT_SAVE_INTERVAL),
+          saveEnabled(DEFAULT_SAVE_ENABLE),
           cWrapper(&CommManager::instance()),
           comm(CommManager::instance()) {
         if (configParams.includes(IMPORT_KEY)) {
@@ -79,12 +84,19 @@ namespace PCOE {
         results.setUniqueId(configParams.at(ID_KEY)[0]);
 
         // Fill in Defaults
-        if (!configParams.includes(INTERVAL_DELAY_KEY)) {
-            configParams.set(INTERVAL_DELAY_KEY, DEFAULT_INTERVAL_DELAY);
-        }
-        loopInterval =
+        if (configParams.includes(INTERVAL_DELAY_KEY)) {
+            loopInterval =
             static_cast<unsigned int>(std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str()));
-
+        }
+        
+        if (configParams.includes(SAVE_INTERVAL_KEY)) {
+            saveInterval = static_cast<unsigned int>(std::stoi((configParams.at(SAVE_INTERVAL_KEY)[0]).c_str()));
+        }
+        
+        if (configParams.includes(SAVE_ENABLE_KEY)) {
+            saveEnabled = (configParams.at(SAVE_ENABLE_KEY)[0].compare("true") == 0) || (configParams.at(SAVE_ENABLE_KEY)[0].compare("0") == 0);
+        }
+              
         if (!configParams.includes(HIST_PATH_KEY)) {
             configParams.set(HIST_PATH_KEY, ".");
         }
@@ -168,7 +180,7 @@ namespace PCOE {
                     /// @todo(CT): Display more information
                     log.WriteLine(LOG_ERROR, MODULE_NAME, "Error in Prognoser Loop- Skipping Step");
                 }
-                if (0 == loopCounter % saveInterval) {
+                if (saveEnabled && 0 == loopCounter % saveInterval) {
                     saveState();
                 }
             } // End if(started)
@@ -260,7 +272,9 @@ namespace PCOE {
         }
 
         // Internal State
-        saveMap(fdHist, results.internals);
+        if (saveEnabled) {
+            saveMap(fdHist, results.internals);
+        }
 
         fdHist.close();
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Finished saving state to file");

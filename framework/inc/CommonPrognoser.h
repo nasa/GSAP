@@ -147,6 +147,7 @@ namespace PCOE {
 
         unsigned int loopInterval; ///< Time between prognostic loops (ms)
         unsigned int saveInterval; ///< Loops between saves
+        bool saveEnabled;
 
         CommManagerWrapper cWrapper;
 
