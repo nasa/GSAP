@@ -69,7 +69,7 @@ void configMapLoadNonexistent()
         theMap = ConfigMap("Nonexistent.cfg"); // File doesn't exist
         Assert::Fail("Found file that should not exist.");
     }
-    catch (...) {}
+    catch (std::ios_base::failure &e) {}
 }
 
 void configMapAddBadSearchPath()
@@ -77,8 +77,9 @@ void configMapAddBadSearchPath()
     ConfigMap theMap;
     try {
         theMap.addSearchPath("../badPath");
+        Assert::Fail("Added bad search path");
     }
-    catch (...) {}
+    catch (std::domain_error &e) {}
 }
 
 void configMapTrim()
