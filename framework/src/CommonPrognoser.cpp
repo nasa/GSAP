@@ -53,8 +53,6 @@ namespace PCOE {
     const std::string RESET_HIST_KEY = "resetHist";
     const std::string INTERVAL_DELAY_KEY = "intervalDelay";
 
-    const std::string IMPORT_KEY = "importConfig";
-
     std::string MODULE_NAME;
 
     CommonPrognoser::CommonPrognoser(GSAPConfigMap& configParams)
@@ -62,15 +60,6 @@ namespace PCOE {
           saveInterval(DEFAULT_SAVE_INTERVAL),
           cWrapper(&CommManager::instance()),
           comm(CommManager::instance()) {
-        if (configParams.includes(IMPORT_KEY)) {
-            for (auto&& file : configParams[IMPORT_KEY]) {
-                log.FormatLine(LOG_DEBUG,
-                               MODULE_NAME,
-                               "Reading configuration file %s",
-                               file.c_str());
-                configParams.loadFile(file);
-            }
-        }
         configParams.checkRequiredParams({NAME_KEY, ID_KEY, TYPE_KEY});
 
         // Handle Required configs
@@ -466,11 +455,11 @@ namespace PCOE {
     }
 
     Datum<double> CommonPrognoser::getValue(const std::string& key) {
-        log.FormatLine(LOG_TRACE, "PROG-COM", "Getting lookup function for key %s", key.c_str());
+        log.FormatLine(LOG_TRACE, MODULE_NAME, "Getting lookup function for key %s", key.c_str());
         std::function<Datum<double>()> fn = lookup[key];
-        log.FormatLine(LOG_TRACE, "PROG-COM", "Getting value for key %s", key.c_str());
+        log.FormatLine(LOG_TRACE, MODULE_NAME, "Getting value for key %s", key.c_str());
         Datum<double> result = fn();
-        log.FormatLine(LOG_TRACE, "PROG-COM", "Getting value ", result.get());
+        log.FormatLine(LOG_TRACE, MODULE_NAME, "Getting value ", result.get());
         return result;
     }
 

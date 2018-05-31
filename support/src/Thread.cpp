@@ -52,8 +52,7 @@ namespace PCOE {
 
     void Thread::enable() {
         lock_guard guard(m);
-        switch (state.load())
-        {
+        switch (state.load()) {
         case ThreadState::Created:
             log.WriteLine(LOG_DEBUG, moduleName, "Enabling");
             state = ThreadState::Enabled;
@@ -72,8 +71,7 @@ namespace PCOE {
 
     void Thread::start() {
         lock_guard guard(m);
-        switch (state.load())
-        {
+        switch (state.load()) {
         case ThreadState::Created:
         case ThreadState::Enabled:
         case ThreadState::Paused:
@@ -102,8 +100,7 @@ namespace PCOE {
 
     void Thread::pause() {
         lock_guard guard(m);
-        switch (state.load())
-        {
+        switch (state.load()) {
         case ThreadState::Enabled:
         case ThreadState::Started:
             log.WriteLine(LOG_DEBUG, moduleName, "Pausing");
@@ -120,8 +117,7 @@ namespace PCOE {
 
     void Thread::stop() {
         lock_guard guard(m);
-        switch (state.load())
-        {
+        switch (state.load()) {
         case ThreadState::Enabled:
         case ThreadState::Started:
         case ThreadState::Paused:

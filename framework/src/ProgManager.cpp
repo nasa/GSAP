@@ -61,6 +61,7 @@ namespace PCOE {
     void ProgManager::setConfig(const GSAPConfigMap& config) {
         configValues = config;
         configSet = true;
+        logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting config map");
     }
 
     void ProgManager::run() {
@@ -86,12 +87,13 @@ namespace PCOE {
             else if (ctrl.command == PAUSE) {
                 pause();
             }
-        }  // End while (command != stop)w
+        }  // End while (command != stop)
     }
     
     void ProgManager::addPrognoser(const std::string & path) {
         PrognoserFactory &factory = PrognoserFactory::instance();
         prognosers.push_back(factory.Create(path));
+        logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Adding new prognoser");
     }
     
     void ProgManager::enable() {
@@ -100,7 +102,7 @@ namespace PCOE {
         logger.WriteLine(LOG_INFO, MODULE_NAME, "Enabling");
         
         if (!configSet) {
-            logger.WriteLine(LOG_DEBUG, MODULE_NAME, "No configuration file set - closing progManager");
+            logger.WriteLine(LOG_FATAL, MODULE_NAME, "No configuration file set - closing progManager");
             return;
         }
         
