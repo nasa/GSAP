@@ -43,6 +43,10 @@
 namespace PCOE {
     class GSAPConfigMap;
     
+    // This class is needed to bind getValue. Bind requires const copy constructor, which
+    // cannot be provided for CommManager (is deleted).
+    // The wrapper has a copy constructor to allow this. The getValue method calls
+    // getvalue for the wrapped CommManager
     class CommManagerWrapper {
      public:
         CommManagerWrapper(CommManager * cIn) : c(cIn) {
