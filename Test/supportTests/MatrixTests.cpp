@@ -65,7 +65,7 @@ namespace TestMatrix {
         for (size_t i = 0; i < ITERATIONS; ++i) {
             std::size_t m = sdist(rng);
             std::size_t n = sdist(rng);
-            double v = dist(rng);
+            double v      = dist(rng);
             try {
                 Matrix matrix(m, n, v);
             }
@@ -117,7 +117,7 @@ namespace TestMatrix {
     void construct_copy() {
         std::size_t m = 5;
         std::size_t n = 10;
-        double v = 7.0;
+        double v      = 7.0;
 
         Matrix m1(m, n, v);
         Matrix m2(m1);
@@ -133,7 +133,7 @@ namespace TestMatrix {
     void construct_move() {
         std::size_t m = 5;
         std::size_t n = 10;
-        double v = 7.0;
+        double v      = 7.0;
 
         Matrix m1(m, n, v);
         Matrix m2(std::move(m1));
@@ -149,7 +149,7 @@ namespace TestMatrix {
     void operator_assign() {
         std::size_t m = 5;
         std::size_t n = 10;
-        double v = 7.0;
+        double v      = 7.0;
 
         Matrix m1(m, n, v);
         Matrix m2 = m1;
@@ -171,8 +171,8 @@ namespace TestMatrix {
             for (std::size_t j = 0; j < m; ++j) {
                 for (std::size_t k = 0; k < n; ++k) {
                     double tmp = dist(rng);
-                    m1[j][k] = tmp;
-                    m2[j][k] = tmp;
+                    m1[j][k]   = tmp;
+                    m2[j][k]   = tmp;
                 }
             }
             Assert::IsTrue(m1 == m2, "Matrices failed to compare as equal");
@@ -241,8 +241,10 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     values[j][k] = dist(rng);
                     matrix[j][k] = values[j][k];
-                    Assert::AreEqual(
-                        values[j][k], matrix[j][k], 1e-12, "Unexpected value in random part");
+                    Assert::AreEqual(values[j][k],
+                                     matrix[j][k],
+                                     1e-12,
+                                     "Unexpected value in random part");
                 }
             }
         }
@@ -299,8 +301,10 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     values[j][k] = dist(rng);
                     matrix[j][k] = values[j][k];
-                    Assert::AreEqual(
-                        values[j][k], matrix.at(j, k), 1e-12, "Unexpected value in random part");
+                    Assert::AreEqual(values[j][k],
+                                     matrix.at(j, k),
+                                     1e-12,
+                                     "Unexpected value in random part");
                 }
             }
         }
@@ -361,8 +365,10 @@ namespace TestMatrix {
 
                 Matrix c = matrix.col(k);
                 for (std::size_t j = 0; j < m; ++j) {
-                    Assert::AreEqual(
-                        values[j][k], c.at(j, 0), 1e-12, "Unexpected value in column vector");
+                    Assert::AreEqual(values[j][k],
+                                     c.at(j, 0),
+                                     1e-12,
+                                     "Unexpected value in column vector");
                 }
             }
         }
@@ -387,8 +393,8 @@ namespace TestMatrix {
                 Matrix c(m, 1);
                 for (std::size_t j = 0; j < m; ++j) {
                     values[j][k] = dist(rng);
-                    m1[j][k] = values[j][k];
-                    c[j][0] = values[j][k];
+                    m1[j][k]     = values[j][k];
+                    c[j][0]      = values[j][k];
                 }
                 m2.col(k, c);
             }
@@ -432,7 +438,7 @@ namespace TestMatrix {
                 std::vector<double> c;
                 for (std::size_t j = 0; j < m; ++j) {
                     values[j][k] = dist(rng);
-                    m1[j][k] = values[j][k];
+                    m1[j][k]     = values[j][k];
                     c.push_back(values[j][k]);
                 }
                 m2.col(k, c);
@@ -473,8 +479,10 @@ namespace TestMatrix {
 
                 Matrix r = matrix.row(j);
                 for (std::size_t k = 0; k < n; ++k) {
-                    Assert::AreEqual(
-                        values[j][k], r.at(0, k), 1e-12, "Unexpected value in column vector");
+                    Assert::AreEqual(values[j][k],
+                                     r.at(0, k),
+                                     1e-12,
+                                     "Unexpected value in column vector");
                 }
             }
         }
@@ -499,8 +507,8 @@ namespace TestMatrix {
                 Matrix r(1, n);
                 for (std::size_t k = 0; k < n; ++k) {
                     values[j][k] = dist(rng);
-                    m1[j][k] = values[j][k];
-                    r[0][k] = values[j][k];
+                    m1[j][k]     = values[j][k];
+                    r[0][k]      = values[j][k];
                 }
                 m2.row(j, r);
             }
@@ -544,7 +552,7 @@ namespace TestMatrix {
                 std::vector<double> r;
                 for (std::size_t k = 0; k < n; ++k) {
                     values[j][k] = dist(rng);
-                    m1[j][k] = values[j][k];
+                    m1[j][k]     = values[j][k];
                     r.push_back(values[j][k]);
                 }
                 m2.row(j, r);
@@ -585,8 +593,10 @@ namespace TestMatrix {
 
                 std::vector<double> r = static_cast<std::vector<double>>(matrix.row(j));
                 for (std::size_t k = 0; k < n; ++k) {
-                    Assert::AreEqual(
-                        values[j][k], r.at(k), 1e-12, "Unexpected value in column vector");
+                    Assert::AreEqual(values[j][k],
+                                     r.at(k),
+                                     1e-12,
+                                     "Unexpected value in column vector");
                 }
             }
 
@@ -598,8 +608,10 @@ namespace TestMatrix {
 
                 std::vector<double> c = static_cast<std::vector<double>>(matrix.col(k));
                 for (std::size_t j = 0; j < m; ++j) {
-                    Assert::AreEqual(
-                        values[j][k], c.at(j), 1e-12, "Unexpected value in column vector");
+                    Assert::AreEqual(values[j][k],
+                                     c.at(j),
+                                     1e-12,
+                                     "Unexpected value in column vector");
                 }
             }
         }
@@ -627,8 +639,10 @@ namespace TestMatrix {
         Assert::AreEqual(n2, matrix.cols(), "Unexpected number of columns shrinking");
         for (std::size_t i = 0; i < m2; ++i) {
             for (std::size_t j = 0; j < n2; ++j) {
-                Assert::AreEqual(
-                    expected.at(i, j), matrix.at(i, j), 1e-12, "Unexpected value after shrinking");
+                Assert::AreEqual(expected.at(i, j),
+                                 matrix.at(i, j),
+                                 1e-12,
+                                 "Unexpected value after shrinking");
             }
         }
 
@@ -638,8 +652,10 @@ namespace TestMatrix {
         Assert::AreEqual(n3, matrix.cols(), "Unexpected number of columns expansion");
         for (std::size_t i = 0; i < m2; ++i) {
             for (std::size_t j = 0; j < n2; ++j) {
-                Assert::AreEqual(
-                    expected.at(i, j), matrix.at(i, j), 1e-12, "Unexpected value after expansion");
+                Assert::AreEqual(expected.at(i, j),
+                                 matrix.at(i, j),
+                                 1e-12,
+                                 "Unexpected value after expansion");
             }
         }
     }
@@ -663,10 +679,14 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] + m2[j][k];
                     double e2 = e1 + m2[j][k];
-                    Assert::AreEqual(
-                        e1, result1[j][k], 1e-12, "Unexpected value after adition [+]");
-                    Assert::AreEqual(
-                        e2, result2[j][k], 1e-12, "Unexpected value after adition [+=]");
+                    Assert::AreEqual(e1,
+                                     result1[j][k],
+                                     1e-12,
+                                     "Unexpected value after adition [+]");
+                    Assert::AreEqual(e2,
+                                     result2[j][k],
+                                     1e-12,
+                                     "Unexpected value after adition [+=]");
                 }
             }
         }
@@ -700,12 +720,18 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] + s;
                     double e3 = e1 + s;
-                    Assert::AreEqual(
-                        e1, result1[j][k], 1e-12, "Unexpected value after adition [s + m1]");
-                    Assert::AreEqual(
-                        e1, result2[j][k], 1e-12, "Unexpected value after adition [m1 + s]");
-                    Assert::AreEqual(
-                        e3, result3[j][k], 1e-12, "Unexpected value after adition [+=]");
+                    Assert::AreEqual(e1,
+                                     result1[j][k],
+                                     1e-12,
+                                     "Unexpected value after adition [s + m1]");
+                    Assert::AreEqual(e1,
+                                     result2[j][k],
+                                     1e-12,
+                                     "Unexpected value after adition [m1 + s]");
+                    Assert::AreEqual(e3,
+                                     result3[j][k],
+                                     1e-12,
+                                     "Unexpected value after adition [+=]");
                 }
             }
         }
@@ -730,10 +756,14 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] - m2[j][k];
                     double e2 = e1 - m2[j][k];
-                    Assert::AreEqual(
-                        e1, result1[j][k], 1e-12, "Unexpected value after subtraction [-]");
-                    Assert::AreEqual(
-                        e2, result2[j][k], 1e-12, "Unexpected value after subtraction [-=]");
+                    Assert::AreEqual(e1,
+                                     result1[j][k],
+                                     1e-12,
+                                     "Unexpected value after subtraction [-]");
+                    Assert::AreEqual(e2,
+                                     result2[j][k],
+                                     1e-12,
+                                     "Unexpected value after subtraction [-=]");
                 }
             }
         }
@@ -766,10 +796,14 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] - s;
                     double e2 = e1 - s;
-                    Assert::AreEqual(
-                        e1, result1[j][k], 1e-12, "Unexpected value after subtraction [-]");
-                    Assert::AreEqual(
-                        e2, result2[j][k], 1e-12, "Unexpected value after subtraction [-=]");
+                    Assert::AreEqual(e1,
+                                     result1[j][k],
+                                     1e-12,
+                                     "Unexpected value after subtraction [-]");
+                    Assert::AreEqual(e2,
+                                     result2[j][k],
+                                     1e-12,
+                                     "Unexpected value after subtraction [-=]");
                 }
             }
         }
@@ -806,12 +840,18 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] * s;
                     double e3 = e1 * s;
-                    Assert::AreEqual(
-                        e1, result1[j][k], 1e-12, "Unexpected value after multiplication [s * m1]");
-                    Assert::AreEqual(
-                        e1, result2[j][k], 1e-12, "Unexpected value after multiplication [m1 * s]");
-                    Assert::AreEqual(
-                        e3, result3[j][k], 1e-12, "Unexpected value after multiplication [*=]");
+                    Assert::AreEqual(e1,
+                                     result1[j][k],
+                                     1e-12,
+                                     "Unexpected value after multiplication [s * m1]");
+                    Assert::AreEqual(e1,
+                                     result2[j][k],
+                                     1e-12,
+                                     "Unexpected value after multiplication [m1 * s]");
+                    Assert::AreEqual(e3,
+                                     result3[j][k],
+                                     1e-12,
+                                     "Unexpected value after multiplication [*=]");
                 }
             }
         }
@@ -835,10 +875,14 @@ namespace TestMatrix {
                 for (std::size_t k = 0; k < n; ++k) {
                     double e1 = m1[j][k] / s;
                     double e2 = e1 / s;
-                    Assert::AreEqual(
-                        e1, result1[j][k], 1e-12, "Unexpected value after division [/]");
-                    Assert::AreEqual(
-                        e2, result2[j][k], 1e-12, "Unexpected value after division [/=]");
+                    Assert::AreEqual(e1,
+                                     result1[j][k],
+                                     1e-12,
+                                     "Unexpected value after division [/]");
+                    Assert::AreEqual(e2,
+                                     result2[j][k],
+                                     1e-12,
+                                     "Unexpected value after division [/=]");
                 }
             }
         }
@@ -911,9 +955,9 @@ namespace TestMatrix {
 
         double r = 0;
         for (size_t i = 0; i < m.rows(); i++) {
-            double f = std::pow(-1.0, i) * m[i][0];
+            double f   = std::pow(-1.0, i) * m[i][0];
             Matrix sub = m.submatrix(i, 0);
-            double d = laplaceDeterminant(sub);
+            double d   = laplaceDeterminant(sub);
             r += f * d;
         }
         return r;
@@ -931,12 +975,12 @@ namespace TestMatrix {
                 for (std::size_t a = 0; a < i; ++a) {
                     for (std::size_t b = 0; b < i; ++b) {
                         double d = dist(rng);
-                        m[a][b] = d;
+                        m[a][b]  = d;
                     }
                 }
                 double det1 = m.determinant();
                 double det2 = laplaceDeterminant(m);
-                double e = std::abs((det1 + det2) / 2e8);
+                double e    = std::abs((det1 + det2) / 2e8);
                 Assert::AreEqual(det1, det2, e, "Random determinants");
             }
             for (size_t j = 0; j < ITERATIONS * 2; j++) {
@@ -945,7 +989,7 @@ namespace TestMatrix {
                 for (std::size_t a = 0; a < i; ++a) {
                     for (std::size_t b = a; b < i; ++b) {
                         double d = dist(rng);
-                        m[a][b] = d;
+                        m[a][b]  = d;
                     }
                     for (std::size_t b = 0; b < a; ++b) {
                         m[b][a] = m[a][b];
@@ -953,7 +997,7 @@ namespace TestMatrix {
                 }
                 double det1 = m.determinant();
                 double det2 = laplaceDeterminant(m);
-                double e = std::abs((det1 + det2) / 2e9);
+                double e    = std::abs((det1 + det2) / 2e9);
                 Assert::AreEqual(det1, det2, e, "Symetric random determinants");
             }
         }
@@ -997,8 +1041,10 @@ namespace TestMatrix {
 
         for (std::size_t j = 0; j < 3; ++j) {
             for (std::size_t k = 0; k < 3; ++k) {
-                Assert::AreEqual(
-                    expected.at(j, k), result.at(j, k), 1e-12, "Invalid inverse value");
+                Assert::AreEqual(expected.at(j, k),
+                                 result.at(j, k),
+                                 1e-12,
+                                 "Invalid inverse value");
             }
         }
 
@@ -1042,16 +1088,19 @@ namespace TestMatrix {
         Matrix matrix(3, 3, {3, 5, 7, 19, 17, 13, 11, 3, 1});
 
         Matrix expected(2, 2, {3, 5, 19, 17});
-        Assert::AreEqual(
-            expected, matrix.submatrix(2, 2), "Unexpected submatrix removing last row/col");
+        Assert::AreEqual(expected,
+                         matrix.submatrix(2, 2),
+                         "Unexpected submatrix removing last row/col");
 
         expected = Matrix(2, 2, {17, 13, 3, 1});
-        Assert::AreEqual(
-            expected, matrix.submatrix(0, 0), "Unexpected submatrix removing first row/col");
+        Assert::AreEqual(expected,
+                         matrix.submatrix(0, 0),
+                         "Unexpected submatrix removing first row/col");
 
         expected = Matrix(2, 2, {3, 7, 11, 1});
-        Assert::AreEqual(
-            expected, matrix.submatrix(1, 1), "Unexpected submatrix removing middle row/col");
+        Assert::AreEqual(expected,
+                         matrix.submatrix(1, 1),
+                         "Unexpected submatrix removing middle row/col");
 
         try {
             matrix.submatrix(3, 1);
@@ -1148,7 +1197,7 @@ namespace TestMatrix {
         }
     }
 
-    void leftShift() {
+    void streamInsertionOperator() {
         Matrix m1(3, 2, {1, 2, 3, 4, 5, 6});
 
         Matrix m2;
