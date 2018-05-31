@@ -4,10 +4,9 @@
 //
 //  Created by Teubert, Christopher (ARC-TI) on 2/14/18.
 //
-//
 
-#ifndef LoadTests_hpp
-#define LoadTests_hpp
+#ifndef PCOE_LOADTESTS_HPP
+#define PCOE_LOADTESTS_HPP
 
 #include <stdio.h>
 
@@ -20,4 +19,4 @@ namespace PCOE {
 }
 
 
-#endif /* LoadTests_hpp */
+#endif /* PCOE_LOADTESTS_HPP */
