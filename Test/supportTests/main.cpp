@@ -207,13 +207,6 @@ int main() {
     context.AddTest("Calculate Standard Deviation", calculateStDv, "Statistical Tools");
     context.AddTest("Calculate CDF", calculateCDF, "Statistical Tools");
 
- //  context.AddTest("Recieve Buffer Size",testRecieveBufferSize,"TCP");
- //  context.AddTest("Send Buffer Size",testSendBufferSize,"TCP");
- //  context.AddTest("Connect",testConnect,"TCP");
-   //    context.AddTest("Send and Receive",testSendAndReceive,"TCP");
-//   context.AddTest("Test", testTest, "TCP");
- //  context.AddTest("Receive", testReceive, "TCP");
-
     // Gaussian Variable Tests
     context.AddTest("Constructor Specified", ctorSpecified, "Gaussian Variable");
     context.AddTest("Constructor Unspecified", ctorUnspecified, "Gaussian Variable");
@@ -251,7 +244,6 @@ int main() {
     // UDPSocket Tests
     context.AddTest("UDPSocket Constructor", testUDPCtor, "UDPSocket");
     context.AddTest("UDPSocket Send", testUDPSendandReceive, "UDPSocket");
-    //context.AddTest("UDPSocket Connect", testUDPConnect, "UDPSocket");
     context.AddTest("UDPSocket Exception Handling", testExceptionHandling, "UDPSocket");
 
     int result = context.Execute();
