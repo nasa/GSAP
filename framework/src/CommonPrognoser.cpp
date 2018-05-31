@@ -53,8 +53,6 @@ namespace PCOE {
     const std::string RESET_HIST_KEY = "resetHist";
     const std::string INTERVAL_DELAY_KEY = "intervalDelay";
 
-    const std::string IMPORT_KEY = "importConfig";
-
     std::string MODULE_NAME;
 
     CommonPrognoser::CommonPrognoser(GSAPConfigMap& configParams)
@@ -62,15 +60,6 @@ namespace PCOE {
           saveInterval(DEFAULT_SAVE_INTERVAL),
           cWrapper(&CommManager::instance()),
           comm(CommManager::instance()) {
-        if (configParams.includes(IMPORT_KEY)) {
-            for (auto&& file : configParams[IMPORT_KEY]) {
-                log.FormatLine(LOG_DEBUG,
-                               MODULE_NAME,
-                               "Reading configuration file %s",
-                               file.c_str());
-                configParams.loadFile(file);
-            }
-        }
         configParams.checkRequiredParams({NAME_KEY, ID_KEY, TYPE_KEY});
 
         // Handle Required configs
