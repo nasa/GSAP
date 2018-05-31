@@ -94,7 +94,7 @@ namespace PCOE {
          *  @see        start, stop
          **/
         inline bool isRunning() const {
-            return (begin != nanoseconds::zero());
+            return begin != nanoseconds::zero();
         }
 
         /** getTotalRunTime
