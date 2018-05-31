@@ -39,6 +39,16 @@ namespace PCOE {
         
         ConstLoadEstimator c = ConstLoadEstimator(configMap);
         
+        Assert::IsFalse(c.usesHistoricalLoading());
+        Assert::IsTrue(c.isSampleBased());
+        
+        try {
+            c.addLoad({10});
+            Assert::Fail();
+        } catch (std::runtime_error er) {
+            
+        }
+        
         LoadEstimate test2 = c.estimateLoad(NAN, 0);
         
         Assert::AreEqual(test, test2, "Sampling not correct");
@@ -75,6 +85,8 @@ namespace PCOE {
         GSAPConfigMap configMap;
         
         MovingAverageLoadEstimator c2 = MovingAverageLoadEstimator(configMap);
+        Assert::IsTrue(c2.usesHistoricalLoading());
+        Assert::IsFalse(c2.isSampleBased());
         
         configMap[MovingAverageLoadEstimator::WINDOW_SIZE_KEY] = std::vector<std::string>({"2"}); // Set window size key;
         MovingAverageLoadEstimator c = MovingAverageLoadEstimator(configMap);
@@ -84,6 +96,13 @@ namespace PCOE {
         
         LoadEstimate test2 = c.estimateLoad(NAN, 0);
         Assert::IsTrue(test2.empty(), "Estimate not empty with no data yet provided");
+        
+        try {
+            c.setNSamples(10);
+            Assert::Fail();
+        } catch (std::runtime_error er) {
+            
+        }
         
         LoadEstimate exampleLoad = LoadEstimate({5.0, 1e10, -5e10});
         c.addLoad(exampleLoad);
