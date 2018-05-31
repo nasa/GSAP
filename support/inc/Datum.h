@@ -131,7 +131,7 @@ namespace PCOE {
 
     template <class T>
     bool Datum<T>::isSet() const {
-        return lastUpdated != std::chrono::duration<int>::zero();
+        return lastUpdated != time_point(std::chrono::duration<int>::zero());
     }
 }
 #endif // PCOE_DATUM_H
