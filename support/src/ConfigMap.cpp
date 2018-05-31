@@ -30,6 +30,8 @@
 
 namespace PCOE {
     std::vector<std::string> ConfigMap::searchPaths;
+    
+    const std::string IMPORT_KEY = "importConfig";
 
     void trim(std::string& str) {
         using size_type = std::string::size_type;
@@ -151,8 +153,9 @@ namespace PCOE {
                 kv.second.push_back(s);
             }
         }
-        if (kv.first.compare("importConfig") == 0) {
-            for (auto&& file : kv.second) { // If this line is pointing to other files to load
+        // If the key is IMPORT_KEY, Import the specified files into this configuration map
+        if (kv.first.compare(IMPORT_KEY) == 0) {
+            for (auto&& file : kv.second) {
                 loadFile(file);
             }
         }
