@@ -81,14 +81,18 @@ namespace PCOE {
             configParams.set(RESET_HIST_KEY, "false");
         }
 
-        // HANDLE TAGS
+        // Process tags
+        //
+        // For each tag in (local:global) format, add a function to the lookup table to get the
+        // value by the global name when requesting it by the local name. This handles the local
+        // to global conversion.
         if (configParams.includes(TAG_KEY)) {
             for (auto& it : configParams.at(TAG_KEY)) {
                 size_t pos = it.find_first_of(':');
                 std::string commonName = it.substr(0, pos);
                 std::string tagName = it.substr(pos + 1, it.length() - pos + 1);
                 log.FormatLine(LOG_TRACE,
-                               "PROG-COM",
+                               MODULE_NAME,
                                "Registering tag common=%s, tag=%s",
                                commonName.c_str(),
                                tagName.c_str());
