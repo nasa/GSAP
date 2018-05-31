@@ -4,6 +4,7 @@
 //
 //  Created by Julian Vu on 2/28/17.
 
+#include <Exceptions.h>
 #include "Tank3.h"
 #include "GSAPConfigMap.h"
 #include "ParticleFilter.h"
@@ -31,7 +32,7 @@ void ctor() {
         ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
         Assert::Fail("Constructor did not catch empty processNoise/sensorNoise vectors");
     }
-    catch (...) {}
+    catch (std::range_error &e) {}
 }
 
 void ctorWithNonemptyVectors() {
@@ -68,7 +69,7 @@ void ctorWithNonemptyVectors() {
         ParticleFilter pf2 = ParticleFilter(&test, N, processNoise, emptySensorNoise);
         Assert::Fail("Constructor did not catch empty sensorNoise vector");
     }
-    catch (...) {}
+    catch (std::range_error &e) {}
 }
 
 void GSAPConfigMapCtor() {
@@ -122,7 +123,7 @@ void PFinitialize() {
         pf2.initialize(t0, x, u);
         Assert::Fail("initialize() didn't catch null model.");
     }
-    catch (...) {}
+    catch (ConfigurationError &e) {}
 }
 
 void step() {
@@ -165,7 +166,7 @@ void step() {
         pf.step(t1, u, z);
         Assert::Fail("step() did not catch uninitialized ParticleFilter.");
     }
-    catch (...) {}
+    catch (std::domain_error &e) {}
 
     pf.initialize(t0, x, u);
 
@@ -174,7 +175,7 @@ void step() {
         pf.step(t0, u, z);
         Assert::Fail("step() did not catch unchanged time.");
     }
-    catch (...) {}
+    catch (std::domain_error &e) {}
 
     pf.setMinNEffective(2000);
     Assert::AreEqual(2000, pf.getMinNEffective());
