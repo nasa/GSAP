@@ -37,7 +37,6 @@ void configMapUse()
     theMap.set("test2","blah");
     Assert::AreEqual(0, theMap["test2"][0].compare("blah"));
 
-    /* Added test cases for incldues() - Julian */
     Assert::IsTrue(theMap.includes({"test"}));
     Assert::IsTrue(theMap.includes({"test2"}));
     Assert::IsFalse(theMap.includes({"test3"}));
@@ -56,20 +55,14 @@ void configMapUse()
 
 void configMapLoad()
 {
-    /* New test here - Julian */
     ConfigMap theMap;
-    try {
-        theMap.addSearchPath("../Test/supportTests");
-        theMap = ConfigMap("Test.cfg");
-        Assert::AreNotEqual(0, theMap["test"][0].compare("modelBasedPrognoser"));
-    }
-    catch(...) {}
+    theMap.addSearchPath("../Test/supportTests");
+    theMap = ConfigMap("Test.cfg");
+    Assert::AreNotEqual(0, theMap["test"][0].compare("modelBasedPrognoser"));
 }
 
 void configMapLoadNonexistent()
 {
-    /* New test here - Julian */
-    // Add search path with / character
     ConfigMap theMap;
     theMap.addSearchPath("../");
     try {
@@ -81,7 +74,6 @@ void configMapLoadNonexistent()
 
 void configMapAddBadSearchPath()
 {
-    /* New test here - Julian */
     ConfigMap theMap;
     try {
         theMap.addSearchPath("../badPath");
@@ -91,7 +83,6 @@ void configMapAddBadSearchPath()
 
 void configMapTrim()
 {
-    /* New test here - Julian */
     ConfigMap theMap;
     theMap.addSearchPath("../Test/supportTests");
     theMap = ConfigMap("Test.cfg");
