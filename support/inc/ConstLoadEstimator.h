@@ -5,7 +5,7 @@
  *
  *   @brief     Constant Load Estimator Class- simulates constant loading
  *
- *   The purpose of this class is to handle the logic of estimating future loading in the case 
+ *   The purpose of this class is to handle the logic of estimating future loading in the case
  *   where future loading is constant.
  *
  *   @author    Chris Teubert
@@ -28,46 +28,51 @@
 
 namespace PCOE {
     class ConstLoadEstimator : public LoadEstimator {
-     public:
-        static const std::string LOADING_KEY; // Key for loading config file
-        static const std::string STDDEV_KEY;  // Optional key for gaussian STDDEV in loading config file
-        
-        typedef enum UncertaintyType {
-            NONE,
-            GAUSSIAN
-        } UType;
+    public:
+        // Key for loading config file
+        static const std::string LOADING_KEY;
+        // Optional key for gaussian STDDEV in loading config file
+        static const std::string STDDEV_KEY;
 
-        /** ConstLoadEstimator constructor.
-         *  @param      configMap   Configuration map of configuration parameters in the prognoser configuration
-         *              file
+        typedef enum UncertaintyType { NONE, GAUSSIAN } UType;
+
+        /**
+         * @brief Initializes the load estimator with values from the given
+         *        config.
          *
-         *  The constructor configures the ConstLoadEstimator
+         * @param configMap Configuration used to set up the load esitmator.
          **/
-        ConstLoadEstimator(GSAPConfigMap & configMap);
-        
-        /** Set the number of samples for the loadEstimator
-         *  @param  nSamples    The number of samples
+        ConstLoadEstimator(GSAPConfigMap& configMap);
+
+        /**
+         * @brief Set the number of samples for the loadEstimator
+         *
+         * @param nSamples The number of samples
          **/
-        void setNSamples(const unsigned int);
-        
-        /** Get the mode of uncertainty being used
-         *  @return The uncertainty mode
+        void setNSamples(const unsigned int nSamples);
+
+        /**
+         * @brief Get the mode of uncertainty being used.
          **/
         UType getUncertaintyMode();
-        
-        /** Estimate Load
-         *  @param      t           Time for estimate (s from start)
-         *  @param      sample      Sample id (unsigned int)
-         *  @return     Load estimate for time and sample
+
+        /**
+         * @brief produces a load estimate for the given time.
+         *
+         * @param t      The number of seconds from the start to estimate a
+         *               load for.
+         * @param sample Sample id
+         * @return Load estimate for time and sample
          **/
-        LoadEstimate estimateLoad(const double, const unsigned int);
-        
-     protected:
-        std::vector<LoadEstimate> profiles; // The profiles to for each sample (used when UncertType != NONE)
-        LoadEstimate raw_profile; // The raw profile
-        LoadEstimate stddev;      // The std of raw_profile
-        
-        UType uncertaintyMode = NONE;   // The uncertainty mode
+        LoadEstimate estimateLoad(const double t, const unsigned int sample);
+
+    protected:
+        // The profiles to for each sample are used when UncertType != NONE
+        std::vector<LoadEstimate> profiles;
+        LoadEstimate raw_profile;
+        LoadEstimate stddev;
+
+        UType uncertaintyMode = NONE;
     };
 }
-#endif //PCOE_CONST_LOAD_EST_H
+#endif // PCOE_CONST_LOAD_EST_H
