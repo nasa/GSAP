@@ -5,7 +5,7 @@
  *
  *   @brief     Load Estimator Class- abstract parent class for load estimators
  *
- *   The purpose of this class is to define the interface for Load Estimators which handle the logic 
+ *   The purpose of this class is to define the interface for Load Estimators which handle the logic
  *      of estimating future loading.
  *
  *   @author    Chris Teubert
@@ -24,6 +24,7 @@
 #ifndef PCOE_LOAD_ESTIMATOR_H
 #define PCOE_LOAD_ESTIMATOR_H
 
+#include <stdexcept>
 #include <vector>
 
 #include "GSAPConfigMap.h"
@@ -32,36 +33,45 @@
 namespace PCOE {
     typedef std::vector<double> LoadEstimate;
     const std::string LOAD_EST_SAMPLES_KEY = "LoadEstimator.samples";
-    
-    /// Load Estimator Abstract Parent Class
+
+    /**
+     * Abstract base class that defines the interface for load estimators.
+     **/
     class LoadEstimator {
-     public:
-        /** Set the number of samples for the loadEstimator
-         *  @param  nSamples    The number of samples
+    public:
+        /**
+         * @brief Set the number of samples for the loadEstimator.
+         * @param nSamples The number of samples
          **/
-        virtual void setNSamples(const unsigned int) {};
-        
-        /** @brief Set model pointer
-         *  @param model given model pointer
+        virtual void setNSamples(const unsigned int nSamples) {
+            throw std::runtime_error("Not supported");
+        };
+
+        /**
+         * @brief Set model pointer
+         * @param model given model pointer
          **/
-        virtual void setModel(PrognosticsModel *model) {
-            pModel = model;
+        virtual void setModel(PrognosticsModel* model) {
+            this->model = model;
         }
-        
-        /** @brief Set the load for that timestep
-         *  @param  loadEstimate    Load estimate for the current timestep
+
+        /**
+         * @brief Set the load for that timestep
+         * @param  loadEstimate    Load estimate for the current timestep
          **/
-        virtual void addLoad(const LoadEstimate & ) {}
-        
+        virtual void addLoad(const LoadEstimate&) {
+            throw std::runtime_error("Not supported");
+        };
+
         /** Estimate Load
          *  @param      t           Time for estimate (s from start)
          *  @param      sample      Sample id (unsigned int)
          *  @return     Load estimate for time and sample
          **/
         virtual LoadEstimate estimateLoad(const double t, const unsigned int sample) = 0;
-        
-     protected:
-        PrognosticsModel * pModel;  // model used for prediction
+
+    protected:
+        PrognosticsModel* model;
     };
 }
-#endif //PCOE_LOAD_ESTIMATOR_H
+#endif // PCOE_LOAD_ESTIMATOR_H
