@@ -1,7 +1,8 @@
 /**  Configuration Map - Body
  *   @class     ConfigMap ConfigMap.h
  *
- *   @brief     Configuration Map- Map for loading accessing, and parsing configuration parameters from a key:value1, value2, ... style file
+ *   @brief     Configuration Map- Map for loading accessing, and parsing configuration parameters
+ * from a key:value1, value2, ... style file
  *
  *   @author    Chris Teubert <christopher.a.teubert@nasa.gov>
  *   @author    Jason Watkins <jason-watkins@outlook.com>
@@ -13,25 +14,24 @@
  *     All Rights Reserved.
  */
 
-#include <iostream>
-#include <fstream>
 #include <algorithm>
-#include <functional>
 #include <cctype>
+#include <fstream>
+#include <functional>
+#include <iostream>
 #include <locale>
 #include <string>
-#include <vector>
-#include <utility>  // For Pair
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <utility> // For Pair
+#include <vector>
 
 #include "ConfigMap.h"
 
 namespace PCOE {
     std::vector<std::string> ConfigMap::searchPaths;
 
-    void trim(std::string& str)
-    {
+    void trim(std::string& str) {
         using size_type = std::string::size_type;
         using diff_type = std::string::difference_type;
         if (str.empty()) {
@@ -56,26 +56,28 @@ namespace PCOE {
                 str.resize(back - front);
             }
             // No whitespace
-        } else if (back <= front) {
+        }
+        else if (back <= front) {
             // All whitespace
             str.clear();
-        } else {
+        }
+        else {
             // Whitespace on both ends
             diff_type frontDiff = static_cast<diff_type>(front);
-            diff_type backDiff = static_cast<diff_type>(back);
-            str = std::string(str.begin() + frontDiff, str.begin() + backDiff);
+            diff_type backDiff  = static_cast<diff_type>(back);
+            str                 = std::string(str.begin() + frontDiff, str.begin() + backDiff);
         }
     }
-    
-    ConfigMap::ConfigMap(const std::string & filename) {
+
+    ConfigMap::ConfigMap(const std::string& filename) {
         loadFile(filename);
     }
-    
-    ConfigMap::ConfigMap(const int argc, char *argv[]) {
+
+    ConfigMap::ConfigMap(const int argc, char* argv[]) {
         loadArguments(argc, argv);
     }
 
-    void ConfigMap::loadFile(const std::string & filename) {
+    void ConfigMap::loadFile(const std::string& filename) {
         // Open file; First check the working directory, then try each path in searchPaths
         std::ifstream file(filename);
         for (auto i = searchPaths.cbegin(); !file.good() && i != searchPaths.cend(); ++i) {
@@ -98,35 +100,36 @@ namespace PCOE {
             parseLine(line);
         }
     }
-    
-    void ConfigMap::loadArguments(const int argc, char *argv[]) {
+
+    void ConfigMap::loadArguments(const int argc, char* argv[]) {
         for (auto i = 1; i < argc; i++) {
             if ((i < argc) && (argv[i][0] == '-')) {
-                (*this)[argv[i]].push_back(argv[i+1]);
+                (*this)[argv[i]].push_back(argv[i + 1]);
                 i++;
-            } else {
+            }
+            else {
                 (*this)["-NO_KEY"].push_back(argv[i]);
             }
         }
     }
 
-    void ConfigMap::set(const std::string & key, const std::string & value) {
-        (*this)[key] = { value };
+    void ConfigMap::set(const std::string& key, const std::string& value) {
+        (*this)[key] = {value};
     }
-    
-    bool ConfigMap::includes(std::initializer_list<std::string> list) const {
-        for (auto & elem : list) {
-            // Check if each element is there
-            if (!includes(elem)) {
+
+    bool ConfigMap::containsAllKeys(std::initializer_list<std::string> list) const {
+        for (auto& elem : list) {
+            if (!containsKey(elem)) {
                 return false;
             }
         }
         return true;
     }
 
-    void ConfigMap::parseLine(const std::string & line) {
+    void ConfigMap::parseLine(const std::string& line) {
         using size_type = std::string::size_type;
-        if (line.empty() || line[0] == '#' || line[0] == '\r' || line[0] == '\n' || line[0] == '/') {
+        if (line.empty() || line[0] == '#' || line[0] == '\r' || line[0] == '\n' ||
+            line[0] == '/') {
             return; // Comment or empty line
         }
         size_type pos = line.find_first_of(':');
@@ -149,10 +152,11 @@ namespace PCOE {
             }
         }
         if (kv.first.compare("importConfig") == 0) {
-            for (auto && file : kv.second) { // If this line is pointing to other files to load
+            for (auto&& file : kv.second) { // If this line is pointing to other files to load
                 loadFile(file);
             }
-        } else {
+        }
+        else {
             insert(std::move(kv));
         }
     }
@@ -168,7 +172,8 @@ namespace PCOE {
         // directly with a filename later
         if (path.back() != '/' && path.back() != '\\') {
             searchPaths.push_back(path + "/");
-        } else {
+        }
+        else {
             searchPaths.push_back(path);
         }
     }
