@@ -16,9 +16,9 @@
 #define PCOE_BENCHMARKTIMER_H
 
 #include <chrono>
+#include <stdexcept>
 #include <stdio.h>
 
-// Ram calc
 #ifdef _WIN32
 #else
 #include <sys/resource.h>
@@ -50,8 +50,7 @@ namespace PCOE {
          **/
         static long getRam() {
 #ifdef _WIN32
-            printf("Currently not supported for windows\n");
-            return -1l;
+            throw std::runtime_error("Windows is not supported.");
 #else
             struct rusage usage;
             getrusage(RUSAGE_SELF, &usage);
