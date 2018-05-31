@@ -148,7 +148,7 @@ int main() {
     context.AddTest("weightedmean", TestMatrix::weightedmean, "Matrix");
     context.AddTest("weightedcovariance", TestMatrix::weightedcovariance, "Matrix");
     // Stream insertion
-    context.AddTest("left bitwise shift", TestMatrix::leftShift, "Matrix");
+    context.AddTest("stream insertion operator", TestMatrix::streamInsertionOperator, "Matrix");
 
     // Model Tests
     context.AddTest("Tank Initialization", testTankInitialize, "Model Tank");
