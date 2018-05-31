@@ -103,15 +103,30 @@ namespace PCOE {
         }
     }
 
+    // This function parses the command line arguments to the program and stores
+    // them in the map. The function expects the exact arguments given to the
+    // program's main, so it assumes that the first value in argv is the program
+    // name.
+    // At some point in the past there was a requirement that options provided
+    // on the command-line be distinguishable from options provided in a config
+    // file, so the leading dash in option names is retained.
+    // The command line args consist of any number of mixed values and
+    // key/value pairs. Key/value pairs take the form of "-KEY VALUE", while
+    // bare values are any item in argv not directly preceded by a an item
+    // starting with a dash.
     void ConfigMap::loadArguments(const int argc, char* argv[]) {
         for (auto i = 1; i < argc; i++) {
-            if ((i < argc) && (argv[i][0] == '-')) {
-                (*this)[argv[i]].push_back(argv[i + 1]);
-                i++;
+            std::string key = "-NO_KEY";
+            if (argv[i][0] == '-') {
+                key = argv[i];
+                i += 1;
+                if (!(i < argc)) {
+                    throw std::runtime_error("Invalid argument");
+                }
             }
-            else {
-                (*this)["-NO_KEY"].push_back(argv[i]);
-            }
+
+            std::string value = argv[i];
+            (*this)[key].push_back(value);
         }
     }
 
