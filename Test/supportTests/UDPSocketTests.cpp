@@ -9,6 +9,7 @@
 #include "UDPSocket.h"
 #include <cstring>
 #include <thread>
+#include <sstream>
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -32,10 +33,13 @@ void testUDPCtor() {
     try {
         UDPSocket socket8 = UDPSocket(AF_INET6, 55559);
     }
-    catch (std::system_error ec) {
-        if (ec.code().value() != EAFNOSUPPORT) {
-            std::cout << ec.code() << std::endl;
-            std::cout << ec.code().value() << std::endl;
+    catch (std::invalid_argument &ec) {
+        std::stringstream ecValueAsString;
+        ecValueAsString << ec.what();
+        int ecValueAsInt;
+        ecValueAsString >> ecValueAsInt;
+        if (ecValueAsInt != EAFNOSUPPORT) {
+            std::cout << ecValueAsInt << std::endl;
             std::cout << EAFNOSUPPORT << std::endl;
             Assert::Fail("Ctor using AF_INET6 failed.");
         }
@@ -44,13 +48,13 @@ void testUDPCtor() {
         UDPSocket socket9 = UDPSocket(AF_UNIX, 55560);
         Assert::Fail("Socket created with unsupported address family.");
     }
-    catch (...) {
+    catch (std::system_error &e) {
     }
     try {
         UDPSocket socket10 = UDPSocket(65000, 55561);
         Assert::Fail("Socket created with unsupported address family.");
     }
-    catch (...) {
+    catch (std::invalid_argument &e) {
     }
 }
 
@@ -94,12 +98,29 @@ void testExceptionHandling() {
     catch (std::system_error &e) {
     }
 
-    UDPSocket socket3 = UDPSocket(AF_INET6, 55556);
     try {
-        UDPSocket socket4 = UDPSocket(AF_INET6, 55556);
-        Assert::Fail("Socket created using taken port.");
+        UDPSocket socket3 = UDPSocket(AF_INET6, 55556);
+
+        try {
+            UDPSocket socket4 = UDPSocket(AF_INET6, 55556);
+            socket4.Close();
+            Assert::Fail("Socket created using taken port.");
+        }
+        catch (std::system_error &e) {
+            socket3.Close();
+        }
+
     }
-    catch (std::system_error &e) {
+    catch (std::invalid_argument &ec) {
+        std::stringstream ecValueAsString;
+        ecValueAsString << ec.what();
+        int ecValueAsInt;
+        ecValueAsString >> ecValueAsInt;
+        if (ecValueAsInt != EAFNOSUPPORT) {
+            std::cout << ecValueAsInt << std::endl;
+            std::cout << EAFNOSUPPORT << std::endl;
+            Assert::Fail("Ctor using AF_INET6 failed.");
+        }
     }
 
     try {
@@ -120,18 +141,20 @@ void testExceptionHandling() {
     catch (std::system_error &e) {
     }
 
-    char buffer[] = "Hello, this is a test message.";
-    socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), "127.0.0.1", 55556);
+    UDPSocket socketToReceive = UDPSocket(AF_INET, 60000);
+    char buffer[31] = "Hello, this is a test message.";
+    socket1.Send(buffer, sizeof(buffer)/ sizeof(buffer[0]), "127.0.0.1", 60000);
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     char buffer2[128];
-    UDPSocket::size_type result = socket3.Available();
+    UDPSocket::size_type result = socketToReceive.Available();
+    std::cout << result << std::endl;
 #if !defined(_WIN32) && !defined(__APPLE__)
     Assert::AreEqual(31, result, "Bytes available to read is not same as bytes sent.");
 #else
-    Assert::AreEqual(59, result, "Bytes available to read is not same as bytes sent.");
+    Assert::AreEqual(47, result, "Bytes available to read is not same as bytes sent.");
 #endif
-    socket3.Receive(buffer2, sizeof(buffer) / sizeof(buffer[0]));
-    result = socket3.Available();
+    socketToReceive.Receive(buffer2, sizeof(buffer) / sizeof(buffer[0]));
+    result = socketToReceive.Available();
     Assert::AreEqual(
             0, result, "Available() returns bytes even though no more bytes are being sent.");
 
@@ -160,10 +183,10 @@ void testExceptionHandling() {
     socket1 = UDPSocket(AF_INET);
     socket1.Connect((struct sockaddr*)&addr, sizeof(addr));
     try {
-        socket3.Close();
+        socketToReceive.Close();
         socket1.Send(
             buffer, sizeof(buffer) / sizeof(buffer[0]), (struct sockaddr*)&addr, sizeof(addr));
-        socket3.Receive(
+        socketToReceive.Receive(
             buffer2, 30, (struct sockaddr*)&addr, reinterpret_cast<socklen_t*>(sizeof(addr)));
         Assert::Fail("Invalid socket received data.");
     }
