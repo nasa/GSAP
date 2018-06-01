@@ -44,6 +44,19 @@ namespace PCOE {
          **/
         MovingAverageLoadEstimator(GSAPConfigMap & configMap);
         
+        /**
+         * @brief   Find if the load estimator uses historical loading.
+         *          If doesn't use historical loading, its function requires the user call addLoad
+         *          If not, addLoad will return a runtime_error
+         *
+         * @return  If the load estimator uses historical loading
+         *
+         * @see     addLoad
+         **/
+        virtual bool usesHistoricalLoading() {
+            return true;
+        }
+        
         /** @brief Set the load for that timestep
          *  @param  loadEstimate    Load estimate for the current timestep
          **/

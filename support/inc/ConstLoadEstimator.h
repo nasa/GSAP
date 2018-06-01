@@ -45,6 +45,19 @@ namespace PCOE {
         ConstLoadEstimator(GSAPConfigMap& configMap);
 
         /**
+         * @brief   Find if the load estimator is sample based (i.e., if you must use setNSamples)
+         *          If it is sample based, its function requires the user call setNSamples
+         *          If not, setNSamples will return a runtime_error
+         *
+         * @return  If the load estimator is sample based
+         *
+         * @see     setNSamples
+         **/
+        bool isSampleBased(){
+            return true;
+        }
+        
+        /**
          * @brief Set the number of samples for the loadEstimator
          *
          * @param nSamples The number of samples

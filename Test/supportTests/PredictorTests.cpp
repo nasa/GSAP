@@ -127,11 +127,6 @@ void testMonteCarloBatteryPredict() {
         meanSOCAt2500 +=
             data.sysTrajectories["SOC"][2500][i] / data.sysTrajectories["SOC"].getNPoints();
     }
-
-    // Check results (TODO(CT): FIX THIS
-    //    Assert::AreEqual(3050, meanEOD, 250);
-    //    Assert::AreEqual(0.995, meanSOCAt1, 0.05);
-    //    Assert::AreEqual(0.275, meanSOCAt2500, 0.025);
 }
 
 // Test error cases with config parameters
@@ -152,37 +147,4 @@ void testMonteCarloBatteryConfig() {
 
     // Create MonteCarloPredictor for battery
     MonteCarloPredictor MCP(configMap);
-
-    // Note: the following may not do as intended anymore because these checks are only made in the
-    // predict function
-
-    //// Remove a predicted output and ensure error thrown
-    // configMap["predictedOutputs"].pop_back();
-    // try {
-    //    MonteCarloPredictor MCP2(configMap);
-    //    Assert::Fail();
-    //}
-    // catch (std::runtime_error e) {
-    //    Assert::AreEqual(1, 1);
-    //}
-
-    //// Remove an input uncertainty value and ensure error thrown
-    // configMap["inputUncertainty"].pop_back();
-    // try {
-    //    MonteCarloPredictor MCP3(configMap);
-    //    Assert::Fail();
-    //}
-    // catch (std::runtime_error e) {
-    //    Assert::AreEqual(1, 1);
-    //}
-
-    //// Remove a process noise value and ensure error thrown
-    // configMap["processNoise"].pop_back();
-    // try {
-    //    MonteCarloPredictor MCP4(configMap);
-    //    Assert::Fail();
-    //}
-    // catch (std::runtime_error e) {
-    //    Assert::AreEqual(1, 1);
-    //}
 }

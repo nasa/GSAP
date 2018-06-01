@@ -156,7 +156,9 @@ namespace PCOE {
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
             u[i] = getValue(model->inputs[i]);
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Adding load");
-            loadEstimator->addLoad(u);
+            if (loadEstimator->usesHistoricalLoading()) {
+                loadEstimator->addLoad(u);
+            }
         }
         for (unsigned int i = 0; i < model->getNumOutputs(); i++) {
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Checking whether output is set");

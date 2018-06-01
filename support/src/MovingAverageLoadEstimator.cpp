@@ -40,6 +40,7 @@ namespace PCOE {
         log.WriteLine(LOG_INFO, DEBUG_TAG, "Configuring");
         if (configMap.includes(WINDOW_SIZE_KEY)) {
             windowSize = std::stoul(configMap[WINDOW_SIZE_KEY][0]);
+            windowSize = windowSize >= 0? windowSize : 0; // Handle size < 0
         }
         
         log.WriteLine(LOG_TRACE, DEBUG_TAG, "Completed configuration");

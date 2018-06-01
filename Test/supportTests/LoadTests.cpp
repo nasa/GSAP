@@ -39,6 +39,16 @@ namespace PCOE {
         
         ConstLoadEstimator c = ConstLoadEstimator(configMap);
         
+        Assert::IsFalse(c.usesHistoricalLoading());
+        Assert::IsTrue(c.isSampleBased());
+        
+        try {
+            c.addLoad({10});
+            Assert::Fail();
+        } catch (std::runtime_error er) {
+            
+        }
+        
         LoadEstimate test2 = c.estimateLoad(NAN, 0);
         
         Assert::AreEqual(test, test2, "Sampling not correct");
@@ -69,38 +79,30 @@ namespace PCOE {
         Assert::AreEqual(c.getUncertaintyMode(), ConstLoadEstimator::GAUSSIAN);
         
         //      TODO(CT): test uncertainty sampling in some meaningful way
-//
-//        LoadEstimate test2 = c.estimateLoad(NAN, 0);
-//        size_t nSame = 0;
-//        for (size_t i = 0; i < test.size(); i++) {
-//            Assert::IsTrue(test2[i] > test[i] - 1 && test2[i] < test[i] + 1); // EXTREMELY UNLIKELY TO FAIL
-//            if (test2[i] == test[i]) {
-//                nSame++;
-//            }
-//        }
-//        Assert::IsTrue(nSame < test.size(), "Data with "); // Extremely unlikely to fail
-//
-//        // Test unequal numbers
-//        configMap[ConstLoadEstimator::LOADING_KEY].push_back("4");
-//        ConstLoadEstimator c2 = ConstLoadEstimator(configMap);
-//        Assert::AreEqual(c2.getUncertaintyMode(), ConstLoadEstimator::NONE, "Did not revert to no uncertainty when given unequal mean and std vector lengths");
     }
     
     void testMovingAverage() {
         GSAPConfigMap configMap;
         
-        try {
-            MovingAverageLoadEstimator c = MovingAverageLoadEstimator(configMap);
-        } catch (...) {
-            Assert::Fail("Did not accept missing loading key (Should use default)");
-        }
+        MovingAverageLoadEstimator c2 = MovingAverageLoadEstimator(configMap);
+        Assert::IsTrue(c2.usesHistoricalLoading());
+        Assert::IsFalse(c2.isSampleBased());
         
         configMap[MovingAverageLoadEstimator::WINDOW_SIZE_KEY] = std::vector<std::string>({"2"}); // Set window size key;
-        // TODO(CT): Negative window size
         MovingAverageLoadEstimator c = MovingAverageLoadEstimator(configMap);
+        
+        configMap[MovingAverageLoadEstimator::WINDOW_SIZE_KEY] = std::vector<std::string>({"-1"}); // Set window size key;
+        MovingAverageLoadEstimator c3 = MovingAverageLoadEstimator(configMap);
         
         LoadEstimate test2 = c.estimateLoad(NAN, 0);
         Assert::IsTrue(test2.empty(), "Estimate not empty with no data yet provided");
+        
+        try {
+            c.setNSamples(10);
+            Assert::Fail();
+        } catch (std::runtime_error er) {
+            
+        }
         
         LoadEstimate exampleLoad = LoadEstimate({5.0, 1e10, -5e10});
         c.addLoad(exampleLoad);
@@ -127,9 +129,6 @@ namespace PCOE {
         for (size_t i = 0; i < test2.size(); i++) {
             Assert::AreEqual(exampleLoad2[i], test2[i], std::numeric_limits<double>::epsilon(), "Full buffer test");
         }
-        
-        // TODO(CT): Uniform distribution with many samples
-        // TODO(CT): multiple add loads per generate sample
     }
     
     void testFactory() {
