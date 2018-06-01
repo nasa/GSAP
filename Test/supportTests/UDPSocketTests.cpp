@@ -8,6 +8,7 @@
 #include "Test.h"
 #include "UDPSocket.h"
 #include <cstring>
+#include <thread>
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -90,23 +91,22 @@ void testExceptionHandling() {
         UDPSocket socket2 = UDPSocket(AF_INET, 55555);
         Assert::Fail("Socket created using taken port.");
     }
-    catch (...) {
+    catch (std::system_error &e) {
     }
 
-    UDPSocket socket3 = UDPSocket(AF_INET, 55555);
-//    UDPSocket socket3 = UDPSocket(AF_INET6, 55556);
-//    try {
-//        UDPSocket socket4 = UDPSocket(AF_INET6, 55556);
-//        Assert::Fail("Socket created using taken port.");
-//    }
-//    catch (...) {
-//    }
+    UDPSocket socket3 = UDPSocket(AF_INET6, 55556);
+    try {
+        UDPSocket socket4 = UDPSocket(AF_INET6, 55556);
+        Assert::Fail("Socket created using taken port.");
+    }
+    catch (std::system_error &e) {
+    }
 
     try {
         UDPSocket socket5 = UDPSocket(-1, 55557);
         Assert::Fail("Socket created with unsupported address family.");
     }
-    catch (...) {
+    catch (std::invalid_argument &e) {
     }
 
     int port = 55555;
@@ -117,11 +117,12 @@ void testExceptionHandling() {
         UDPSocket socket6 = UDPSocket((struct sockaddr*)&addr, sizeof(addr));
         Assert::Fail("Socket created using taken port.");
     }
-    catch (...) {
+    catch (std::system_error &e) {
     }
 
     char buffer[] = "Hello, this is a test message.";
     socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), "127.0.0.1", 55556);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     char buffer2[128];
     UDPSocket::size_type result = socket3.Available();
 #if !defined(_WIN32) && !defined(__APPLE__)
@@ -132,7 +133,7 @@ void testExceptionHandling() {
     socket3.Receive(buffer2, sizeof(buffer) / sizeof(buffer[0]));
     result = socket3.Available();
     Assert::AreEqual(
-        0, result, "Available() returns bytes even though no more bytes are being sent.");
+            0, result, "Available() returns bytes even though no more bytes are being sent.");
 
     port = 55558;
     addr.sin_family = AF_UNIX;
@@ -141,16 +142,16 @@ void testExceptionHandling() {
         socket1.Connect((struct sockaddr*)&addr, sizeof(addr));
         Assert::Fail("Connected socket to socket with unsupported address family");
     }
-    catch (...) {
+    catch (std::system_error &e) {
     }
 
     try {
-        // socket1.Close();
+         socket1.Close();
         socket1.Send(
             buffer, sizeof(buffer) / sizeof(buffer[0]), (struct sockaddr*)&addr, sizeof(addr));
         Assert::Fail("Invalid socket sent data.");
     }
-    catch (...) {
+    catch (std::system_error &e) {
     }
 
     port = 55556;
@@ -166,7 +167,7 @@ void testExceptionHandling() {
             buffer2, 30, (struct sockaddr*)&addr, reinterpret_cast<socklen_t*>(sizeof(addr)));
         Assert::Fail("Invalid socket received data.");
     }
-    catch (...) {
+    catch (std::system_error &e) {
     }
 
     try {
@@ -176,8 +177,9 @@ void testExceptionHandling() {
         failSocket.Connect("127.0.0.1", 55562);
         failSocket.Close();
         failSocket.Send(messageToSend, strlen(messageToSend));
+        Assert::Fail("Invalid socket sent data.");
     }
-    catch (...) {
+    catch (std::system_error &e) {
     }
 
     try {
@@ -186,8 +188,9 @@ void testExceptionHandling() {
         UDPSocket failSocket2(AF_INET, 55562);
         failSocket.Close();
         failSocket.Send(messageToSend, strlen(messageToSend), "127.0.0.1", 55562);
+        Assert::Fail("Invalid socket sent data.");
     }
-    catch (...) {
+    catch (std::system_error &e) {
     }
 
     try {
@@ -195,8 +198,9 @@ void testExceptionHandling() {
         UDPSocket failSocket2(AF_INET, 55562);
         failSocket.Close();
         failSocket.Connect("127.0.0.1", 55562);
+        Assert::Fail("Socket connected after closing.");
     }
-    catch (...) {
+    catch (std::system_error &e) {
     }
 
     try {
@@ -204,7 +208,8 @@ void testExceptionHandling() {
         UDPSocket failSocket2(AF_INET, 55562);
         failSocket.Close();
         failSocket.Available();
+        Assert::Fail("Socket has bytes to read after closing.");
     }
-    catch (...) {
+    catch (std::system_error &e) {
     }
 }
