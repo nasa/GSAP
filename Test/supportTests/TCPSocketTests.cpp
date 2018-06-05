@@ -10,6 +10,7 @@
 #include "Test.h"
 #include <cstring>
 #include <thread>
+#include <sstream>
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -24,8 +25,14 @@ void testTCPctor() {
     try {
         TCPSocket testSocket2 = TCPSocket(AF_INET6);
     }
-    catch (std::system_error ec) {
-        if (ec.code().value() != EAFNOSUPPORT) {
+    catch (std::invalid_argument &ec) {
+        std::stringstream ecValueAsString;
+        ecValueAsString << ec.what();
+        int ecValueAsInt;
+        ecValueAsString >> ecValueAsInt;
+        if (ecValueAsInt == EAFNOSUPPORT) {
+            std::cout << ecValueAsInt << std::endl;
+            std::cout << EAFNOSUPPORT << std::endl;
             Assert::Fail("Ctor using AF_INET6 failed.");
         }
     }
