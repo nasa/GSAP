@@ -31,14 +31,14 @@ void testUDPCtor() {
         Assert::Fail("Constructor(s) failed.");
     }
     try {
-        UDPSocket socket8 = UDPSocket(AF_INET6, 55559);
+        UDPSocket socket8 = UDPSocket(0, 55559);
     }
     catch (std::invalid_argument &ec) {
         std::stringstream ecValueAsString;
         ecValueAsString << ec.what();
         int ecValueAsInt;
         ecValueAsString >> ecValueAsInt;
-        if (ecValueAsInt != EAFNOSUPPORT) {
+        if (ecValueAsInt == EAFNOSUPPORT) {
             std::cout << ecValueAsInt << std::endl;
             std::cout << EAFNOSUPPORT << std::endl;
             Assert::Fail("Ctor using AF_INET6 failed.");
@@ -116,7 +116,7 @@ void testExceptionHandling() {
         ecValueAsString << ec.what();
         int ecValueAsInt;
         ecValueAsString >> ecValueAsInt;
-        if (ecValueAsInt != EAFNOSUPPORT) {
+        if (ecValueAsInt == EAFNOSUPPORT) {
             std::cout << ecValueAsInt << std::endl;
             std::cout << EAFNOSUPPORT << std::endl;
             Assert::Fail("Ctor using AF_INET6 failed.");
