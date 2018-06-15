@@ -59,7 +59,7 @@ All contributions are welcome! If you are having problems with the plugin, pleas
 
 ## Notices
 
-Copyright ©2016 United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All Rights Reserved.
+Copyright ©2016-2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All Rights Reserved.
 
 No Warranty: THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OF
 ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED

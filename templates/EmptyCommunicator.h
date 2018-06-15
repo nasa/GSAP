@@ -1,19 +1,17 @@
 /**  Empty Communicator - Header
  *   @class     EmptyCommunicator EmptyCommunicator.h
- *   @ingroup   GPIC++
- *   @ingroup   commCollection
  *
  *   @brief     Communicator Template
  *
  *   @see        CommonCommunicator
  *
  *   @author    Chris Teubert
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *      Created: March 25, 2016
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -32,6 +30,14 @@ namespace PCOE {
          *  @see        CommunicatorFactory
          **/
         EmptyCommunicator(const ConfigMap & config);
+
+        /** @brief      Optional Deconstructor
+         **/
+        // ~EmpltyCommunicator();
+
+        /** @brief      Used to indicate that there is data to be read 
+         **/
+        void poll();
 
         /** @brief      Publisher callback funciton- used to consume data from the prognostic framework
          *  @param      data        Reference to DataStore containing all the input data

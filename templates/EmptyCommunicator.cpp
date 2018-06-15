@@ -3,7 +3,7 @@
 //  Batt1 Verification Tests
 //
 //  Created by Teubert, Christopher (ARC-TI)[SGT, INC] on 5/27/16.
-//  Copyright © 2016 NASA. All rights reserved.
+//  Copyright © 2013-2018 NASA. All rights reserved.
 //
 
 #include <string>
@@ -28,6 +28,17 @@ namespace PCOE {
         ///------------------------------------
     }
 
+    void poll() {
+        ///------------------------------------
+        /// HERE IS WHERE YOU INDICATE IF THERE IS DATA TO BE READ
+        ///
+        /// ADD COMMUNICATOR PUBLISHER CODE BELOW:
+        ///------------------------------------
+
+        // setRead(); // <- Uncomment if there is data to be read
+        // Uncommenting the above line will cause read() to be called
+    }
+
     void EmptyCommunicator::write(AllData data) {
         ///------------------------------------
         /// HERE IS WHERE YOU SEND DATA
@@ -35,7 +46,8 @@ namespace PCOE {
         ///
         /// ADD COMMUNICATOR PUBLISHER CODE BELOW:
         ///------------------------------------
-        (void)data; // Supress unused variable warning. Remove when implementing your communicator
+        DataStore& data = dataIn.doubleDatastore;
+        ProgDataMap& progDataMap = dataIn.progData;
 
         ///------------------------------------
     }

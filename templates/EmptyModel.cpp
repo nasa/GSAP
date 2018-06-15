@@ -2,17 +2,7 @@
 *   @file       EmptyModel.cpp
 *   @ingroup    GSAP-Support
 *
-*   @brief      EmptyModel model class for prognostics
-*
-*   @author     Matthew Daigle
-*   @version    0.1.0
-*
-*   @pre        N/A
-*
-*      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
-*      Created: January 10, 2017
-*
-*   @copyright Copyright (c) 2017 United States Government as represented by
+*   @copyright Copyright (c) 2017-2018 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
@@ -24,6 +14,14 @@ using namespace PCOE;
 
 EmptyModel::EmptyModel() {
     // Default constructor
+    inputs  = {} // SET MODEL INPUT TAG NAMES
+    // e.g., inputs = {"power"}
+    outputs = {} // SET MODEL OUTPUT TAG NAMES
+    // e.g., outputs = {"voltage", "temperature"}
+    events = {} // SET EVENT NAMES
+    // e.g., events = {"EOD"}
+    predictedOutputs = {} // SET PREDICTED OUTPUT NAMES
+    // e.g., predictedOutputs = {"SOC"}
 }
 
 // Constructor based on configMap
