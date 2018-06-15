@@ -614,9 +614,3 @@ void Battery::initialize(std::vector<double> & x /*state*/, const std::vector<do
     x[indices.states.qpB] = qpB0;
     x[indices.states.qpS] = qpS0;
 }
-
-void Battery::transform(std::vector<double> & u, std::vector<double> & z) {
-    // Given input is current, change it to power
-    u[indices.inputs.P] *= z[indices.outputs.Vm];
-    // Leave everything else as is
-}

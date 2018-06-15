@@ -78,10 +78,6 @@ namespace PCOE {
         // Get/set dt
         double getDt() const;
         void setDt(const double newDt);
-        
-        /** @brief      Performs a transformation on the given inputs/outputs
-         **/
-        virtual void transform(std::vector<double> &, std::vector<double> &) {}
     };
 }
 
