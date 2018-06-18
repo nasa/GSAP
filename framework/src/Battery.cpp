@@ -474,7 +474,6 @@ void Battery::predictedOutputEqn(const double,
     double qnS       = x[indices.states.qnS];
     double qnB       = x[indices.states.qnB];
     z[PRED_OUT::SOC] = (qnS + qnB) / parameters.qnMax;
-    ;
 }
 
 // Set model parameters, given qMobile
