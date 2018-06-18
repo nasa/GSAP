@@ -32,21 +32,20 @@
 #include "ObserverFactory.h"
 #include "PredictorFactory.h"
 #include "PrognosticsModelFactory.h"
-#include "SharedLib.h"
 #include "UData.h"
 
 namespace PCOE {
     // Configuration Keys
-    const std::string MODEL_KEY = "model";
-    const std::string OBSERVER_KEY = "observer";
-    const std::string PREDICTOR_KEY = "predictor";
-    const std::string EVENT_KEY = "Model.event";
-    const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
-    const std::string HORIZON_KEY = "Predictor.horizon";
-    const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
-    const std::string PREDICTEDOUTPUTS_KEY = "Model.predictedOutputs";
+    const std::string MODEL_KEY         = "model";
+    const std::string OBSERVER_KEY      = "observer";
+    const std::string PREDICTOR_KEY     = "predictor";
+    const std::string STEPSIZE_KEY      = "Model.stepSize";
+    const std::string NUMSAMPLES_KEY    = "Predictor.numSamples";
+    const std::string HORIZON_KEY       = "Predictor.horizon";
+    const std::string LOAD_EST_KEY      = "Predictor.loadEstimator";
 
-    const std::string DEFAULT_LOAD_EST = "movingAverage";
+    const std::string DEFAULT_LOAD_EST  = "movingAverage";
+    const double DEFAULT_STEPSIZE_S     = 1; // seconds
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
         : CommonPrognoser(configMap), initialized(false) {
@@ -54,28 +53,26 @@ namespace PCOE {
         configMap.checkRequiredParams({MODEL_KEY,
                                        OBSERVER_KEY,
                                        PREDICTOR_KEY,
-                                       EVENT_KEY,
                                        NUMSAMPLES_KEY,
-                                       HORIZON_KEY,
-                                       PREDICTEDOUTPUTS_KEY});
+                                       HORIZON_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Model");
         PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
-        model = std::unique_ptr<PrognosticsModel>(
+        model                                      = std::unique_ptr<PrognosticsModel>(
             pProgModelFactory.Create(configMap[MODEL_KEY][0], configMap));
 
         // Create Observer
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Observer");
         ObserverFactory& pObserverFactory = ObserverFactory::instance();
-        observer = std::unique_ptr<Observer>(
+        observer                          = std::unique_ptr<Observer>(
             pObserverFactory.Create(configMap[OBSERVER_KEY][0], configMap));
 
         // Create Predictor
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
         PredictorFactory& pPredictorFactory = PredictorFactory::instance();
-        predictor = std::unique_ptr<Predictor>(
+        predictor                           = std::unique_ptr<Predictor>(
             pPredictorFactory.Create(configMap[PREDICTOR_KEY][0], configMap));
 
         // Create Load Estimator
@@ -91,6 +88,15 @@ namespace PCOE {
                 std::unique_ptr<LoadEstimator>(loadEstFact.Create(DEFAULT_LOAD_EST, configMap));
         }
 
+        // Set model stepsize
+        if (configMap.includes(STEPSIZE_KEY)) {
+            model->setDt(std::stod(configMap[STEPSIZE_KEY][0]));
+        }
+        else {
+            model->setDt(DEFAULT_STEPSIZE_S);
+        }
+
+        // Set load estimator
         using std::placeholders::_1;
         using std::placeholders::_2;
         predictor->setLoadEst(std::bind(&LoadEstimator::estimateLoad, loadEstimator.get(), _1, _2));
@@ -99,11 +105,11 @@ namespace PCOE {
         observer->setModel(model.get());
         loadEstimator->setModel(model.get());
         predictor->setModel(model.get());
-            
-        for (auto && input : model->inputs) {
+
+        for (auto&& input : model->inputs) {
             comm.registerKey(input);
         }
-        for (auto && output : model->outputs) {
+        for (auto&& output : model->outputs) {
             comm.registerKey(output);
         }
 
@@ -111,26 +117,23 @@ namespace PCOE {
         unsigned int numSamples =
             static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
         unsigned int horizon = static_cast<unsigned int>(std::stoul(configMap[HORIZON_KEY][0]));
-        std::string event = configMap[EVENT_KEY][0];
-        std::vector<std::string> predictedOutputs = configMap[PREDICTEDOUTPUTS_KEY];
 
         // Create progdata
         results.setUncertainty(UType::Samples); // @todo(MD): do not force samples representation
-        results.addEvent(event); // @todo(MD): do not assume only a single event
-        results.addSystemTrajectories(predictedOutputs); // predicted outputs
+        for (std::string & event : model->events) {
+            results.addEvent(event);
+            results.events[event].getTOE().npoints(numSamples);
+        }
+        results.addSystemTrajectories(model->predictedOutputs); // predicted outputs
         results.setPredictions(1, horizon); // interval, number of predictions
         results.setupOccurrence(numSamples);
-        results.events[event].getTOE().npoints(numSamples);
         results.sysTrajectories.setNSamples(numSamples);
     }
 
     void ModelBasedPrognoser::step() {
-        // Initialize time (convert to seconds)
-        static double initialTime = getValue(model->outputs[0]).getTime() / 1.0e3;
-
-        // Get new relative time (convert to seconds)
+        // Get new time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
-        double newT = getValue(model->outputs[0]).getTime() / 1.0e3 - initialTime;
+        double newT_s = getValue(model->outputs[0]).getTime() / 1.0e3;
 
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
@@ -141,7 +144,7 @@ namespace PCOE {
             const std::string& input_name = model->inputs[i];
             log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %s", input_name.c_str());
             Datum<double> input = getValue(input_name);
-            
+
             log.FormatLine(LOG_TRACE,
                            "PROG-MBP",
                            "Got input (%f, %ul)",
@@ -169,19 +172,19 @@ namespace PCOE {
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
             z[i] = getValue(model->outputs[i]);
         }
-        
+
         // If this is the first step, will want to initialize the observer and the predictor
         if (!initialized) {
             log.WriteLine(LOG_DEBUG, moduleName, "Initializing ModelBasedPrognoser");
             std::vector<double> x(model->getNumStates());
             model->initialize(x, u, z);
-            observer->initialize(newT, x, u);
+            observer->initialize(newT_s, x, u);
             initialized = true;
-            lastTime = newT;
+            lastTime    = newT_s;
         }
         else {
             // If time has not advanced, skip this step
-            if (newT <= lastTime) {
+            if (newT_s <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
                 return;
             }
@@ -189,18 +192,18 @@ namespace PCOE {
             try {
                 // Run observer
                 log.WriteLine(LOG_DEBUG, moduleName, "Running Observer Step");
-                observer->step(newT, u, z);
+                observer->step(newT_s, u, z);
                 log.WriteLine(LOG_DEBUG, moduleName, "Done Running Observer Step");
 
                 // Run predictor
                 log.WriteLine(LOG_DEBUG, moduleName, "Running Prediction Step");
                 // Set up state
                 std::vector<UData> stateEst = observer->getStateEstimate();
-                predictor->predict(newT, stateEst, results);
+                predictor->predict(newT_s, stateEst, results);
                 log.WriteLine(LOG_DEBUG, moduleName, "Done Running Prediction Step");
 
                 // Set lastTime
-                lastTime = newT;
+                lastTime = newT_s;
             }
             catch (...) {
                 log.WriteLine(LOG_ERROR, moduleName, "Error in Step, skipping");

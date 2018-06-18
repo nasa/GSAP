@@ -33,7 +33,6 @@ namespace PCOE {
      private:
         unsigned int numSamples;           // number of samples used in prediction
         std::vector<double> processNoise;  // variance vector (zero-mean assumed)
-        std::string event;                 // name of event to predict
 
      public:
         /** @brief    Constructor for a MonteCarloPredictor based on a configMap

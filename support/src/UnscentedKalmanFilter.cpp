@@ -219,7 +219,7 @@ namespace PCOE {
     }
     
     // Step function (required by Observer interface)
-    void UnscentedKalmanFilter::step(const double newT, const std::vector<double> & u,
+    void UnscentedKalmanFilter::step(const double newT_s, const std::vector<double> & u,
                                      const std::vector<double> & z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
         
@@ -229,9 +229,9 @@ namespace PCOE {
         }
         
         // Update time
-        double dt = newT - m_t;
-        m_t = newT;
-        if (dt <= 0) {
+        double dt_s = newT_s - m_t; // Seconds
+        m_t = newT_s;
+        if (dt_s <= 0) {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "dt is less than or equal to zero");
             throw std::domain_error("UnscentedKalmanFilter::step dt is 0");
         }
@@ -254,7 +254,7 @@ namespace PCOE {
             // Get ith sigma point
             std::vector<double> x = static_cast<std::vector<double>>(m_sigmaX.M.col(i));
             // Apply state equation
-            pModel->stateEqn(newT, x, m_uOld, zeroNoise, dt);
+            pModel->stateEqn(newT_s, x, m_uOld, zeroNoise, dt_s);
             // Set column in Xkk1
             Xkk1.col(i, x);
         }
@@ -269,7 +269,7 @@ namespace PCOE {
             // Get ith predicted sigma point
             std::vector<double> zkk1(numOutputs);
             // Apply state equation
-            pModel->outputEqn(newT, static_cast<std::vector<double>>(Xkk1.col(i)), u, zeroNoise, zkk1);
+            pModel->outputEqn(newT_s, static_cast<std::vector<double>>(Xkk1.col(i)), u, zeroNoise, zkk1);
             // Set column in Zkk1
             Zkk1.col(i, zkk1);
         }
@@ -316,7 +316,7 @@ namespace PCOE {
         
         // Compute output estimate
         std::vector<double> zeroNoiseZ(numOutputs);
-        pModel->outputEqn(newT, m_xEstimated, u, zeroNoiseZ, m_zEstimated);
+        pModel->outputEqn(newT_s, m_xEstimated, u, zeroNoiseZ, m_zEstimated);
         
         // Compute covariance
         m_P = Pkk1 - Kk*Pzz*Kk.transpose();

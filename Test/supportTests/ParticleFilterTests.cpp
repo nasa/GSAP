@@ -32,7 +32,7 @@ void ctor() {
         ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
         Assert::Fail("Constructor did not catch empty processNoise/sensorNoise vectors");
     }
-    catch (std::range_error &e) {}
+    catch (std::range_error) {}
 }
 
 void ctorWithNonemptyVectors() {
@@ -69,7 +69,7 @@ void ctorWithNonemptyVectors() {
         ParticleFilter pf2 = ParticleFilter(&test, N, processNoise, emptySensorNoise);
         Assert::Fail("Constructor did not catch empty sensorNoise vector");
     }
-    catch (std::range_error &e) {}
+    catch (std::range_error) {}
 }
 
 void GSAPConfigMapCtor() {
@@ -123,7 +123,7 @@ void PFinitialize() {
         pf2.initialize(t0, x, u);
         Assert::Fail("initialize() didn't catch null model.");
     }
-    catch (ConfigurationError &e) {}
+    catch (std::runtime_error) {}
 }
 
 void step() {
@@ -166,7 +166,7 @@ void step() {
         pf.step(t1, u, z);
         Assert::Fail("step() did not catch uninitialized ParticleFilter.");
     }
-    catch (std::domain_error &e) {}
+    catch (std::domain_error) {}
 
     pf.initialize(t0, x, u);
 
@@ -175,7 +175,7 @@ void step() {
         pf.step(t0, u, z);
         Assert::Fail("step() did not catch unchanged time.");
     }
-    catch (std::domain_error &e) {}
+    catch (std::domain_error) {}
 
     pf.setMinNEffective(2000);
     Assert::AreEqual(2000, pf.getMinNEffective());

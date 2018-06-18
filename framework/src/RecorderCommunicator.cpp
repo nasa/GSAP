@@ -60,31 +60,31 @@
 #include <string>
 
 #include "RecorderCommunicator.h"
-#include "SharedLib.h"
+#include "StringUtils.h"
 
 namespace PCOE {
     // Defaults
-    const std::string DEFAULT_FILE_NAME = "RecordedMessages.csv";
-    const bool DEFAULT_WRITE_OCCUR = false;
-    const bool DEFAULT_WRITE_PROB_OCCUR = false;
+    const std::string DEFAULT_FILE_NAME  = "RecordedMessages.csv";
+    const bool DEFAULT_WRITE_OCCUR       = false;
+    const bool DEFAULT_WRITE_PROB_OCCUR  = false;
     const bool DEFAULT_WRITE_PREDICTIONS = false;
     const bool DEFAULT_WRITE_SYSTEM_TRAJ = true;
 
     // Configuration Keys
-    const std::string FILE_KEY = "saveFile";
+    const std::string FILE_KEY       = "saveFile";
     const std::string PROB_OCCUR_KEY = "recordProbOccur";
-    const std::string OCCUR_KEY = "recordOccurance";
-    const std::string PREDICT_KEY = "recordPredictions";
-    const std::string SYS_TRAJ_KEY = "recordSystemTrajectories";
+    const std::string OCCUR_KEY      = "recordOccurance";
+    const std::string PREDICT_KEY    = "recordPredictions";
+    const std::string SYS_TRAJ_KEY   = "recordSystemTrajectories";
 
     // Log Parameters
     const std::string MODULE_NAME = "RecorderComm";
 
     // Format Strings for writing to file
-    const char toeFormatString[] = "pData-%s.Events[%s].TOE (%d), ";
-    const char probFormatString[] = "pData-%s.Events[%s].probMatrix[T+%f], ";
-    const char occFormatString[] = "pData-%s.Events[%s].occurrenceMatrix[T+%f], ";
-    const char sysTrajFormatString[] = "pData-%s.sysTrajectories[%s][T+%f](%d), ";
+    const char toeFormatString[]              = "pData-%s.Events[%s].TOE (%d), ";
+    const char probFormatString[]             = "pData-%s.Events[%s].probMatrix[T+%f], ";
+    const char occFormatString[]              = "pData-%s.Events[%s].occurrenceMatrix[T+%f], ";
+    const char sysTrajFormatString[]          = "pData-%s.sysTrajectories[%s][T+%f](%d), ";
     const char dataWithValidityAndTimeSpace[] = "%f (v=%i; t=%llii) ";
     // TODO (JW): duration representations are platform dependant, so %llu is not always correct
     const char dataWithTime[] = "%f (t=%llu), ";
@@ -92,11 +92,11 @@ namespace PCOE {
     static void WriteTime(FILE* theFile) {
         using namespace std::chrono;
 
-        system_clock::time_point now = system_clock::now();
-        std::time_t now_tt = system_clock::to_time_t(now);
+        system_clock::time_point now     = system_clock::now();
+        std::time_t now_tt               = system_clock::to_time_t(now);
         system_clock::time_point now_sec = system_clock::from_time_t(now_tt);
-        milliseconds ms = duration_cast<milliseconds>(now - now_sec);
-        std::tm* tm = std::localtime(&now_tt);
+        milliseconds ms                  = duration_cast<milliseconds>(now - now_sec);
+        std::tm* tm                      = std::localtime(&now_tt);
 
         std::stringstream ss;
         ss << std::setfill('0');
@@ -207,7 +207,8 @@ namespace PCOE {
     }
 
     void RecorderCommunicator::write(AllData dataIn) {
-        DataStore& data = dataIn.doubleDatastore;
+        using namespace std::chrono;
+        DataStore& data          = dataIn.doubleDatastore;
         ProgDataMap& progDataMap = dataIn.progData;
         if (!init) {
             log.WriteLine(LOG_DEBUG, MODULE_NAME, "Printing Header");
@@ -221,11 +222,11 @@ namespace PCOE {
             // Header for Prognostic Outputs
             for (auto& itPD : progDataMap) {
                 const auto progName = itPD.first.c_str();
-                const auto times = itPD.second->getTimes();
+                const auto times    = itPD.second->getTimes();
 
                 // For each Event
                 for (auto& itEvents : itPD.second->getEventNames()) {
-                    const auto& event = itPD.second->events[itEvents];
+                    const auto& event    = itPD.second->events[itEvents];
                     const auto eventName = itEvents.c_str();
                     // timeOfEvent
                     fprintf(theFile,
@@ -265,7 +266,7 @@ namespace PCOE {
                 if (writeSysTraj) {
                     for (auto& itOutputs : itPD.second->getSystemTrajectoryNames()) {
                         const auto outputName = itOutputs.c_str();
-                        const auto uCert = static_cast<int>(
+                        const auto uCert      = static_cast<int>(
                             itPD.second->sysTrajectories[itOutputs][0].uncertainty());
                         if (writePredictions) {
                             for (auto& theTime : times) {
@@ -323,7 +324,7 @@ namespace PCOE {
 
                 // Below values do not change inside loop, so there are accessed here for efficiency
                 const auto&& timeofEventLastUpdate = event.getTOE().updated();
-                const auto&& timeofEventValidity = event.getTOE().valid();
+                const auto&& timeofEventValidity   = event.getTOE().valid();
                 for (unsigned long it = 0; it < vec.size(); ++it) {
                     fprintf(theFile,
                             dataWithValidityAndTimeSpace,
@@ -380,7 +381,9 @@ namespace PCOE {
         }
 
         // Print Timestamp
-        fprintf(theFile, "%llul\n", millisecondsNow());
+        fprintf(theFile,
+                "%llul\n",
+                duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count());
         std::fflush(theFile); // Flush (update file)
         log.WriteLine(LOG_TRACE, MODULE_NAME, "End Print Line");
     }

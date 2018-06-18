@@ -7,7 +7,7 @@ set (HEADERS
     inc/ModelFactory.h
 	inc/ProgManager.h
 	inc/PrognoserFactory.h
-	inc/SharedLib.h
+	inc/StringUtils.h
 	inc/RandomCommunicator.h
 	inc/PlaybackCommunicator.h
 	inc/RecorderCommunicator.h
