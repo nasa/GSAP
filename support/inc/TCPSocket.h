@@ -42,6 +42,7 @@
 
 namespace PCOE {
     class TCPSocket {
+        friend class TCPServer;
     private:
 #ifdef _WIN32
         using ssize_type = int;
