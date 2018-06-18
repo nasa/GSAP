@@ -74,14 +74,11 @@ namespace PCOE {
         unsigned int getNumOutputs() const;
         std::vector<std::string> inputs;
         std::vector<std::string> outputs;
+        std::vector<std::string> events;
 
         // Get/set dt
         double getDt() const;
         void setDt(const double newDt);
-        
-        /** @brief      Performs a transformation on the given inputs/outputs
-         **/
-        virtual void transform(std::vector<double> &, std::vector<double> &) {}
     };
 }
 

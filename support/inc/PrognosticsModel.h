@@ -62,6 +62,8 @@ namespace PCOE {
 
         inline unsigned int getNumInputParameters() const { return numInputParameters; }
         inline unsigned int getNumPredictedOutputs() const { return numPredictedOutputs; }
+        
+        std::vector<std::string> predictedOutputs;
     };
 }
 #endif  // PCOE_PROGNOSTICSMODEL_H

@@ -84,6 +84,8 @@ namespace PCOE {
 
     TCPSocket::TCPSocket(int af) : sock(InvalidSocket), family(af) {
 #ifdef _WIN32
+        // After the first call to WSAStartup by the current application, this just increments a ref
+        // count.
         WSADATA wsa;
         if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
             std::error_code ec(sockerr, std::generic_category());
@@ -106,12 +108,12 @@ namespace PCOE {
 
     TCPSocket::TCPSocket(TCPSocket&& other) : sock(other.sock), family(other.family) {
         other.sock = InvalidSocket;
-        other.family = AF_UNSPEC;
     }
 
     TCPSocket::~TCPSocket() noexcept {
         Close();
 #ifdef _WIN32
+        // This just decrements a ref count unless this is the last object using WSA.
         WSACleanup();
 #endif
     }
@@ -121,7 +123,6 @@ namespace PCOE {
         sock = other.sock;
         family = other.family;
         other.sock = InvalidSocket;
-        other.family = AF_UNSPEC;
         return *this;
     }
 
@@ -145,6 +146,9 @@ namespace PCOE {
     }
 
     void TCPSocket::Close() noexcept {
+        if (sock == InvalidSocket) {
+            return;
+        }
         // close/closesocket can produce errors, but there isn't anything we
         // can really do about them and we are done with the socket anyway, so
         // ignore them.

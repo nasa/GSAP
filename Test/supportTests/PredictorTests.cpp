@@ -50,8 +50,6 @@ void testMonteCarloBatteryPredict() {
     GSAPConfigMap configMap;
     configMap.set("Predictor.numSamples", "10");
     configMap.set("Predictor.horizon", "5000");
-    configMap.set("Model.event", "EOD");
-    configMap.set("Model.predictedOutputs", "SOC");
     std::vector<std::string> processNoise;
     for (unsigned int i = 0; i < 8; i++) {
         processNoise.push_back("1e-5");
@@ -103,9 +101,9 @@ void testMonteCarloBatteryPredict() {
 
     // Create progdata
     ProgData data;
-    data.setUncertainty(UType::Samples);
     data.addEvent("EOD");
     data.addSystemTrajectory("SOC");
+    data.setUncertainty(UType::Samples);
     data.sysTrajectories.setNSamples(
         10); // numSamples @todo(MD): Is this right? No basic setup function?
     data.setPredictions(1, 5000); // interval, number of predictions
@@ -135,8 +133,6 @@ void testMonteCarloBatteryConfig() {
     GSAPConfigMap configMap;
     configMap.set("Predictor.numSamples", "100");
     configMap.set("Predictor.horizon", "5000");
-    configMap.set("Model.event", "EOD");
-    configMap.set("Model.predictedOutputs", "SOC");
     std::vector<std::string> processNoise;
     for (unsigned int i = 0; i < 8; i++) {
         processNoise.push_back("1e-5");

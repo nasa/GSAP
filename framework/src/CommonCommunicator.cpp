@@ -12,8 +12,8 @@
 #include "CommonCommunicator.h"
 
 namespace PCOE {
-    CommonCommunicator::CommonCommunicator() : subscribers(), writeItems(),
-        readWaiting(false), m(), cv(), sm() {
+    CommonCommunicator::CommonCommunicator()
+        : subscribers(), writeItems(), readWaiting(false), m(), cv(), sm() {
         // Implemenation Note: The use of sm/scv here is needed to prevent
         // read/write operations being requested before the processing thread
         // is started. Otherwise, the processing thread may block when it has
@@ -31,7 +31,7 @@ namespace PCOE {
         join();
     }
 
-    void CommonCommunicator::enqueue(const AllData & data) {
+    void CommonCommunicator::enqueue(const AllData& data) {
         lock_guard lock(m);
         writeItems.push(data);
         cv.notify_one();
@@ -61,6 +61,7 @@ namespace PCOE {
         scv.notify_one();
         while (getState() != ThreadState::Stopped) {
             cv.wait(lock);
+            log.WriteLine(LOG_TRACE, "COMM", "Starting run");
 
             if (getState() == ThreadState::Stopped) {
                 // Exit early to avoid long program exit times
@@ -68,26 +69,26 @@ namespace PCOE {
             }
             while (!writeItems.empty() || readWaiting) {
                 if (!writeItems.empty()) {
+                    log.WriteLine(LOG_TRACE, "COMM", "Writing data");
                     AllData p = writeItems.front();
                     writeItems.pop();
                     write(p);
                 }
                 else if (readWaiting) {
+                    log.WriteLine(LOG_TRACE, "COMM", "Reading data");
                     DataStore ds = read();
-                    log.WriteLine(LOG_INFO, "CommonComm", "Returned to run()");
+                    log.WriteLine(LOG_TRACE, "CommonComm", "Read complete. Calling callbacks");
 
                     readWaiting = false;
-                    log.WriteLine(LOG_INFO, "CommonComm", "Running Callbacks");
-
                     for (Callback& fn : subscribers) {
                         lock.unlock();
                         fn(ds);
                         lock.lock();
                     }
-                    log.WriteLine(LOG_INFO, "CommonComm", "completed");
-
+                    log.WriteLine(LOG_TRACE, "CommonComm", "Callbacks completed");
                 }
             }
         }
+        log.WriteLine(LOG_TRACE, "COMM", "Exiting run");
     }
 }
