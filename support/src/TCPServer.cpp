@@ -82,12 +82,6 @@ namespace PCOE {
 
     const TCPServer::sock_type TCPServer::InvalidSocket = -1;
 
-    TCPServer::TCPServer(int af) : sock(InvalidSocket), family(af) {
-        if (af != AF_UNSPEC) {
-            CreateServer(af);
-        }
-    }
-
     TCPServer::TCPServer(int af,
                                      const std::string& hostname,
                                      const unsigned short port) {
@@ -126,6 +120,7 @@ namespace PCOE {
             std::error_code ec(err, std::generic_category());
             throw std::system_error(ec, "Listen failed.");
         }
+
     }
 
     TCPSocket TCPServer::Accept() {
@@ -173,9 +168,5 @@ namespace PCOE {
             std::error_code ec(err, std::generic_category());
             throw std::system_error(ec, "Socket creation failed--bind.");
         }
-    }
-
-    unsigned int TCPServer::getPort() const {
-        return port;
     }
 }

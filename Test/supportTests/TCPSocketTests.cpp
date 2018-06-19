@@ -55,15 +55,14 @@ void testTCPctor() {
 }
 
 void testTCPServerCtor() {
-    TCPServer testServer = TCPServer(AF_INET);
-    TCPServer testServer2 = TCPServer(AF_INET, "127.0.0.1", 55555);
-    TCPServer testServer3(std::move(testServer));
-    TCPServer testServer4;
-    testServer4 = std::move(testServer3);
+    TCPServer testServer = TCPServer(AF_INET, "0.0.0.0", 55555);
+    TCPServer testServer2(std::move(testServer));
+    TCPServer testServer3;
+    testServer3 = std::move(testServer2);
 }
 
 void testTCPSendAndReceive() {
-    TCPServer testServer = TCPServer(AF_INET);
+    TCPServer testServer = TCPServer(AF_INET, "0.0.0.0", 8080);
     testServer.Listen();
     
     TCPSocket testClient = TCPSocket(AF_INET);
@@ -117,7 +116,7 @@ void testTCPSendAndReceive() {
 }
 
 void testTCPClose() {
-    TCPServer testServer(AF_INET);
+    TCPServer testServer(AF_INET, "0.0.0.0", 8080);
     
     TCPSocket testClient1(AF_INET);
     TCPSocket testClient2(AF_INET);
@@ -146,7 +145,7 @@ void testTCPClose() {
 }
 
 void testTCPNoDelay() {
-    TCPServer testServer(AF_INET);
+    TCPServer testServer(AF_INET, "0.0.0.0", 8080);
     
     TCPSocket testSocket(AF_INET);
     
@@ -218,7 +217,6 @@ void testTCPSendTimeout() {
 }
 
 void testTCPExceptions() {
-    TCPServer testServer(AF_INET);
     TCPSocket testSocket1(AF_INET);
     TCPSocket testSocket2(AF_INET);
     TCPSocket testSocket3(AF_INET);
@@ -248,12 +246,6 @@ void testTCPExceptions() {
     }
     
     // Server's CreateServer() exception tests
-    try {
-        TCPServer failServer(AF_INET6);
-        Assert::Fail("Created server with unsupported address family.");
-    }
-    catch (std::system_error ec) {}
-    catch (std::invalid_argument) {}
     
 #if !defined(WIN32) && !defined(__APPLE__)
     // AF_PACKET doesn't exist on Windows
@@ -266,7 +258,7 @@ void testTCPExceptions() {
 #endif
     
     try {
-        TCPServer failServer(1024);
+        TCPServer failServer(1024, "0:0:0:0", 55556);
         Assert::Fail("Created server with unsupported address family.");
     }
     catch (std::system_error ec) {}
@@ -308,7 +300,7 @@ void testTCPExceptions() {
     // Client's Connect() exception tests
     testSocket1.Close();
     try {
-        TCPServer testServer2(AF_INET);
+        TCPServer testServer2(AF_INET, "127.0.0.1", 8080);
         testSocket1.Connect("127.0.0.1", 8080);
         Assert::Fail("Socket attempted connection after closing.");
     }
@@ -325,8 +317,9 @@ void testTCPExceptions() {
     
 #ifndef WIN32
     // Client's Receive() exception tests
+    TCPServer testServer(AF_INET, "0.0.0.0", 8080);
     testServer.Close();
-    TCPServer testReceiveExceptionServer(AF_INET);
+    TCPServer testReceiveExceptionServer(AF_INET, "0.0.0.0", 8080);
     testReceiveExceptionServer.Listen();
     TCPSocket testSocket5("127.0.0.1", 8080);
     testReceiveExceptionServer.Accept();
@@ -355,7 +348,7 @@ void testTCPExceptions() {
     catch (std::invalid_argument &e) {
     }
     
-    TCPServer testConnectExceptionServer(AF_INET);
+    TCPServer testConnectExceptionServer(AF_INET, "0.0.0.0", 8080);
     testConnectExceptionServer.Listen();
     
     // Client's Connect() with sockaddr exception test
