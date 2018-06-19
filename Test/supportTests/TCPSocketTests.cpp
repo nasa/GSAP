@@ -250,7 +250,7 @@ void testTCPExceptions() {
 #if !defined(WIN32) && !defined(__APPLE__)
     // AF_PACKET doesn't exist on Windows
     try {
-        TCPServer failServer(AF_PACKET);
+        TCPServer failServer(AF_PACKET, "0.0.0.0", 8080);
         Assert::Fail("Created server with unsupported address family.");
     }
     catch (std::system_error ec) {}
