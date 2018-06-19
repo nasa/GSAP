@@ -132,6 +132,11 @@ namespace PCOE {
         socklen_t size = sizeof(struct sockaddr_in);
         struct sockaddr_in their_addr;
         sock_type socketToAccept = accept(sock, (struct sockaddr*)&their_addr, &size);
+        if (socketToAccept == -1) {
+            int err = sockerr;
+            std::error_code ec(err, std::generic_category());
+            throw std::system_error(ec, "Accept failed.");
+        }
         TCPSocket socketObject = TCPSocket::fromRaw(socketToAccept);
         return socketObject;
     }
