@@ -23,6 +23,7 @@
 #include <string>
 #include <sys/types.h>
 #include <system_error>
+#include "TCPSocket.h"
 
 #include <sys/types.h>
 #ifdef _WIN32
@@ -39,7 +40,7 @@ using ssize_t = intptr_t;
 #endif
 
 namespace PCOE {
-    class TCPSocketServer {
+    class TCPServer {
     private:
         using ssize_type = ssize_t;
 
@@ -48,11 +49,11 @@ namespace PCOE {
         using sock_type = int;
         using timeout_type = struct timeval;
 
-        /// @brief Initializes a new instance of the @see{TCPSocketServer} class.
-        ///        This constructor is equivalent to @code{TCPSocketServer(AF_UNSPEC)}.
-        TCPSocketServer() : TCPSocketServer(AF_UNSPEC) {}
+        /// @brief Initializes a new instance of the @see{TCPServer} class.
+        ///        This constructor is equivalent to @code{TCPServer(AF_UNSPEC)}.
+        TCPServer() : TCPServer(AF_UNSPEC) {}
 
-        /// @brief   Initializes a new instance of the @see{TCPSocketServer} class
+        /// @brief   Initializes a new instance of the @see{TCPServer} class
         ///          with the specified address family.
         /// @remarks The most common values for @p{af} are AF_INET for IPV4
         ///          and AF_INET6 for IPV6. If AF_UNSPEC is specified,
@@ -64,9 +65,9 @@ namespace PCOE {
         ///            not supported.
         /// @exception std::system_error An error occurred when attempting to
         ///            create the socket.
-        explicit TCPSocketServer(int af);
+        explicit TCPServer(int af);
 
-        /// @brief Initializes a new instance of the @see{TCPSocketServer} class and
+        /// @brief Initializes a new instance of the @see{TCPServer} class and
         ///        connects to the specified port on the specified host.
         ///
         /// @param hostname The name of the default remote host to which the
@@ -76,33 +77,33 @@ namespace PCOE {
         /// @exception std::system_error An error occurred when attempting to
         ///            create or connect the socket.
 
-        TCPSocketServer(int af, const std::string& hostname, const unsigned short port);
+        TCPServer(int af, const std::string& hostname, const unsigned short port);
 
-        /// @brief Deletes the @see{TCPSocketServer} copy constructor. The underlying
+        /// @brief Deletes the @see{TCPServer} copy constructor. The underlying
         ///        socket is automatically closed when the instance is
         ///        destroyed, so it can't be shared between instances.
-        TCPSocketServer(const TCPSocketServer&) = delete;
+        TCPServer(const TCPServer&) = delete;
 
         /// @brief Moves the underlying socket of @p{other} to the current
         ///        instance.
         ///
-        /// @param other Another @see{TCPSocketServer} instance.
-        TCPSocketServer(TCPSocketServer&& other);
+        /// @param other Another @see{TCPServer} instance.
+        TCPServer(TCPServer&& other);
 
         /// @brief Closes the underlying TCP connection and releases the
-        ///        resources used by the @see{TCPSocketServer}.
-        ~TCPSocketServer() noexcept;
+        ///        resources used by the @see{TCPServer}.
+        ~TCPServer() noexcept;
 
-        /// @brief Deletes the @see{TCPSocketServer} copy assignment operator. The
+        /// @brief Deletes the @see{TCPServer} copy assignment operator. The
         ///        underlying socket is automatically closed when the instance
         ///        is destroyed, so it can't be shared between instances.
-        TCPSocketServer& operator=(const TCPSocketServer&) = delete;
+        TCPServer& operator=(const TCPServer&) = delete;
 
         /// @brief Moves the underlying socket of @p{other} to the current
         ///        instance.
         ///
-        /// @param other Another @see{TCPSocketServer} instance.
-        TCPSocketServer& operator=(TCPSocketServer&& other);
+        /// @param other Another @see{TCPServer} instance.
+        TCPServer& operator=(TCPServer&& other);
 
         /// @brief   Gets the address family of the socket.
         /// @remarks The address family is either the family specified when
@@ -114,54 +115,17 @@ namespace PCOE {
         }
 
         /// @brief Closes the underlying TCP connection and releases the
-        ///        resources used by the @see{TCPSocketServer}.
+        ///        resources used by the @see{TCPServer}.
         void Close();
-
-        /// @brief Closes underlying TCP connection of connected client and releases
-        ///        the resources used by the @see{TCPSocket}.
-        ///
-        /// @param socketKey The key corresponding to a connected client
-        void Close(int socketKey);
-
-        /// @brief Closes all the underlying TCP connections of clients and releases
-        ///        the resources used by @see{TCPSocket}.
-        void CloseAll();
 
         /// @brief Listens for a client connection.
         ///
         /// @param backlog Backlog for connections waiting to be accepted
         void Listen(const int backlog = SOMAXCONN);
 
-        /// @brief Accepts a client attempting to connect to this @see{TCPSocketServer}.
-        /// @return the accepted socket's fd
-        sock_type Accept();
-
-        /// @brief Sends the given data.
-        ///
-        /// @param socketKey    The key corresponding to a connected client
-        /// @param buffer       A pointer to the data to send
-        /// @param len          The number of bytes to send
-        /// @return             The number of bytes sent
-        size_type Send(int socketKey, const char buffer[], size_type len);
-
-        /// @brief Sends the given data to all connected clients
-        /// @param buffer   A pointer to the data to send
-        /// @param len      The number of bytes to send
-        /// @return         The number of bytes sent
-        void SendAll(const char buffer[], size_type len);
-
-        /// Receives the specified amount of data from the last connected client.
-        /// @param buffer   A buffer to hold the data received
-        /// @param len      The number of bytes to read
-        /// @return         The number of bytes read
-        size_type Receive(char buffer[], const size_type len);
-
-        /// Receives the specified amount of data from a specified client.
-        /// @param socketKey    The key corresponding to a connected client
-        /// @param buffer       A buffer to hold the data received
-        /// @param len          The number of bytes to read
-        /// @return             The number of bytes read
-        size_type Receive(int socketKey, char buffer[], const size_type len);
+        /// @brief Accepts a client attempting to connect to this @see{TCPServer}.
+        /// @return the accepted socket as a TCPSocket object
+        TCPSocket Accept();
 
         /// @brief Gets the underlying socket.
         inline sock_type Socket() noexcept {
@@ -176,11 +140,12 @@ namespace PCOE {
 
         const static sock_type InvalidSocket;
 
+        unsigned int getPort() const;
+
     private:
-        void CreateServer(int af);
-        void CreateServer(int af, const std::string& hostname, const unsigned short port);
-        int clientKeys;
-        std::map<int, sock_type> mapOfClients;
+//        void CreateServer(int af);
+        void CreateServer(int af, const std::string hostname = "0.0.0.0", const unsigned short port = 8080);
+        unsigned int port;
         sock_type sock;
         int family;
     };

@@ -3,7 +3,7 @@
 ///            the Administrator of the National Aeronautics and Space
 ///            Administration. All Rights Reserved.
 
-#include "TCPSocketServer.h"
+#include "TCPServer.h"
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -18,12 +18,12 @@
 #define _EAFNOSUPPORT EAFNOSUPPORT
 #include <netinet/tcp.h>
 #include <sys/ioctl.h>
+#include <TCPSocket.h>
+
 #define sockerr errno
 #define _close close
 #define _ioctl ioctl
 #endif
-
-#define SERVER_PORT 8080
 
 namespace PCOE {
 
@@ -80,15 +80,15 @@ namespace PCOE {
         return AddressInfo(hostname.c_str(), portStr.c_str(), &hints);
     }
 
-    const TCPSocketServer::sock_type TCPSocketServer::InvalidSocket = -1;
+    const TCPServer::sock_type TCPServer::InvalidSocket = -1;
 
-    TCPSocketServer::TCPSocketServer(int af) : sock(InvalidSocket), family(af) {
+    TCPServer::TCPServer(int af) : sock(InvalidSocket), family(af) {
         if (af != AF_UNSPEC) {
             CreateServer(af);
         }
     }
 
-    TCPSocketServer::TCPSocketServer(int af,
+    TCPServer::TCPServer(int af,
                                      const std::string& hostname,
                                      const unsigned short port) {
         if (af != AF_UNSPEC) {
@@ -96,18 +96,17 @@ namespace PCOE {
         }
     }
 
-    TCPSocketServer::TCPSocketServer(TCPSocketServer&& other)
+    TCPServer::TCPServer(TCPServer&& other)
         : sock(other.sock), family(other.family) {
         other.sock = InvalidSocket;
         other.family = AF_UNSPEC;
     }
 
-    TCPSocketServer::~TCPSocketServer() noexcept {
-        CloseAll();
+    TCPServer::~TCPServer() noexcept {
         Close();
     }
 
-    TCPSocketServer& TCPSocketServer::operator=(TCPSocketServer&& other) {
+    TCPServer& TCPServer::operator=(TCPServer&& other) {
         Close();
         sock = other.sock;
         family = other.family;
@@ -116,28 +115,12 @@ namespace PCOE {
         return *this;
     }
 
-    void TCPSocketServer::Close() {
+    void TCPServer::Close() {
         _close(sock);
         sock = InvalidSocket;
-        CloseAll();
     }
 
-    void TCPSocketServer::Close(int socketKey) {
-        _close(mapOfClients.at(socketKey));
-        mapOfClients.at(socketKey) = InvalidSocket;
-        mapOfClients.erase(socketKey);
-    }
-
-    void TCPSocketServer::CloseAll() {
-        for (auto& s : mapOfClients) {
-            _close(s.second);
-            s.second = InvalidSocket;
-        }
-
-        mapOfClients.clear();
-    }
-
-    void TCPSocketServer::Listen(const int backlog) {
+    void TCPServer::Listen(const int backlog) {
         if (listen(sock, backlog) < 0) {
             int err = sockerr;
             std::error_code ec(err, std::generic_category());
@@ -145,95 +128,16 @@ namespace PCOE {
         }
     }
 
-    TCPSocketServer::sock_type TCPSocketServer::Accept() {
+    TCPSocket TCPServer::Accept() {
         socklen_t size = sizeof(struct sockaddr_in);
         struct sockaddr_in their_addr;
         sock_type socketToAccept = accept(sock, (struct sockaddr*)&their_addr, &size);
-        mapOfClients.emplace(clientKeys, socketToAccept);
-        if (mapOfClients.at(clientKeys) == -1) {
-            int err = sockerr;
-            std::error_code ec(err, std::generic_category());
-            throw std::system_error(ec, "Accept failed.");
-        }
-        ++clientKeys;
-        return socketToAccept;
+        TCPSocket socketObject = TCPSocket::fromRaw(socketToAccept);
+        return socketObject;
     }
 
-    TCPSocketServer::size_type TCPSocketServer::Send(int socketKey,
-                                                     const char* buffer,
-                                                     TCPSocketServer::size_type len) {
-        sock_type socketToSend = mapOfClients.at(socketKey);
-        ssize_type result = send(socketToSend, buffer, len, 0);
-        if (result < 0) {
-            std::error_code ec(sockerr, std::generic_category());
-            throw std::system_error(ec, "Send operation failed");
-        }
-        return static_cast<size_type>(result);
-    }
-
-    void TCPSocketServer::SendAll(const char* buffer, TCPSocketServer::size_type len) {
-        for (auto& sock : mapOfClients) {
-            Send(sock.first, buffer, len);
-        }
-    }
-
-    TCPSocketServer::size_type TCPSocketServer::Receive(char* buffer,
-                                                        const TCPSocketServer::size_type len) {
-        ssize_type result = recv(mapOfClients.at(mapOfClients.size() - 1), buffer, len, 0);
-        if (result < 0) {
-            std::error_code ec(sockerr, std::generic_category());
-            throw std::system_error(ec, "Read operation failed");
-        }
-        return static_cast<size_type>(result);
-    }
-
-    TCPSocketServer::size_type TCPSocketServer::Receive(int socketKey,
-                                                        char* buffer,
-                                                        const TCPSocketServer::size_type len) {
-        ssize_type result = recv(mapOfClients.at(socketKey), buffer, len, 0);
-        if (result < 0) {
-            std::error_code ec(sockerr, std::generic_category());
-            throw std::system_error(ec, "Read operation failed");
-        }
-        return static_cast<size_type>(result);
-    }
-
-    void TCPSocketServer::CreateServer(int af) {
-        if ((sock = socket(af, SOCK_STREAM, IPPROTO_TCP)) == InvalidSocket) {
-            int err = sockerr;
-            if (err == _EAFNOSUPPORT) {
-                throw std::invalid_argument("Address family not supported.");
-            }
-            else {
-                std::error_code ec(err, std::generic_category());
-                throw std::system_error(ec, "Socket creation failed--socket.");
-            }
-        }
-
-        family = af;
-
-        size_type value = 1;
-        if (setsockopt(
-                sock, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&value), sizeof(int)) ==
-            -1) {
-            int err = sockerr;
-            std::error_code ec(err, std::generic_category());
-            throw std::system_error(ec, "Socket creation failed--setsockopt.");
-        }
-
-        AddressInfo result = GetAddressInfo("127.0.0.1", SERVER_PORT, family);
-        addrinfo* ai = &result;
-        if (bind(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
-            int err = sockerr;
-            std::error_code ec(err, std::generic_category());
-            throw std::system_error(ec, "Socket creation failed--bind.");
-        }
-
-        clientKeys = 0;
-    }
-
-    void TCPSocketServer::CreateServer(int af,
-                                       const std::string& hostname,
+    void TCPServer::CreateServer(int af,
+                                       const std::string hostname,
                                        const unsigned short port) {
         if ((sock = socket(af, SOCK_STREAM, IPPROTO_TCP)) == InvalidSocket) {
             int err = sockerr;
@@ -264,7 +168,9 @@ namespace PCOE {
             std::error_code ec(err, std::generic_category());
             throw std::system_error(ec, "Socket creation failed--bind.");
         }
+    }
 
-        clientKeys = 0;
+    unsigned int TCPServer::getPort() const {
+        return port;
     }
 }

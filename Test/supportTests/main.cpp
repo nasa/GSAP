@@ -231,7 +231,7 @@ int main() {
 
     // TCPSocket Tests
     context.AddTest("TCPSocket Constructor", testTCPctor, "TCPSocket");
-    context.AddTest("TCPSocketServer Constructor", testTCPServerCtor, "TCPSocket");
+    context.AddTest("TCPServer Constructor", testTCPServerCtor, "TCPSocket");
     context.AddTest("TCPSocket Send and Receive", testTCPSendAndReceive, "TCPSocket");
     context.AddTest("TCPSocket Closers", testTCPClose, "TCPSocket");
     context.AddTest("TCPSocket NoDelay", testTCPNoDelay, "TCPSocket");
