@@ -117,7 +117,7 @@ void testTCPSendAndReceive() {
 }
 
 void testTCPClose() {
-    TCPServer testServer(AF_INET, "127.0.0.1", 8080);
+    TCPServer testServer(AF_INET);
     
     TCPSocket testClient1(AF_INET);
     TCPSocket testClient2(AF_INET);
