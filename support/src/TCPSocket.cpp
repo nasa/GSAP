@@ -32,7 +32,8 @@ namespace PCOE {
             std::swap(result, other.result);
         }
         AddressInfo& operator=(const AddressInfo&) = delete;
-        AddressInfo& operator                      =(AddressInfo&& other) {
+
+        AddressInfo& operator=(AddressInfo&& other) {
             std::swap(result, other.result);
             return *this;
         }
