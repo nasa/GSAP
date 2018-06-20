@@ -126,10 +126,7 @@ namespace PCOE {
 
         const static sock_type InvalidSocket;
 
-        unsigned int getPort() const;
-
     private:
-//        void CreateServer(int af);
         void CreateServer(int af, const std::string hostname, const unsigned short port);
         sock_type sock;
         int family;

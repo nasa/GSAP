@@ -280,7 +280,6 @@ namespace PCOE {
         const static sock_type InvalidSocket;
 
     private:
-        static TCPSocket fromRaw(int fd);
         void CreateSocket(int af);
         bool TryConnect(const sockaddr* address, size_type len, int af);
 

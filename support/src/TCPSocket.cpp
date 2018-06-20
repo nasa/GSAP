@@ -362,10 +362,4 @@ namespace PCOE {
         }
         return connect(sock, address, len) == 0;
     }
-
-    TCPSocket TCPSocket::fromRaw(int fd) {
-        TCPSocket socket;
-        socket.sock = fd;
-        return socket;
-    }
 }
