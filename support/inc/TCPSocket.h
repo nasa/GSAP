@@ -43,20 +43,21 @@
 namespace PCOE {
     class TCPSocket {
         friend class TCPServer;
+
     private:
 #ifdef _WIN32
         using ssize_type = int;
 #else
-        using ssize_type = ssize_t;
+        using ssize_type   = ssize_t;
 #endif
     public:
 #ifdef _WIN32
-        using size_type = int;
-        using sock_type = SOCKET;
+        using size_type    = int;
+        using sock_type    = SOCKET;
         using timeout_type = DWORD;
 #else
-        using size_type = size_t;
-        using sock_type = int;
+        using size_type    = size_t;
+        using sock_type    = int;
         using timeout_type = struct timeval;
 #endif
         /// @brief Initializes a new instance of the @see{TCPSocket} class.
@@ -273,7 +274,7 @@ namespace PCOE {
 
         /// @brief Sets the underlying socket.
         inline void Socket(sock_type s) {
-            sock = s;
+            sock   = s;
             family = AF_UNSPEC;
         }
 
