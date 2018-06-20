@@ -18,12 +18,12 @@
 #ifndef GSAP_TCPSOCKETSERVER_H
 #define GSAP_TCPSOCKETSERVER_H
 
+#include "TCPSocket.h"
 #include <map>
 #include <stdexcept>
 #include <string>
 #include <sys/types.h>
 #include <system_error>
-#include "TCPSocket.h"
 
 #include <sys/types.h>
 #ifdef _WIN32
@@ -45,12 +45,11 @@ namespace PCOE {
         using ssize_type = ssize_t;
 
     public:
-        using size_type = size_t;
-        using sock_type = int;
+        using size_type    = size_t;
+        using sock_type    = int;
         using timeout_type = struct timeval;
 
         /// @brief Initializes a new instance of the @see{TCPServer} class.
-        ///        This constructor is equivalent to @code{TCPServer(AF_UNSPEC)}.
         TCPServer() : TCPServer(AF_UNSPEC, "0.0.0.0", 0) {}
 
         /// @brief Initializes a new instance of the @see{TCPServer} class and
@@ -120,7 +119,7 @@ namespace PCOE {
 
         /// @brief Sets the underlying socket.
         inline void Socket(sock_type s) {
-            sock = s;
+            sock   = s;
             family = AF_UNSPEC;
         }
 
