@@ -53,6 +53,12 @@ namespace PCOE {
         TCPServer() : TCPServer(AF_UNSPEC, "0.0.0.0", 0) {}
 
         /// @brief Initializes a new instance of the @see{TCPServer} class and
+        ///        connects to the specified port on the "Any" address
+        /// @param port The port number of the remote host to which the socket
+        ///             will connect
+        TCPServer(int af, const unsigned short port);
+
+        /// @brief Initializes a new instance of the @see{TCPServer} class and
         ///        connects to the specified port on the specified host.
         ///
         /// @param hostname The name of the default remote host to which the

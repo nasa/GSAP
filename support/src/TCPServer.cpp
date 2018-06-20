@@ -88,6 +88,12 @@ namespace PCOE {
 
     const TCPServer::sock_type TCPServer::InvalidSocket = -1;
 
+    TCPServer::TCPServer(int af, const unsigned short port) {
+        if (af != AF_UNSPEC) {
+            CreateServer(af, "0.0.0.0", port);
+        }
+    }
+
     TCPServer::TCPServer(int af, const std::string& hostname, const unsigned short port) {
         if (af != AF_UNSPEC) {
             CreateServer(af, hostname, port);
