@@ -13,10 +13,10 @@
 ///
 /// @author    Jason Watkins <jason-watkins@outlook.com>
 /// @author    Chris Teubert <christopher.a.teubert@nasa.gov>
-/// @version   0.1.0
+/// @version   1.1.0
 /// @date      2016-02-08
 ///
-/// @copyright Copyright (c) 2016 United States Government as represented by
+/// @copyright Copyright (c) 2018 United States Government as represented by
 ///            the Administrator of the National Aeronautics and Space
 ///            Administration. All Rights Reserved.
 
@@ -42,25 +42,27 @@
 
 namespace PCOE {
     class TCPSocket {
+        friend class TCPServer;
+
     private:
 #ifdef _WIN32
         using ssize_type = int;
 #else
-        using ssize_type = ssize_t;
+        using ssize_type   = ssize_t;
 #endif
     public:
 #ifdef _WIN32
-        using size_type = int;
-        using sock_type = SOCKET;
+        using size_type    = int;
+        using sock_type    = SOCKET;
         using timeout_type = DWORD;
 #else
-        using size_type = size_t;
-        using sock_type = int;
+        using size_type    = size_t;
+        using sock_type    = int;
         using timeout_type = struct timeval;
 #endif
         /// @brief Initializes a new instance of the @see{TCPSocket} class.
         ///        This constructor is equivalent to @code{TCPSocket(AF_UNSPEC)}.
-        TCPSocket() : TCPSocket(AF_UNSPEC) { }
+        TCPSocket() : TCPSocket(AF_UNSPEC) {}
 
         /// @brief   Initializes a new instance of the @see{TCPSocket} class
         ///          with the specified address family.
@@ -118,7 +120,9 @@ namespace PCOE {
         ///          the TCPSocket was constructed, or the address family used
         ///          to open the connection if AF_UNSPEC was set at
         ///          construction and the socket has subsequently been opened.
-        inline int AddressFamily() { return family; }
+        inline int AddressFamily() {
+            return family;
+        }
 
         /// @brief Gets the amount of data that has been received from the
         ///        network and is available to be read.
@@ -205,7 +209,20 @@ namespace PCOE {
         ///        data once a read operation is initiated. The value is a
         ///        DWORD representing milliseconds on windows and a timeval
         ///        on *NIX platforms.
+        ///
+        /// @exception std::system_error An error occurred when
+        ///            attempting to access the socket.
         void ReceiveTimeout(timeout_type value);
+
+        /// @brief Sets the amount of time the TcpSocket will wait to receive
+        ///        data once a read operation is initiated.
+        ///
+        /// @param value The number of seconds to wait for data before timing
+        ///              out.
+        ///
+        /// @exception std::system_error An error occurred when
+        ///            attempting to access the socket.
+        void ReceiveTimeout(double value);
 
         /// @brief Gets the size of the send buffer.
         ///
@@ -237,6 +254,10 @@ namespace PCOE {
         ///            attempting to access the socket.
         void SendTimeout(timeout_type value);
 
+        /// @brief Cross platform way of setting the  amount of time a TcpClient will wait in
+        ///        seconds for the send operation to finish successfully
+        void SendTimeout(double value);
+
         /// Sends the given data.
         ///
         /// @param buffer A pointer to the data to send.
@@ -247,11 +268,13 @@ namespace PCOE {
         size_type Send(const char buffer[], size_type len);
 
         /// @brief Gets the underlying socket.
-        inline sock_type Socket() noexcept { return sock; }
+        inline sock_type Socket() noexcept {
+            return sock;
+        }
 
         /// @brief Sets the underlying socket.
         inline void Socket(sock_type s) {
-            sock = s;
+            sock   = s;
             family = AF_UNSPEC;
         }
 
@@ -261,8 +284,8 @@ namespace PCOE {
         void CreateSocket(int af);
         bool TryConnect(const sockaddr* address, size_type len, int af);
 
-        int family;
         sock_type sock;
+        int family;
     };
 }
 

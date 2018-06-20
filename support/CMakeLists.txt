@@ -1,5 +1,6 @@
 set (HEADERS
 	inc/ConfigMap.h
+	inc/ConstLoadEstimator.h
 	inc/DataPoint.h
 	inc/DataPoints.h
 	inc/DataStore.h
@@ -8,10 +9,12 @@ set (HEADERS
 	inc/Factory.h
 	inc/GaussianVariable.h
 	inc/GSAPConfigMap.h
+	inc/LoadEstimator.h
+	inc/LoadEstimatorFactory.h
 	inc/Matrix.h
 	inc/Model.h
-	inc/ModelFactory.h
 	inc/MonteCarloPredictor.h
+        inc/MovingAverageLoadEstimator.h
 	inc/Observer.h
 	inc/ObserverFactory.h
 	inc/ParticleFilter.h
@@ -33,11 +36,14 @@ set (HEADERS
 	inc/UDataInterfaces.h
 	inc/UDPSocket.h
 	inc/UnscentedKalmanFilter.h
-	inc/Benchmark.h
-)
+	inc/BenchmarkTimer.h
+	inc/TCPSocket.h
+	inc/UDPSocket.h
+        inc/TCPServer.h)
 
 set(SRCS
 	src/ConfigMap.cpp
+	src/ConstLoadEstimator.cpp
 	src/DataPoint.cpp
 	src/DataPoints.cpp
 	src/GaussianVariable.cpp
@@ -45,6 +51,7 @@ set(SRCS
 	src/Matrix.cpp
 	src/Model.cpp
 	src/MonteCarloPredictor.cpp
+        src/MovingAverageLoadEstimator.cpp
 	src/Observer.cpp
 	src/ParticleFilter.cpp
 	src/ProgContainers.cpp
@@ -60,7 +67,7 @@ set(SRCS
 	src/UDataInterfaces.cpp
 	src/UDPSocket.cpp
 	src/UnscentedKalmanFilter.cpp
-)
+        src/TCPServer.cpp)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)
 

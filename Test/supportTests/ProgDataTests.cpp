@@ -3,7 +3,7 @@
 //  ProgDataUnit
 //
 //  Created by Chris Teubert on 3/7/16.
-//  Copyright © 2016 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
+//  Copyright © 2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
 //
 
 #include "Test.h"
@@ -32,7 +32,6 @@ void progDataTest()
     Assert::AreEqual(0, test.getTimes().size()); // No Times
     Assert::AreEqual(UType::Point, test.events.getUncertainty());
     Assert::AreEqual(UType::Point, test.sysTrajectories.getUncertainty());
-    Assert::AreEqual(UType::Point, test.futureInputs.getUncertainty());
 
     ProgData test2("Example","Example1","5w19fs");
     Assert::AreEqual(0, test2.getComponentName().compare("Example1"));
@@ -44,7 +43,6 @@ void progDataTest()
     Assert::AreEqual(0, test2.getTimes().size()); // No Times
     Assert::AreEqual(UType::Point, test2.events.getUncertainty());
     Assert::AreEqual(UType::Point, test2.sysTrajectories.getUncertainty());
-    Assert::AreEqual(UType::Point, test2.futureInputs.getUncertainty());
 
     // Set names
     test.setComponentName("Test");
@@ -64,7 +62,6 @@ void progDataTest()
     test.setUncertainty(UType::MeanCovar);
     Assert::AreEqual(UType::MeanCovar, test.events.getUncertainty());
     Assert::AreEqual(UType::MeanCovar, test.sysTrajectories.getUncertainty());
-    Assert::AreEqual(UType::MeanCovar, test.futureInputs.getUncertainty());
 
     // Adding events
     test.addEvent("Test Event");

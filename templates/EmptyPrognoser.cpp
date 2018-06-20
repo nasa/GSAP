@@ -19,6 +19,7 @@
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
+#include "GSAPConfigMap.h"
 #include "EmptyPrognoser.h"
 
 namespace PCOE {
@@ -26,7 +27,7 @@ namespace PCOE {
         CommonPrognoser(configMap) {
         // DEFINE EVENTS FOR THIS SPECIFIC PROGNOSER
         // Ex:
-            // info.events.push_back(param("EOL", "s"));
+            // results.addEvent("EOL");
 
         // Handle Configuration
         log.WriteLine(LOG_DEBUG, moduleName, "Configuring");
@@ -37,15 +38,12 @@ namespace PCOE {
         log.WriteLine(LOG_TRACE, moduleName, "Running Monitor Step");
 
         // Update States
-    //    currentProgData.state["STATE1"].set(1.1);
-    //    currentProgData.state["STATE2"].set(0.9);
-
-        // Update safety Metrics
-    //    currentProgData.safetyMetric[MEAN].set(1.2);
+    //    results.state["STATE1"].set(1.1);
+    //    results.state["STATE2"].set(0.9);
 
         log.WriteLine(LOG_TRACE, moduleName, "Running Prediction Step");
         // Update Time To Events
-        //    currentProgData.timeToEvent[MEAN].set(1.5);
+        //    results.timeToEvent[MEAN].set(1.5);
 
         // Update Future Safety Metrics
     }

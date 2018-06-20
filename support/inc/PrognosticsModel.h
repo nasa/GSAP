@@ -13,7 +13,7 @@
 *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
 *      Created: March 5, 2016
 *
-*   @copyright Copyright (c) 2016 United States Government as represented by
+*   @copyright Copyright (c) 2018 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
@@ -27,11 +27,11 @@
 
 namespace PCOE {
     class PrognosticsModel : public Model {
-    protected:
+     protected:
         unsigned int numInputParameters;    // Number of input parameters used in inputEqn
         unsigned int numPredictedOutputs;   // Number of predicted outputs
 
-    public:
+     public:
         virtual ~PrognosticsModel() = default;
 
         /** @brief      Execute threshold equation
@@ -49,6 +49,7 @@ namespace PCOE {
         **/
         virtual void inputEqn(const double t, const std::vector<double> & inputParameters,
             std::vector<double> & u) = 0;
+        
         /** @brief      Execute predicted output equation.
         *               Predicted outputs are those that are not measured, but are interested in being predicted for prognostics.
         *   @param      t Time

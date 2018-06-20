@@ -5,11 +5,11 @@
 ///
 /// @author    Jason Watkins <jason-watkins@outlook.com>
 /// @author    Chris Teubert <christopher.a.teubert@nasa.gov>
-/// @version   0.1.0
+/// @version   1.1.0
 /// @date      Intial Version: 2015-04-10
 /// @date        Last Updated: 2016-08-11
 ///
-/// @copyright Copyright (c) 2013-2016 United States Government as represented
+/// @copyright Copyright (c) 2013-2018 United States Government as represented
 ///            by the Administrator of the National Aeronautics and Space
 ///            Administration. All Rights Reserved.
 
@@ -76,7 +76,8 @@ namespace PCOE
         ///          families are supported by this constructor. for other
         ///          families, use the sockaddr constructor.
         ///
-        /// @param af   The address family of the IP protocol. 
+
+        /// @param af   The address family of the IP protocol.
         /// @param port The local port number that the socket will receive data
         ///             on.
         /// @exception std::invalid_argument The specified address family is
@@ -254,8 +255,8 @@ namespace PCOE
     private:
         void CreateSocket(int af);
 
-        int family;
         sock_type sock;
+        int family;
     };
 }
 #endif // PCOE_UDPSOCKET_H

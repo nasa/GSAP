@@ -3,7 +3,7 @@
  *   @ingroup    GPIC++
  *   @defgroup   Observer     Observer
  *
- *   @brief      Unscented Kalman filter class. Implements UKF state estimation algorithm for nonlineary models.
+ *   @brief      Particle filter class. Implements Particle Filter state estimation algorithm for nonlineary models.
  *               Uses the Model class.
  *
  *   @author     Matthew Daigle
@@ -14,7 +14,7 @@
  *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
  *      Created: February 8, 2017
  *
- *   @copyright Copyright (c) 2017 United States Government as represented by
+ *   @copyright Copyright (c) 2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -181,16 +181,6 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initialize completed");
     }
     
-    // Get state mean
-    const std::vector<double> & ParticleFilter::getStateMean() const {
-        return m_xEstimated;
-    }
-    
-    // Get output mean
-    const std::vector<double> & ParticleFilter::getOutputMean() const {
-        return m_zEstimated;
-    }
-    
     // Normalize particle weighs
     void ParticleFilter::normalize() {
         // Compute sum of weights
@@ -237,7 +227,7 @@ namespace PCOE {
         for (size_t p=0; p<numParticles; p++) {
             // Move along CDF
             u = u1 + (p-1.0)/numParticles;
-            while (u>cumsum[p]) {
+            while (u>cumsum[i]) {
                 i += 1;
             }
             // Reassign particle
@@ -327,6 +317,7 @@ namespace PCOE {
             
             // Set weight
             particles.w[p] = likelihood(z, zNew);
+            particles.w[p] = likelihood(z, zNew);
         }
         
         // Normalize weights
@@ -356,5 +347,30 @@ namespace PCOE {
         }
         return state;
     }
-    
+
+    size_t ParticleFilter::getNumParticles() const {
+        return numParticles;
+    }
+
+    size_t ParticleFilter::getMinNEffective() const {
+        return minNEffective;
+    }
+
+    const std::vector<double> &ParticleFilter::getProcessNoiseVariance() const {
+        return processNoiseVariance;
+    }
+
+    const std::vector<double> &ParticleFilter::getSensorNoiseVariance() const {
+        return sensorNoiseVariance;
+    }
+
+    // Get state mean
+    const std::vector<double> & ParticleFilter::getStateMean() const {
+        return m_xEstimated;
+    }
+
+    // Get output mean
+    const std::vector<double> & ParticleFilter::getOutputMean() const {
+        return m_zEstimated;
+    }
 }

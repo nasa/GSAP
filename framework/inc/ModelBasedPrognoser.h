@@ -8,14 +8,14 @@
 *   General model-based prognoser class. It gets created for a specified model, observer, and predictor.
 *
 *   @author    Matthew Daigle
-*   @version   0.1.0
+*   @version   1.1.0
 *
 *   @pre       Prognostic Configuration File and Prognoster Configuration Files
 *
 *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
 *      Created: March 16, 2016
 *
-*   @copyright Copyright (c) 2016 United States Government as represented by
+*   @copyright Copyright (c) 2018 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
@@ -33,16 +33,14 @@
 namespace PCOE {
     class ModelBasedPrognoser : public CommonPrognoser
     {
-    private:
+     private:
         std::unique_ptr<PrognosticsModel> model;
         std::unique_ptr<Observer> observer;
         std::unique_ptr<Predictor> predictor;
-        std::vector<std::string> inputs;
-        std::vector<std::string> outputs;
+        std::unique_ptr<LoadEstimator> loadEstimator;
         bool initialized;
-        double firstTime;
         double lastTime;
-    public:
+     public:
         /** @brief      Model-based Prognoser Constructor
          *  @param      config Map of config parameters from the prognoser config file
          */

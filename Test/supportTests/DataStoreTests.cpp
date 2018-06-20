@@ -3,7 +3,7 @@
 //  UnitTestAll
 //
 //  Created by Chris Teubert on 4/5/16.
-//  Copyright © 2016 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
+//  Copyright © 2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
 //
 
 #include <chrono>
@@ -53,4 +53,9 @@ void DStoreUse()
 
     Datum<double> c(1.9);
     Assert::AreEqual(1.9, c, 1e-12, "Incorrect value of c");
+    
+    Datum<double> d;
+    Assert::IsFalse(d.isSet(), "Datum not set");
+    Datum<double> e(1.7);
+    Assert::IsTrue(e.isSet(), "Datum is set");
 }

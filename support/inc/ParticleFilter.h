@@ -3,7 +3,7 @@
 *   @ingroup    GPIC++
 *   @defgroup   Observer     Observer
 *
-*   @brief      Unscented Kalman filter class. Implements UKF state estimation algorithm for nonlineary models.
+*   @brief      Particle filter class. Implements Particle Filter state estimation algorithm for nonlineary models.
 *               Uses the Model class.
 *
 *   @author     Matthew Daigle
@@ -14,7 +14,7 @@
 *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
 *      Created: February 8, 2017
 *
-*   @copyright Copyright (c) 2017 United States Government as represented by
+*   @copyright Copyright (c) 2018 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
@@ -126,6 +126,14 @@ namespace PCOE {
         const std::vector<double> & getStateMean() const;
         const std::vector<double> & getOutputMean() const;
         std::vector<UData> getStateEstimate() const;
+
+        size_t getNumParticles() const;
+
+        size_t getMinNEffective() const;
+
+        const std::vector<double> &getProcessNoiseVariance() const;
+
+        const std::vector<double> &getSensorNoiseVariance() const;
     };
 }
 

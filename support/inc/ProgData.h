@@ -6,14 +6,14 @@
  *   @brief     Prognostic Data Structure Classes - Classes used for storing, distributing, and manipulation prognostic data
  *
  *   @author    Chris Teubert
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *   @pre       Prognostic Configuration File and Prognoster Configuration Files
  *
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *      Created: December 8, 2015
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -153,12 +153,6 @@ namespace PCOE {
         }
 
         DataPoints sysTrajectories;     ///< The SystemTrajectory objects and associated data
-
-        // *-----------------------*
-        // |     Future Inputs     |
-        // *-----------------------*
-
-        DataPoints futureInputs;        ///< The future inputs
 
         // *-----------------------*
         // |       Internals       |

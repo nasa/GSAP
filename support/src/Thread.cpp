@@ -1,8 +1,8 @@
 // Author: Jason Watkins <jason-watkins@outlook.com>
 // Author: Chris Teubert <christopher.a.teubert@nasa.gov>
-// Date:   2016-06-21
+// Date:   2018-03-19
 //
-//  Copyright (c) 2016 United States Government as represented by
+//  Copyright (c) 2016-2018 United States Government as represented by
 //  the Administrator of the National Aeronautics and Space Administration.
 //  All Rights Reserved.
 
@@ -11,7 +11,9 @@
 namespace PCOE {
     Thread::Thread()
         : log(Log::Instance()), moduleName(""), m(), state(ThreadState::Created),
-          thread() {}
+          thread() {
+        log.WriteLine(LOG_DEBUG, moduleName, "Creating");
+    }
 
     Thread::Thread(Thread&& src) : Thread() {
         swap(*this, src);
@@ -37,6 +39,12 @@ namespace PCOE {
         lock_guard guard(m);
         if (thread.joinable()) {
             log.WriteLine(LOG_DEBUG, moduleName, "Joining thread in destructor");
+            // Note (JW): It's not necessary to call this->stop() or
+            //     this->join() here since the object is about to die anyway.
+            //     Setting the state variable and calling thead.join() directly
+            //     is sufficient to cleanly kill the thread. This also avoids
+            //     potential crashes that can occur when calling virtual
+            //     methods in the destructor
             state = ThreadState::Stopped;
             thread.join();
         }
@@ -44,8 +52,7 @@ namespace PCOE {
 
     void Thread::enable() {
         lock_guard guard(m);
-        switch (state.load())
-        {
+        switch (state.load()) {
         case ThreadState::Created:
             log.WriteLine(LOG_DEBUG, moduleName, "Enabling");
             state = ThreadState::Enabled;
@@ -64,14 +71,16 @@ namespace PCOE {
 
     void Thread::start() {
         lock_guard guard(m);
-        switch (state.load())
-        {
+        switch (state.load()) {
         case ThreadState::Created:
         case ThreadState::Enabled:
         case ThreadState::Paused:
             log.WriteLine(LOG_DEBUG, moduleName, "Starting");
             state = ThreadState::Started;
+                // Check to see if thread already created
+                // startThread() should only be run once
             if (thread.get_id() == std::thread::id()) {
+                // Should only run if not enabled first
                 startThread();
             }
             break;
@@ -91,8 +100,7 @@ namespace PCOE {
 
     void Thread::pause() {
         lock_guard guard(m);
-        switch (state.load())
-        {
+        switch (state.load()) {
         case ThreadState::Enabled:
         case ThreadState::Started:
             log.WriteLine(LOG_DEBUG, moduleName, "Pausing");
@@ -109,8 +117,7 @@ namespace PCOE {
 
     void Thread::stop() {
         lock_guard guard(m);
-        switch (state.load())
-        {
+        switch (state.load()) {
         case ThreadState::Enabled:
         case ThreadState::Started:
         case ThreadState::Paused:

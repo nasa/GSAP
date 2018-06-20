@@ -4,12 +4,12 @@
  *   @brief     Run unit tests for support classes
  *
  *   @author    Jason Watkins <jason-watkins@outlook.com>
- *   @version   0.1.0
+ *   @version   1.1.0
  *   @date      2016-07-08
  *
  *   @pre       N/A
  *
- *   @copyright Copyright (c) 2016 United States Government as represented by
+ *   @copyright Copyright (c) 2018 United States Government as represented by
  *              the Administrator of the National Aeronautics and Space
  *              Administration. All Rights Reserved.
  */
@@ -27,8 +27,14 @@
 #include "PEventTests.h"
 #include "PredictorTests.h"
 #include "ProgDataTests.h"
+#include "LoadTests.hpp"
 #include "ThreadTests.h"
 #include "UDataTests.h"
+#include "StatisticalToolsTests.h"
+#include "GaussianVariableTests.h"
+#include "ParticleFilterTests.h"
+#include "TCPSocketTests.h"
+#include "UDPSocketTests.h"
 
 using namespace PCOE::Test;
 
@@ -36,8 +42,12 @@ int main() {
     TestContext context;
     // Config Map Tests
     context.AddTest("Init", configMapInit, "Config Map");
+    context.AddTest("Load Arguments", configMapLoadArgs, "Config Map");
     context.AddTest("Use", configMapUse, "Config Map");
-    context.AddTest("Load", configMapLoad, "Config Map");
+    context.AddTest("Load", configMapLoad, "Config Map");   // Filled test case - Julian
+    context.AddTest("Load Nonexistent", configMapLoadNonexistent, "ConfigMap"); // Added test case - Julian
+    context.AddTest("Add Bad Search Path", configMapAddBadSearchPath, "Config Map");    // Added test case - Julian
+    context.AddTest("Trim", configMapTrim, "Config Map");   // Added test case - Julian
     context.AddTest("GSAP Init", gsapConfigMapInit, "Config Map");
     context.AddTest("GSAP Use", gsapConfigMapUse, "Config Map");
 
@@ -77,6 +87,8 @@ int main() {
     context.AddTest("DPoint Init", testDPointsInit, "DPoints");
     context.AddTest("P Event Update", testPEventsUpdate, "DPoints");
     context.AddTest("D Point Update", testDPointsUpdate, "DPoints");
+    context.AddTest("P Event Includes", testPEventsIncludes, "DPoints");
+    context.AddTest("D Points Includes", testDPointsIncludes, "DPoints");
 
     // DPoint Tests
     context.AddTest("Initialization", testDPointInit, "DPoint");
@@ -103,6 +115,7 @@ int main() {
     context.AddTest("indexer", TestMatrix::indexer, "Matrix");
     context.AddTest("indexer_const", TestMatrix::indexer_const, "Matrix");
     context.AddTest("at", TestMatrix::at, "Matrix");
+    context.AddTest("const_at", TestMatrix::const_at, "Matrix");
     context.AddTest("col_get", TestMatrix::col_get, "Matrix");
     context.AddTest("col_setmatrix", TestMatrix::col_setmatrix, "Matrix");
     context.AddTest("col_setvector", TestMatrix::col_setvector, "Matrix");
@@ -123,14 +136,19 @@ int main() {
     context.AddTest("adjoint", TestMatrix::adjoint, "Matrix");
     context.AddTest("cofactors", TestMatrix::cofactors, "Matrix");
     context.AddTest("determinant", TestMatrix::determinant, "Matrix");
+    context.AddTest("laplace determinant", TestMatrix::laplaceDet, "Matrix");
+    context.AddTest("diagonal", TestMatrix::diagonal, "Matrix");
     context.AddTest("inverse", TestMatrix::inverse, "Matrix");
     context.AddTest("minors", TestMatrix::minors, "Matrix");
     context.AddTest("submatrix", TestMatrix::submatrix, "Matrix");
     context.AddTest("transpose", TestMatrix::transpose, "Matrix");
+    context.AddTest("identity", TestMatrix::identity, "Matrix");
     // Special operations
     context.AddTest("cholesky", TestMatrix::cholesky, "Matrix");
     context.AddTest("weightedmean", TestMatrix::weightedmean, "Matrix");
     context.AddTest("weightedcovariance", TestMatrix::weightedcovariance, "Matrix");
+    // Stream insertion
+    context.AddTest("stream insertion operator", TestMatrix::streamInsertionOperator, "Matrix");
 
     // Model Tests
     context.AddTest("Tank Initialization", testTankInitialize, "Model Tank");
@@ -157,11 +175,11 @@ int main() {
     context.AddTest("UKF Initialization for Battery", testUKFBatteryInitialize, "Observer");
     context.AddTest("UKF Step for Battery", testUKFBatteryStep, "Observer");
     
-    // PF Battery tests
+/*    // PF Battery tests
     context.AddTest("PF Battery Construction from ConfigMap", testPFBatteryFromConfig, "Observer");
     context.AddTest("PF Initialization for Battery", testPFBatteryInitialize, "Observer");
-    context.AddTest("PF Step for Battery", testPFBatteryStep, "Observer");
-    
+    context.AddTest("PF Step for Battery", testPFBatteryStep, "Observer"); */
+
     // PEvent Tests
     context.AddTest("Initialization", testPEventInit, "PEvent");
     context.AddTest("Meta Data", testPEventMeta, "PEvent");
@@ -174,11 +192,59 @@ int main() {
     // Thread Tests
     context.AddTest("treadctrl", tctrltests, "Thread");
     context.AddTest("Exception", exceptiontest, "Thread");
+    context.AddTest("Move Constructor", moveCtor, "Thread");
+    context.AddTest("Assignment Operator", assignmentOperator, "Thread");
+    context.AddTest("Get ID", testGetID, "Thread");
+    //context.AddTest("Destructor", testDestructor, "Thread");
 
     // Predictor Tests
     context.AddCategoryInitializer("Predictor", predictorTestInit);
     context.AddTest("Monte Carlo Predictor Configuration for Battery", testMonteCarloBatteryConfig, "Predictor");
     context.AddTest("Monte Carlo Prediction for Battery", testMonteCarloBatteryPredict, "Predictor");
+
+    // Statistical Tools Tests
+    context.AddTest("Calculate Mean", calculateMean, "Statistical Tools");
+    context.AddTest("Calculate Standard Deviation", calculateStDv, "Statistical Tools");
+    context.AddTest("Calculate CDF", calculateCDF, "Statistical Tools");
+
+    // Gaussian Variable Tests
+    context.AddTest("Constructor Specified", ctorSpecified, "Gaussian Variable");
+    context.AddTest("Constructor Unspecified", ctorUnspecified, "Gaussian Variable");
+    context.AddTest("Generate Samples Direct", generateSamplesDirect, "Gaussian Variable");
+    context.AddTest("Generate Samples ICDUR", generateSamplesICDFUR, "Gaussian Variable");
+    context.AddTest("Set Mean Std", setMeanStd, "Gaussian Variable");
+    context.AddTest("Evaluate PDF", evaluatePDF, "Gaussian Variable");
+    context.AddTest("Evaluate CDF", evaluateCDF, "Gaussian Variable");
+
+    context.AddTest("Constructor", ctor, "Particle Filter");
+    context.AddTest("Constructor with Nonempty Vectors", ctorWithNonemptyVectors, "Particle Filter");
+    context.AddTest("GSAPConfigMap Constructor", GSAPConfigMapCtor, "Particle Filter");
+    context.AddTest("Initialize", PFinitialize, "Particle Filter");
+    context.AddTest("Step", step, "Particle Filter");
+    context.AddTest("Get State Estimate", getStateEstimate, "Particle Filter");
+
+    context.AddCategoryInitializer("LoadEstimator", PCOE::LoadTestInit);
+    context.AddTest("ConstLoadEst", PCOE::testConstLoad, "LoadEstimator");
+    context.AddTest("ConstLoadFact", PCOE::testFactory, "LoadEstimator");
+    context.AddTest("MovingAverageLoadEst", PCOE::testMovingAverage, "LoadEstimator");
+    context.AddTest("ConstLoadUcert", PCOE::testConstLoadWithUncert, "LoadEstimator");
+
+    // TCPSocket Tests
+    context.AddTest("TCPSocket Constructor", testTCPctor, "TCPSocket");
+    context.AddTest("TCPServer Constructor", testTCPServerCtor, "TCPSocket");
+    context.AddTest("TCPSocket Send and Receive", testTCPSendAndReceive, "TCPSocket");
+    context.AddTest("TCPSocket Closers", testTCPClose, "TCPSocket");
+    context.AddTest("TCPSocket NoDelay", testTCPNoDelay, "TCPSocket");
+    context.AddTest("TCPSocket ReceiveBufferSize", testTCPReceiveBufferSize, "TCPSocket");
+    context.AddTest("TCPSocket ReceiveTimeout", testTCPReceiveTimeout, "TCPSocket");
+    context.AddTest("TCPSocket SendBufferSize", testTCPSendBufferSize, "TCPSocket");
+    context.AddTest("TCPSocket SendTimeout", testTCPSendTimeout, "TCPSocket");
+    context.AddTest("TCPSocket Exceptions", testTCPExceptions, "TCPSocket");
+
+    // UDPSocket Tests
+    context.AddTest("UDPSocket Constructor", testUDPCtor, "UDPSocket");
+    context.AddTest("UDPSocket Send", testUDPSendandReceive, "UDPSocket");
+    context.AddTest("UDPSocket Exception Handling", testExceptionHandling, "UDPSocket");
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");

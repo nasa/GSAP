@@ -1,21 +1,21 @@
 /**  MatrixTests - Header
-*   @file      Unit tests for Matrix class
-*   @ingroup   GPIC++
-*
-*   @brief     Unit tests for Matrix classes
-*
-*   @author    Matthew Daigle
-*   @version   0.1.0
-*
-*   @pre       N/A
-*
-*      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
-*      Created: April 7, 2016
-*
-*   @copyright Copyright (c) 2016 United States Government as represented by
-*     the Administrator of the National Aeronautics and Space Administration.
-*     All Rights Reserved.
-*/
+ *   @file      Unit tests for Matrix class
+ *   @ingroup   GPIC++
+ *
+ *   @brief     Unit tests for Matrix classes
+ *
+ *   @author    Matthew Daigle
+ *   @version   1.1.0
+ *
+ *   @pre       N/A
+ *
+ *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
+ *      Created: April 7, 2016
+ *
+ *   @copyright Copyright (c) 2018 United States Government as represented by
+ *     the Administrator of the National Aeronautics and Space Administration.
+ *     All Rights Reserved.
+ */
 
 #ifndef MATRIXTESTS_H
 #define MATRIXTESTS_H
@@ -42,6 +42,7 @@ namespace TestMatrix {
     void indexer();
     void indexer_const();
     void at();
+    void const_at();
     void col_get();
     void col_setmatrix();
     void col_setvector();
@@ -64,16 +65,20 @@ namespace TestMatrix {
     void adjoint();
     void cofactors();
     void determinant();
+    void laplaceDet();
+    void diagonal();
     void inverse();
     void minors();
     void submatrix();
     void transpose();
+    void identity();
 
     // Special operations
     void cholesky();
     void weightedmean();
     void weightedcovariance();
-
+    // Stream insertion
+    void streamInsertionOperator();
 }
 
 #endif // MATRIXTESTS_H

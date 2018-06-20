@@ -4,6 +4,7 @@ set (HEADERS
 	inc/CommonPrognoser.h
 	inc/CommunicatorFactory.h
 	inc/ModelBasedPrognoser.h
+    inc/ModelFactory.h
 	inc/ProgManager.h
 	inc/PrognoserFactory.h
 	inc/SharedLib.h
@@ -11,7 +12,8 @@ set (HEADERS
 	inc/PlaybackCommunicator.h
 	inc/RecorderCommunicator.h
 	inc/Battery.h
-	)
+    inc/STDINCommunicator.h
+        inc/StringUtils.h)
 
 set(SRCS
 	src/CommManager.cpp
@@ -23,6 +25,7 @@ set(SRCS
 	src/PlaybackCommunicator.cpp
 	src/RecorderCommunicator.cpp
 	src/Battery.cpp
+    src/STDINCommunicator.cpp
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../support/inc/)

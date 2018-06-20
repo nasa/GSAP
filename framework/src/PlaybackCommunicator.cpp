@@ -11,12 +11,12 @@
  *   @see        CommonCommunicator
  *
  *   @author    Chris Teubert
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *      Created: March 27, 2016
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  **/
@@ -25,6 +25,10 @@
 #include <sstream>
 #include <string>
 #include <chrono> // For timestamps
+#include <string>
+#include <cctype>
+#include <algorithm>
+
 
 #include "Exceptions.h"
 #include "PlaybackCommunicator.h"
@@ -91,18 +95,21 @@ namespace PCOE {
             throw;
         }
 
+
         // Read Header
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Reading Header");
 
         std::string s;
-        while (s.substr(0, 9).compare("Timestamp") != 0 \
-            && s.substr(0, 9).compare("TimeStamp") != 0) {
-            if (!getline(playbackStream, s)) {
-                log.WriteLine(LOG_ERROR, MODULE_NAME,
-                    "Playback file not in proper format");
-                throw FormatError("Playback file not in proper format");
+
+        while (s.substr(0, 9).compare("timestamp") != 0) {
+                if (!getline(playbackStream, s)) {
+                    log.WriteLine(LOG_ERROR, MODULE_NAME,
+                        "Playback file not in proper format");
+                    throw FormatError("Playback file not in proper format");
+                }
+                lower(s);
             }
-        }
+
 
         // Parse Header
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Parsing Header");
@@ -110,10 +117,9 @@ namespace PCOE {
         std::size_t pos = 0;
         std::size_t last = 0;
             
-        while (pos != std::string::npos) {
+        while (pos < s.length()) {
             pos = s.find(delim, last);
-            auto length = (pos == std::string::npos)? s.length(): pos;
-            length = length - pos;
+            pos = (pos == std::string::npos)? s.length(): pos;
             
             auto s2 = s.substr(last, pos-last);
             last = pos+1;
@@ -146,16 +152,21 @@ namespace PCOE {
 
             return ds;
         }
+        
+        std::size_t pos = 0;
+        std::size_t last = 0;
 
         // Parse Line
-        std::istringstream ss(s);
+        //std::istringstream ss(s);
         std::string s2;
-
-        if (!getline(ss, s2, delim)) {
+        pos = s.find(delim, last);
+        if (pos == std::string::npos) {
             log.WriteLine(LOG_WARN, MODULE_NAME, "Line was empty");
-
+            
             return ds;
         }
+        
+        s2 = s.substr(0, pos);
 
         // Otherwise- received timestamp
         static std::chrono::time_point<std::chrono::system_clock> startingTime = std::chrono::system_clock::now();
@@ -164,11 +175,17 @@ namespace PCOE {
         std::chrono::time_point<std::chrono::system_clock> theTime = startingTime + step;
 
         for (const auto & it : header) {
-            if (!getline(ss, s2, delim)) {
+            pos = s.find(delim, last);
+            pos = (pos == std::string::npos)? s.length(): pos;
+
+            if (pos-last <= 0) {
                 log.WriteLine(LOG_WARN, MODULE_NAME,
-                    "parameter not present-reached end of line");
+                              "parameter not present-reached end of line");
                 return ds;
             }
+            s2 = s.substr(last, pos-last);
+            last = pos+1;
+            
             std::istringstream ss2(s2);
             std::string s3;
             if (!getline(ss2, s3, '(')) {
@@ -179,7 +196,7 @@ namespace PCOE {
                 continue;
             }
             ds[it] = std::stof(s3);
-            log.FormatLine(LOG_TRACE, MODULE_NAME,
+            log.FormatLine(LOG_INFO, MODULE_NAME,
                           "Received %s:%f", it.c_str(), ds[it].get());
             if (timestampFromFile) {
                 ds[it].setTime(theTime);
@@ -190,7 +207,7 @@ namespace PCOE {
 
         return ds;
     }
-    
+
     void PlaybackCommunicator::write(AllData dataIn) {
         (void) dataIn;
         //throw std::domain_error("Write not supported");

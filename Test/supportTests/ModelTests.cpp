@@ -5,14 +5,14 @@
 *   @brief     Unit tests for Model class and derived classes.
 *
 *   @author    Matthew Daigle
-*   @version   0.1.0
+*   @version   1.1.0
 *
 *   @pre       N/A
 *
 *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
 *      Created: March 7, 2016
 *
-*   @copyright Copyright (c) 2016 United States Government as represented by
+*   @copyright Copyright (c) 2018 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
@@ -304,13 +304,7 @@ void testBatteryInputEqn()
 
     // Run inputEqn for different time points and check values
     battery.inputEqn(1, inputParameters, u);
-    Assert::AreEqual(2, u[0], 1e-12);
-    battery.inputEqn(3, inputParameters, u);
-    Assert::AreEqual(3.5, u[0], 1e-12);
-    battery.inputEqn(6, inputParameters, u);
-    Assert::AreEqual(5, u[0], 1e-12);
-    battery.inputEqn(7, inputParameters, u);
-    Assert::AreEqual(5, u[0], 1e-12);
+    Assert::AreEqual(1, u[0], 1e-12);
 }
 
 void testBatteryPredictedOutputEqn()

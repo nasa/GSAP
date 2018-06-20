@@ -7,7 +7,7 @@
  *    This class creates the ProgMonitors and Communication Manager.
  *
  *   @author    Chris Teubert
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *   @pre       Prognostic Configuration File and Prognoster Configuration Files
  *
@@ -16,7 +16,7 @@
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *      Created: November 11, 2015
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -24,27 +24,26 @@
 #ifndef PCOE_PROGMANAGER_H
 #define PCOE_PROGMANAGER_H
 
+#include <memory>
 #include <string>
+#include <vector>
 
+#include "CommonPrognoser.h"
 #include "GSAPConfigMap.h"
- 
+
 namespace PCOE {
-    enum COMMAND {
-        NONE,
-        START,
-        STOP,
-        RESUME,
-        PAUSE
-    };
+    enum COMMAND { NONE, START, STOP, RESUME, PAUSE };
 
     /** @brief      Structure for holding received commands */
     struct Cmd {
-        Cmd();            /**< Initialize command to none */
-        COMMAND command;  /**< Set to value from Enum COMMAND- Defined in ThreadControl */
-        std::string body; /**< Body of the message (to be used in future iterations) (ex: Start thisPrognoser) */
+        Cmd(); /**< Initialize command to none */
+        COMMAND command; /**< Set to value from Enum COMMAND- Defined in ThreadControl */
+        std::string body; /**< Body of the message (to be used in future iterations) (ex: Start
+                             thisPrognoser) */
     };
 
     class Log;
+    class CommManager;
 
     /**
      *  @class      ProgManager
@@ -58,7 +57,7 @@ namespace PCOE {
          *         calling @see setConfig before running the progManager.
          */
         ProgManager();
-        
+
         /** @brief Constructs a new ProgManager configured by opening the
          *         configuration file at the given path.
          *
@@ -77,16 +76,34 @@ namespace PCOE {
          *
          *  @param path The path to a configuration file.
          */
-        void setConfig(const std::string & path);
-        
+        void setConfig(const std::string& path);
+
         /** @brief Sets the configuration of the current progManager.
          *
          *  @param config The configuration used by the progManager
          */
         void setConfig(const GSAPConfigMap& config);
 
+        /** @brief Add a new prognoser
+         *
+         *  @param  path  The path to a configuration file
+         **/
+        void addPrognoser(const std::string& path);
+
         /** @brief starts the progManager. */
         void run();
+
+        void enable();
+
+        void start();
+
+        void pause();
+
+        inline void resume() {
+            start();
+        }
+
+        void stop();
 
     private:
         GSAPConfigMap configValues;
@@ -96,6 +113,10 @@ namespace PCOE {
         /// @brief      Function to receive control commands from terminal
         /// @return     Received Command
         Cmd control();
+
+        std::vector<std::unique_ptr<CommonPrognoser>> prognosers;
+
+        CommManager& theComm;
     };
 }
 

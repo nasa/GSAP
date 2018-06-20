@@ -13,5 +13,7 @@ void testPEventsInit();
 void testDPointsInit();
 void testPEventsUpdate();
 void testDPointsUpdate();
+void testPEventsIncludes();
+void testDPointsIncludes();
 
 #endif // DPOINTSTESTS_H

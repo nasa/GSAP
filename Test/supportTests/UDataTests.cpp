@@ -1,7 +1,8 @@
 /**  Unit Test functions for UData- Body
  *   @file      Unit Testing functions for UData
  *
- *   @brief     A set of functions to be used with UnitTester. These functions test all the aspects of UData
+ *   @brief     A set of functions to be used with UnitTester. These functions
+ *              test all the aspects of UData
  *
  *   @ingroup   UData
  *
@@ -10,7 +11,7 @@
  *   @version   0.2.0
  *   @date      March 5, 2016
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  **/
@@ -19,14 +20,13 @@
 #include <thread>
 
 #include "Test.h"
-#include "UDataTests.h"
 #include "UData.h"
+#include "UDataTests.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
-static std::vector<double> getTestVec()
-{
+static std::vector<double> getTestVec() {
     std::vector<double> a;
     a.push_back(1.3);
     a.push_back(4.4);
@@ -48,20 +48,40 @@ namespace TestUData {
     }
 
     void construct_type() {
-        try { UData ud(UType::Point); }
-        catch (...) { Assert::Fail("UType::Point constructor threw an exception"); }
+        try {
+            UData ud(UType::Point);
+        }
+        catch (...) {
+            Assert::Fail("UType::Point constructor threw an exception");
+        }
 
-        try { UData ud(UType::MeanSD); }
-        catch (...) { Assert::Fail("UType::MeanSD constructor threw an exception"); }
+        try {
+            UData ud(UType::MeanSD);
+        }
+        catch (...) {
+            Assert::Fail("UType::MeanSD constructor threw an exception");
+        }
 
-        try { UData ud(UType::MeanCovar); }
-        catch (...) { Assert::Fail("UType::MeanCovar constructor threw an exception"); }
+        try {
+            UData ud(UType::MeanCovar);
+        }
+        catch (...) {
+            Assert::Fail("UType::MeanCovar constructor threw an exception");
+        }
 
-        try { UData ud(UType::Samples); }
-        catch (...) { Assert::Fail("UType::Samples constructor threw an exception"); }
+        try {
+            UData ud(UType::Samples);
+        }
+        catch (...) {
+            Assert::Fail("UType::Samples constructor threw an exception");
+        }
 
-        try { UData ud(UType::WSamples); }
-        catch (...) { Assert::Fail("WUType::Samples constructor threw an exception"); }
+        try {
+            UData ud(UType::WSamples);
+        }
+        catch (...) {
+            Assert::Fail("WUType::Samples constructor threw an exception");
+        }
     }
 
     void construct_copy() {
@@ -69,8 +89,7 @@ namespace TestUData {
         UData ud2(ud1);
         Assert::AreEqual(ud1.dist(), ud2.dist(), "Distributions are not equal");
         Assert::AreEqual(ud1.size(), ud2.size(), "Sizes are not equal");
-        Assert::AreEqual(ud1.uncertainty(), ud2.uncertainty(),
-            "Uncertainty types are not equal");
+        Assert::AreEqual(ud1.uncertainty(), ud2.uncertainty(), "Uncertainty types are not equal");
         Assert::AreEqual(ud1.npoints(), ud2.npoints(), "NPoints are not equal");
         Assert::AreEqual(ud1.valid(), ud2.valid(), "Validities are not equal");
         Assert::AreEqual(ud1.updated(), ud2.updated(), "Times are not equal");
@@ -89,8 +108,7 @@ namespace TestUData {
 
         Assert::AreEqual(dist1, ud2.dist(), "Distributions are not equal");
         Assert::AreEqual(size1, ud2.size(), "Sizes are not equal");
-        Assert::AreEqual(uncertainty1, ud2.uncertainty(),
-            "Uncertainty types are not equal");
+        Assert::AreEqual(uncertainty1, ud2.uncertainty(), "Uncertainty types are not equal");
         Assert::AreEqual(npoints1, ud2.npoints(), "NPoints are not equal");
         Assert::AreEqual(validity1, ud2.valid(), "Validities are not equal");
         Assert::AreEqual(time1, ud2.updated(), "Times are not equal");
@@ -109,8 +127,7 @@ namespace TestUData {
 
         Assert::AreEqual(dist1, ud2.dist(), "Distributions are not equal");
         Assert::AreEqual(size1, ud2.size(), "Sizes are not equal");
-        Assert::AreEqual(uncertainty1, ud2.uncertainty(),
-            "Uncertainty types are not equal");
+        Assert::AreEqual(uncertainty1, ud2.uncertainty(), "Uncertainty types are not equal");
         Assert::AreEqual(npoints1, ud2.npoints(), "NPoints are not equal");
         Assert::AreEqual(validity1, ud2.valid(), "Validities are not equal");
         Assert::AreEqual(time1, ud2.updated(), "Times are not equal");
@@ -173,37 +190,53 @@ namespace TestUData {
         ud.uncertainty(UType::Point);
         Assert::AreEqual(UType::Point, ud.uncertainty(), "UType::Point uncertainty does not match");
         ud.uncertainty(UType::MeanSD);
-        Assert::AreEqual(UType::MeanSD, ud.uncertainty(), "UType::MeanSD uncertainty does not match");
+        Assert::AreEqual(UType::MeanSD,
+                         ud.uncertainty(),
+                         "UType::MeanSD uncertainty does not match");
     }
 
     void updated() {
-        using time_point = UData::time_point;
+        using size_type = UData::size_type;
 
         UData ud;
-        time_point start = ud.updated();
-        Assert::AreEqual(time_point(), ud.updated(), "Default updated time not 0");
+        size_type start = ud.updated();
+        Assert::AreEqual(0, ud.updated(), "Default updated time not 0");
+
+        // Need short pause between every updated() call for IDEs that run test too quickly
+        std::chrono::milliseconds ms(1); // Declare and initialize one millisecond variable
+        std::this_thread::sleep_for(ms); // Pause for 1 ms
 
         ud.set(7);
-        time_point doubleTime = ud.updated();
+        size_type doubleTime = ud.updated();
         Assert::IsTrue(doubleTime > start, "updated not changed after setting double [0]");
 
+        std::this_thread::sleep_for(ms); // Pause for 1 ms
+
         ud.set(std::make_pair(7, 11));
-        time_point pairTime = ud.updated();
+        size_type pairTime = ud.updated();
         Assert::IsTrue(pairTime > doubleTime, "updated not changed after setting pair [0]");
 
-        ud.set({ 7, 11, 19 });
-        time_point vecTime = ud.updated();
+        std::this_thread::sleep_for(ms); // Pause for 1 ms
+
+        ud.set({7, 11, 19});
+        size_type vecTime = ud.updated();
         Assert::IsTrue(vecTime > pairTime, "updated not changed after setting vector [0]");
+
+        std::this_thread::sleep_for(ms); // Pause for 1 ms
 
         ud[0] = 13;
         doubleTime = ud.updated();
         Assert::IsTrue(doubleTime > vecTime, "updated not changed after setting double [1]");
 
+        std::this_thread::sleep_for(ms); // Pause for 1 ms
+
         ud[0] = std::make_pair(13, 17);
         pairTime = ud.updated();
         Assert::IsTrue(pairTime > doubleTime, "updated not changed after setting pair [1]");
 
-        ud[0] = { 13, 17, 23 };
+        std::this_thread::sleep_for(ms); // Pause for 1 ms
+
+        ud[0] = {13, 17, 23};
         vecTime = ud.updated();
         Assert::IsTrue(vecTime > pairTime, "updated not changed after setting vector [1]");
     }
@@ -240,7 +273,7 @@ namespace TestUData {
     void iterators_forward() {
         UData ud(UType::MeanCovar);
         ud.npoints(3);
-        std::vector<double> values = { 1.2, 3.4, 4.5, 5.6 };
+        std::vector<double> values = {1.2, 3.4, 4.5, 5.6};
         ud.setVec(values);
         UData::iterator i = ud.begin();
         std::vector<double>::iterator j = values.begin();
@@ -258,7 +291,7 @@ namespace TestUData {
     void iterators_reverse() {
         UData ud(UType::MeanCovar);
         ud.npoints(3);
-        std::vector<double> values = { 1.2, 3.4, 4.5, 5.6 };
+        std::vector<double> values = {1.2, 3.4, 4.5, 5.6};
         ud.setVec(values);
         UData::reverse_iterator i = ud.rbegin();
         std::vector<double>::reverse_iterator j = values.rbegin();
@@ -299,10 +332,11 @@ namespace TestUData {
             ud.getPair();
             Assert::Fail("Pair returned when ud should only have one data element");
         }
-        catch (...) {}
+        catch (...) {
+        }
 
         ud.uncertainty(UType::MeanSD);
-        ud.set(std::pair<double, double>({ 1.0, 2.0 }));
+        ud.set(std::pair<double, double>({1.0, 2.0}));
         auto p = ud.getPair();
         Assert::AreEqual(1.0, p.first, 1e-12, "Unexpected first element");
         Assert::AreEqual(2.0, p.second, 1e-12, "Unexpected second element");
@@ -316,7 +350,7 @@ namespace TestUData {
         Assert::AreEqual(1, vec1.size() - vec2.size(), "Unexpected vector sizes");
 
         ud.uncertainty(UType::MeanSD);
-        ud.set(std::vector<double>({ 1.0, 2.0 }));
+        ud.set(std::vector<double>({1.0, 2.0}));
         vec1 = ud.getVec();
         Assert::AreEqual(2, vec1.size(), "Unexpected UType::MeanSD vector size");
         Assert::AreEqual(1.0, vec1[0], 1e-12, "Unexpected first element");
@@ -330,17 +364,16 @@ namespace TestUData {
         Assert::AreEqual(1, ud.npoints(), "Unexpected npoints");
 
         ud[VALUE] = 3.433;
-        UData::time_point update1 = ud.updated();
+        UData::size_type update1 = ud.updated();
         Assert::AreEqual(3.433, ud.get(VALUE), 1e-12, "Unexpected value using indexer");
-        Assert::IsTrue(update1.time_since_epoch().count() > 0, "Time not updated on first insert");
+        Assert::IsTrue(update1 > 0, "Time not updated on first insert");
         Assert::IsTrue(ud.valid(), "Not valid after first insert");
 
         ud.set(7.35);
-        UData::time_point update2 = ud.updated();
+        UData::size_type update2 = ud.updated();
         Assert::AreEqual(7.35, ud.get(VALUE), 1e-12, "Unexpected value using set");
-        Assert::IsTrue((update2 - update1).count() > 0, "Time not updated on second insert");
+        Assert::IsTrue(update2 - update1 > 0, "Time not updated on second insert");
         Assert::IsTrue(ud.valid(), "Not valid after second insert");
-
 
         // Setting another value should reset valid to true
         ud.invalidate();
@@ -360,7 +393,8 @@ namespace TestUData {
             ud.getPair();
             Assert::Fail("Got pair from UType::Point without throwing");
         }
-        catch (...) { }
+        catch (...) {
+        }
     }
 
     void meanSD() {
@@ -399,7 +433,7 @@ namespace TestUData {
         Assert::AreEqual(5.0, ud[SD], 1e-12, "Unexpected SD value from pair [2]");
 
         // Vector Tests
-        ud.set(std::vector<double>({ 1.3, 2.0 }));
+        ud.set(std::vector<double>({1.3, 2.0}));
         Assert::AreEqual(1.3, ud[MEAN], 1e-12, "Unexpected mean value from vec [0]");
         Assert::AreEqual(2.0, ud[SD], 1e-12, "Unexpected SD value from vec [0]");
 
@@ -407,7 +441,7 @@ namespace TestUData {
         Assert::AreEqual(1.3, vec[0], 1e-12, "Unexpected mean value from vec [1]");
         Assert::AreEqual(2.0, vec[1], 1e-12, "Unexpected SD value from vec [1]");
 
-        vec = std::vector<double>({ 7.0, 5.0 });
+        vec = std::vector<double>({7.0, 5.0});
         ud.setVec(vec);
         Assert::AreEqual(7.0, ud[MEAN], 1e-12, "Unexpected mean value from vec [2]");
         Assert::AreEqual(5.0, ud[SD], 1e-12, "Unexpected SD value from vec [2]");
@@ -446,7 +480,7 @@ namespace TestUData {
         Assert::AreEqual(pair2, ud.getPair(2), "Unexpected value for second pair");
 
         // Vector Tests
-        std::vector<double> vec = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 };
+        std::vector<double> vec = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
         ud.setVec(vec);
         for (size_t i = 0; i < ud.npoints(); i++) {
             Assert::AreEqual(vec[i], ud.get(i), 1e-12, "Unexpected value when setting vector");
@@ -566,7 +600,8 @@ namespace TestUData {
         ud.set(7);
         Assert::AreEqual(7, ud[SAMPLE(0)], 1e-12);
         ud[WEIGHT(0)] = 0.1;
-        Assert::IsTrue(std::abs(ud[WEIGHT(0)] - 0.1) < 1e-12 && std::abs(ud[SAMPLE(0)] - 7) < 1e-12);
+        Assert::IsTrue(std::abs(ud[WEIGHT(0)] - 0.1) < 1e-12 &&
+                       std::abs(ud[SAMPLE(0)] - 7) < 1e-12);
         ud[SAMPLE(4)] = 15.0;
         Assert::AreEqual(15.0, ud[SAMPLE(4)], 1e-12);
         ud.set(SAMPLE(0), 9);
@@ -576,9 +611,11 @@ namespace TestUData {
         Assert::AreEqual(9.5, ud[SAMPLE(1)], 1e-12);
         Assert::AreEqual(ud.get(SAMPLE(1)), ud[SAMPLE(1)], 1e-12);
         ud.set(std::pair<double, double>(1.3, 0.5));
-        Assert::IsTrue(std::abs(ud[SAMPLE(0)] - 1.3) < 1e-12 && std::abs(ud[WEIGHT(0)] - 0.5) < 1e-12);
+        Assert::IsTrue(std::abs(ud[SAMPLE(0)] - 1.3) < 1e-12 &&
+                       std::abs(ud[WEIGHT(0)] - 0.5) < 1e-12);
         ud.set(PAIR(3), std::pair<double, double>(1.9, 0.25));
-        Assert::IsTrue(std::abs(ud[SAMPLE(3)] - 1.9) < 1e-12 && std::abs(ud[WEIGHT(3)] - 0.25) < 1e-12);
+        Assert::IsTrue(std::abs(ud[SAMPLE(3)] - 1.9) < 1e-12 &&
+                       std::abs(ud[WEIGHT(3)] - 0.25) < 1e-12);
         std::size_t size = ud.getVec().size();
         Assert::AreEqual(10, size);
     }

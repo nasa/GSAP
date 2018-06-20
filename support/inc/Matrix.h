@@ -7,7 +7,7 @@
  *   @version   0.2.0
  *   @date      2016-07-25
  *
- *   @copyright Copyright (c) 2016 United States Government as represented by
+ *   @copyright Copyright (c) 2018 United States Government as represented by
  *              the Administrator of the National Aeronautics and Space
  *              Administration. All Rights Reserved.
  */
@@ -92,7 +92,7 @@ namespace PCOE {
         /** @brief Exchanges the underlying data of two Matrices.
          *
          *  @param a The first matrix to swap.
-         *  @param a The second matrix to swap.
+         *  @param b The second matrix to swap.
          */
         friend void swap(Matrix& a, Matrix& b);
 

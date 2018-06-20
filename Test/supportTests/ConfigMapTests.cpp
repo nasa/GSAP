@@ -3,7 +3,7 @@
 //  UnitTestAll
 //
 //  Created by Chris Teubert on 4/5/16.
-//  Copyright © 2016 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
+//  Copyright © 2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
 //
 
 #include "Test.h"
@@ -21,6 +21,12 @@ void configMapInit()
     Assert::AreEqual(0, theMap.size());
 }
 
+void configMapLoadArgs() {
+    const int argc = 4;
+    char *argv[argc] = {"-test", "-test2", "-test3" , "badTest"};
+    ConfigMap theMap(argc, argv);
+}
+
 void configMapUse()
 {
     ConfigMap theMap;
@@ -30,6 +36,10 @@ void configMapUse()
 
     theMap.set("test2","blah");
     Assert::AreEqual(0, theMap["test2"][0].compare("blah"));
+
+    Assert::IsTrue(theMap.includes({"test"}));
+    Assert::IsTrue(theMap.includes({"test2"}));
+    Assert::IsFalse(theMap.includes({"test3"}));
 
     //std::string exampleLine("test3:a,b,dslfjs,d");
     //theMap.add(exampleLine);
@@ -45,7 +55,38 @@ void configMapUse()
 
 void configMapLoad()
 {
+    ConfigMap theMap;
+    theMap.addSearchPath("../Test/supportTests");
+    theMap = ConfigMap("Test.cfg");
+    Assert::AreNotEqual(0, theMap["test"][0].compare("modelBasedPrognoser"));
+}
 
+void configMapLoadNonexistent()
+{
+    ConfigMap theMap;
+    theMap.addSearchPath("../");
+    try {
+        theMap = ConfigMap("Nonexistent.cfg"); // File doesn't exist
+        Assert::Fail("Found file that should not exist.");
+    }
+    catch (std::ios_base::failure &e) {}
+}
+
+void configMapAddBadSearchPath()
+{
+    ConfigMap theMap;
+    try {
+        theMap.addSearchPath("../badPath");
+        Assert::Fail("Added bad search path");
+    }
+    catch (std::domain_error &e) {}
+}
+
+void configMapTrim()
+{
+    ConfigMap theMap;
+    theMap.addSearchPath("../Test/supportTests");
+    theMap = ConfigMap("Test.cfg");
 }
 
 void gsapConfigMapInit()

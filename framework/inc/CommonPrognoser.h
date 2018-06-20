@@ -16,14 +16,14 @@
  *   @note      THIS SOFTWARE IS DESIGNED TO WORK WITH OS X 10.11, and Windows V #####
  *
  *   @author    Chris Teubert
- *   @version   0.1.0
+ *   @version   1.1.0
  *
- *   @pre       Prognostic Configuration File and Prognoster Configuration Files
+ *   @pre       Prognostic Configuration File and Prognoser Configuration Files
  *
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *      Created: November 11, 2015
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -38,10 +38,30 @@
 #include "Thread.h"  // For Start, Stop, pause, ... etc.
 #include "ProgData.h"
 #include "DataStore.h"
+#include "CommManager.h"
 
 namespace PCOE {
-    class CommManager;
     class GSAPConfigMap;
+    
+    // This class is needed to bind getValue. Bind requires const copy constructor, which
+    // cannot be provided for CommManager (is deleted).
+    // The wrapper has a copy constructor to allow this. The getValue method calls
+    // getvalue for the wrapped CommManager
+    class CommManagerWrapper {
+     public:
+        CommManagerWrapper(CommManager * cIn) : c(cIn) {
+        }
+        
+        CommManagerWrapper(const CommManagerWrapper & in) {
+            c = in.c;
+        }
+        
+        Datum<double> getValue(const std::string & key) const {
+            return c->getValue(key);
+        }
+        
+        CommManager * c;
+    };
 
     class CommonPrognoser : public Thread {
     public:
@@ -124,22 +144,20 @@ namespace PCOE {
 
     protected:
         ProgData results;  ///> Prognostic Results
-
-        /**  @brief     A snapshot of the data used by this prognoser
-         *              in form (commonName, datum).
-         *   @see       getData()
-         */
-        DataStore dataSnapshot;
-
+        
+        Datum<double> getValue(const std::string & key);
         CommManager& comm;  ///> Communciations Manager
-
+        
     private:
         std::string histFileName;  ///< Name of history file
         std::vector<std::string> histStr;  ///< Current contents of history file
 
         unsigned int loopInterval;  ///< Time between prognostic loops (ms)
         unsigned int saveInterval;  ///< Loops between saves
-        bool usingPlaybackData;  ///< Using Playback data
+        
+        CommManagerWrapper cWrapper;
+        
+        std::map<std::string, std::function<Datum<double>(void)> > lookup;
     };
 }
 

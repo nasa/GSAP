@@ -12,7 +12,7 @@
 *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
 *      Created: March 5, 2016
 *
-*   @copyright Copyright (c) 2016 United States Government as represented by
+*   @copyright Copyright (c) 2018 United States Government as represented by
 *     the Administrator of the National Aeronautics and Space Administration.
 *     All Rights Reserved.
 */
@@ -21,16 +21,15 @@
 #define PCOE_MODEL_H
 
 #include <vector>
+#include <string>
 
 namespace PCOE {
     class Model {
-    protected:
+     protected:
         unsigned int numStates;
-        unsigned int numInputs;
-        unsigned int numOutputs;
         double m_dt;  // Sampling time
 
-    public:
+     public:
         virtual ~Model() = default;
 
         /** @brief      Execute state equation. This version of the function uses the default sampling time.
@@ -73,10 +72,16 @@ namespace PCOE {
         unsigned int getNumStates() const;
         unsigned int getNumInputs() const;
         unsigned int getNumOutputs() const;
+        std::vector<std::string> inputs;
+        std::vector<std::string> outputs;
 
         // Get/set dt
         double getDt() const;
         void setDt(const double newDt);
+        
+        /** @brief      Performs a transformation on the given inputs/outputs
+         **/
+        virtual void transform(std::vector<double> &, std::vector<double> &) {}
     };
 }
 

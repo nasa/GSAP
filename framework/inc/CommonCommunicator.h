@@ -6,12 +6,12 @@
  *   @brief     CommonCommunicator Class- Abstract base class for all communicators
  *
  *   @author    Chris Teubert
- *   @version   0.1.0
+ *   @version   1.1.0
  *
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *      Created: March 21, 2016
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
@@ -19,12 +19,13 @@
 #ifndef PCOE_COMMONCOMMUNICATOR_H
 #define PCOE_COMMONCOMMUNICATOR_H
 
-#include <unordered_map>
-#include <string>
-#include <mutex>
 #include <condition_variable>
-#include <utility>
+#include <functional>
+#include <mutex>
+#include <string>
 #include <queue>
+#include <unordered_map>
+#include <utility>
 
 #include "DataStore.h"
 #include "ProgData.h"

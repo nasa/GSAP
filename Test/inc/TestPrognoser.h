@@ -3,7 +3,7 @@
 //  Generic Infrastructure Example
 //
 //  Created by Chris Teubert on 4/18/16.
-//  Copyright (c) 2016 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
+//  Copyright (c) 2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
 //
 
 #ifndef GSAP_TESTPROGNOSER_H

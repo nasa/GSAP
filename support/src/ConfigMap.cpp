@@ -1,38 +1,39 @@
 /**  Configuration Map - Body
  *   @class     ConfigMap ConfigMap.h
  *
- *   @brief     Configuration Map- Map for loading accessing, and parsing configuration parameters from a key:value1, value2, ... style file
+ *   @brief     Configuration Map- Map for loading accessing, and parsing configuration parameters
+ * from a key:value1, value2, ... style file
  *
  *   @author    Chris Teubert <christopher.a.teubert@nasa.gov>
  *   @author    Jason Watkins <jason-watkins@outlook.com>
- *   @version   0.1.1
+ *   @version   1.1.1
  *   @date      2016-06-22
  *
- *   @copyright Copyright (c) 2013-2016 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
 
-#include <iostream>
-#include <fstream>
 #include <algorithm>
-#include <functional>
 #include <cctype>
+#include <fstream>
+#include <functional>
+#include <iostream>
 #include <locale>
 #include <string>
-#include <vector>
-#include <utility>  // For Pair
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <utility> // For Pair
+#include <vector>
 
-#include "Exceptions.h"
 #include "ConfigMap.h"
 
 namespace PCOE {
     std::vector<std::string> ConfigMap::searchPaths;
+    
+    const std::string IMPORT_KEY = "importConfig";
 
-    void trim(std::string& str)
-    {
+    void trim(std::string& str) {
         using size_type = std::string::size_type;
         using diff_type = std::string::difference_type;
         if (str.empty()) {
@@ -65,16 +66,20 @@ namespace PCOE {
         else {
             // Whitespace on both ends
             diff_type frontDiff = static_cast<diff_type>(front);
-            diff_type backDiff = static_cast<diff_type>(back);
-            str = std::string(str.begin() + frontDiff, str.begin() + backDiff);
+            diff_type backDiff  = static_cast<diff_type>(back);
+            str                 = std::string(str.begin() + frontDiff, str.begin() + backDiff);
         }
     }
-    
-    ConfigMap::ConfigMap(const std::string & filename) {
+
+    ConfigMap::ConfigMap(const std::string& filename) {
         loadFile(filename);
     }
 
-    void ConfigMap::loadFile(const std::string & filename) {
+    ConfigMap::ConfigMap(const int argc, char* argv[]) {
+        loadArguments(argc, argv);
+    }
+
+    void ConfigMap::loadFile(const std::string& filename) {
         // Open file; First check the working directory, then try each path in searchPaths
         std::ifstream file(filename);
         for (auto i = searchPaths.cbegin(); !file.good() && i != searchPaths.cend(); ++i) {
@@ -98,18 +103,55 @@ namespace PCOE {
         }
     }
 
-    void ConfigMap::set(const std::string & key, const std::string & value) {
-        (*this)[key] = { value };
+    // This function parses the command line arguments to the program and stores
+    // them in the map. The function expects the exact arguments given to the
+    // program's main, so it assumes that the first value in argv is the program
+    // name.
+    // At some point in the past there was a requirement that options provided
+    // on the command-line be distinguishable from options provided in a config
+    // file, so the leading dash in option names is retained.
+    // The command line args consist of any number of mixed values and
+    // key/value pairs. Key/value pairs take the form of "-KEY VALUE", while
+    // bare values are any item in argv not directly preceded by a an item
+    // starting with a dash.
+    void ConfigMap::loadArguments(const int argc, char* argv[]) {
+        for (auto i = 1; i < argc; i++) {
+            std::string key = "-NO_KEY";
+            if (argv[i][0] == '-') {
+                key = argv[i];
+                i += 1;
+                if (!(i < argc)) {
+                    throw std::runtime_error("Invalid argument");
+                }
+            }
+
+            std::string value = argv[i];
+            (*this)[key].push_back(value);
+        }
     }
 
-    void ConfigMap::parseLine(const std::string & line) {
+    void ConfigMap::set(const std::string& key, const std::string& value) {
+        (*this)[key] = {value};
+    }
+
+    bool ConfigMap::containsAllKeys(std::initializer_list<std::string> list) const {
+        for (auto& elem : list) {
+            if (!containsKey(elem)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void ConfigMap::parseLine(const std::string& line) {
         using size_type = std::string::size_type;
-        if (line.empty() || line[0] == '#' || line[0] == '/') {
+        if (line.empty() || line[0] == '#' || line[0] == '\r' || line[0] == '\n' ||
+            line[0] == '/') {
             return; // Comment or empty line
         }
         size_type pos = line.find_first_of(':');
         if (pos == std::string::npos) {
-            throw FormatError("Invalid Configuration line, missing ':' character.");
+            throw std::runtime_error("Invalid Configuration line, missing ':' character.");
         }
 
         std::pair<std::string, std::vector<std::string>> kv;
@@ -126,7 +168,15 @@ namespace PCOE {
                 kv.second.push_back(s);
             }
         }
-        insert(std::move(kv));
+        // If the key is IMPORT_KEY, Import the specified files into this configuration map
+        if (kv.first.compare(IMPORT_KEY) == 0) {
+            for (auto&& file : kv.second) {
+                loadFile(file);
+            }
+        }
+        else {
+            insert(std::move(kv));
+        }
     }
 
     void ConfigMap::addSearchPath(const std::string& path) {

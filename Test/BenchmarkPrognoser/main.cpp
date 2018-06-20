@@ -3,7 +3,7 @@
 //  Example
 //
 //  Created by Teubert, Christopher (ARC-TI)[SGT, INC] on 5/4/16.
-//  Copyright © 2016 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
+//  Copyright © 2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
 //
 
 #include "ProgManager.h"
@@ -31,12 +31,6 @@
 using namespace PCOE;
 
 int main() {
-    // Specify configuration file directories
-  //  std::ofstream file;
-    //file.open("test.txt");
-    //file<<"test \n";
-    //file.close();
-
     ConfigMap::addSearchPath("../example/cfg/");
 
     // Specify Prognosers
@@ -63,6 +57,13 @@ int main() {
     pPredictorFactory.Register("MC", PredictorFactory::Create<MonteCarloPredictor>);
 
     ProgManager PM = ProgManager("bench.cfg");
-    PM.run();
+    
+    printf("Benchmarking\n");
+    PM.enable();
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    PM.start();
+    std::this_thread::sleep_for(std::chrono::minutes(1));
+    PM.stop();
+  
     return 0;
 }

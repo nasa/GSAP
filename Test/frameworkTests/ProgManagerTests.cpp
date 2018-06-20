@@ -5,7 +5,7 @@
  *  @version   0.2.0
  *  @date      2016-08-08
  *
- *  @copyright Copyright (c) 2016 United States Government as represented by
+ *  @copyright Copyright (c) 2018 United States Government as represented by
  *             the Administrator of the National Aeronautics and Space
  *             Administration. All Rights Reserved.
  **/
@@ -21,10 +21,6 @@ using namespace PCOE::Test;
 namespace TestProgManager {
     void construct_default() {
         ProgManager pm;
-
-        // ProgManager with no config file set should run and exit without
-        // throwing an exception or hanging.
-        pm.run();
     }
 
     void construct_path() {

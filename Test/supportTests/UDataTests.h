@@ -1,7 +1,8 @@
 /**  Unit Test functions for UData- Header
  *   @file      Unit Testing functions for UData
  *
- *   @brief     A set of functions to be used with UnitTester. These functions test all the aspects of UData
+ *   @brief     A set of functions to be used with UnitTester. These functions
+ *              test all the aspects of UData
  *
  *   @ingroup   UData
  *
@@ -10,7 +11,7 @@
  *   @version   0.2.0
  *   @date      March 5, 2016
  *
- *   @copyright Copyright (c) 2013-2015 United States Government as represented by
+ *   @copyright Copyright (c) 2013-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  **/
