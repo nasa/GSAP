@@ -22,7 +22,7 @@
 #ifndef PCOE_PROGNOSERFACTORY_H
 #define PCOE_PROGNOSERFACTORY_H
 
-#include "CommonPrognoser.h"
+#include "Prognoser.h"
 #include "ModelBasedPrognoser.h"
 #include "Factory.h"
 #include "Singleton.h"
@@ -35,7 +35,7 @@ namespace PCOE {
      *  @see        Factory
      *  @note       Uses Factory template parent class.
      **/
-    class PrognoserFactory : public Factory<CommonPrognoser>,
+    class PrognoserFactory : public Factory<Prognoser>,
         public Singleton<PrognoserFactory> {
         friend class Singleton<PrognoserFactory>;  // Needed for singleton
     private:

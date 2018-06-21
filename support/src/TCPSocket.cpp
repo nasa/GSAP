@@ -309,7 +309,7 @@ namespace PCOE {
 
     void TCPSocket::SendTimeout(double value) {
 #ifdef _WIN32
-        timeout_type to = (long int)value * 1e3;
+        timeout_type to = ((long int)value) * 1000;
 #else
         timeout_type to;
         to.tv_sec  = static_cast<long int>(value);

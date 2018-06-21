@@ -12,14 +12,12 @@
  *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
  *      Created: March 5, 2016
  *
- *   https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20140009120.pdf
- *
  *   @copyright Copyright (c) 2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
 
-#include "Battery.h"
+#include "BatteryModel.h"
 
 #include <cmath>
 #include <vector>
@@ -80,22 +78,19 @@ const std::string XNMIN_KEY        = "Battery.xnMin";
 const std::string XPMAX_KEY        = "Battery.xpMax";
 const std::string XPMIN_KEY        = "Battery.xpMin";
 
-Battery::Battery() {
+BatteryModel::BatteryModel() {
     numStates           = 8;
     numInputParameters  = 1;
     numPredictedOutputs = 1;
     m_dt                = 1;
-
-    inputs  = {"power"};
-    outputs = {"voltage", "temperature"};
-    events = {"EOD"};
-    predictedOutputs = {"SOC"};
+    inputs              = {"power"};
+    outputs             = {"voltage", "temperature"};
     // Set some default parameters
     setParameters();
 }
 
 // Constructor based on configMap
-Battery::Battery(const ConfigMap& configMap) : Battery::Battery() {
+BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryModel() {
     // Check for arguments to setParameters first, qMobile and Vol
     // There are default values available, so call to setParameters is different depending
     // on which are given in the configMap.
@@ -243,20 +238,20 @@ Battery::Battery(const ConfigMap& configMap) : Battery::Battery() {
 }
 
 // Battery State Equation
-void Battery::stateEqn(const double,
-                       std::vector<double>& x,
-                       const std::vector<double>& u,
-                       const std::vector<double>& n,
-                       const double dt) {
+void BatteryModel::stateEqn(const double,
+                            std::vector<double>& x,
+                            const std::vector<double>& u,
+                            const std::vector<double>& n,
+                            const double dt) {
     // Extract states
     double Tb  = x[0];
     double Vo  = x[1];
-    double Vsn = x[2]; // Surface voltage negative
-    double Vsp = x[3]; // Surface voltage positive
-    double qnB = x[4]; // Amount of negative lithium ions in the bulk
-    double qnS = x[5]; // Amount of negative lithium ions in the surface
-    double qpB = x[6]; // Amount of positive lithium ions in the bulk
-    double qpS = x[7]; // Amount of positive lithium ions in the surface
+    double Vsn = x[2];
+    double Vsp = x[3];
+    double qnB = x[4];
+    double qnS = x[5];
+    double qpB = x[6];
+    double qpS = x[7];
 
     // Extract inputs
     double P = u[0];
@@ -268,26 +263,18 @@ void Battery::stateEqn(const double,
     double CnSurface = qnS / parameters.VolS;
     double xSn       = qnS / parameters.qSMax;
     double xnS       = qnS / parameters.qSMax;
-    
-    // Cached values (for efficiency)
-    double xnS2        = xnS * xnS;
-    double xnS2_1      = 2 * xnS - 1;
-    double xnS2_xnS    = xnS2 - xnS;
-    
-    // State estimation
+    auto xnS2        = xnS * xnS;
+    auto xnS2_1      = 2 * xnS - 1;
+    auto xnS2_xnS    = xnS2 - xnS;
     double Ven11 =
         parameters.An11 * (22 * xnS2_1 * pow(xnS2_1, 10) + pow(xnS2_1, 12)) / parameters.F;
     double Ven1   = parameters.An1 * (2 * xnS2_1 + pow(xnS2_1, 2)) / parameters.F;
     double CnBulk = qnB / parameters.VolB;
     double Ven6   = parameters.An6 * (12 * xnS2_1 * pow(xnS2_1, 5) + pow(xnS2_1, 7)) / parameters.F;
     double xpS    = qpS / parameters.qSMax;
-    
-    // Cached values
     auto xpS2     = xpS * xpS;
     auto xpS2_1   = 2 * xpS - 1;
     auto xpS2_xpS = xpS2 - xpS;
-    
-    // Continue state estimation
     double xSp    = qpS / parameters.qBMax;
     double qdotDiffusionBSp = (CpBulk - CpSurface) / parameters.tDiffusion;
     double Ven8 = parameters.An8 * (16 * xnS2_xnS * pow(xnS2_1, 7) + pow(xnS2_1, 9)) / parameters.F;
@@ -362,12 +349,12 @@ void Battery::stateEqn(const double,
 }
 
 // Battery Output Equation
-void Battery::outputEqn(const double,
-                        const std::vector<double>& x,
-                        const std::vector<double>&,
-                        const std::vector<double>& n,
+void BatteryModel::outputEqn(const double,
+                             const std::vector<double>& x,
+                             const std::vector<double>&,
+                             const std::vector<double>& n,
 
-                        std::vector<double>& z) {
+                             std::vector<double>& z) {
     // Extract states
     const double& Tb  = x[0];
     const double& Vo  = x[1];
@@ -441,9 +428,9 @@ void Battery::outputEqn(const double,
 }
 
 // Battery Threshold Equation
-bool Battery::thresholdEqn(const double t,
-                           const std::vector<double>& x,
-                           const std::vector<double>& u) {
+bool BatteryModel::thresholdEqn(const double t,
+                                const std::vector<double>& x,
+                                const std::vector<double>& u) {
     // Compute based on voltage, so use output equation to get voltage
     std::vector<double> z(2);
     outputEqn(t, x, u, std::vector<double>(2), z);
@@ -453,9 +440,9 @@ bool Battery::thresholdEqn(const double t,
 }
 
 // Battery Input Equation
-void Battery::inputEqn(const double,
-                       const std::vector<double>& inputParameters,
-                       std::vector<double>& u) {
+void BatteryModel::inputEqn(const double,
+                            const std::vector<double>& inputParameters,
+                            std::vector<double>& u) {
     //    if (u[0] == NAN) {
     //        u[0] = inputParameters[1];
     //    } else {
@@ -465,19 +452,20 @@ void Battery::inputEqn(const double,
 }
 
 // Battery Predicted Outputs Equation
-void Battery::predictedOutputEqn(const double,
-                                 const std::vector<double>& x,
-                                 const std::vector<double>&,
-                                 std::vector<double>& z) {
+void BatteryModel::predictedOutputEqn(const double,
+                                      const std::vector<double>& x,
+                                      const std::vector<double>&,
+                                      std::vector<double>& z) {
     // SOC is the only predicted output
     // Compute "nominal" SOC
     double qnS       = x[indices.states.qnS];
     double qnB       = x[indices.states.qnB];
     z[PRED_OUT::SOC] = (qnS + qnB) / parameters.qnMax;
+    ;
 }
 
 // Set model parameters, given qMobile
-void Battery::setParameters(const double qMobile, const double Vol) {
+void BatteryModel::setParameters(const double qMobile, const double Vol) {
     // Set qMobile
     parameters.qMobile = qMobile;
 
@@ -579,9 +567,9 @@ void Battery::setParameters(const double qMobile, const double Vol) {
 }
 
 // Initialize state, given an initial voltage, current, and temperature
-void Battery::initialize(std::vector<double>& x /*state*/,
-                         const std::vector<double>& u /*input*/,
-                         const std::vector<double>& z /*output*/) {
+void BatteryModel::initialize(std::vector<double>& x /*state*/,
+                              const std::vector<double>& u /*input*/,
+                              const std::vector<double>& z /*output*/) {
     // This is solved via a search procedure
     // Start by setting up an xp and xn vectors
     std::vector<double> xp, xn;
@@ -718,4 +706,10 @@ void Battery::initialize(std::vector<double>& x /*state*/,
     x[indices.states.qnS] = qnS0;
     x[indices.states.qpB] = qpB0;
     x[indices.states.qpS] = qpS0;
+}
+
+void BatteryModel::transform(std::vector<double>& u, std::vector<double>& z) {
+    // Given input is current, change it to power
+    u[indices.inputs.P] *= z[indices.outputs.Vm];
+    // Leave everything else as is
 }

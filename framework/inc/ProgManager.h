@@ -28,8 +28,8 @@
 #include <string>
 #include <vector>
 
-#include "CommonPrognoser.h"
 #include "GSAPConfigMap.h"
+#include "Prognoser.h"
 
 namespace PCOE {
     enum COMMAND { NONE, START, STOP, RESUME, PAUSE };
@@ -114,7 +114,7 @@ namespace PCOE {
         /// @return     Received Command
         Cmd control();
 
-        std::vector<std::unique_ptr<CommonPrognoser>> prognosers;
+        std::vector<std::unique_ptr<Prognoser>> prognosers;
 
         CommManager& theComm;
     };

@@ -16,7 +16,7 @@
 
 #include <fstream>
 
-#include "CommonCommunicatorTests.h"
+#include "CommunicatorTests.h"
 #include "FrameworkTests.h"
 #include "ProgManagerTests.h"
 #include "Test.h"
@@ -35,10 +35,10 @@ int main() {
     context.AddTest("setConfig_path", TestProgManager::setConfig_path, "ProgManager");
     context.AddTest("setConfig_config", TestProgManager::setConfig_config, "ProgManager");
 
-    context.AddTest("construct", TestCommonCommunicator::construct, "Common Communicator");
-    context.AddTest("enqueue", TestCommonCommunicator::enqueue, "Common Communicator");
-    context.AddTest("subscribe", TestCommonCommunicator::subscribe, "Common Communicator");
-    context.AddTest("stop", TestCommonCommunicator::stop, "Common Communicator");
+    context.AddTest("construct", TestCommunicator::construct, "Common Communicator");
+    context.AddTest("enqueue", TestCommunicator::enqueue, "Common Communicator");
+    context.AddTest("subscribe", TestCommunicator::subscribe, "Common Communicator");
+    context.AddTest("stop", TestCommunicator::stop, "Common Communicator");
 
     int result = context.Execute();
     std::ofstream junit("testresults/framework.xml");

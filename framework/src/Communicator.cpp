@@ -1,4 +1,4 @@
-/** @file CommonCommunicator.cpp
+/** @file Communicator.cpp
  *
  *  @author  Jason Watkins <jason-watkins@outlook.com>
  *  @version 0.1.0
@@ -9,10 +9,10 @@
  *    All Rights Reserved.
  */
 
-#include "CommonCommunicator.h"
+#include "Communicator.h"
 
 namespace PCOE {
-    CommonCommunicator::CommonCommunicator()
+    Communicator::Communicator()
         : subscribers(), writeItems(), readWaiting(false), m(), cv(), sm() {
         // Implemenation Note: The use of sm/scv here is needed to prevent
         // read/write operations being requested before the processing thread
@@ -23,7 +23,7 @@ namespace PCOE {
         scv.wait(slock);
     }
 
-    CommonCommunicator::~CommonCommunicator() {
+    Communicator::~Communicator() {
         unique_lock lock(m);
         setState(ThreadState::Stopped);
         cv.notify_one();
@@ -31,30 +31,30 @@ namespace PCOE {
         join();
     }
 
-    void CommonCommunicator::enqueue(const AllData& data) {
+    void Communicator::enqueue(const AllData& data) {
         lock_guard lock(m);
         writeItems.push(data);
         cv.notify_one();
     }
 
-    void CommonCommunicator::setRead() {
+    void Communicator::setRead() {
         lock_guard lock(m);
         readWaiting = true;
         cv.notify_one();
     }
 
-    void CommonCommunicator::subscribe(const Callback& fn) {
+    void Communicator::subscribe(const Callback& fn) {
         lock_guard lock(m);
         subscribers.push_back(fn);
     }
 
-    void CommonCommunicator::stop() {
+    void Communicator::stop() {
         lock_guard lock(m);
         Thread::stop();
         cv.notify_one();
     }
 
-    void CommonCommunicator::run() {
+    void Communicator::run() {
         unique_lock slock(sm);
         slock.unlock();
         unique_lock lock(m);

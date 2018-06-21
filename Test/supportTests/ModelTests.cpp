@@ -1,36 +1,35 @@
 /**  Model Unit Tests - Body
-*   @ingroup   GPIC++
-*   @ingroup   GSAP-Support
-*
-*   @brief     Unit tests for Model class and derived classes.
-*
-*   @author    Matthew Daigle
-*   @version   1.1.0
-*
-*   @pre       N/A
-*
-*      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
-*      Created: March 7, 2016
-*
-*   @copyright Copyright (c) 2018 United States Government as represented by
-*     the Administrator of the National Aeronautics and Space Administration.
-*     All Rights Reserved.
-*/
+ *   @ingroup   GPIC++
+ *   @ingroup   GSAP-Support
+ *
+ *   @brief     Unit tests for Model class and derived classes.
+ *
+ *   @author    Matthew Daigle
+ *   @version   1.1.0
+ *
+ *   @pre       N/A
+ *
+ *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
+ *      Created: March 7, 2016
+ *
+ *   @copyright Copyright (c) 2018 United States Government as represented by
+ *     the Administrator of the National Aeronautics and Space Administration.
+ *     All Rights Reserved.
+ */
 
 #include <iostream>
 
 #include "Test.h"
 
-#include "ModelTests.h"
+#include "BatteryModel.h"
 #include "Model.h"
+#include "ModelTests.h"
 #include "Tank3.h"
-#include "Battery.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
-void testTankInitialize()
-{
+void testTankInitialize() {
     // Create Tank3 model
     Tank3 TankModel = Tank3();
 
@@ -46,18 +45,17 @@ void testTankInitialize()
     Assert::AreEqual(0, x[2], 1e-12);
 }
 
-void testTankStateEqn()
-{
+void testTankStateEqn() {
     // Create Tank3 model
     Tank3 TankModel = Tank3();
 
     // Set parameter values
-    TankModel.parameters.K1 = 1;
-    TankModel.parameters.K2 = 2;
-    TankModel.parameters.K3 = 3;
-    TankModel.parameters.R1 = 1;
-    TankModel.parameters.R2 = 2;
-    TankModel.parameters.R3 = 3;
+    TankModel.parameters.K1   = 1;
+    TankModel.parameters.K2   = 2;
+    TankModel.parameters.K3   = 3;
+    TankModel.parameters.R1   = 1;
+    TankModel.parameters.R2   = 2;
+    TankModel.parameters.R3   = 3;
     TankModel.parameters.R1c2 = 1;
     TankModel.parameters.R2c3 = 2;
 
@@ -94,18 +92,17 @@ void testTankStateEqn()
     Assert::AreEqual(0.1, TankModel.getDt(), 1e-12);
 }
 
-void testTankOutputEqn()
-{
+void testTankOutputEqn() {
     // Create Tank3 model
     Tank3 TankModel = Tank3();
 
     // Set parameter values
-    TankModel.parameters.K1 = 1;
-    TankModel.parameters.K2 = 2;
-    TankModel.parameters.K3 = 3;
-    TankModel.parameters.R1 = 1;
-    TankModel.parameters.R2 = 2;
-    TankModel.parameters.R3 = 3;
+    TankModel.parameters.K1   = 1;
+    TankModel.parameters.K2   = 2;
+    TankModel.parameters.K3   = 3;
+    TankModel.parameters.R1   = 1;
+    TankModel.parameters.R2   = 2;
+    TankModel.parameters.R3   = 3;
     TankModel.parameters.R1c2 = 1;
     TankModel.parameters.R2c3 = 2;
 
@@ -144,10 +141,9 @@ void testTankOutputEqn()
     Assert::AreEqual(1.0 / 30.0, z[2], 1e-12);
 }
 
-void testBatterySetParameters()
-{
+void testBatterySetParameters() {
     // Create battery model
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
 
     // Set parameters to defaults
     battery.setParameters(7500);
@@ -158,10 +154,9 @@ void testBatterySetParameters()
     Assert::AreEqual(12500, battery.parameters.qpMax, 1e-12);
 }
 
-void testBatteryInitialization()
-{
+void testBatteryInitialization() {
     // Create battery model
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
 
     // Set up state vector
     std::vector<double> x(8);
@@ -176,19 +171,22 @@ void testBatteryInitialization()
 
     // Check states
     Assert::AreEqual(293.15, x[battery.indices.states.Tb], 1e-12);
-    Assert::AreEqual(battery.parameters.Ro*0.1, x[battery.indices.states.Vo], 1e-12);
+    Assert::AreEqual(battery.parameters.Ro * 0.1, x[battery.indices.states.Vo], 1e-12);
     Assert::AreEqual(0, x[battery.indices.states.Vsn], 1e-12);
     Assert::AreEqual(0, x[battery.indices.states.Vsp], 1e-12);
-    Assert::IsTrue(x[battery.indices.states.qnB] > 5.62e3 && x[battery.indices.states.qnB] < 5.63e3);
-    Assert::IsTrue(x[battery.indices.states.qpB] > 5.771e3 && x[battery.indices.states.qpB] < 5.772e3);
-    Assert::IsTrue(x[battery.indices.states.qnS] > 6.2535e2 && x[battery.indices.states.qnS] < 6.2536e2);
-    Assert::IsTrue(x[battery.indices.states.qpS] > 6.413e2 && x[battery.indices.states.qpS] < 6.4132e2);
+    Assert::IsTrue(x[battery.indices.states.qnB] > 5.62e3 &&
+                   x[battery.indices.states.qnB] < 5.63e3);
+    Assert::IsTrue(x[battery.indices.states.qpB] > 5.771e3 &&
+                   x[battery.indices.states.qpB] < 5.772e3);
+    Assert::IsTrue(x[battery.indices.states.qnS] > 6.2535e2 &&
+                   x[battery.indices.states.qnS] < 6.2536e2);
+    Assert::IsTrue(x[battery.indices.states.qpS] > 6.413e2 &&
+                   x[battery.indices.states.qpS] < 6.4132e2);
 }
 
-void testBatteryStateEqn()
-{
+void testBatteryStateEqn() {
     // Create battery model
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
 
     // Set up state vector
     std::vector<double> x(8);
@@ -213,19 +211,25 @@ void testBatteryStateEqn()
 
     // Check states
     Assert::AreEqual(293.15, x[battery.indices.states.Tb], 1e-12);
-    Assert::IsTrue(x[battery.indices.states.Vo] > 0.01461 && x[battery.indices.states.Vo] < 0.14611);
-    Assert::IsTrue(x[battery.indices.states.Vsn] > 1.34338e-5 && x[battery.indices.states.Vsn] < 1.34339e-5);
-    Assert::IsTrue(x[battery.indices.states.Vsp] > 7.66013e-6 && x[battery.indices.states.Vsp] < 7.6601342e-6);
-    Assert::IsTrue(x[battery.indices.states.qnB] > 5.62818e3 && x[battery.indices.states.qnB] < 5.62819e3);
-    Assert::IsTrue(x[battery.indices.states.qnS] > 6.251e2 && x[battery.indices.states.qnS] < 6.2511e2);
-    Assert::IsTrue(x[battery.indices.states.qpB] > 5.77181e3 && x[battery.indices.states.qpB] < 5.771821e3);
-    Assert::IsTrue(x[battery.indices.states.qpS] > 6.41563e2 && x[battery.indices.states.qpS] < 6.4156335e2);
+    Assert::IsTrue(x[battery.indices.states.Vo] > 0.01461 &&
+                   x[battery.indices.states.Vo] < 0.14611);
+    Assert::IsTrue(x[battery.indices.states.Vsn] > 1.34338e-5 &&
+                   x[battery.indices.states.Vsn] < 1.34339e-5);
+    Assert::IsTrue(x[battery.indices.states.Vsp] > 7.66013e-6 &&
+                   x[battery.indices.states.Vsp] < 7.6601342e-6);
+    Assert::IsTrue(x[battery.indices.states.qnB] > 5.62818e3 &&
+                   x[battery.indices.states.qnB] < 5.62819e3);
+    Assert::IsTrue(x[battery.indices.states.qnS] > 6.251e2 &&
+                   x[battery.indices.states.qnS] < 6.2511e2);
+    Assert::IsTrue(x[battery.indices.states.qpB] > 5.77181e3 &&
+                   x[battery.indices.states.qpB] < 5.771821e3);
+    Assert::IsTrue(x[battery.indices.states.qpS] > 6.41563e2 &&
+                   x[battery.indices.states.qpS] < 6.4156335e2);
 }
 
-void testBatteryOutputEqn()
-{
+void testBatteryOutputEqn() {
     // Create battery model
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
 
     // Set up state vector
     std::vector<double> x(8);
@@ -252,14 +256,14 @@ void testBatteryOutputEqn()
     battery.outputEqn(0, x, u, zeroNoise, z);
 
     // Check outputs
-    Assert::IsTrue(z[battery.indices.outputs.Vm] > 3.999871 && z[battery.indices.outputs.Vm] < 3.9998711);
+    Assert::IsTrue(z[battery.indices.outputs.Vm] > 3.999871 &&
+                   z[battery.indices.outputs.Vm] < 3.9998711);
     Assert::AreEqual(20, z[battery.indices.outputs.Tbm], 1e-12);
 }
 
-void testBatteryThresholdEqn()
-{
+void testBatteryThresholdEqn() {
     // Create battery model
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
 
     // Set up state vector
     std::vector<double> x(8);
@@ -284,33 +288,31 @@ void testBatteryThresholdEqn()
     z0[0] = 20;
     z0[1] = 3.0;
     battery.initialize(x, u0, z0);
-    //battery.initialize(x,3.0,0.1,20);
+    // battery.initialize(x,3.0,0.1,20);
 
     // Check that at threshold
     Assert::AreEqual(true, battery.thresholdEqn(0, x, u));
 }
 
-void testBatteryInputEqn()
-{
+void testBatteryInputEqn() {
     // Create battery model
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
 
     // Set input vector
     std::vector<double> u(1);
     u[0] = 0;
 
     // Set input parameters
-    std::vector<double> inputParameters({ 1,2,3,4,5 });
+    std::vector<double> inputParameters({1, 2, 3, 4, 5});
 
     // Run inputEqn for different time points and check values
     battery.inputEqn(1, inputParameters, u);
     Assert::AreEqual(1, u[0], 1e-12);
 }
 
-void testBatteryPredictedOutputEqn()
-{
+void testBatteryPredictedOutputEqn() {
     // Create battery model
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
 
     // Set up state vector
     std::vector<double> x(8);

@@ -9,7 +9,7 @@
  *                  max     The maximum random number generated (default 10000)
  *                  step    The step size between possible random numbers (default 0.5)
  *
- *   @see        CommonCommunicator
+ *   @see        Communicator
  *
  *   @author    Chris Teubert
  *   @version   1.1.0
@@ -25,10 +25,10 @@
 #ifndef PCOE_RANDOMCOMMUNICATOR_H
 #define PCOE_RANDOMCOMMUNICATOR_H
 
-#include "CommonCommunicator.h"  ///< Parent Class
+#include "Communicator.h"  ///< Parent Class
 
 namespace PCOE {
-    class RandomCommunicator : public CommonCommunicator {
+    class RandomCommunicator : public Communicator {
     public:
         /** @brief      Constructor for RandomCommunicator - Called by the CommunicatorFactory
          *  @param      config  Reference to configuration map for the communicator

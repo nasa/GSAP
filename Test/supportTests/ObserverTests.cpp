@@ -1,63 +1,62 @@
 /**  ObserverTests - Body
-*   @file      Unit tests for Observer classes
-*   @ingroup   GPIC++
-*   @ingroup   Observers
-*
-*   @brief     Unit tests for Observer classes
-*
-*   @author    Matthew Daigle
-*   @version   1.1.0
-*
-*   @pre       N/A
-*
-*      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
-*      Created: March 17, 2016
-*
-*   @copyright Copyright (c) 2018 United States Government as represented by
-*     the Administrator of the National Aeronautics and Space Administration.
-*     All Rights Reserved.
-*/
+ *   @file      Unit tests for Observer classes
+ *   @ingroup   GPIC++
+ *   @ingroup   Observers
+ *
+ *   @brief     Unit tests for Observer classes
+ *
+ *   @author    Matthew Daigle
+ *   @version   1.1.0
+ *
+ *   @pre       N/A
+ *
+ *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
+ *      Created: March 17, 2016
+ *
+ *   @copyright Copyright (c) 2018 United States Government as represented by
+ *     the Administrator of the National Aeronautics and Space Administration.
+ *     All Rights Reserved.
+ */
 
 #include <iostream>
 
 #include "Test.h"
 
-#include "ObserverTests.h"
-#include "Tank3.h"
-#include "Battery.h"
+#include "BatteryModel.h"
 #include "Matrix.h"
-#include "UnscentedKalmanFilter.h"
-#include "ParticleFilter.h"
-#include "ThreadSafeLog.h"
 #include "ModelFactory.h"
+#include "ObserverTests.h"
+#include "ParticleFilter.h"
+#include "Tank3.h"
+#include "ThreadSafeLog.h"
+#include "UnscentedKalmanFilter.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
 void observerTestsInit() {
     // Set up the log
-    Log & log = Log::Instance("ObserverTests.log");
+    Log& log = Log::Instance("ObserverTests.log");
     log.Initialize("ObserverTests", "1.0", "No comments.");
 
     // Create the needed factories
-    ModelFactory & pModelFactory = ModelFactory::instance();
+    ModelFactory& pModelFactory = ModelFactory::instance();
 
     // Register battery model
-    pModelFactory.Register("Battery", ModelFactory::Create<Battery>);
+    pModelFactory.Register("Battery", ModelFactory::Create<BatteryModel>);
 }
 
-void testUKFTankInitialize()
-{
+void testUKFTankInitialize() {
     // Create Tank model
     Tank3 TankModel = Tank3();
 
     // Set parameter values
-    TankModel.parameters.K1 = 1;
-    TankModel.parameters.K2 = 2;
-    TankModel.parameters.K3 = 3;
-    TankModel.parameters.R1 = 1;
-    TankModel.parameters.R2 = 2;
-    TankModel.parameters.R3 = 3;
+    TankModel.parameters.K1   = 1;
+    TankModel.parameters.K2   = 2;
+    TankModel.parameters.K3   = 3;
+    TankModel.parameters.R1   = 1;
+    TankModel.parameters.R2   = 2;
+    TankModel.parameters.R3   = 3;
     TankModel.parameters.R1c2 = 1;
     TankModel.parameters.R2c3 = 2;
 
@@ -89,7 +88,7 @@ void testUKFTankInitialize()
 
     // Create a UKF
     UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&TankModel, Q, R);
-    double t = 0;
+    double t                  = 0;
 
     // Make sure that can't step without initializing first
     try {
@@ -97,7 +96,8 @@ void testUKFTankInitialize()
         UKF.step(t, u, z);
         Assert::Fail();
     }
-    catch (...) { }
+    catch (...) {
+    }
 
     // Initialize UKF
     UKF.initialize(t, x, u);
@@ -108,7 +108,7 @@ void testUKFTankInitialize()
     // Check x, z, P
     std::vector<double> xMean = UKF.getStateMean();
     std::vector<double> zMean = UKF.getOutputMean();
-    Matrix xCov = UKF.getStateCovariance();
+    Matrix xCov               = UKF.getStateCovariance();
     Assert::AreEqual(0, xMean[0], 1e-12);
     Assert::AreEqual(0, xMean[1], 1e-12);
     Assert::AreEqual(0, xMean[2], 1e-12);
@@ -118,18 +118,17 @@ void testUKFTankInitialize()
     Assert::AreEqual(Q, xCov);
 }
 
-void testUKFTankStep()
-{
+void testUKFTankStep() {
     // Create Tank model
     Tank3 TankModel = Tank3();
 
     // Set parameter values
-    TankModel.parameters.K1 = 1;
-    TankModel.parameters.K2 = 2;
-    TankModel.parameters.K3 = 3;
-    TankModel.parameters.R1 = 1;
-    TankModel.parameters.R2 = 2;
-    TankModel.parameters.R3 = 3;
+    TankModel.parameters.K1   = 1;
+    TankModel.parameters.K2   = 2;
+    TankModel.parameters.K3   = 3;
+    TankModel.parameters.R1   = 1;
+    TankModel.parameters.R2   = 2;
+    TankModel.parameters.R3   = 3;
     TankModel.parameters.R1c2 = 1;
     TankModel.parameters.R2c3 = 2;
 
@@ -183,7 +182,7 @@ void testUKFTankStep()
     UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&TankModel, Q, R);
 
     // Initialize UKF
-    double t = 0;
+    double t  = 0;
     double dt = 0.1;
     UKF.initialize(t, x, u);
 
@@ -192,7 +191,8 @@ void testUKFTankStep()
         UKF.step(t, u, z);
         Assert::Fail("Step without incrementing time");
     }
-    catch (...) { }
+    catch (...) {
+    }
 
     // Simulate to get outputs for time t
     t += dt;
@@ -223,18 +223,17 @@ void testUKFTankStep()
     Assert::IsTrue(xCov[2][2] > 0.194574e-4 && xCov[2][2] < 0.1945742e-4);
 }
 
-void testUKFTankGetInputs()
-{
+void testUKFTankGetInputs() {
     // Create Tank model
     Tank3 TankModel = Tank3();
 
     // Set parameter values
-    TankModel.parameters.K1 = 1;
-    TankModel.parameters.K2 = 2;
-    TankModel.parameters.K3 = 3;
-    TankModel.parameters.R1 = 1;
-    TankModel.parameters.R2 = 2;
-    TankModel.parameters.R3 = 3;
+    TankModel.parameters.K1   = 1;
+    TankModel.parameters.K2   = 2;
+    TankModel.parameters.K3   = 3;
+    TankModel.parameters.R1   = 1;
+    TankModel.parameters.R2   = 2;
+    TankModel.parameters.R3   = 3;
     TankModel.parameters.R1c2 = 1;
     TankModel.parameters.R2c3 = 2;
 
@@ -288,7 +287,7 @@ void testUKFTankGetInputs()
     UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&TankModel, Q, R);
 
     // Initialize UKF
-    double t = 0;
+    double t  = 0;
     double dt = 0.1;
     UKF.initialize(t, x, u);
 
@@ -308,13 +307,11 @@ void testUKFTankGetInputs()
     Assert::AreEqual(1, uOld[0], 1e-12);
     Assert::AreEqual(2, uOld[1], 1e-12);
     Assert::AreEqual(3, uOld[2], 1e-12);
-
 }
 
-void testUKFBatteryInitialize()
-{
+void testUKFBatteryInitialize() {
     // Create battery model
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
 
     // Set up state vector
     std::vector<double> x(8);
@@ -348,7 +345,7 @@ void testUKFBatteryInitialize()
     UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&battery, Q, R);
 
     // Initialize UKF
-    //double dt = 0.1;
+    // double dt = 0.1;
     double t = 0;
     UKF.initialize(t, x, u);
 
@@ -366,10 +363,9 @@ void testUKFBatteryInitialize()
     Assert::AreEqual(Q, xCov);
 }
 
-void testUKFBatteryStep()
-{
+void testUKFBatteryStep() {
     // Create battery model
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
 
     // Set up state vector
     std::vector<double> x(8);
@@ -415,7 +411,7 @@ void testUKFBatteryStep()
 
     // Initialize UKF
     double dt = 1;
-    double t = 0;
+    double t  = 0;
     UKF.initialize(t, x, u);
 
     // Simulate to get outputs for time t
@@ -429,7 +425,7 @@ void testUKFBatteryStep()
 
     // Check x
     std::vector<double> xMean = UKF.getStateMean();
-	Assert::AreEqual(-3.515545e-11, xMean[1], 1e-17, "xMean[1]");
+    Assert::AreEqual(-3.515545e-11, xMean[1], 1e-17, "xMean[1]");
     Assert::AreEqual(760, xMean[5], 1e-12, "xMean[5]");
 
     // Check z
@@ -443,8 +439,7 @@ void testUKFBatteryStep()
     Assert::AreEqual(1.654e-24, xCov[4][6], 1e-23, "xCov[4][6]");
 }
 
-void testUKFBatteryFromConfig()
-{
+void testUKFBatteryFromConfig() {
     GSAPConfigMap paramMap;
 
     // Observer parameters
@@ -479,7 +474,8 @@ void testUKFBatteryFromConfig()
     // Construct a UKF from the config map
     UnscentedKalmanFilter ukf(paramMap);
 
-    // NOTE: These may not be relevant anymore, because it only does these checks now within initialize...
+    // NOTE: These may not be relevant anymore, because it only does these checks now within
+    // initialize...
 
     // Create a UKF with bad R and ensure throws error
     rStrings.pop_back();
@@ -488,7 +484,8 @@ void testUKFBatteryFromConfig()
         UnscentedKalmanFilter ukf2(paramMap);
         Assert::Fail();
     }
-    catch (...) { }
+    catch (...) {
+    }
 
     // Create a UKF with bad Q and ensure throws error
     // Note that it checks Q first, so it is okay that R is also bad
@@ -498,36 +495,36 @@ void testUKFBatteryFromConfig()
         UnscentedKalmanFilter ukf3(paramMap);
         Assert::Fail();
     }
-    catch (...) { }
+    catch (...) {
+    }
 }
 
-void testPFBatteryFromConfig()
-{
+void testPFBatteryFromConfig() {
     GSAPConfigMap configMap;
-    
+
     // Observer parameters
     configMap.set("observer", "ParticleFilter");
-    
+
     // Build process noise variance vector
     std::vector<std::string> pnStrings;
     for (int i = 0; i < 8; i++) {
         pnStrings.push_back("1e-10");
     }
     configMap["Observer.processNoise"] = pnStrings;
-    
+
     // Build sensor noise variance vector
     std::vector<std::string> snStrings;
     for (int i = 0; i < 2; i++) {
         snStrings.push_back("1e-3");
     }
     configMap["Observer.sensorNoise"] = snStrings;
-    
+
     // Set number of particles
     configMap.set("Observer.N", "100");
-    
+
     // Construct a PF from the config map
     ParticleFilter pf(configMap);
-    
+
     // Create a UKF with bad sn and ensure throws error
     snStrings.pop_back();
     configMap["Observer.sensorNoise"] = snStrings;
@@ -535,8 +532,9 @@ void testPFBatteryFromConfig()
         ParticleFilter pf2(configMap);
         Assert::Fail();
     }
-    catch (...) { }
-    
+    catch (...) {
+    }
+
     // Create a UKF with bad sn and ensure throws error
     // Note that it checks pn first, so it is okay that sn is also bad
     pnStrings.pop_back();
@@ -545,18 +543,17 @@ void testPFBatteryFromConfig()
         ParticleFilter pf3(configMap);
         Assert::Fail();
     }
-    catch (...) { }
-
+    catch (...) {
+    }
 }
 
-void testPFBatteryInitialize()
-{
+void testPFBatteryInitialize() {
     // Create battery model
-    Battery battery = Battery();
-    
+    BatteryModel battery = BatteryModel();
+
     // Set up state vector
     std::vector<double> x(8);
-    
+
     // Initialize
     std::vector<double> u0(1);
     std::vector<double> z0(2);
@@ -564,49 +561,48 @@ void testPFBatteryInitialize()
     z0[0] = 20;
     z0[1] = 4.2;
     battery.initialize(x, u0, z0);
-    
+
     // Set up inputs
     std::vector<double> u(1);
-    
+
     // Set up process noise
     std::vector<double> pn(battery.getNumStates());
     for (unsigned int i = 0; i < battery.getNumStates(); i++) {
         pn[i] = 1e-10;
     }
-    
+
     // Set up process noise
     std::vector<double> sn(battery.getNumOutputs());
     for (unsigned int i = 0; i < battery.getNumOutputs(); i++) {
         pn[i] = 1e-3;
     }
-    
+
     // Create a PF
-    size_t N = 100;
+    size_t N          = 100;
     ParticleFilter PF = ParticleFilter(&battery, N, pn, sn);
-    
+
     // Initialize PF
     double t = 0;
     PF.initialize(t, x, u);
-    
+
     // Check x
     std::vector<double> xMean = PF.getStateMean();
     Assert::AreEqual(x, xMean);
-    
+
     // Check z
     std::vector<double> zMean = PF.getOutputMean();
     Assert::IsTrue(zMean[1] > 4.191423 && zMean[1] < 4.1914237);
     Assert::AreEqual(20, zMean[0], 1e-12);
 }
 
-void testPFBatteryStep()
-{
+void testPFBatteryStep() {
     // Create battery model
-    Battery battery = Battery();
-    
+    BatteryModel battery = BatteryModel();
+
     // Set up state and output vectors
     std::vector<double> x(battery.getNumStates());
     std::vector<double> z(battery.getNumOutputs());
-    
+
     // Initialize
     std::vector<double> u0(1);
     std::vector<double> z0(2);
@@ -614,53 +610,53 @@ void testPFBatteryStep()
     z0[0] = 20;
     z0[1] = 4.2;
     battery.initialize(x, u0, z0);
-    
+
     // Set up inputs
     std::vector<double> u(1);
-    
+
     // Set up process noise
     std::vector<double> pn(battery.getNumStates());
     for (unsigned int i = 0; i < battery.getNumStates(); i++) {
         pn[i] = 1e-10;
     }
-    
+
     // Set up process noise
     std::vector<double> sn(battery.getNumOutputs());
     for (unsigned int i = 0; i < battery.getNumOutputs(); i++) {
         sn[i] = 1e-3;
     }
-    
+
     // Create a PF
-    size_t N = 100;
+    size_t N          = 100;
     ParticleFilter PF = ParticleFilter(&battery, N, pn, sn);
-    
+
     // Initialize PF
-    double t = 0;
+    double t  = 0;
     double dt = 1;
     PF.initialize(t, x, u);
-    
+
     // Set up zNoise
     std::vector<double> zNoise(battery.getNumOutputs());
     zNoise[0] = 0.01;
     zNoise[1] = 0.01;
-    
+
     // Set up xNoise
     std::vector<double> xNoise(battery.getNumStates());
-    
+
     // Simulate to get outputs for time t
     t += dt;
     u[0] = 1;
     battery.stateEqn(t, x, u, xNoise, dt);
     battery.outputEqn(t, x, u, zNoise, z);
-    
+
     // Step UKF for time t
     PF.step(t, u, z);
-    
+
     // Check x
     std::vector<double> xMean = PF.getStateMean();
     Assert::AreEqual(0, xMean[1], 1e-3, "xMean[1]");
     Assert::AreEqual(760, xMean[5], 1e-1, "xMean[5]");
-    
+
     // Check z
     std::vector<double> zMean = PF.getOutputMean();
     Assert::AreEqual(20, zMean[0], 1e-6, "zMean[0]");

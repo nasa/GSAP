@@ -3,7 +3,8 @@
  *   @ingroup   GPIC++
  *   @ingroup   ProgData
  *
- *   @brief     Prognostic Container Structure Classes - Classes used for handling access to a group of ProgEvents or DataPoints
+ *   @brief     Prognostic Container Structure Classes - Classes used for handling access to a group
+ * of ProgEvents or DataPoints
  *
  *   @author    Chris Teubert
  *   @version   1.1.0
@@ -16,14 +17,14 @@
  *     All Rights Reserved.
  */
 
-#ifndef PCOE_PROGCONTAINERS_H
-#define PCOE_PROGCONTAINERS_H
+#ifndef PCOE_PCONTAINER_H
+#define PCOE_PCONTAINER_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "ProgEvent.h"
 #include "DataPoint.h"
+#include "ProgEvent.h"
 
 namespace PCOE {
     // *------------------------*
@@ -33,7 +34,7 @@ namespace PCOE {
     /// @brief      Abstract parent class for ProgEvents, DataPoints
     class PContainer {
     public:
-        PContainer();  ///< Constructor- Initializes parameters
+        PContainer(); ///< Constructor- Initializes parameters
 
         virtual ~PContainer() = default;
 
@@ -68,14 +69,16 @@ namespace PCOE {
          *  @param      name The name of the new element
          *  @param      description A description of the element
          **/
-        virtual void addNew(const std::string & name, const std::string & description = "") = 0;
+        virtual void addNew(const std::string& name, const std::string& description = "") = 0;
 
-        /** @brief      Get a list of the labels used in the DataPoints object (Events, SystemTrajectories, etc.)
+        /** @brief      Get a list of the labels used in the DataPoints object (Events,
+         *SystemTrajectories, etc.)
          *  @return     Vector of labels
          **/
         virtual std::vector<std::string> getLabels() const = 0;
 
-        /** @brief      Set the number of timestamps for which prognostic relevant prognostic data will be recorded
+        /** @brief      Set the number of timestamps for which prognostic relevant prognostic data
+         *will be recorded
          *  @param      nTimesIn        Number of timestamps
          **/
         virtual void setNTimes(const unsigned int nTimesIn) = 0;
@@ -86,12 +89,12 @@ namespace PCOE {
         virtual unsigned int size() const = 0;
 
     protected:
-        unsigned int nTimes;  ///< Number of prediction timestamps considered
+        unsigned int nTimes; ///< Number of prediction timestamps considered
 
-        UType uType;  ///< Uncertainty Type of the elements in Data (from the UNCERTAINTYTYPE enum)
+        UType uType; ///< Uncertainty Type of the elements in Data (from the UNCERTAINTYTYPE enum)
 
-        unsigned int nSamples;  ///< The number of samples used internally with UData objects
-    };  // End PContainer definition
+        unsigned int nSamples; ///< The number of samples used internally with UData objects
+    }; // End PContainer definition
 }
 
-#endif  // PCOE_PROGCONTAINERS_H
+#endif

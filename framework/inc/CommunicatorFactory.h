@@ -21,7 +21,7 @@
 #ifndef PCOE_COMMUNICATORFACTORY_H
 #define PCOE_COMMUNICATORFACTORY_H
 
-#include "CommonCommunicator.h"
+#include "Communicator.h"
 #include "PlaybackCommunicator.h"
 #include "RecorderCommunicator.h"
 #include "RandomCommunicator.h"
@@ -36,7 +36,7 @@ namespace PCOE {
      *  @see        Factory
      *  @note       Uses Factory template parent class.
      **/
-    class CommunicatorFactory : public Factory<CommonCommunicator>,
+    class CommunicatorFactory : public Factory<Communicator>,
         public Singleton<CommunicatorFactory> {
     private:
         friend class Singleton<CommunicatorFactory>;

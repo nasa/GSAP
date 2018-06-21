@@ -22,9 +22,9 @@
 #ifndef PCOE_PROGNOSTICSMODELFACTORY_H
 #define PCOE_PROGNOSTICSMODELFACTORY_H
 
-#include "PrognosticsModel.h"
-#include "Battery.h"
+#include "BatteryModel.h"
 #include "Factory.h"
+#include "PrognosticsModel.h"
 #include "Singleton.h"
 
 namespace PCOE {
@@ -36,8 +36,9 @@ namespace PCOE {
      *  @note       Uses Factory template parent class.
      **/
     class PrognosticsModelFactory : public Factory<PrognosticsModel>,
-        public Singleton<PrognosticsModelFactory> {
+                                    public Singleton<PrognosticsModelFactory> {
         friend class Singleton<PrognosticsModelFactory>;
+
     private:
         /**
          *  @brief      PrognosticsModelFactory Constructor
@@ -45,7 +46,7 @@ namespace PCOE {
          *              Consistant with the singleton pattern
          **/
         PrognosticsModelFactory() {
-            Register("Battery", PrognosticsModelFactory::Create<Battery>);
+            Register("Battery", PrognosticsModelFactory::Create<BatteryModel>);
         };
     };
 }

@@ -25,13 +25,13 @@
 
 #include <memory>
 
-#include "CommonPrognoser.h"
+#include "Prognoser.h"
 #include "PrognosticsModel.h"
 #include "Observer.h"
 #include "Predictor.h"
 
 namespace PCOE {
-    class ModelBasedPrognoser : public CommonPrognoser
+    class ModelBasedPrognoser : public Prognoser
     {
      private:
         std::unique_ptr<PrognosticsModel> model;
@@ -82,7 +82,7 @@ namespace PCOE {
            *             analysis. By default this a simple bounds test on timeToEvent
            *             - making this step optional in the component prognoser
            *             implementation
-           *             Default implemented in CommonPrognoser
+           *             Default implemented in Prognoser
            */
            //void checkResultValidity();
     };

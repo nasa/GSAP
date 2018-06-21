@@ -378,9 +378,7 @@ namespace TestMatrix {
             m2.col(n + 1);
             Assert::Fail("Got column that doesn't exist.");
         }
-        catch (std::out_of_range) {}
-        catch (...) {
-            Assert::Fail("Unknown exception thrown with col.");
+        catch (std::out_of_range&) {
         }
     }
 
@@ -526,7 +524,7 @@ namespace TestMatrix {
             m3.row(m + 1, r1);
             Assert::Fail("Set row that doesn't exist.");
         }
-        catch (std::out_of_range) {
+        catch (std::out_of_range&) {
         }
         try {
             m3.row(0, r2);
@@ -1175,7 +1173,8 @@ namespace TestMatrix {
             matrix.weightedMean(w3);
             Assert::Fail("Calculated weighted mean with wrong number of weights");
         }
-        catch (std::domain_error) {}
+        catch (std::domain_error&) {
+        }
     }
 
     void weightedcovariance() {
@@ -1210,6 +1209,4 @@ namespace TestMatrix {
             Assert::Fail("Exception occurred in left bitwise shift.");
         }
     }
-
-
 }

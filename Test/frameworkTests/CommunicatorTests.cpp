@@ -1,5 +1,5 @@
-/** @file CommonCommunicatorTests.cpp
- *  @brief Tests the basic functionality of CommonCommunicator
+/** @file CommunicatorTests.cpp
+ *  @brief Tests the basic functionality of Communicator
  *
  *  @author    Jason Watkins <jason-watkins@outlook.com>
  *  @version   0.2.0
@@ -14,12 +14,12 @@
 
 #include "Test.h"
 
-#include "CommonCommunicatorTests.h"
+#include "CommunicatorTests.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
-namespace TestCommonCommunicator {
+namespace TestCommunicator {
     void construct() {
         TestCommunicator tc;
         Assert::AreEqual(0, tc.readCount, "Non-zero read count");

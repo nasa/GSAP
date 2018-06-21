@@ -20,7 +20,7 @@ set (HEADERS
 	inc/ParticleFilter.h
 	inc/Predictor.h
 	inc/PredictorFactory.h
-	inc/ProgContainers.h
+	inc/PContainer.h
 	inc/ProgData.h
 	inc/ProgEvent.h
 	inc/ProgEvents.h
@@ -48,13 +48,15 @@ set(SRCS
 	src/DataPoints.cpp
 	src/GaussianVariable.cpp
 	src/GSAPConfigMap.cpp
+	src/LoadEstimator.cpp
 	src/Matrix.cpp
 	src/Model.cpp
 	src/MonteCarloPredictor.cpp
         src/MovingAverageLoadEstimator.cpp
 	src/Observer.cpp
 	src/ParticleFilter.cpp
-	src/ProgContainers.cpp
+	src/Predictor.cpp
+	src/PContainer.cpp
 	src/ProgData.cpp
 	src/ProgEvent.cpp
 	src/ProgEvents.cpp

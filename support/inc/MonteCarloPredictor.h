@@ -21,36 +21,36 @@
 #ifndef PCOE_MONTECARLOPREDICTOR_H
 #define PCOE_MONTECARLOPREDICTOR_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
+#include "GSAPConfigMap.h"
 #include "Model.h"
 #include "Predictor.h"
-#include "GSAPConfigMap.h"
 
 namespace PCOE {
     class MonteCarloPredictor final : public Predictor {
-     private:
-        unsigned int numSamples;           // number of samples used in prediction
-        std::vector<double> processNoise;  // variance vector (zero-mean assumed)
+    private:
+        unsigned int numSamples; // number of samples used in prediction
+        std::vector<double> processNoise; // variance vector (zero-mean assumed)
 
-     public:
+    public:
         /** @brief    Constructor for a MonteCarloPredictor based on a configMap
          *  @param  configMap Configuration map specifying predictor parameters
          **/
-        explicit MonteCarloPredictor(GSAPConfigMap & configMap);
-        
+        explicit MonteCarloPredictor(GSAPConfigMap& configMap);
+
         /** @brief Set model pointer
-         *  @param model given model pointer
+         *  @param value given model pointer
          **/
-        void setModel(PrognosticsModel * model);
+        void setModel(PrognosticsModel* value);
 
         /** @brief    Predict function for a Predictor
          *  @param    tP Time of prediction
          *  @param    state state of system at time of prediction
          *  @param  data ProgData object, in which prediction results \re stored
          **/
-        void predict(const double tP, const std::vector<UData> & state, ProgData & data);
+        void predict(const double tP, const std::vector<UData>& state, ProgData& data);
     };
 }
-#endif  // PCOE_MONTECARLOPREDICTOR_H
+#endif // PCOE_MONTECARLOPREDICTOR_H

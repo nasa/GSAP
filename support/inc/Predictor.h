@@ -46,11 +46,7 @@ namespace PCOE {
         /** Constructor
          *  @param  configMap   Map of configuration parameters
          **/
-        Predictor(GSAPConfigMap& configMap) : model(nullptr), log(Log::Instance()) {
-            using std::placeholders::_1;
-            using std::placeholders::_2;
-            loadEstFcn = std::bind(&LoadEstimator::estimateLoad, defaultLoadEst, _1, _2);
-        }
+        Predictor(GSAPConfigMap& configMap);
 
         /** Destructor
          **/
@@ -64,10 +60,10 @@ namespace PCOE {
         }
 
         /** @brief Set model pointer
-         *  @param model given model pointer
+         *  @param value given model pointer
          **/
-        virtual void setModel(PrognosticsModel* model) {
-            this->model = model;
+        virtual void setModel(PrognosticsModel* value) {
+            this->model = value;
         }
 
         /** @brief    Predict future events and values of system variables

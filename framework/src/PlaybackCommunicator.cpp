@@ -9,7 +9,7 @@
  *                  file        Name of the file that will be played back (default
  *RecordedMessages.csv)
  *
- *   @see        CommonCommunicator
+ *   @see        Communicator
  *
  *   @author    Chris Teubert
  *   @version   1.1.0

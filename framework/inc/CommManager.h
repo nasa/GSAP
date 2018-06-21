@@ -29,7 +29,7 @@
 #include <mutex>
 
 #include "Thread.h"  // For start, stop, pause, ...
-#include "CommonCommunicator.h"
+#include "Communicator.h"
 #include "GSAPConfigMap.h"
 #include "Singleton.h"
 #include "Datum.h"
@@ -63,7 +63,7 @@ namespace PCOE {
          *              Will be null if key does not exist
          */
         Datum<double> getValue(const std::string & key) const;
-        
+
         Datum<std::string> getString(const std::string & key) const;
 
         /**  @brief     Main Communications Thread
@@ -85,10 +85,10 @@ namespace PCOE {
 
         DataStore lookup;
         DataStoreString stringLookup;
-    
+
         bool threadStarted;
 
-        std::vector<std::unique_ptr<CommonCommunicator> > comms;
+        std::vector<std::unique_ptr<Communicator> > comms;
         unsigned long stepSize;
         mutable mutex progDataMutex;
         mutable mutex lookupMutex;

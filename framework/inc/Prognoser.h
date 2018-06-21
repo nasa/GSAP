@@ -1,5 +1,5 @@
 /**  Common Prognoser - Header
- *   @class     CommonPrognoser CommonPrognoser.h
+ *   @class     Prognoser Prognoser.h
  *   @ingroup   GPIC++
  *   @ingroup   ProgLib
  *
@@ -28,8 +28,8 @@
  *     All Rights Reserved.
  */
 
-#ifndef PCOE_COMMONPROGNOSER_H
-#define PCOE_COMMONPROGNOSER_H
+#ifndef PCOE_Prognoser_H
+#define PCOE_Prognoser_H
 
 #include <map>
 #include <string>
@@ -42,7 +42,7 @@
 
 namespace PCOE {
     class GSAPConfigMap;
-    
+
     // This class is needed to bind getValue. Bind requires const copy constructor, which
     // cannot be provided for CommManager (is deleted).
     // The wrapper has a copy constructor to allow this. The getValue method calls
@@ -62,7 +62,7 @@ namespace PCOE {
         CommManager* c;
     };
 
-    class CommonPrognoser : public Thread {
+    class Prognoser : public Thread {
     public:
         /** @brief      Common Prognoser Constructor
          *  @param      config Map of configuration parameters in the prognoser configuration
@@ -75,7 +75,7 @@ namespace PCOE {
          *      2. initializes the communications manager and logger, which both the
          *         common and component prognosers use.
          */
-        CommonPrognoser(GSAPConfigMap& config);
+        Prognoser(GSAPConfigMap& config);
 
         /**  @brief       Main Prognostics Thread
          *
@@ -130,7 +130,7 @@ namespace PCOE {
          *             analysis. By default this a simple bounds test on timeToEvent
          *             - making this step optional in the component prognoser
          *             implementation
-         *             Default implemented in CommonPrognoser
+         *             Default implemented in Prognoser
          */
         virtual void checkResultValidity();
 
@@ -145,24 +145,23 @@ namespace PCOE {
             return results;
         }
 
+    protected:
+        ProgData results; ///> Prognostic Results
+
+        Datum<double> getValue(const std::string& key);
+        CommManager& comm; ///> Communciations Manager
+
     private:
         std::string histFileName; ///< Name of history file
         std::vector<std::string> histStr; ///< Current contents of history file
 
         unsigned int loopInterval; ///< Time between prognostic loops (ms)
         unsigned int saveInterval; ///< Loops between saves
-        bool saveEnabled;
 
         CommManagerWrapper cWrapper;
 
         std::map<std::string, std::function<Datum<double>(void)>> lookup;
-
-    protected:
-        ProgData results; ///> Prognostic Results
-
-        Datum<double> getValue(const std::string& key);
-        CommManager& comm; ///> Communciations Manager
     };
 }
 
-#endif // PCOE_COMMONPROGNOSER_H
+#endif // PCOE_Prognoser_H

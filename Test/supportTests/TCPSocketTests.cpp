@@ -231,8 +231,6 @@ void testTCPExceptions() {
     TCPSocket testSocket1(AF_INET);
     TCPSocket testSocket2(AF_INET);
     TCPSocket testSocket3(AF_INET);
-    char messageFromServer[]    = "Hello from Server";
-    char hugeMessage[INT16_MAX] = {0};
 
     // testServer.Listen();
 
@@ -328,11 +326,12 @@ void testTCPExceptions() {
         testSocket4.Connect("bad hostname", 8080);
         Assert::Fail("Socket connected to bad hostname.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
 #ifndef WIN32
     // Client's Receive() exception tests
+    char messageFromServer[] = "Hello from Server";
     TCPServer testServer(AF_INET, "0.0.0.0", 8080);
     testServer.Close();
     TCPServer testReceiveExceptionServer(AF_INET, "0.0.0.0", 8080);
@@ -360,7 +359,7 @@ void testTCPExceptions() {
 #endif
         Assert::Fail("Socket created with bad address family.");
     }
-    catch (std::invalid_argument& e) {
+    catch (std::invalid_argument&) {
     }
 
     TCPServer testConnectExceptionServer(AF_INET, "0.0.0.0", 8080);
@@ -377,7 +376,7 @@ void testTCPExceptions() {
         testBadAddress.Connect((struct sockaddr*)&sa, sizeof(sa), AF_INET);
         Assert::Fail("Client connected to Server with bad port/address.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     // Client's NoDelay exception tests
@@ -386,7 +385,7 @@ void testTCPExceptions() {
         testSocket4.NoDelay();
         Assert::Fail("Invalid socket got delay value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     try {
@@ -394,7 +393,7 @@ void testTCPExceptions() {
         testSocket4.NoDelay(false);
         Assert::Fail("Invalid socket set delay value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     // Client's ReceiveBufferSize exception tests
@@ -402,14 +401,14 @@ void testTCPExceptions() {
         testSocket4.ReceiveBufferSize();
         Assert::Fail("Invalid socket got recv buffer size value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     try {
         testSocket4.ReceiveBufferSize(100);
         Assert::Fail("Invalid socket set recv buffer size value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     // Client's ReceiveTimeout exception tests
@@ -417,14 +416,14 @@ void testTCPExceptions() {
         testSocket4.ReceiveTimeout();
         Assert::Fail("Invalid socket got timeout value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     try {
         testSocket4.ReceiveTimeout(100.0);
         Assert::Fail("Invalid socket set timeout value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     try {
@@ -437,7 +436,7 @@ void testTCPExceptions() {
 
         testSocket4.ReceiveTimeout(val);
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     // Client's SendBufferSize() exception tests
@@ -445,14 +444,14 @@ void testTCPExceptions() {
         testSocket4.SendBufferSize();
         Assert::Fail("Invalid socket got send buffer size value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     try {
         testSocket4.SendBufferSize(100);
         Assert::Fail("Invalid socket set send buffer size value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     // Client's SendTimeOut() exception tests
@@ -460,14 +459,14 @@ void testTCPExceptions() {
         testSocket4.SendTimeout();
         Assert::Fail("Invalid socket got send timeout value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     try {
         testSocket4.SendTimeout(100.0);
         Assert::Fail("Invalid socket set send timeout value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     try {
@@ -480,7 +479,7 @@ void testTCPExceptions() {
         testSocket4.SendTimeout(t);
         Assert::Fail("Invalid socket set send timeout value.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     // Client's Send() exception test
@@ -489,13 +488,13 @@ void testTCPExceptions() {
         testSocket4.Send(messageToSend, strlen(messageToSend));
         Assert::Fail("Invalid socket sent message.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 
     try {
         testSocket4.Available();
         Assert::Fail("Invalid socket got bytes available to read.");
     }
-    catch (std::system_error& e) {
+    catch (std::system_error&) {
     }
 }

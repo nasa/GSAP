@@ -20,7 +20,7 @@ namespace PCOE {
 #ifdef _WIN32
         timeout = 1000;
 #else
-        timeout.tv_sec = 1;
+        timeout.tv_sec  = 1;
         timeout.tv_usec = 0;
 #endif
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Configured");
@@ -39,11 +39,11 @@ namespace PCOE {
         else {
             const DWORD nLength = 1;
             INPUT_RECORD lpBuffer[nLength];
-            LPDWORD lpNumberOfEventsRead;
-            if (!PeekConsoleInput(stdin_handle, lpBuffer, nLength, lpNumberOfEventsRead)) {
+            DWORD numberOfEventsRead;
+            if (!PeekConsoleInput(stdin_handle, lpBuffer, nLength, &numberOfEventsRead)) {
                 log.WriteLine(LOG_ERROR, MODULE_NAME, "Unable to read standard input handle");
             }
-            else if (*lpNumberOfEventsRead > 0) {
+            else if (numberOfEventsRead > 0) {
                 log.WriteLine(LOG_TRACE, MODULE_NAME, "Data Received");
                 setRead();
             }
@@ -57,7 +57,7 @@ namespace PCOE {
         FD_ZERO(&fds);
         FD_SET(STDIN_FILENO, &fds);
         struct timeval to = timeout; // select may modify timeout, so give it a copy
-        int rc = select(STDIN_FILENO + 1, &fds, nullptr, nullptr, &to);
+        int rc            = select(STDIN_FILENO + 1, &fds, nullptr, nullptr, &to);
         if (rc < 0) {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "Select failed");
             perror("select");
@@ -78,9 +78,9 @@ namespace PCOE {
         timeout = static_cast<DWORD>(seconds * 1000);
 #else
         struct timeval to;
-        to.tv_sec = static_cast<time_t>(seconds);
+        to.tv_sec  = static_cast<time_t>(seconds);
         to.tv_usec = static_cast<long int>(seconds * 1000000);
-        timeout = to;
+        timeout    = to;
 #endif
     }
 }

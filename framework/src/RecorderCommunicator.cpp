@@ -39,7 +39,7 @@
  *   @note      This class will look for the following optional configuration parameters:
  *                  saveFile    File to which the data will be saved (default RecordedMessages.csv")
  *
- *   @see        CommonCommunicator
+ *   @see        Communicator
  *
  *   @author    Chris Teubert
  *   @version   1.1.0

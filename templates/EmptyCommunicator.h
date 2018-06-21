@@ -3,7 +3,7 @@
  *
  *   @brief     Communicator Template
  *
- *   @see        CommonCommunicator
+ *   @see        Communicator
  *
  *   @author    Chris Teubert
  *   @version   1.1.0
@@ -20,10 +20,10 @@
 #ifndef PCOE_EMPTYCOMMUNICATOR_H
 #define PCOE_EMPTYCOMMUNICATOR_H
 
-#include "CommonCommunicator.h"  ///< Parent Class
+#include "Communicator.h"  ///< Parent Class
 
 namespace PCOE {
-    class EmptyCommunicator : public CommonCommunicator {
+    class EmptyCommunicator : public Communicator {
     public:
         /** @brief      Constructor for EmptyCommunicator - Called by the CommunicatorFactory
          *  @param      config  Reference to configuration map for the communicator

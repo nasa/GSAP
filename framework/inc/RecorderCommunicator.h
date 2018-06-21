@@ -40,7 +40,7 @@
  *                  saveFile    File to which the data will be saved (default
  *                  "RecordedMessages.csv")
  *
- *   @see        CommonCommunicator
+ *   @see        Communicator
  *
  *   @author    Chris Teubert
  *   @version   1.1.0
@@ -56,11 +56,11 @@
 #ifndef PCOE_RECORDERCOMMUNICATOR_H
 #define PCOE_RECORDERCOMMUNICATOR_H
 
-#include "CommonCommunicator.h"
+#include "Communicator.h"
 #include "DataStore.h"
 
 namespace PCOE {
-    class RecorderCommunicator : public CommonCommunicator {
+    class RecorderCommunicator : public Communicator {
     public:
         /** @brief      Constructor for RecorderCommunicator - Called by the CommunicatorFactory
          *  @param      config  Reference to configuration map for the communicator

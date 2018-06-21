@@ -52,9 +52,9 @@ namespace PCOE {
         virtual bool isSampleBased() {
             return false;
         }
-        
+
         /**
-         * @brief   Set the number of samples for the loadEstimator, if the load estimator is 
+         * @brief   Set the number of samples for the loadEstimator, if the load estimator is
          *          samplebased. Use isSampleBased to see if LoadEstimator is sample based
          *
          * @param   nSamples The number of samples
@@ -62,16 +62,14 @@ namespace PCOE {
          * @note    Will throw a runtime_error if not sample based (isSampleBased returns false)
          * @see     isSampleBased
          **/
-        virtual void setNSamples(const unsigned int nSamples) {
-            throw std::runtime_error("Not supported");
-        };
+        virtual void setNSamples(const unsigned int nSamples);
 
         /**
          * @brief Set model pointer
-         * @param model given model pointer
+         * @param value given model pointer
          **/
-        virtual void setModel(PrognosticsModel* model) {
-            this->model = model;
+        virtual void setModel(PrognosticsModel* value) {
+            this->model = value;
         }
 
         /**
@@ -86,13 +84,13 @@ namespace PCOE {
         virtual bool usesHistoricalLoading() {
             return false;
         }
-        
+
         /**
          * @brief   Set the load for that timestep, if the load estimator uses historical loading.
          *          Call usesHistoricalLoading to check if historical loading is used.
          * @param   loadMeasurement    Load measurement for the current timestep
          *
-         * @note    Will throw a runtime_error if not using historical loading 
+         * @note    Will throw a runtime_error if not using historical loading
          *          (i.e.,usesHistoricalLoading returns false)
          * @see     usesHistoricalLoading
          **/

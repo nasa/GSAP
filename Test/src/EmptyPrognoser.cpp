@@ -23,7 +23,7 @@
 
 namespace PCOE {
     EmptyPrognoser::EmptyPrognoser(GSAPConfigMap & configMap) :
-        CommonPrognoser(configMap) {
+        Prognoser(configMap) {
         // DEFINE EVENTS FOR THIS SPECIFIC PROGNOSER
         // Ex:
             // info.events.push_back(param("EOL", "s"));

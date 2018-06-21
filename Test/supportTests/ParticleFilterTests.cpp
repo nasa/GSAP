@@ -4,13 +4,13 @@
 //
 //  Created by Julian Vu on 2/28/17.
 
-#include <Exceptions.h>
-#include "Tank3.h"
-#include "GSAPConfigMap.h"
-#include "ParticleFilter.h"
 #include "ParticleFilterTests.h"
+#include "GSAPConfigMap.h"
 #include "Model.h"
+#include "ParticleFilter.h"
+#include "Tank3.h"
 #include "Test.h"
+#include <Exceptions.h>
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -32,7 +32,8 @@ void ctor() {
         ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
         Assert::Fail("Constructor did not catch empty processNoise/sensorNoise vectors");
     }
-    catch (std::range_error) {}
+    catch (std::range_error&) {
+    }
 }
 
 void ctorWithNonemptyVectors() {
@@ -69,7 +70,8 @@ void ctorWithNonemptyVectors() {
         ParticleFilter pf2 = ParticleFilter(&test, N, processNoise, emptySensorNoise);
         Assert::Fail("Constructor did not catch empty sensorNoise vector");
     }
-    catch (std::range_error) {}
+    catch (std::range_error&) {
+    }
 }
 
 void GSAPConfigMapCtor() {
@@ -103,7 +105,7 @@ void PFinitialize() {
     sensorNoise.push_back(2.0);
 
     ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
-    const double t0 = 0;
+    const double t0   = 0;
 
     pf.initialize(t0, x, u);
 
@@ -123,7 +125,8 @@ void PFinitialize() {
         pf2.initialize(t0, x, u);
         Assert::Fail("initialize() didn't catch null model.");
     }
-    catch (std::runtime_error) {}
+    catch (ConfigurationError&) {
+    }
 }
 
 void step() {
@@ -131,12 +134,12 @@ void step() {
     Tank3 test = Tank3();
 
     // Set parameter values
-    test.parameters.K1 = 1;
-    test.parameters.K2 = 2;
-    test.parameters.K3 = 3;
-    test.parameters.R1 = 1;
-    test.parameters.R2 = 2;
-    test.parameters.R3 = 3;
+    test.parameters.K1   = 1;
+    test.parameters.K2   = 2;
+    test.parameters.K3   = 3;
+    test.parameters.R1   = 1;
+    test.parameters.R2   = 2;
+    test.parameters.R3   = 3;
     test.parameters.R1c2 = 1;
     test.parameters.R2c3 = 2;
 
@@ -158,15 +161,16 @@ void step() {
     sensorNoise.push_back(2.0);
 
     ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
-    const double t0 = 0;
-    const double t1 = 1;
+    const double t0   = 0;
+    const double t1   = 1;
 
     // Test step() with uninitialized Particle Filter
     try {
         pf.step(t1, u, z);
         Assert::Fail("step() did not catch uninitialized ParticleFilter.");
     }
-    catch (std::domain_error) {}
+    catch (std::domain_error&) {
+    }
 
     pf.initialize(t0, x, u);
 
@@ -175,7 +179,8 @@ void step() {
         pf.step(t0, u, z);
         Assert::Fail("step() did not catch unchanged time.");
     }
-    catch (std::domain_error) {}
+    catch (std::domain_error&) {
+    }
 
     pf.setMinNEffective(2000);
     Assert::AreEqual(2000, pf.getMinNEffective());
@@ -203,7 +208,7 @@ void getStateEstimate() {
     sensorNoise.push_back(1.0);
     sensorNoise.push_back(2.0);
 
-    ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
+    ParticleFilter pf                = ParticleFilter(&test, N, processNoise, sensorNoise);
     std::vector<UData> stateEstimate = pf.getStateEstimate();
     Assert::AreEqual(3, stateEstimate.size());
 }

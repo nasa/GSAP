@@ -30,13 +30,13 @@
 // Default parameter values
 static const double QMOBILE_DEFAULT_VALUE = 7600;
 
-class Battery final : public PCOE::PrognosticsModel {
+class BatteryModel final : public PCOE::PrognosticsModel {
 public:
     // Constructor
-    Battery();
+    BatteryModel();
 
     // Constructor based on configMap
-    Battery(const PCOE::ConfigMap& paramMap);
+    BatteryModel(const PCOE::ConfigMap& paramMap);
 
     // State indices
     struct stateIndices {
@@ -199,5 +199,10 @@ public:
     void initialize(std::vector<double>& x,
                     const std::vector<double>& u,
                     const std::vector<double>& z);
+
+    /** @brief      Transform inputs and outputs. Specifically, given current as input
+     *              change it to power.
+     */
+    virtual void transform(std::vector<double>& u, std::vector<double>& z);
 };
 #endif

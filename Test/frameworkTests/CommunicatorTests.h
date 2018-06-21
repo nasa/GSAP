@@ -1,5 +1,5 @@
-/** @file CommonCommunicatorTests.h
- *  @brief Tests the basic functionality of CommonCommunicator
+/** @file CommunicatorTests.h
+ *  @brief Tests the basic functionality of Communicator
  *
  *  @author    Jason Watkins <jason-watkins@outlook.com>
  *  @version   0.2.0
@@ -10,13 +10,13 @@
  *             Administration. All Rights Reserved.
  **/
 
-#ifndef COMMONCOMMUNICATORTESTS_H
-#define COMMONCOMMUNICATORTESTS_H
+#ifndef CommunicatorTESTS_H
+#define CommunicatorTESTS_H
 
-#include "CommonCommunicator.h"
+#include "Communicator.h"
 
-namespace TestCommonCommunicator {
-    class TestCommunicator : public CommonCommunicator {
+namespace TestCommunicator {
+    class TestCommunicator : public Communicator {
     public:
         void poll() override {
             setRead();
@@ -46,4 +46,4 @@ namespace TestCommonCommunicator {
     void stop();
 }
 
-#endif // COMMONCOMMUNICATORTESTS_H
+#endif // CommunicatorTESTS_H

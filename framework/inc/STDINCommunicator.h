@@ -9,7 +9,7 @@
 #ifndef STDINCommunicator_h
 #define STDINCommunicator_h
 
-#include "CommonCommunicator.h"
+#include "Communicator.h"
 #ifdef _WIN32
 #include "Windows.h"
 #else
@@ -18,7 +18,7 @@
 #endif
 
 namespace PCOE {
-    class STDINCommunicator : public CommonCommunicator {
+    class STDINCommunicator : public Communicator {
     public:
 #ifdef _WIN32
         using timeout_type = DWORD;

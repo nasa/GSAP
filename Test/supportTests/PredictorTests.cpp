@@ -22,7 +22,7 @@
 #include <memory>
 #include <vector>
 
-#include "Battery.h"
+#include "BatteryModel.h"
 #include "GSAPConfigMap.h"
 #include "MonteCarloPredictor.h"
 #include "PredictorTests.h"
@@ -42,7 +42,7 @@ void predictorTestInit() {
 
     // Create the model factory and register battery model
     PrognosticsModelFactory& modelFactory = PrognosticsModelFactory::instance();
-    modelFactory.Register("Battery", PrognosticsModelFactory::Create<Battery>);
+    modelFactory.Register("Battery", PrognosticsModelFactory::Create<BatteryModel>);
 }
 
 void testMonteCarloBatteryPredict() {
@@ -54,12 +54,12 @@ void testMonteCarloBatteryPredict() {
     for (unsigned int i = 0; i < 8; i++) {
         processNoise.push_back("1e-5");
     }
-    configMap["Model.processNoise"] = processNoise;
+    configMap["Model.processNoise"]      = processNoise;
     configMap["Predictor.loadEstimator"] = std::vector<std::string>({"const"});
-    configMap["LoadEstimator.loading"] = std::vector<std::string>({"8"});
+    configMap["LoadEstimator.loading"]   = std::vector<std::string>({"8"});
 
     // Create a battery model (to help set up inputs for predict)
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
     std::vector<double> x(8);
     std::vector<double> u0(1);
     std::vector<double> z0(2);
@@ -114,8 +114,8 @@ void testMonteCarloBatteryPredict() {
     MCP.predict(t, state, data);
 
     // Compute mean of timeOfEvent and SOC at different time points
-    double meanEOD = 0;
-    double meanSOCAt1 = 0;
+    double meanEOD       = 0;
+    double meanSOCAt1    = 0;
     double meanSOCAt2500 = 0;
     for (unsigned int i = 0; i < data.events["EOD"].getTOE().npoints(); i++) {
         meanEOD += data.events["EOD"].getTOE()[i] / data.events["EOD"].getTOE().npoints();
@@ -137,9 +137,9 @@ void testMonteCarloBatteryConfig() {
     for (unsigned int i = 0; i < 8; i++) {
         processNoise.push_back("1e-5");
     }
-    configMap["Model.processNoise"] = processNoise;
+    configMap["Model.processNoise"]      = processNoise;
     configMap["Predictor.loadEstimator"] = std::vector<std::string>({"const"});
-    configMap["LoadEstimator.loading"] = std::vector<std::string>({"8"});
+    configMap["LoadEstimator.loading"]   = std::vector<std::string>({"8"});
 
     // Create MonteCarloPredictor for battery
     MonteCarloPredictor MCP(configMap);

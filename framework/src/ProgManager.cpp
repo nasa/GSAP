@@ -42,7 +42,7 @@ namespace PCOE {
 
     Cmd::Cmd() : command(NONE) {}
 
-    class CommonCommunicator;
+    class Communicator;
 
     static Log& logger = Log::Instance();
 

@@ -8,7 +8,7 @@
  *   @note      This class will look for the following optional configuration parameters:
  *                  file        Name of the file that will be played back (default RecordedMessages.csv)
  *
- *   @see        CommonCommunicator
+ *   @see        Communicator
  *
  *   @author    Chris Teubert
  *   @version   1.1.0
@@ -28,10 +28,10 @@
 #include <string>
 #include <vector>
 
-#include "CommonCommunicator.h"  ///< Parent Class
+#include "Communicator.h"  ///< Parent Class
 
 namespace PCOE {
-    class PlaybackCommunicator : public CommonCommunicator {
+    class PlaybackCommunicator : public Communicator {
      public:
         /** @brief      Constructor for PlaybackCommunicator - Called by the CommunicatorFactory
          *  @param      config  Reference to configuration map for the communicator

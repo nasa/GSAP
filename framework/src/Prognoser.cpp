@@ -1,5 +1,5 @@
 /**  Common Prognoser - Body
- *   @class     CommonPrognoser CommonPrognoser.h
+ *   @class     Prognoser Prognoser.h
  *   @ingroup   GPIC++
  *   @ingroup   ProgLib
  *
@@ -35,15 +35,15 @@
 #include <thread> // For thread sleep
 #include <vector>
 
-#include "CommonPrognoser.h"
 #include "GSAPConfigMap.h"
+#include "Prognoser.h"
 #include "StringUtils.h"
 
 namespace PCOE {
     // DEFAULTS
     const unsigned int DEFAULT_INTERVAL_DELAY = 100; // ms
-    const unsigned int DEFAULT_SAVE_INTERVAL = 60; // loops
-    const bool DEFAULT_SAVE_ENABLE = false;
+    const unsigned int DEFAULT_SAVE_INTERVAL  = 60; // loops
+    const bool DEFAULT_SAVE_ENABLE            = false;
 
     // CONFIGURATION KEYS
     const std::string TYPE_KEY           = "type";
@@ -58,7 +58,7 @@ namespace PCOE {
 
     std::string MODULE_NAME;
 
-    CommonPrognoser::CommonPrognoser(GSAPConfigMap& configParams)
+    Prognoser::Prognoser(GSAPConfigMap& configParams)
         : Thread(),
           loopInterval(DEFAULT_INTERVAL_DELAY),
           saveInterval(DEFAULT_SAVE_INTERVAL),
@@ -74,18 +74,20 @@ namespace PCOE {
 
         // Fill in Defaults
         if (configParams.includes(INTERVAL_DELAY_KEY)) {
-            loopInterval =
-            static_cast<unsigned int>(std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str()));
+            loopInterval = static_cast<unsigned int>(
+                std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str()));
         }
-        
+
         if (configParams.includes(SAVE_INTERVAL_KEY)) {
-            saveInterval = static_cast<unsigned int>(std::stoi((configParams.at(SAVE_INTERVAL_KEY)[0]).c_str()));
+            saveInterval = static_cast<unsigned int>(
+                std::stoi((configParams.at(SAVE_INTERVAL_KEY)[0]).c_str()));
         }
-        
+
         if (configParams.includes(SAVE_ENABLE_KEY)) {
-            saveEnabled = (configParams.at(SAVE_ENABLE_KEY)[0].compare("true") == 0) || (configParams.at(SAVE_ENABLE_KEY)[0].compare("0") == 0);
+            saveEnabled = (configParams.at(SAVE_ENABLE_KEY)[0].compare("true") == 0) ||
+                          (configParams.at(SAVE_ENABLE_KEY)[0].compare("0") == 0);
         }
-              
+
         if (!configParams.includes(HIST_PATH_KEY)) {
             configParams.set(HIST_PATH_KEY, ".");
         }
@@ -131,7 +133,7 @@ namespace PCOE {
     //*----------------------------------------------*
     //|           Main Prognostics Thread            |
     //*----------------------------------------------*
-    void CommonPrognoser::run() {
+    void Prognoser::run() {
         unsigned long loopCounter = 0;
 
         try {
@@ -195,7 +197,7 @@ namespace PCOE {
     //|              Support Functions               |
     //*----------------------------------------------*
 
-    void CommonPrognoser::checkResultValidity() {
+    void Prognoser::checkResultValidity() {
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Checking Result Validity");
     }
 
@@ -289,7 +291,7 @@ namespace PCOE {
     //    return (unsigned int) timeVec.size()-1;
     //}
 
-    void CommonPrognoser::loadHistory() {
+    void Prognoser::loadHistory() {
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Loading history from file");
         struct stat buf;
         if (stat(histFileName.c_str(), &buf) == -1) {
@@ -474,7 +476,7 @@ namespace PCOE {
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Finished loading history from file");
     }
 
-    Datum<double> CommonPrognoser::getValue(const std::string& key) {
+    Datum<double> Prognoser::getValue(const std::string& key) {
         log.FormatLine(LOG_TRACE, MODULE_NAME, "Getting lookup function for key %s", key.c_str());
         std::function<Datum<double>()> fn = lookup[key];
         log.FormatLine(LOG_TRACE, MODULE_NAME, "Getting value for key %s", key.c_str());
@@ -483,7 +485,7 @@ namespace PCOE {
         return result;
     }
 
-    inline void CommonPrognoser::resetHistory() const {
+    inline void Prognoser::resetHistory() const {
         using std::chrono::seconds;
         using std::chrono::system_clock;
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Resetting History");
