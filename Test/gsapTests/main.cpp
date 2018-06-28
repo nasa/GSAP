@@ -16,25 +16,28 @@
 
 #include <fstream>
 
-#include "Test.h"
+#include "CommunicatorTests.h"
 #include "ConfigMapTests.h"
-#include "DataStoreTests.h"
-#include "DPointsTests.h"
 #include "DPointTests.h"
+#include "DPointsTests.h"
+#include "DataStoreTests.h"
+#include "FrameworkTests.h"
+#include "GaussianVariableTests.h"
+#include "LoadTests.hpp"
 #include "MatrixTests.h"
 #include "ModelTests.h"
 #include "ObserverTests.h"
 #include "PEventTests.h"
+#include "ParticleFilterTests.h"
 #include "PredictorTests.h"
 #include "ProgDataTests.h"
-#include "LoadTests.hpp"
-#include "ThreadTests.h"
-#include "UDataTests.h"
+#include "ProgManagerTests.h"
 #include "StatisticalToolsTests.h"
-#include "GaussianVariableTests.h"
-#include "ParticleFilterTests.h"
 #include "TCPSocketTests.h"
+#include "Test.h"
+#include "ThreadTests.h"
 #include "UDPSocketTests.h"
+#include "UDataTests.h"
 
 using namespace PCOE::Test;
 
@@ -44,10 +47,14 @@ int main() {
     context.AddTest("Init", configMapInit, "Config Map");
     context.AddTest("Load Arguments", configMapLoadArgs, "Config Map");
     context.AddTest("Use", configMapUse, "Config Map");
-    context.AddTest("Load", configMapLoad, "Config Map");   // Filled test case - Julian
-    context.AddTest("Load Nonexistent", configMapLoadNonexistent, "ConfigMap"); // Added test case - Julian
-    context.AddTest("Add Bad Search Path", configMapAddBadSearchPath, "Config Map");    // Added test case - Julian
-    context.AddTest("Trim", configMapTrim, "Config Map");   // Added test case - Julian
+    context.AddTest("Load", configMapLoad, "Config Map"); // Filled test case - Julian
+    context.AddTest("Load Nonexistent",
+                    configMapLoadNonexistent,
+                    "ConfigMap"); // Added test case - Julian
+    context.AddTest("Add Bad Search Path",
+                    configMapAddBadSearchPath,
+                    "Config Map"); // Added test case - Julian
+    context.AddTest("Trim", configMapTrim, "Config Map"); // Added test case - Julian
     context.AddTest("GSAP Init", gsapConfigMapInit, "Config Map");
     context.AddTest("GSAP Use", gsapConfigMapUse, "Config Map");
 
@@ -171,14 +178,16 @@ int main() {
     context.AddTest("UKF Tank Get Inputs", testUKFTankGetInputs, "Observer");
 
     // UKF Battery tests
-    context.AddTest("UKF Battery Construction from ConfigMap", testUKFBatteryFromConfig, "Observer");
+    context.AddTest("UKF Battery Construction from ConfigMap",
+                    testUKFBatteryFromConfig,
+                    "Observer");
     context.AddTest("UKF Initialization for Battery", testUKFBatteryInitialize, "Observer");
     context.AddTest("UKF Step for Battery", testUKFBatteryStep, "Observer");
-    
-/*    // PF Battery tests
-    context.AddTest("PF Battery Construction from ConfigMap", testPFBatteryFromConfig, "Observer");
-    context.AddTest("PF Initialization for Battery", testPFBatteryInitialize, "Observer");
-    context.AddTest("PF Step for Battery", testPFBatteryStep, "Observer"); */
+
+    /*    // PF Battery tests
+        context.AddTest("PF Battery Construction from ConfigMap", testPFBatteryFromConfig,
+       "Observer"); context.AddTest("PF Initialization for Battery", testPFBatteryInitialize,
+       "Observer"); context.AddTest("PF Step for Battery", testPFBatteryStep, "Observer"); */
 
     // PEvent Tests
     context.AddTest("Initialization", testPEventInit, "PEvent");
@@ -195,12 +204,16 @@ int main() {
     context.AddTest("Move Constructor", moveCtor, "Thread");
     context.AddTest("Assignment Operator", assignmentOperator, "Thread");
     context.AddTest("Get ID", testGetID, "Thread");
-    //context.AddTest("Destructor", testDestructor, "Thread");
+    // context.AddTest("Destructor", testDestructor, "Thread");
 
     // Predictor Tests
     context.AddCategoryInitializer("Predictor", predictorTestInit);
-    context.AddTest("Monte Carlo Predictor Configuration for Battery", testMonteCarloBatteryConfig, "Predictor");
-    context.AddTest("Monte Carlo Prediction for Battery", testMonteCarloBatteryPredict, "Predictor");
+    context.AddTest("Monte Carlo Predictor Configuration for Battery",
+                    testMonteCarloBatteryConfig,
+                    "Predictor");
+    context.AddTest("Monte Carlo Prediction for Battery",
+                    testMonteCarloBatteryPredict,
+                    "Predictor");
 
     // Statistical Tools Tests
     context.AddTest("Calculate Mean", calculateMean, "Statistical Tools");
@@ -217,7 +230,9 @@ int main() {
     context.AddTest("Evaluate CDF", evaluateCDF, "Gaussian Variable");
 
     context.AddTest("Constructor", ctor, "Particle Filter");
-    context.AddTest("Constructor with Nonempty Vectors", ctorWithNonemptyVectors, "Particle Filter");
+    context.AddTest("Constructor with Nonempty Vectors",
+                    ctorWithNonemptyVectors,
+                    "Particle Filter");
     context.AddTest("GSAPConfigMap Constructor", GSAPConfigMapCtor, "Particle Filter");
     context.AddTest("Initialize", PFinitialize, "Particle Filter");
     context.AddTest("Step", step, "Particle Filter");
@@ -245,6 +260,21 @@ int main() {
     context.AddTest("UDPSocket Constructor", testUDPCtor, "UDPSocket");
     context.AddTest("UDPSocket Send", testUDPSendandReceive, "UDPSocket");
     context.AddTest("UDPSocket Exception Handling", testExceptionHandling, "UDPSocket");
+
+    context.AddTest("Prognoser Factory", PrognoserFactoryTest);
+    context.AddTest("CommManagerTest", PCOE::CommManagerTest);
+
+    // ProgManager
+    context.AddTest("construct_default", TestProgManager::construct_default, "ProgManager");
+    context.AddTest("construct_path", TestProgManager::construct_path, "ProgManager");
+    context.AddTest("construct_config", TestProgManager::construct_config, "ProgManager");
+    context.AddTest("setConfig_path", TestProgManager::setConfig_path, "ProgManager");
+    context.AddTest("setConfig_config", TestProgManager::setConfig_config, "ProgManager");
+
+    context.AddTest("construct", TestCommunicator::construct, "Common Communicator");
+    context.AddTest("enqueue", TestCommunicator::enqueue, "Common Communicator");
+    context.AddTest("subscribe", TestCommunicator::subscribe, "Common Communicator");
+    context.AddTest("stop", TestCommunicator::stop, "Common Communicator");
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");

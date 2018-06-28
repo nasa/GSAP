@@ -10,8 +10,8 @@
  *             Administration. All Rights Reserved.
  **/
 
-#ifndef CommunicatorTESTS_H
-#define CommunicatorTESTS_H
+#ifndef COMMUNICATORTESTS_H
+#define COMMUNICATORTESTS_H
 
 #include "Communicator.h"
 
@@ -29,11 +29,11 @@ namespace TestCommunicator {
 
         void write(AllData aData) override {
             ++writeCount;
-            writeData = aData.doubleDatastore;
+            writeData     = aData.doubleDatastore;
             writeProgData = aData.progData;
         }
 
-        int readCount = 0;
+        int readCount  = 0;
         int writeCount = 0;
         DataStore readData;
         DataStore writeData;

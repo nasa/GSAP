@@ -14,7 +14,9 @@ set(HEADERS
 	UDataTests.h
     StatisticalToolsTests.h
     GaussianVariableTests.h
-    ParticleFilterTests.h TCPSocketTests.h UDPSocketTests.h)
+	ParticleFilterTests.h TCPSocketTests.h UDPSocketTests.h
+	ProgManagerTests.h
+)
 
 
 set(SRCS
@@ -34,12 +36,18 @@ set(SRCS
 	UDataTests.cpp
 	StatisticalToolsTests.cpp
 	GaussianVariableTests.cpp
-	ParticleFilterTests.cpp TCPSocketTests.cpp UDPSocketTests.cpp)
+	ParticleFilterTests.cpp
+	TCPSocketTests.cpp
+	UDPSocketTests.cpp
+	CommunicatorTests.cpp
+	FrameworkTests.cpp
+	main.cpp
+	ProgManagerTests.cpp
+)
 
-include_directories(${CMAKE_SOURCE_DIR}/support/inc/)
-include_directories(${CMAKE_SOURCE_DIR}/framework/inc/)
+include_directories(${CMAKE_SOURCE_DIR}/inc/)
 include_directories(${CMAKE_SOURCE_DIR}/test/inc/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-link_libraries(testLib support framework)
-add_executable(supportTests ${HEADERS} ${SRCS})
+link_libraries(testLib gsap)
+add_executable(gsapTests ${HEADERS} ${SRCS})
