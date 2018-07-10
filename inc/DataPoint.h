@@ -83,11 +83,6 @@ namespace PCOE {
          **/
         unsigned int getNPoints() const;
 
-    private:
-        /// @brief Data to be stored in datapoint- 2-d: Time x Uncertainty
-        std::vector< UData > data;
-
-        UType uType;            ///< Uncertainty Type of the elements in Data (from the UNCERTAINTYTYPE enum)
 
         /** @brief      Set the number of points considered
          *  @param      nPoints     The number of points considered
@@ -96,6 +91,12 @@ namespace PCOE {
          *  @see        getNPoints();
          **/
         void setNPoints(const unsigned int nPoints);
+
+    private:
+        /// @brief Data to be stored in datapoint- 2-d: Time x Uncertainty
+        std::vector< UData > data;
+
+        UType uType;            ///< Uncertainty Type of the elements in Data (from the UNCERTAINTYTYPE enum)
 
         unsigned int nPoints;   ///< The number of points considered
     };

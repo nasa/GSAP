@@ -58,16 +58,12 @@ std::vector<std::string> ProgEvents::getLabels() const {
 
 void ProgEvents::setNTimes(const unsigned int nTimesIn) {
     nTimes = nTimesIn;
-    for (auto& it : dataPts) {
-        it.second.setNumTimes(nTimesIn);
-    }
 }
 
 void ProgEvents::addNew(const std::string& name, const std::string& description = "") {
     dataPts.insert(std::make_pair(name, ProgEvent()));
     dataPts[name].setMeta(name, description);
     dataPts[name].setUncertainty(uType);
-    dataPts[name].setNumTimes(nTimes);
 
     // Resize
     for (auto& it : dataPts) {
@@ -77,8 +73,6 @@ void ProgEvents::addNew(const std::string& name, const std::string& description 
         else {
             it.second.setNPoints(nSamples);
         }
-
-        it.second.setNumTimes(nTimes);
     }
 }
 

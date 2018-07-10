@@ -10,7 +10,7 @@
 #include "DPointsTests.h"
 #include "DataPoint.h"
 #include "DataPoints.h"
-#include "PContainer.h"
+#include "ProgContainers.h"
 #include "ProgEvent.h"
 #include "ProgEvents.h"
 #include "Test.h"
@@ -51,9 +51,6 @@ void testPEventsInit() {
     // Set Num Times
     test.setNTimes(5);
     Assert::AreEqual(5, test.getNTimes());
-    Assert::AreEqual(5, test["Test"].getNumTimes());
-    test.addNew("TestNew2", "Test Desc");
-    Assert::AreEqual(5, test["TestNew2"].getNumTimes());
 }
 
 void testDPointsInit() {

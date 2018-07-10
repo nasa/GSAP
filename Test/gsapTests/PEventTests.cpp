@@ -18,19 +18,9 @@ using namespace PCOE::Test;
 void testPEventInit() {
     ProgEvent test;
 
-    test.setNumTimes(0);
-
     // Test Defaults
     Assert::AreEqual(UType::Point, test.getUncertainty());
     Assert::AreEqual(UType::Point, test.getTOE().uncertainty()); // Default
-    Assert::AreEqual(0, test.getNumOccurrenceSamples());
-    Assert::AreEqual(0, test.getNumTimes());
-    Assert::AreEqual(1,
-                     test.occurrenceMatrix
-                         .size()); // Should not change until there is a number of times (only now)
-    Assert::AreEqual(0, test.occurrenceMatrix[0].size());
-    Assert::AreEqual(1, test.probMatrix.size());
-    Assert::IsNaN(test.probMatrix[0]);
 }
 
 void testPEventUpdate() {
@@ -47,28 +37,9 @@ void testPEventUpdate() {
     test.timeOfEventUnit = "Custom";
     Assert::AreEqual("Custom", test.timeOfEventUnit);
 
-    test.isEventDriven = true;
-    Assert::IsTrue(test.isEventDriven);
-
     test.setUncertainty(UType::MeanSD);
     Assert::AreEqual(UType::MeanSD, test.getUncertainty());
     Assert::AreEqual(UType::MeanSD, test.getTOE().uncertainty()); // Changes for both
-
-    test.setNumOccurrenceSamples(10);
-    Assert::AreEqual(10, test.getNumOccurrenceSamples());
-    Assert::AreEqual(0, test.getNumTimes());
-    Assert::AreEqual(1,
-                     test.occurrenceMatrix
-                         .size()); // Should not change until there is a number of times (only now)
-    Assert::AreEqual(10, test.occurrenceMatrix[0].size());
-    Assert::IsFalse(test.occurrenceMatrix[0][0]);
-
-    test.setNumTimes(5);
-    Assert::AreEqual(5, test.getNumTimes());
-    Assert::AreEqual(10, test.getNumOccurrenceSamples());
-    Assert::AreEqual(6, test.occurrenceMatrix.size());
-    Assert::AreEqual(6, test.probMatrix.size());
-    Assert::AreEqual(10, test.occurrenceMatrix[0].size());
 
     //    test.setNPoints(3); // Usually private
     //    Assert::AreEqual(3, test.timeOfEvent.getNPoints());

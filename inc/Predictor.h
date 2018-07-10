@@ -39,15 +39,23 @@ namespace PCOE {
         LoadEstFcn loadEstFcn;
         MovingAverageLoadEstimator defaultLoadEst;
         PrognosticsModel* model;
-        double horizon; // time span of prediction
-        Log& log; ///> Logger (Defined in ThreadSafeLog.h)
-        std::string event;
-
-    public:
+        double horizon;            // time span of prediction
+        Log &log;  ///> Logger (Defined in ThreadSafeLog.h)
+        struct Prediction {
+            std::vector<ProgEvent> events;
+            std::vector<DataPoint> sysTrajectories;
+        };
+        
+     public:
         /** Constructor
          *  @param  configMap   Map of configuration parameters
          **/
-        Predictor(GSAPConfigMap& configMap);
+        Predictor(GSAPConfigMap& configMap) : model(nullptr), log(Log::Instance()) {
+            (void)configMap; // Suppress unused parameter warning. Future versions may need the map
+            using std::placeholders::_1;
+            using std::placeholders::_2;
+            loadEstFcn = std::bind(&LoadEstimator::estimateLoad, defaultLoadEst, _1, _2);
+        }
 
         /** Destructor
          **/
@@ -61,10 +69,10 @@ namespace PCOE {
         }
 
         /** @brief Set model pointer
-         *  @param value given model pointer
+         *  @param model given model pointer
          **/
-        virtual void setModel(PrognosticsModel* value) {
-            this->model = value;
+        virtual void setModel(PrognosticsModel* model) {
+            this->model = model;
         }
 
         /** @brief    Predict future events and values of system variables
@@ -72,7 +80,7 @@ namespace PCOE {
          *  @param    state state of system at time of prediction
          *  @param  data ProgData object, in which prediction results are stored
          **/
-        virtual void predict(const double tP, const std::vector<UData>& state, ProgData& data) = 0;
+        virtual Prediction predict(const double tP, const std::vector<UData>& state, ProgData& data) = 0;
     };
 }
 

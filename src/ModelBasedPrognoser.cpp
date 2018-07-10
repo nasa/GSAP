@@ -36,22 +36,25 @@
 
 namespace PCOE {
     // Configuration Keys
-    const std::string MODEL_KEY      = "model";
-    const std::string OBSERVER_KEY   = "observer";
-    const std::string PREDICTOR_KEY  = "predictor";
-    const std::string STEPSIZE_KEY   = "Model.stepSize";
-    const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
-    const std::string HORIZON_KEY    = "Predictor.horizon";
-    const std::string LOAD_EST_KEY   = "Predictor.loadEstimator";
+    const std::string MODEL_KEY         = "model";
+    const std::string OBSERVER_KEY      = "observer";
+    const std::string PREDICTOR_KEY     = "predictor";
+    const std::string STEPSIZE_KEY      = "Model.stepSize";
+    const std::string NUMSAMPLES_KEY    = "Predictor.numSamples";
+    const std::string HORIZON_KEY       = "Predictor.horizon";
+    const std::string LOAD_EST_KEY      = "Predictor.loadEstimator";
 
-    const std::string DEFAULT_LOAD_EST = "movingAverage";
-    const double DEFAULT_STEPSIZE_S    = 1; // seconds
+    const std::string DEFAULT_LOAD_EST  = "movingAverage";
+    const double DEFAULT_STEPSIZE_S     = 1; // seconds
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
-        : Prognoser(configMap), initialized(false) {
+        : CommonPrognoser(configMap), initialized(false) {
         // Check for required config parameters
-        configMap.checkRequiredParams(
-            {MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY, NUMSAMPLES_KEY, HORIZON_KEY});
+        configMap.checkRequiredParams({MODEL_KEY,
+                                       OBSERVER_KEY,
+                                       PREDICTOR_KEY,
+                                       NUMSAMPLES_KEY,
+                                       HORIZON_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
@@ -117,13 +120,12 @@ namespace PCOE {
 
         // Create progdata
         results.setUncertainty(UType::Samples); // @todo(MD): do not force samples representation
-        for (std::string& event : model->events) {
+        for (std::string & event : model->events) {
             results.addEvent(event);
             results.events[event].getTOE().npoints(numSamples);
         }
         results.addSystemTrajectories(model->predictedOutputs); // predicted outputs
         results.setPredictions(1, horizon); // interval, number of predictions
-        results.setupOccurrence(numSamples);
         results.sysTrajectories.setNSamples(numSamples);
     }
 

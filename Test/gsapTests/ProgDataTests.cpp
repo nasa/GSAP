@@ -95,15 +95,10 @@ void progDataTest()
     test.addInternals(extraInternals);
     Assert::AreEqual(3, test.getInternalNames().size()); // 3 Internals
 
-    // Setup Occurrence Matrix
-    test.setupOccurrence(1000);
-    Assert::AreEqual(1000, test.events["Test Event"].occurrenceMatrix[0].size());
-
     // Setup Future Times
     test.setPredictions(10, 5); // 5 intervals, 10s apart
     Assert::AreEqual(5, test.events.getNTimes());
     Assert::AreEqual(5, test.sysTrajectories.getNTimes());
-    Assert::AreEqual(6, test.events["Test Event"].occurrenceMatrix.size());
     Assert::AreEqual(50, test.getTimes()[5], 1e-12);
 
     std::vector<double> t;
