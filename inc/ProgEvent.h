@@ -88,21 +88,6 @@ namespace PCOE {
             return timeOfEvent;
         }
 
-        /// @brief      The probability of event occuring within the prediction horizon
-        double eventProb;
-
-        /// @brief      The probability the the event will occur at each time stamp
-        std::vector<double> probMatrix; // 1-dim: Time
-
-        /** @brief A two dimentional matrix storing wether the event has occured for each
-         *         sample. The matrix has the dimensions time x unweighted samples so that:
-         *         occurrenceMatrix[0][7]  represents wether the event has occured for sample 7
-         *         at time 0.
-         *  @see   setNumOccurrenceSamples
-         *  @note  probMatrix can be calculated from this
-         **/
-        std::vector<std::vector<bool>> occurrenceMatrix; // 2-dim: Time x samples
-
         /** @brief Set the number of timestamps for which prognostic relevant prognostic data
          *         will be recorded
          *  @param nTimesIn Number of timestamps
@@ -128,7 +113,6 @@ namespace PCOE {
         UType getUncertainty() const;
 
         std::string timeOfEventUnit; ///< Unit of the ToE
-        bool isEventDriven; ///< Event is event driven
 
     private:
         unsigned int nSamples; ///< Number of samples in the occurrence matrix

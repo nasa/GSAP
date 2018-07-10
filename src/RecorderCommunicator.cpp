@@ -39,7 +39,7 @@
  *   @note      This class will look for the following optional configuration parameters:
  *                  saveFile    File to which the data will be saved (default RecordedMessages.csv")
  *
- *   @see        Communicator
+ *   @see        CommonCommunicator
  *
  *   @author    Chris Teubert
  *   @version   1.1.0
@@ -247,19 +247,7 @@ namespace PCOE {
                         }
                     }
 
-                    // OccurrenceMat (if used)
-                    if (writeOccur) {
-                        if (!event.occurrenceMatrix[NOW].empty()) {
-                            if (writePredictions) {
-                                for (auto& theTime : times) {
-                                    fprintf(theFile, occFormatString, progName, eventName, theTime);
-                                }
-                            }
-                            else {
-                                fprintf(theFile, occFormatString, progName, eventName, times[0]);
-                            }
-                        }
-                    }
+
                 } // end for each event
 
                 // For System Trajectories
@@ -333,26 +321,6 @@ namespace PCOE {
                             timeofEventLastUpdate);
                 }
                 fprintf(theFile, "], ");
-
-                // Probability of Occurrence
-                if (writeProbOccur) {
-                    for (unsigned int theTime = 0; theTime < nTimes; theTime++) {
-                        fprintf(theFile, "%f, ", event.probMatrix[theTime]);
-                    }
-                }
-
-                // OccurrenceMat (if used)
-                if (writeOccur) {
-                    if (!event.occurrenceMatrix[NOW].empty()) {
-                        for (unsigned int theTime = 0; theTime < nTimes; theTime++) {
-                            fputc('[', theFile);
-                            for (const auto& theSample : event.occurrenceMatrix[theTime]) {
-                                fprintf(theFile, "%s ", theSample ? "true" : "false");
-                            }
-                            fprintf(theFile, "], ");
-                        }
-                    }
-                }
             }
 
             // System Trajectories

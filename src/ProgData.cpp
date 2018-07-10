@@ -69,15 +69,6 @@ namespace PCOE {
         }
     }
 
-    void ProgData::setupOccurrence(const unsigned int nSamples) {
-        auto eventList = events.getLabels();
-        // For each event
-        for (const auto & it : eventList) {
-            // Done this way so DataPoints can stay generic
-            events[it].setNumOccurrenceSamples(nSamples);
-        }
-    }
-
     void ProgData::addEvents(const std::vector<std::string> & names) {
         // Add vector of events
         for (const auto & it : names) {

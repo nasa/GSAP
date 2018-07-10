@@ -41,8 +41,7 @@ namespace PCOE {
     // *------------------------*
 
     ProgEvent::ProgEvent() : ProgMeta(), nSamples(0) {
-        probMatrix.resize(1, NAN);
-        occurrenceMatrix.resize(1, std::vector<bool>(nSamples));
+
     }
 
     void ProgEvent::setUncertainty(const UType uncertType) {
@@ -52,26 +51,6 @@ namespace PCOE {
 
     UType ProgEvent::getUncertainty() const {
         return timeOfEvent.uncertainty();
-    }
-
-    void ProgEvent::setNumTimes(const unsigned int nTimes) {
-        probMatrix.resize(nTimes + 1, NAN); // +1 for NOW
-        occurrenceMatrix.resize(nTimes + 1, std::vector<bool>(nSamples));
-    }
-
-    unsigned int ProgEvent::getNumTimes() const {
-        return static_cast<unsigned int>(probMatrix.size() - 1);
-    }
-
-    void ProgEvent::setNumOccurrenceSamples(const unsigned int nSamplesIn) {
-        nSamples = nSamplesIn;
-        for (auto& it : occurrenceMatrix) {
-            it.resize(nSamples);
-        }
-    }
-
-    unsigned int ProgEvent::getNumOccurrenceSamples() const {
-        return nSamples;
     }
 
     // *------------------------*
