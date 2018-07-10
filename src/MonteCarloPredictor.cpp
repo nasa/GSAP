@@ -35,6 +35,8 @@ namespace PCOE {
     // Other string constants
     const std::string MODULE_NAME = "MonteCarloPredictor";
 
+    Log& log = Log::Instance();
+
     // ConfigMap-based Constructor
     MonteCarloPredictor::MonteCarloPredictor(GSAPConfigMap& configMap) : Predictor(configMap) {
         // Check for required parameters:
@@ -152,18 +154,20 @@ namespace PCOE {
 
             // 3. Simulate until time limit reached
             std::vector<double> u(this->model->getNumInputs());
-            std::vector<double> z(this->model->getNumPredictedOutputs());
+            std::vector<double> z(this->model->getNumOutputs());
             unsigned int timeIndex              = 0;
             data.events[event].getTOE()[sample] = INFINITY;
             for (double t_s = time_s; t_s <= time_s + horizon; t_s += this->model->getDt()) {
                 // Get inputs for time t
                 std::vector<double> loadEstimate = loadEstFcn(t_s, sample);
+
                 this->model->inputEqn(t_s, loadEstimate, u);
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
-                auto& theEvent                               = data.events[event];
+                auto& theEvent = data.events[event];
+
                 theEvent.occurrenceMatrix[timeIndex][sample] = this->model->thresholdEqn(t_s, x, u);
                 if (theEvent.occurrenceMatrix[timeIndex][sample]) {
                     theEvent.getTOE()[sample] = t_s;
@@ -174,9 +178,8 @@ namespace PCOE {
                 // Write to system trajectory (model variables for which we are interested in
                 // predicted values)
                 this->model->predictedOutputEqn(t_s, x, u, z);
-                for (unsigned int p = 0; p < this->model->getNumPredictedOutputs(); p++) {
-                    data.sysTrajectories[this->model->predictedOutputs[p]][timeIndex][sample] =
-                        z[p];
+                for (unsigned int p = 0; p < this->model->getNumOutputs(); p++) {
+                    data.sysTrajectories[this->model->outputs[p]][timeIndex][sample] = z[p];
                 }
 
                 // Sample process noise - for now, assuming independent

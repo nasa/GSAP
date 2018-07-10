@@ -207,7 +207,7 @@ namespace PCOE {
         }
     }
 
-    void CommonPrognoser::saveState() const {
+    void Prognoser::saveState() const {
         using namespace std::chrono;
         // @todo(CT): Make more efficient- right now it copies every udata vector
 
