@@ -51,21 +51,7 @@ namespace PCOE {
 
         /// @brief Initializes a new instance of the @see{TCPServer} class.
         ///        This constructor is equivalent to @code{TCPServer(AF_UNSPEC)}.
-        TCPServer() : TCPServer(AF_UNSPEC) {}
-
-        /// @brief   Initializes a new instance of the @see{TCPServer} class
-        ///          with the specified address family.
-        /// @remarks The most common values for @p{af} are AF_INET for IPV4
-        ///          and AF_INET6 for IPV6. If AF_UNSPEC is specified,
-        ///          the socket is eventually created with either AF_INET or
-        ///          AF_INET6 based on the result of a call to getaddrinfo.
-        ///
-        /// @param af The address family of the IP protocol.
-        /// @exception std::invalid_argument The specified address family is
-        ///            not supported.
-        /// @exception std::system_error An error occurred when attempting to
-        ///            create the socket.
-        explicit TCPServer(int af);
+        TCPServer() : TCPServer(AF_UNSPEC, "0.0.0.0", 0) {}
 
         /// @brief Initializes a new instance of the @see{TCPServer} class and
         ///        connects to the specified port on the specified host.
@@ -144,8 +130,7 @@ namespace PCOE {
 
     private:
 //        void CreateServer(int af);
-        void CreateServer(int af, const std::string hostname = "0.0.0.0", const unsigned short port = 8080);
-        unsigned int port;
+        void CreateServer(int af, const std::string hostname, const unsigned short port);
         sock_type sock;
         int family;
     };
