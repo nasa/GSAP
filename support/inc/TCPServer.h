@@ -23,6 +23,7 @@
 #include <string>
 #include <sys/types.h>
 #include <system_error>
+#include "TCPSocket.h"
 
 #include <sys/types.h>
 #ifdef _WIN32
@@ -139,9 +140,12 @@ namespace PCOE {
 
         const static sock_type InvalidSocket;
 
+        unsigned int getPort() const;
+
     private:
-        void CreateServer(int af);
-        void CreateServer(int af, const std::string& hostname, const unsigned short port);
+//        void CreateServer(int af);
+        void CreateServer(int af, const std::string hostname = "0.0.0.0", const unsigned short port = 8080);
+        unsigned int port;
         sock_type sock;
         int family;
     };

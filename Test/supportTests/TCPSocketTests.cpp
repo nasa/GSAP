@@ -72,55 +72,52 @@ void testTCPSendAndReceive() {
     
     char buffer[1024] = "Hello, this is a test message.";
     testClient.Send(buffer, sizeof(buffer) / sizeof(buffer[0]));
-    testServer.Accept();
-    char serverBuffer[1024] = {0};
-    testServer.Receive(serverBuffer, sizeof(serverBuffer) / sizeof(serverBuffer[0]));
-    
-    Assert::AreEqual(0, strcmp(buffer, serverBuffer));
-    
-    char serverReturnMessage[1024] = "Hello from Server.";
-    testServer.Send(
-                    0, serverReturnMessage, sizeof(serverReturnMessage) / sizeof(serverReturnMessage[0]));
-    
+    TCPSocket socketAccepted1 = testServer.Accept();
+
+    char socketAccepted1Buffer[1024] = {0};
+    socketAccepted1.Receive(socketAccepted1Buffer, sizeof(socketAccepted1Buffer) / sizeof(socketAccepted1Buffer[0]));
+    Assert::AreEqual(0, strcmp(buffer, socketAccepted1Buffer));
+
+    char returnMessage[1024] = "Hello from socketAccepted1";
+    socketAccepted1.Send(returnMessage, sizeof(returnMessage)/ sizeof(returnMessage[0]));
+
     char receiveBuffer[1024] = {0};
     testClient.Receive(receiveBuffer, sizeof(receiveBuffer) / sizeof(receiveBuffer[0]));
-    std::cout << receiveBuffer << std::endl;
-    
+
     TCPSocket::size_type result = testClient.Available();
     Assert::AreEqual(0, result, "Bytes available to read not 0");
-    
+
     testServer.Listen();
-    
+
     TCPSocket testClientTwo = TCPSocket("127.0.0.1", 8080);
-    
+
     char buffer2[] = "Hello, this is a second message from ClientTwo.";
     testClientTwo.Send(buffer2, strlen(buffer2));
-    testServer.Accept();
-    char serverBuffer2[1024] = {0};
-    testServer.Receive(serverBuffer2, sizeof(serverBuffer2) / sizeof(serverBuffer2[0]));
-    
-    Assert::AreEqual(0, strcmp(buffer2, serverBuffer2));
-    
+    TCPSocket socketAccepted2 = testServer.Accept();
+
+    char socketAccepted2Buffer[1024] = {0};
+    socketAccepted2.Receive(socketAccepted2Buffer, sizeof(socketAccepted2Buffer)/ sizeof(socketAccepted2Buffer[0]));
+    Assert::AreEqual(0, strcmp(buffer2, socketAccepted2Buffer));
+
     struct sockaddr_in sa = {};
     sa.sin_port = htons(8080);
     inet_pton(AF_INET, "127.0.0.1", &sa.sin_addr);
     sa.sin_family = AF_INET;
-    
+
     TCPSocket testClientThree = TCPSocket(AF_INET);
     testClientThree.Connect((struct sockaddr*)&sa, sizeof(sa), AF_INET);
-    
+
     char buffer3[] = "Hello, this is a third message from ClientThree";
     testClientThree.Send(buffer3, strlen(buffer3));
-    testServer.Accept();
-    char serverBuffer3[1024] = {0};
-    testServer.Receive(2, serverBuffer3, sizeof(serverBuffer3) / sizeof(serverBuffer3[0]));
-    
-    char sendAllMessage[] = "Hello, this is a message from Server to all Clients.";
-    testServer.SendAll(sendAllMessage, strlen(sendAllMessage));
+    TCPSocket socketAccepted3 = testServer.Accept();
+
+    char socketAcceptedBuffer3[1024] = {0};
+    socketAccepted3.Receive(socketAcceptedBuffer3, sizeof(socketAcceptedBuffer3)/ sizeof(socketAcceptedBuffer3[0]));
+    Assert::AreEqual(0, strcmp(buffer3, socketAcceptedBuffer3));
 }
 
 void testTCPClose() {
-    TCPServer testServer(AF_INET);
+    TCPServer testServer(AF_INET, "127.0.0.1", 8080);
     
     TCPSocket testClient1(AF_INET);
     TCPSocket testClient2(AF_INET);
@@ -137,33 +134,15 @@ void testTCPClose() {
     
     testClient3.Connect("127.0.0.1", 8080);
     testServer.Accept();
-    
-    testServer.Close(1);
 
     testClient4.Connect("127.0.0.1", 8080);
     testServer.Accept();
-    
-    testServer.Close(0);
-    
-    try {
-        char messageToSend[] = "Hello from Server.";
-        testServer.Send(0, messageToSend, strlen(messageToSend));
-        Assert::Fail("Server sent message to closed  client.");
-    }
-    catch (std::out_of_range &e) {
-    }
-    
-    testServer.CloseAll();
-    
-    for (auto i = 1; i <= 3; ++i) {
-        try {
-            char messageToSend[] = "Hello from Server.";
-            testServer.Send(i, messageToSend, strlen(messageToSend));
-            Assert::Fail("Server sent message to closed client.");
-        }
-        catch (std::out_of_range &e) {
-        }
-    }
+
+    testClient1.Close();
+    testClient2.Close();
+    testClient3.Close();
+    testClient4.Close();
+    testServer.Close();
 }
 
 void testTCPNoDelay() {
@@ -354,7 +333,7 @@ void testTCPExceptions() {
     try {
         
         char recvBuffer[1024];
-        testReceiveExceptionServer.Send(0, messageFromServer, strlen(messageFromServer));
+//        testReceiveExceptionServer.Send(0, messageFromServer, strlen(messageFromServer));
         testSocket5.Close();
         testSocket5.Receive(recvBuffer, strlen(messageFromServer));
         Assert::Fail("Socket received message after closing.");

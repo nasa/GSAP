@@ -25,8 +25,6 @@
 #define _ioctl ioctl
 #endif
 
-#define SERVER_PORT 8080
-
 namespace PCOE {
 
     /// @brief RAII wrapper around and addrinfo pointer created by getaddrinfo
@@ -134,44 +132,12 @@ namespace PCOE {
         socklen_t size = sizeof(struct sockaddr_in);
         struct sockaddr_in their_addr;
         sock_type socketToAccept = accept(sock, (struct sockaddr*)&their_addr, &size);
-
-        return TCPSocket();
-    }
-
-    void TCPServer::CreateServer(int af) {
-        if ((sock = socket(af, SOCK_STREAM, IPPROTO_TCP)) == InvalidSocket) {
-            int err = sockerr;
-            if (err == _EAFNOSUPPORT) {
-                throw std::invalid_argument("Address family not supported.");
-            }
-            else {
-                std::error_code ec(err, std::generic_category());
-                throw std::system_error(ec, "Socket creation failed--socket.");
-            }
-        }
-
-        family = af;
-
-        size_type value = 1;
-        if (setsockopt(
-                sock, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&value), sizeof(int)) ==
-            -1) {
-            int err = sockerr;
-            std::error_code ec(err, std::generic_category());
-            throw std::system_error(ec, "Socket creation failed--setsockopt.");
-        }
-
-        AddressInfo result = GetAddressInfo("127.0.0.1", SERVER_PORT, family);
-        addrinfo* ai = &result;
-        if (bind(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
-            int err = sockerr;
-            std::error_code ec(err, std::generic_category());
-            throw std::system_error(ec, "Socket creation failed--bind.");
-        }
+        TCPSocket socketObject = TCPSocket::fromRaw(socketToAccept);
+        return socketObject;
     }
 
     void TCPServer::CreateServer(int af,
-                                       const std::string& hostname,
+                                       const std::string hostname,
                                        const unsigned short port) {
         if ((sock = socket(af, SOCK_STREAM, IPPROTO_TCP)) == InvalidSocket) {
             int err = sockerr;
@@ -202,5 +168,9 @@ namespace PCOE {
             std::error_code ec(err, std::generic_category());
             throw std::system_error(ec, "Socket creation failed--bind.");
         }
+    }
+
+    unsigned int TCPServer::getPort() const {
+        return port;
     }
 }
