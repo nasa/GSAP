@@ -13,7 +13,7 @@ set (HEADERS
 	inc/RecorderCommunicator.h
 	inc/Battery.h
     inc/STDINCommunicator.h
-	)
+        inc/StringUtils.h)
 
 set(SRCS
 	src/CommManager.cpp

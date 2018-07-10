@@ -28,9 +28,9 @@
 namespace PCOE {
     const char PATH_SEPARATOR =
 #ifdef _WIN32
-        '\\';
+            '\\';
 #else
-        '/';
+            '/';
 #endif
 
     // Note: Trim functions from
