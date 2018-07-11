@@ -1,7 +1,4 @@
 language: cpp
-compiler:
-  - clang
-  - gcc
 
 branches:
   only:
@@ -11,6 +8,7 @@ branches:
 matrix:
   include:
     - os: linux
+      compiler: gcc
       addons:
         apt:
           sources:
@@ -20,6 +18,7 @@ matrix:
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
     - os: linux
+      compiler: clang
       addons:
         apt:
           sources:
@@ -28,10 +27,6 @@ matrix:
             - clang-5.0
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
-    - os: osx
-      osx_image: xcode8
-      env:
-        - MATRIX_EVAL="brew install gcc && CC=gcc-7 && CXX=g++-7"
 
 before_install:
     - eval "${MATRIX_EVAL}"
