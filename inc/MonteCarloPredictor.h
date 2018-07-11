@@ -50,7 +50,7 @@ namespace PCOE {
          *  @param    state state of system at time of prediction
          *  @param  data ProgData object, in which prediction results \re stored
          **/
-        MonteCarloPredictor::Prediction predict(const double tP, const std::vector<UData>& state, ProgData& data);
+        PCOE::Prediction predict(const double tP, const std::vector<UData>& state, ProgData& data);
     };
 }
 #endif // PCOE_MONTECARLOPREDICTOR_H

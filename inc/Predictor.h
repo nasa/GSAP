@@ -33,6 +33,11 @@
 #include "ThreadSafeLog.h"
 
 namespace PCOE {
+    struct Prediction {
+        std::vector<ProgEvent> events;
+        std::vector<DataPoint> sysTrajectories;
+    };
+
     class Predictor {
     protected:
         typedef std::function<LoadEstimate(const double, const unsigned int)> LoadEstFcn;
@@ -41,10 +46,6 @@ namespace PCOE {
         PrognosticsModel* model;
         double horizon;            // time span of prediction
         Log &log;  ///> Logger (Defined in ThreadSafeLog.h)
-        struct Prediction {
-            std::vector<ProgEvent> events;
-            std::vector<DataPoint> sysTrajectories;
-        };
         
      public:
         /** Constructor
