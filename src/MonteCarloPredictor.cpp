@@ -59,8 +59,8 @@ namespace PCOE {
         log.WriteLine(LOG_INFO, MODULE_NAME, "MonteCarloPredictor created");
     }
 
-    void MonteCarloPredictor::setModel(PrognosticsModel* model) {
-        this->model = model;
+    void MonteCarloPredictor::setModel(PrognosticsModel* value) {
+        this->model = value;
 
         // Check that process noise was set consistent with this model
         if (processNoise.size() != this->model->getNumStates()) {
@@ -82,7 +82,7 @@ namespace PCOE {
     }
 
     // Predict function
-    PCOE::Prediction MonteCarloPredictor::predict(const double time_s,
+    Prediction MonteCarloPredictor::predict(const double time_s,
                                                   const std::vector<UData>& state,
                                                   ProgData& data) {
         // @todo(MD): This is setup for only a single event to predict, need to extend to multiple
