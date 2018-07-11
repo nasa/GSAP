@@ -1,9 +1,5 @@
 language: cpp
 
-branches:
-  only:
-    - travis
-
 # Use reasonable compiler versions
 matrix:
   include:
