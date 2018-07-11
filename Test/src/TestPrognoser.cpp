@@ -16,7 +16,7 @@ using namespace PCOE;
 const std::string MODULE_NAME   = "TestPrognoser";
 
 TestPrognoser::TestPrognoser(PCOE::GSAPConfigMap & paramMap):
-CommonPrognoser(paramMap) {
+Prognoser(paramMap) {
     log.WriteLine(LOG_DEBUG, MODULE_NAME, "Creating");
 
     if (paramMap.includes("futureLoading")) {

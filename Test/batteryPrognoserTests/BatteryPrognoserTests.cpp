@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "Battery.h"
+#include "BatteryModel.h"
 #include "BatteryPrognoserTests.h"
 #include "CommManager.h"
 #include "CommunicatorFactory.h"
@@ -27,15 +27,15 @@ using namespace PCOE::Test;
 
 void batteryPrognoserInit() {
     // Create the needed factories
-    ModelFactory& pModelFactory = ModelFactory::instance();
+    ModelFactory& pModelFactory                = ModelFactory::instance();
     PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
-    ObserverFactory& pObserverFactory = ObserverFactory::instance();
-    PredictorFactory& pPredictorFactory = PredictorFactory::instance();
-    CommunicatorFactory& pCommFactory = CommunicatorFactory::instance();
+    ObserverFactory& pObserverFactory          = ObserverFactory::instance();
+    PredictorFactory& pPredictorFactory        = PredictorFactory::instance();
+    CommunicatorFactory& pCommFactory          = CommunicatorFactory::instance();
 
     // Register battery model
-    pModelFactory.Register("Battery", ModelFactory::Create<Battery>);
-    pProgModelFactory.Register("Battery", PrognosticsModelFactory::Create<Battery>);
+    pModelFactory.Register("Battery", ModelFactory::Create<BatteryModel>);
+    pProgModelFactory.Register("Battery", PrognosticsModelFactory::Create<BatteryModel>);
 
     // Register UKF
     pObserverFactory.Register("UKF", ObserverFactory::Create<UnscentedKalmanFilter>);
@@ -165,8 +165,8 @@ void testBatteryPrognoserStep() {
     const ProgData& pData = p->getResults();
 
     // Compute mean of timeOfEvent and SOC at different time points
-    double meanEOD = 0;
-    double meanSOCAt1 = 0;
+    double meanEOD      = 0;
+    double meanSOCAt1   = 0;
     double meanSOCAt500 = 0;
     for (unsigned int i = 0; i < pData.events["EOD"].getTOE().npoints(); i++) {
         meanEOD += pData.events["EOD"].getTOE()[i] / pData.events["EOD"].getTOE().npoints();

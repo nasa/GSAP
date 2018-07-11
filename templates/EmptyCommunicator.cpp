@@ -1,10 +1,22 @@
-//
-//  EmptyCommunicator.cpp
-//  Batt1 Verification Tests
-//
-//  Created by Teubert, Christopher (ARC-TI)[SGT, INC] on 5/27/16.
-//  Copyright © 2013-2018 NASA. All rights reserved.
-//
+/**  Empty Communicator - Body
+ *   @class     EmptyCommunicator EmptyCommunicator.h
+ *   @ingroup   GPIC++
+ *   @ingroup   commCollection
+ *
+ *   @brief     Communicator Template
+ *
+ *   @see        Communicator
+ *
+ *   @author    Chris Teubert
+ *   @version   1.0.0
+ *
+ *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
+ *      Created: March 25, 2016
+ *
+ *   @copyright Copyright (c) 2013-2017 United States Government as represented by
+ *     the Administrator of the National Aeronautics and Space Administration.
+ *     All Rights Reserved.
+ */
 
 #include <string>
 
@@ -13,7 +25,7 @@
 namespace PCOE {
     const std::string MODULE_NAME = "EMPTYCOMM"; // Replace with your module name for log
 
-    EmptyCommunicator::EmptyCommunicator(const ConfigMap & configMap) {
+    EmptyCommunicator::EmptyCommunicator(const ConfigMap& configMap) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Configuring");
         ///------------------------------------
         /// HERE IS WHERE YOU CONFIGURE THE Communicator.
@@ -23,7 +35,8 @@ namespace PCOE {
         ///
         /// ADD COMMUNICATOR CONFIGURATION CODE BELOW:
         ///------------------------------------
-        (void)configMap; // Supress unused variable warning. Remove when implementing your communicator
+        (void)configMap; // Supress unused variable warning. Remove when implementing your
+                         // communicator
 
         ///------------------------------------
     }
@@ -46,7 +59,7 @@ namespace PCOE {
         ///
         /// ADD COMMUNICATOR PUBLISHER CODE BELOW:
         ///------------------------------------
-        DataStore& data = dataIn.doubleDatastore;
+        DataStore& data          = dataIn.doubleDatastore;
         ProgDataMap& progDataMap = dataIn.progData;
 
         ///------------------------------------
@@ -61,7 +74,6 @@ namespace PCOE {
         /// ADD COMMUNICATOR SUBSCRIBER CODE BELOW:
         ///------------------------------------
         DataStore ds;
-
 
         ///------------------------------------
         return ds;

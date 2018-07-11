@@ -9,7 +9,7 @@
 #ifndef GSAP_TESTPROGNOSER_H
 #define GSAP_TESTPROGNOSER_H
 
-#include "CommonPrognoser.h"
+#include "Prognoser.h"
 #include "ThreadSafeLog.h"
 #include "ProgData.h"
 #include "PrognoserFactory.h"
@@ -18,7 +18,7 @@ namespace PCOE {
     class GSAPConfigMap;
 }
 
-class TestPrognoser: public PCOE::CommonPrognoser {
+class TestPrognoser: public PCOE::Prognoser {
  public:
     TestPrognoser(PCOE::GSAPConfigMap & paramMap);
     void step();

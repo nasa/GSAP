@@ -117,8 +117,106 @@ if (UseOpenMP)
 	endif()
 endif()
 
-#Libraries
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/support/)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/framework/)
+set (HEADERS
+	inc/ConfigMap.h
+	inc/ConstLoadEstimator.h
+	inc/DataPoint.h
+	inc/DataPoints.h
+	inc/DataStore.h
+	inc/Datum.h
+	inc/Exceptions.h
+	inc/Factory.h
+	inc/GaussianVariable.h
+	inc/GSAPConfigMap.h
+	inc/LoadEstimator.h
+	inc/LoadEstimatorFactory.h
+	inc/Matrix.h
+	inc/Model.h
+	inc/MonteCarloPredictor.h
+	inc/MovingAverageLoadEstimator.h
+	inc/Observer.h
+	inc/ObserverFactory.h
+	inc/ParticleFilter.h
+	inc/Predictor.h
+	inc/PredictorFactory.h
+	inc/PContainer.h
+	inc/ProgData.h
+	inc/ProgEvent.h
+	inc/ProgEvents.h
+	inc/ProgMeta.h
+	inc/PrognosticsModel.h
+	inc/PrognosticsModelFactory.h
+	inc/Singleton.h
+	inc/StatisticalTools.h
+	inc/TCPSocket.h
+	inc/Thread.h
+	inc/ThreadSafeLog.h
+	inc/UData.h
+	inc/UDataInterfaces.h
+	inc/UDPSocket.h
+	inc/UnscentedKalmanFilter.h
+	inc/BenchmarkTimer.h
+	inc/TCPSocket.h
+	inc/UDPSocket.h
+	inc/TCPServer.h
+	inc/BatteryModel.h
+	inc/CommManager.h
+	inc/Communicator.h
+	inc/Prognoser.h
+	inc/CommunicatorFactory.h
+	inc/ModelBasedPrognoser.h
+	inc/ModelFactory.h
+	inc/ProgManager.h
+	inc/PrognoserFactory.h
+	inc/RandomCommunicator.h
+	inc/PlaybackCommunicator.h
+	inc/RecorderCommunicator.h
+	inc/STDINCommunicator.h
+	inc/StringUtils.h)
+
+set(SRCS
+	src/ConfigMap.cpp
+	src/ConstLoadEstimator.cpp
+	src/DataPoint.cpp
+	src/DataPoints.cpp
+	src/GaussianVariable.cpp
+	src/GSAPConfigMap.cpp
+	src/LoadEstimator.cpp
+	src/Matrix.cpp
+	src/Model.cpp
+	src/MonteCarloPredictor.cpp
+	src/MovingAverageLoadEstimator.cpp
+	src/Observer.cpp
+	src/ParticleFilter.cpp
+        src/PContainer.cpp
+	src/ProgData.cpp
+	src/ProgEvent.cpp
+	src/ProgEvents.cpp
+	src/ProgMeta.cpp
+	src/StatisticalTools.cpp
+	src/TCPSocket.cpp
+	src/Thread.cpp
+	src/ThreadSafeLog.cpp
+	src/UData.cpp
+	src/UDataInterfaces.cpp
+	src/UDPSocket.cpp
+	src/UnscentedKalmanFilter.cpp
+	src/TCPServer.cpp
+	src/BatteryModel.cpp
+	src/CommManager.cpp
+	src/Communicator.cpp
+	src/Prognoser.cpp
+	src/ModelBasedPrognoser.cpp
+	src/ProgManager.cpp
+	src/RandomCommunicator.cpp
+	src/PlaybackCommunicator.cpp
+	src/RecorderCommunicator.cpp
+	src/STDINCommunicator.cpp
+)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)
+add_library(gsap ${HEADERS} ${SRCS})
+
+
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Test/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/example/)
