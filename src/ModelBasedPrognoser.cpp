@@ -48,7 +48,7 @@ namespace PCOE {
     const double DEFAULT_STEPSIZE_S     = 1; // seconds
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
-        : CommonPrognoser(configMap), initialized(false) {
+        : Prognoser(configMap), initialized(false) {
         // Check for required config parameters
         configMap.checkRequiredParams({MODEL_KEY,
                                        OBSERVER_KEY,

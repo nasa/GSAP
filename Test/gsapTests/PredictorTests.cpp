@@ -22,7 +22,7 @@
 #include <memory>
 #include <vector>
 
-#include "Battery.h"
+#include "BatteryModel.h"
 #include "GSAPConfigMap.h"
 #include "MonteCarloPredictor.h"
 #include "PredictorTests.h"
@@ -42,7 +42,7 @@ void predictorTestInit() {
 
     // Create the model factory and register battery model
     PrognosticsModelFactory& modelFactory = PrognosticsModelFactory::instance();
-    modelFactory.Register("Battery", PrognosticsModelFactory::Create<Battery>);
+    modelFactory.Register("Battery", PrognosticsModelFactory::Create<BatteryModel>);
 }
 
 void testMonteCarloBatteryPredict() {
@@ -59,7 +59,7 @@ void testMonteCarloBatteryPredict() {
     configMap["LoadEstimator.loading"] = std::vector<std::string>({"8"});
 
     // Create a battery model (to help set up inputs for predict)
-    Battery battery = Battery();
+    BatteryModel battery = BatteryModel();
     std::vector<double> x(8);
     std::vector<double> u0(1);
     std::vector<double> z0(2);
