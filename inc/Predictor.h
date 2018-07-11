@@ -70,7 +70,7 @@ namespace PCOE {
         }
 
         /** @brief Set model pointer
-         *  @param model given model pointer
+         *  @param value given model pointer
          **/
         virtual void setModel(PrognosticsModel* value) {
             this->model = value;
