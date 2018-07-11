@@ -3,6 +3,10 @@ compiler:
   - clang
   - gcc
 
+branches:
+  only:
+    - travis
+
 # Use reasonable compiler versions
 matrix:
   include:
