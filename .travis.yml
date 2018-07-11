@@ -1,0 +1,46 @@
+language: cpp
+compiler:
+  - clang
+  - gcc
+
+# Use reasonable compiler versions
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+      env:
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+    - os: osx
+      osx_image: xcode8
+      env:
+        - MATRIX_EVAL="brew install gcc && CC=gcc-7 && CXX=g++-7"
+
+before_install:
+    - eval "${MATRIX_EVAL}"
+
+script:
+  - set OPEN_MP_NUM_THREADS 4
+  - mkdir build
+  - mkdir bin
+  - mkdir -p bin/testresults
+  - pushd build
+  - cmake ..
+  - cmake --build .
+  - popd
+  - pushd bin
+  - ./gsapTests
+
