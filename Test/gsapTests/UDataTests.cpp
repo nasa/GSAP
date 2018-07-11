@@ -369,7 +369,7 @@ namespace TestUData {
         Assert::IsTrue(update1 > 0, "Time not updated on first insert");
         Assert::IsTrue(ud.valid(), "Not valid after first insert");
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         ud.set(7.35);
         UData::size_type update2 = ud.updated();
         Assert::AreEqual(7.35, ud.get(VALUE), 1e-12, "Unexpected value using set");
