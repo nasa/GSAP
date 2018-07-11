@@ -36,43 +36,40 @@
 
 namespace PCOE {
     // Configuration Keys
-    const std::string MODEL_KEY         = "model";
-    const std::string OBSERVER_KEY      = "observer";
-    const std::string PREDICTOR_KEY     = "predictor";
-    const std::string STEPSIZE_KEY      = "Model.stepSize";
-    const std::string NUMSAMPLES_KEY    = "Predictor.numSamples";
-    const std::string HORIZON_KEY       = "Predictor.horizon";
-    const std::string LOAD_EST_KEY      = "Predictor.loadEstimator";
+    const std::string MODEL_KEY = "model";
+    const std::string OBSERVER_KEY = "observer";
+    const std::string PREDICTOR_KEY = "predictor";
+    const std::string STEPSIZE_KEY = "Model.stepSize";
+    const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
+    const std::string HORIZON_KEY = "Predictor.horizon";
+    const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
 
-    const std::string DEFAULT_LOAD_EST  = "movingAverage";
-    const double DEFAULT_STEPSIZE_S     = 1; // seconds
+    const std::string DEFAULT_LOAD_EST = "movingAverage";
+    const double DEFAULT_STEPSIZE_S = 1; // seconds
 
     ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
         : Prognoser(configMap), initialized(false) {
         // Check for required config parameters
-        configMap.checkRequiredParams({MODEL_KEY,
-                                       OBSERVER_KEY,
-                                       PREDICTOR_KEY,
-                                       NUMSAMPLES_KEY,
-                                       HORIZON_KEY});
+        configMap.checkRequiredParams(
+            {MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY, NUMSAMPLES_KEY, HORIZON_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Model");
         PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
-        model                                      = std::unique_ptr<PrognosticsModel>(
+        model = std::unique_ptr<PrognosticsModel>(
             pProgModelFactory.Create(configMap[MODEL_KEY][0], configMap));
 
         // Create Observer
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Observer");
         ObserverFactory& pObserverFactory = ObserverFactory::instance();
-        observer                          = std::unique_ptr<Observer>(
+        observer = std::unique_ptr<Observer>(
             pObserverFactory.Create(configMap[OBSERVER_KEY][0], configMap));
 
         // Create Predictor
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
         PredictorFactory& pPredictorFactory = PredictorFactory::instance();
-        predictor                           = std::unique_ptr<Predictor>(
+        predictor = std::unique_ptr<Predictor>(
             pPredictorFactory.Create(configMap[PREDICTOR_KEY][0], configMap));
 
         // Create Load Estimator
@@ -120,7 +117,7 @@ namespace PCOE {
 
         // Create progdata
         results.setUncertainty(UType::Samples); // @todo(MD): do not force samples representation
-        for (std::string & event : model->events) {
+        for (std::string& event : model->events) {
             results.addEvent(event);
             results.events[event].getTOE().npoints(numSamples);
         }
@@ -179,7 +176,7 @@ namespace PCOE {
             model->initialize(x, u, z);
             observer->initialize(newT_s, x, u);
             initialized = true;
-            lastTime    = newT_s;
+            lastTime = newT_s;
         }
         else {
             // If time has not advanced, skip this step
