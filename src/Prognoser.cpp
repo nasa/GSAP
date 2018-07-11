@@ -240,18 +240,6 @@ namespace PCOE {
                        << static_cast<int>(event.getTOE().uncertainty())
                        << "):" << event.getTOE().get();
             }
-
-            // Occurrence
-            fdHist << tmp.str() << "].pMat[T+0]:" << static_cast<double>(event.probMatrix[0]);
-
-            // OccurrenceMat (if used)
-            if (!event.occurrenceMatrix[NOW].empty()) {
-                for (unsigned int theSample = 0; theSample < event.occurrenceMatrix[0].size();
-                     theSample++) {
-                    fdHist << tmp.str() << "].oMat[T+0]" << theSample
-                           << "]:" << event.occurrenceMatrix[0][theSample];
-                }
-            }
         }
 
         // For System Trajectories
@@ -376,26 +364,6 @@ namespace PCOE {
                             }
                             theEvent.getTOE()[std::stoul(subEntry)] = std::stod(entry);
 
-                            break;
-                        }
-
-                        {
-                        case 'p':
-                            theEvent.probMatrix[0] = std::stod(entry);
-                            break;
-                        }
-
-                        {
-                        case 'o':
-                            std::getline(sss, subEntry, '[');
-                            std::getline(sss, subEntry, ']');
-
-                            if (std::stoul(subEntry) >= theEvent.occurrenceMatrix[0].size()) {
-                                theEvent.occurrenceMatrix[0].resize(std::stoul(subEntry) + 1);
-                                /// @todo(CT): resize above for efficiency
-                            }
-                            theEvent.occurrenceMatrix[0][std::stoul(subEntry)] =
-                                std::stoi(entry) != 0;
                             break;
                         }
 

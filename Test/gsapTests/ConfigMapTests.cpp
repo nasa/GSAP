@@ -54,7 +54,7 @@ void configMapUse() {
 
 void configMapLoad() {
     ConfigMap theMap;
-    theMap.addSearchPath("../Test/supportTests");
+    theMap.addSearchPath("../Test/gsapTests");
     theMap = ConfigMap("Test.cfg");
     Assert::AreNotEqual(0, theMap["test"][0].compare("modelBasedPrognoser"));
 }
@@ -82,7 +82,7 @@ void configMapAddBadSearchPath() {
 
 void configMapTrim() {
     ConfigMap theMap;
-    theMap.addSearchPath("../Test/supportTests");
+    theMap.addSearchPath("../Test/gsapTests");
     theMap = ConfigMap("Test.cfg");
 }
 

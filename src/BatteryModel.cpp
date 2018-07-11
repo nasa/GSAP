@@ -12,6 +12,8 @@
  *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
  *      Created: March 5, 2016
  *
+ *   https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20140009120.pdf
+ *
  *   @copyright Copyright (c) 2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
@@ -83,8 +85,11 @@ BatteryModel::BatteryModel() {
     numInputParameters  = 1;
     numPredictedOutputs = 1;
     m_dt                = 1;
+
     inputs              = {"power"};
     outputs             = {"voltage", "temperature"};
+    events = {"EOD"};
+    predictedOutputs = {"SOC"};
     // Set some default parameters
     setParameters();
 }

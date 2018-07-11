@@ -188,8 +188,7 @@ set(SRCS
 	src/MovingAverageLoadEstimator.cpp
 	src/Observer.cpp
 	src/ParticleFilter.cpp
-	src/Predictor.cpp
-	src/PContainer.cpp
+        src/PContainer.cpp
 	src/ProgData.cpp
 	src/ProgEvent.cpp
 	src/ProgEvents.cpp
