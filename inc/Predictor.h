@@ -72,8 +72,8 @@ namespace PCOE {
         /** @brief Set model pointer
          *  @param model given model pointer
          **/
-        virtual void setModel(PrognosticsModel* model) {
-            this->model = model;
+        virtual void setModel(PrognosticsModel* value) {
+            this->model = value;
         }
 
         /** @brief    Predict future events and values of system variables
