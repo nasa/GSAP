@@ -36,9 +36,9 @@ namespace PCOE {
     const double PI = std::atan(1) * 4.0; // Use this instead of M_PI- M_PI is not cross platform
 
     // Configuration Keys
-    const std::string N_KEY    = "Observer.N";
-    const std::string PN_KEY   = "Observer.processNoise";
-    const std::string SN_KEY   = "Observer.sensorNoise";
+    const std::string N_KEY = "Observer.N";
+    const std::string PN_KEY = "Observer.processNoise";
+    const std::string SN_KEY = "Observer.sensorNoise";
     const std::string NEFF_KEY = "Observer.MinNEffective";
 
     // Other string constants
@@ -55,7 +55,7 @@ namespace PCOE {
 
         // Set variance vectors
         processNoiseVariance = processNoise;
-        sensorNoiseVariance  = sensorNoise;
+        sensorNoiseVariance = sensorNoise;
         setSensorCovariance();
 
         // Set model
@@ -120,7 +120,7 @@ namespace PCOE {
         // Set process noise variance
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting process noise variance vector");
         std::vector<std::string> PNValues = configMap.at(PN_KEY);
-        std::size_t dimension             = PNValues.size();
+        std::size_t dimension = PNValues.size();
         processNoiseVariance.resize(dimension);
         for (size_t i = 0; i < dimension; i++) {
             processNoiseVariance[i] = std::stod(PNValues[i]);
@@ -129,7 +129,7 @@ namespace PCOE {
         // Set sensor noise variance
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting sensor noise variance vector");
         std::vector<std::string> SNValues = configMap.at(SN_KEY);
-        dimension                         = SNValues.size();
+        dimension = SNValues.size();
         sensorNoiseVariance.resize(dimension);
         for (size_t i = 0; i < dimension; i++) {
             sensorNoiseVariance[i] = std::stod(SNValues[i]);
@@ -166,9 +166,9 @@ namespace PCOE {
         generator.seed(rDevice());
 
         // Initialize time, state, inputs
-        m_t          = t0;
+        m_t = t0;
         m_xEstimated = x0;
-        m_uOld       = u0;
+        m_uOld = u0;
 
         // Compute corresponding output estimate
         std::vector<double> zeroNoiseZ(pModel->getNumOutputs(), 0);
@@ -274,7 +274,7 @@ namespace PCOE {
         Matrix zP(zActual.size(), 1);
         zA.col(0, zActual);
         zP.col(0, zPredicted);
-        Matrix I           = zA - zP;
+        Matrix I = zA - zP;
         Matrix expArgument = -0.5 * I.transpose() * R.inverse() * I;
         double lh = 1.0 / pow(2.0 * PI, zActual.size() / 2.0) * 1.0 / sqrt(R.determinant()) *
                     exp(expArgument[0][0]);
@@ -310,7 +310,7 @@ namespace PCOE {
 
         // Update time
         double dt = newT - m_t;
-        m_t       = newT;
+        m_t = newT;
         if (dt <= 0) {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "dt is less than or equal to zero");
             throw std::domain_error("ParticleFilter::step dt is 0");
@@ -325,7 +325,7 @@ namespace PCOE {
 
             // Generate new particle
             std::vector<double> xNew(particles.X.col(p));
-            pModel->stateEqn(newT, xNew, m_uOld, noise, dt);
+            xNew = pModel->stateEqn(newT, xNew, m_uOld, noise, dt);
             particles.X.col(p, xNew);
             std::vector<double> zNew(particles.Z.col(p));
             pModel->outputEqn(newT, xNew, u, zeroNoise, zNew);
