@@ -441,7 +441,7 @@ bool BatteryModel::thresholdEqn(const double t,
                                 const std::vector<double>& u) const {
     // Compute based on voltage, so use output equation to get voltage
     std::vector<double> z(2);
-    outputEqn(t, x, u, std::vector<double>(2), z);
+    z = outputEqn(t, x, u, std::vector<double>(2), z);
 
     // Determine if voltage (second element in z) is below VEOD threshold
     return z[1] <= parameters.VEOD;
