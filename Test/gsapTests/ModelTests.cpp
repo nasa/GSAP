@@ -274,7 +274,6 @@ void testBatteryThresholdEqn() {
     z0[0] = 20;
     z0[1] = 3.0;
     x = battery.initialize(u0, z0);
-    // battery.initialize(x,3.0,0.1,20);
 
     // Check that at threshold
     Assert::AreEqual(true, battery.thresholdEqn(0, x, u));
