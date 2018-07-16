@@ -132,7 +132,7 @@ void testTankOutputEqn() {
 
     // Output equation
     double t = 0;
-    TankModel.outputEqn(t, x, u, no, z);
+    z = TankModel.outputEqn(t, x, u, no, z);
 
     // Check values of z
     Assert::AreEqual(0.1, z[0], 1e-12);
@@ -242,7 +242,7 @@ void testBatteryOutputEqn() {
     u[0] = 1;
 
     // Compute output
-    battery.outputEqn(0, x, u, zeroNoise, z);
+    z = battery.outputEqn(0, x, u, zeroNoise, z);
 
     // Check outputs
     Assert::IsTrue(z[battery.indices.outputs.Vm] > 3.999871 &&

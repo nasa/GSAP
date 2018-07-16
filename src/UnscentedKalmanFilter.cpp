@@ -199,7 +199,7 @@ namespace PCOE {
 
         // Compute corresponding output estimate
         std::vector<double> zeroNoiseZ(pModel->getNumOutputs());
-        pModel->outputEqn(m_t, m_xEstimated, m_uOld, zeroNoiseZ, m_zEstimated);
+        m_zEstimated = pModel->outputEqn(m_t, m_xEstimated, m_uOld, zeroNoiseZ, m_zEstimated);
 
         // Set initialized flag
         m_initialized = true;
@@ -276,11 +276,11 @@ namespace PCOE {
             // Get ith predicted sigma point
             std::vector<double> zkk1(numOutputs);
             // Apply state equation
-            pModel->outputEqn(newT_s,
-                              static_cast<std::vector<double>>(Xkk1.col(i)),
-                              u,
-                              zeroNoise,
-                              zkk1);
+            zkk1 = pModel->outputEqn(newT_s,
+                                     static_cast<std::vector<double>>(Xkk1.col(i)),
+                                     u,
+                                     zeroNoise,
+                                     zkk1);
             // Set column in Zkk1
             Zkk1.col(i, zkk1);
         }
@@ -328,7 +328,7 @@ namespace PCOE {
 
         // Compute output estimate
         std::vector<double> zeroNoiseZ(numOutputs);
-        pModel->outputEqn(newT_s, m_xEstimated, u, zeroNoiseZ, m_zEstimated);
+        m_zEstimated = pModel->outputEqn(newT_s, m_xEstimated, u, zeroNoiseZ, m_zEstimated);
 
         // Compute covariance
         m_P = Pkk1 - Kk * Pzz * Kk.transpose();

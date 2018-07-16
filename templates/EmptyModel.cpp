@@ -1,11 +1,11 @@
 /**  EmptyModel - Body
-*   @file       EmptyModel.cpp
-*   @ingroup    GSAP-Support
-*
-*   @copyright Copyright (c) 2017-2018 United States Government as represented by
-*     the Administrator of the National Aeronautics and Space Administration.
-*     All Rights Reserved.
-*/
+ *   @file       EmptyModel.cpp
+ *   @ingroup    GSAP-Support
+ *
+ *   @copyright Copyright (c) 2017-2018 United States Government as represented by
+ *     the Administrator of the National Aeronautics and Space Administration.
+ *     All Rights Reserved.
+ */
 
 #include "EmptyModel.h"
 #include "ConfigMap.h"
@@ -14,7 +14,7 @@ using namespace PCOE;
 
 EmptyModel::EmptyModel() {
     // Default constructor
-    inputs  = {} // SET MODEL INPUT TAG NAMES
+    inputs = {} // SET MODEL INPUT TAG NAMES
     // e.g., inputs = {"power"}
     outputs = {} // SET MODEL OUTPUT TAG NAMES
     // e.g., outputs = {"voltage", "temperature"}
@@ -25,15 +25,16 @@ EmptyModel::EmptyModel() {
 }
 
 // Constructor based on configMap
-EmptyModel::EmptyModel(const ConfigMap & configMap) : EmptyModel::EmptyModel() {
+EmptyModel::EmptyModel(const ConfigMap& configMap) : EmptyModel::EmptyModel() {
     // Setup model based on configuration parameters
 }
 
 // EmptyModel State Equation
-void EmptyModel::stateEqn(const double, std::vector<double> & x, 
-                       const std::vector<double> & u, const std::vector<double> & n, 
-                       const double dt) {
-
+std::vector<double> EmptyModel::stateEqn(const double,
+                                         std::vector<double>& x,
+                                         const std::vector<double>& u,
+                                         const std::vector<double>& n,
+                                         const double dt) const {
     // Extract states
     // double a = x[0];
     // double b = x[1];
@@ -60,15 +61,16 @@ void EmptyModel::stateEqn(const double, std::vector<double> & x,
 }
 
 // EmptyModel Output Equation
-void EmptyModel::outputEqn(const double, const std::vector<double> & x,
-                        const std::vector<double> &, const std::vector<double> & n,
-                        std::vector<double> & z) {
-
+std::vector<double> EmptyModel::outputEqn(const double,
+                                          const std::vector<double>& x,
+                                          const std::vector<double>&,
+                                          const std::vector<double>& n,
+                                          const std::vector<double>& z) const {
     // Extract states
     // double a = x[0];
     // double b = x[1];
     // ...
-    
+
     // Extract inputs
     // double c = u[0];
     // ...
@@ -87,12 +89,13 @@ void EmptyModel::outputEqn(const double, const std::vector<double> & x,
 }
 
 // Initialize state, given initial inputs and outputs
-void EmptyModel::initialize(std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & z) {
+std::vector<double> EmptyModel::initialize(const std::vector<double>& u,
+                                           const std::vector<double>& z) const {
     // Determine x from u and z (model-dependent) or as fixed values
     // double a0 = 1;
     // double b0 = 2;
     // ...
-    
+
     // Set x
     // x[0] = a0;
     // x[1] = b0;

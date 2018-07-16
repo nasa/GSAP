@@ -63,11 +63,11 @@ namespace PCOE {
          *   @param      n Sensor noise vector
          *   @param      z Output vector. This gets updated to the new output at the given time.
          **/
-        virtual void outputEqn(const double t,
-                               const std::vector<double>& x,
-                               const std::vector<double>& u,
-                               const std::vector<double>& n,
-                               std::vector<double>& z) const = 0;
+        virtual std::vector<double> outputEqn(const double t,
+                                              const std::vector<double>& x,
+                                              const std::vector<double>& u,
+                                              const std::vector<double>& n,
+                                              const std::vector<double>& z) const = 0;
         /** @brief      Initialize state vector given initial inputs and outputs.
          *   @param      x Current state vector. This gets updated.
          *   @param      u Input vector

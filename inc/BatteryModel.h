@@ -153,11 +153,11 @@ public:
      *   @param      n Sensor noise vector
      *   @param      z Output vector. This gets updated to the new output at the given time.
      **/
-    void outputEqn(const double t,
-                   const std::vector<double>& x,
-                   const std::vector<double>& u,
-                   const std::vector<double>& n,
-                   std::vector<double>& z) const override;
+    std::vector<double> outputEqn(const double t,
+                                  const std::vector<double>& x,
+                                  const std::vector<double>& u,
+                                  const std::vector<double>& n,
+                                  const std::vector<double>& z) const override;
     /** @brief      Execute threshold equation
      *   @param      t Time
      *   @param      x State vector
