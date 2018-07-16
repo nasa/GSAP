@@ -39,10 +39,10 @@ namespace PCOE {
          *   @param      u Input vector
          *   @param      n Process noise vector
          **/
-        void stateEqn(const double t,
-                      std::vector<double>& x,
-                      const std::vector<double>& u,
-                      const std::vector<double>& n);
+        std::vector<double> stateEqn(const double t,
+                                     const std::vector<double>& x,
+                                     const std::vector<double>& u,
+                                     const std::vector<double>& n) const;
         /** @brief      Execute state equation. This version of the function uses a given sampling
          *time.
          *   @param      t Time
@@ -51,11 +51,11 @@ namespace PCOE {
          *   @param      n Process noise vector
          *   @param      dt Sampling time
          **/
-        virtual void stateEqn(const double t,
-                              std::vector<double>& x,
-                              const std::vector<double>& u,
-                              const std::vector<double>& n,
-                              const double dt) = 0;
+        virtual std::vector<double> stateEqn(const double t,
+                                             const std::vector<double>& x,
+                                             const std::vector<double>& u,
+                                             const std::vector<double>& n,
+                                             const double dt) const = 0;
         /** @brief      Execute output equation
          *   @param      t Time
          *   @param      x State vector
@@ -67,14 +67,14 @@ namespace PCOE {
                                const std::vector<double>& x,
                                const std::vector<double>& u,
                                const std::vector<double>& n,
-                               std::vector<double>& z) = 0;
+                               std::vector<double>& z) const = 0;
         /** @brief      Initialize state vector given initial inputs and outputs.
          *   @param      x Current state vector. This gets updated.
          *   @param      u Input vector
          *   @param      z Output vector
          **/
         virtual std::vector<double> initialize(const std::vector<double>& u,
-                                               const std::vector<double>& z) = 0;
+                                               const std::vector<double>& z) const = 0;
 
         // Get size of vectors
         unsigned int getNumStates() const;

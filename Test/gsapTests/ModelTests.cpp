@@ -80,7 +80,7 @@ void testTankStateEqn() {
     // Step state equation
     double t = 0;
     TankModel.setDt(0.1);
-    TankModel.Model::stateEqn(t, x, u, ns);
+    x = TankModel.Model::stateEqn(t, x, u, ns);
 
     // Check values of x
     Assert::AreEqual(0.1, x[0], 1e-12);
@@ -200,7 +200,7 @@ void testBatteryStateEqn() {
     u[0] = 1;
 
     // Compute next state
-    battery.Model::stateEqn(0, x, u, zeroNoise);
+    x = battery.Model::stateEqn(0, x, u, zeroNoise);
 
     // Check states
     Assert::AreEqual(293.15, x[battery.indices.states.Tb], 1e-12);

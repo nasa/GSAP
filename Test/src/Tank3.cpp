@@ -6,11 +6,11 @@
 using namespace std;
 
 // Tank3 State Equation
-void Tank3::stateEqn(const double,
-                     std::vector<double>& x,
-                     const std::vector<double>& u,
-                     const std::vector<double>& n,
-                     const double dt) {
+std::vector<double> Tank3::stateEqn(const double,
+                                    const std::vector<double>& x,
+                                    const std::vector<double>& u,
+                                    const std::vector<double>& n,
+                                    const double dt) const {
     // Extract states
     double m1 = x[0];
     double m2 = x[1];
@@ -34,15 +34,18 @@ void Tank3::stateEqn(const double,
     double m2dot = q1c2 - q2 - q2c3 + u2;
     double m1dot = -q1 - q1c2 + u1;
 
+    std::vector<double> x_new(numStates);
     // Update state
-    x[0] = m1 + m1dot * dt;
-    x[1] = m2 + m2dot * dt;
-    x[2] = m3 + m3dot * dt;
+    x_new[0] = m1 + m1dot * dt;
+    x_new[1] = m2 + m2dot * dt;
+    x_new[2] = m3 + m3dot * dt;
 
     // Add process noise
-    x[0] += dt * n[0];
-    x[1] += dt * n[1];
-    x[2] += dt * n[2];
+    x_new[0] += dt * n[0];
+    x_new[1] += dt * n[1];
+    x_new[2] += dt * n[2];
+
+    return x_new;
 }
 
 // Tank3 Output Equation
@@ -50,7 +53,7 @@ void Tank3::outputEqn(const double,
                       const std::vector<double>& x,
                       const std::vector<double>&,
                       const std::vector<double>& n,
-                      std::vector<double>& z) {
+                      std::vector<double>& z) const {
     // Extract states
     double m1 = x[0];
     double m2 = x[1];
@@ -80,7 +83,7 @@ void Tank3::outputEqn(const double,
     z[2] += n[2];
 }
 
-std::vector<double> Tank3::initialize(const vector<double>&, const vector<double>&) {
+std::vector<double> Tank3::initialize(const vector<double>&, const vector<double>&) const {
     std::vector<double> x(3);
     x[0] = 0;
     x[1] = 0;
