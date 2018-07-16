@@ -172,7 +172,7 @@ namespace PCOE {
 
         // Compute corresponding output estimate
         std::vector<double> zeroNoiseZ(pModel->getNumOutputs(), 0);
-        pModel->outputEqn(m_t, m_xEstimated, m_uOld, zeroNoiseZ, m_zEstimated);
+        m_zEstimated = pModel->outputEqn(m_t, m_xEstimated, m_uOld, zeroNoiseZ, m_zEstimated);
 
         // Initialize particles
         for (size_t p = 0; p < numParticles; p++) {
@@ -181,7 +181,7 @@ namespace PCOE {
             // Set z based on x
             std::vector<double> z0(pModel->getNumOutputs());
             std::vector<double> zeroNoise(pModel->getNumOutputs(), 0);
-            pModel->outputEqn(t0, x0, u0, zeroNoise, z0);
+            z0 = pModel->outputEqn(t0, x0, u0, zeroNoise, z0);
             particles.Z.col(p, z0);
             // Set w all equal, since we aren't adding any noise
             particles.w[p] = 1.0 / numParticles;
@@ -328,7 +328,7 @@ namespace PCOE {
             xNew = pModel->stateEqn(newT, xNew, m_uOld, noise, dt);
             particles.X.col(p, xNew);
             std::vector<double> zNew(particles.Z.col(p));
-            pModel->outputEqn(newT, xNew, u, zeroNoise, zNew);
+            zNew = pModel->outputEqn(newT, xNew, u, zeroNoise, zNew);
             particles.Z.col(p, zNew);
 
             // Set weight

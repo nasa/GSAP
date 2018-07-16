@@ -356,12 +356,11 @@ std::vector<double> BatteryModel::stateEqn(const double,
 }
 
 // Battery Output Equation
-void BatteryModel::outputEqn(const double,
-                             const std::vector<double>& x,
-                             const std::vector<double>&,
-                             const std::vector<double>& n,
-
-                             std::vector<double>& z) const {
+std::vector<double> BatteryModel::outputEqn(const double,
+                                            const std::vector<double>& x,
+                                            const std::vector<double>&,
+                                            const std::vector<double>& n,
+                                            const std::vector<double>& z) const {
     // Extract states
     const double& Tb = x[0];
     const double& Vo = x[1];
@@ -425,13 +424,15 @@ void BatteryModel::outputEqn(const double,
                  Vep6 + Vep7 + Vep8 + Vep9 +
                  parameters.R * Tb * log((-xpS + 1) / xpS) / parameters.F;
 
+    std::vector<double> z_new(getNumOutputs());
     // Set outputs
-    z[OUT::TEMP] = Tb - 273.15;
-    z[OUT::VOLTS] = -Ven + Vep - Vo - Vsn - Vsp;
+    z_new[OUT::TEMP] = Tb - 273.15;
+    z_new[OUT::VOLTS] = -Ven + Vep - Vo - Vsn - Vsp;
 
     // Add noise
-    z[OUT::TEMP] += n[OUT::TEMP];
-    z[OUT::VOLTS] += n[OUT::VOLTS];
+    z_new[OUT::TEMP] += n[OUT::TEMP];
+    z_new[OUT::VOLTS] += n[OUT::VOLTS];
+    return z_new;
 }
 
 // Battery Threshold Equation

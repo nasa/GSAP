@@ -49,20 +49,15 @@ std::vector<double> Tank3::stateEqn(const double,
 }
 
 // Tank3 Output Equation
-void Tank3::outputEqn(const double,
-                      const std::vector<double>& x,
-                      const std::vector<double>&,
-                      const std::vector<double>& n,
-                      std::vector<double>& z) const {
+std::vector<double> Tank3::outputEqn(const double,
+                                     const std::vector<double>& x,
+                                     const std::vector<double>&,
+                                     const std::vector<double>& n,
+                                     const std::vector<double>& z) const {
     // Extract states
     double m1 = x[0];
     double m2 = x[1];
     double m3 = x[2];
-
-    // Extract inputs
-    //	double u1 = u[0];
-    //	double u2 = u[1];
-    //	double u3 = u[2];
 
     // Constraints
     double p1 = m1 / parameters.K1;
@@ -72,15 +67,17 @@ void Tank3::outputEqn(const double,
     double p3m = p3;
     double p1m = p1;
 
+    std::vector<double> z_new(getNumOutputs());
     // Set outputs
-    z[0] = p1m;
-    z[1] = p2m;
-    z[2] = p3m;
+    z_new[0] = p1m;
+    z_new[1] = p2m;
+    z_new[2] = p3m;
 
     // Add noise
-    z[0] += n[0];
-    z[1] += n[1];
-    z[2] += n[2];
+    z_new[0] += n[0];
+    z_new[1] += n[1];
+    z_new[2] += n[2];
+    return z_new;
 }
 
 std::vector<double> Tank3::initialize(const vector<double>&, const vector<double>&) const {

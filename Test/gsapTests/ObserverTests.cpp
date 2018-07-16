@@ -197,7 +197,7 @@ void testUKFTankStep() {
     // Simulate to get outputs for time t
     t += dt;
     x = TankModel.stateEqn(t, x, u, ns, dt);
-    TankModel.outputEqn(t, x, u, no, z);
+    z = TankModel.outputEqn(t, x, u, no, z);
 
     // Step UKF for time t
     UKF.step(t, u, z);
@@ -294,7 +294,7 @@ void testUKFTankGetInputs() {
     // Simulate to get outputs for time t
     t += dt;
     x = TankModel.stateEqn(t, x, u, ns, dt);
-    TankModel.outputEqn(t, x, u, no, z);
+    z = TankModel.outputEqn(t, x, u, no, z);
 
     // Step UKF for time t
     u[0] = 1;
@@ -412,7 +412,7 @@ void testUKFBatteryStep() {
     t += dt;
     u[0] = 1;
     x = battery.stateEqn(t, x, u, xNoise, dt);
-    battery.outputEqn(t, x, u, zNoise, z);
+    z = battery.outputEqn(t, x, u, zNoise, z);
 
     // Step UKF for time t
     UKF.step(t, u, z);
@@ -637,7 +637,7 @@ void testPFBatteryStep() {
     t += dt;
     u[0] = 1;
     x = battery.stateEqn(t, x, u, xNoise, dt);
-    battery.outputEqn(t, x, u, zNoise, z);
+    z = battery.outputEqn(t, x, u, zNoise, z);
 
     // Step UKF for time t
     PF.step(t, u, z);
