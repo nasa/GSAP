@@ -40,8 +40,8 @@ public:
 
     // State indices
     struct stateIndices {
-        static const unsigned int Tb  = 0;
-        static const unsigned int Vo  = 1;
+        static const unsigned int Tb = 0;
+        static const unsigned int Vo = 1;
         static const unsigned int Vsn = 2;
         static const unsigned int Vsp = 3;
         static const unsigned int qnB = 4;
@@ -56,7 +56,7 @@ public:
     // Output indices
     struct outputIndices {
         static const unsigned int Tbm = 0;
-        static const unsigned int Vm  = 1;
+        static const unsigned int Vm = 1;
     };
     // Indices
     struct allIndices {
@@ -196,9 +196,8 @@ public:
      *   @param      u Input vector
      *   @param      z Output vector
      **/
-    void initialize(std::vector<double>& x,
-                    const std::vector<double>& u,
-                    const std::vector<double>& z);
+    std::vector<double> initialize(const std::vector<double>& u,
+                                   const std::vector<double>& z) override;
 
     /** @brief      Transform inputs and outputs. Specifically, given current as input
      *              change it to power.

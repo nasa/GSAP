@@ -20,10 +20,9 @@ void ctor() {
     Tank3 test = Tank3();
 
     // Initialize its
-    std::vector<double> x(test.getNumStates());
     std::vector<double> z(test.getNumOutputs());
     std::vector<double> u(test.getNumInputs());
-    test.initialize(x, u, z);
+    auto x = test.initialize(u, z);
 
     size_t N = 0;
     std::vector<double> processNoise;
@@ -41,10 +40,9 @@ void ctorWithNonemptyVectors() {
     Tank3 test = Tank3();
 
     // Initialize its
-    std::vector<double> x(test.getNumStates());
     std::vector<double> z(test.getNumOutputs());
     std::vector<double> u(test.getNumInputs());
-    test.initialize(x, u, z);
+    auto x = test.initialize(u, z);
 
     size_t N = 0;
     std::vector<double> processNoise;
@@ -88,10 +86,9 @@ void PFinitialize() {
     Tank3 test = Tank3();
 
     // Initialize its
-    std::vector<double> x(test.getNumStates());
     std::vector<double> z(test.getNumOutputs());
     std::vector<double> u(test.getNumInputs());
-    test.initialize(x, u, z);
+    auto x = test.initialize(u, z);
 
     size_t N = 200;
     std::vector<double> processNoise;
@@ -105,7 +102,7 @@ void PFinitialize() {
     sensorNoise.push_back(2.0);
 
     ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
-    const double t0   = 0;
+    const double t0 = 0;
 
     pf.initialize(t0, x, u);
 
@@ -134,20 +131,19 @@ void step() {
     Tank3 test = Tank3();
 
     // Set parameter values
-    test.parameters.K1   = 1;
-    test.parameters.K2   = 2;
-    test.parameters.K3   = 3;
-    test.parameters.R1   = 1;
-    test.parameters.R2   = 2;
-    test.parameters.R3   = 3;
+    test.parameters.K1 = 1;
+    test.parameters.K2 = 2;
+    test.parameters.K3 = 3;
+    test.parameters.R1 = 1;
+    test.parameters.R2 = 2;
+    test.parameters.R3 = 3;
     test.parameters.R1c2 = 1;
     test.parameters.R2c3 = 2;
 
     // Initialize its
-    std::vector<double> x(test.getNumStates());
     std::vector<double> z(test.getNumOutputs());
     std::vector<double> u(test.getNumInputs());
-    test.initialize(x, u, z);
+    auto x = test.initialize(u, z);
 
     size_t N = 20;
     std::vector<double> processNoise;
@@ -161,8 +157,8 @@ void step() {
     sensorNoise.push_back(2.0);
 
     ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
-    const double t0   = 0;
-    const double t1   = 1;
+    const double t0 = 0;
+    const double t1 = 1;
 
     // Test step() with uninitialized Particle Filter
     try {
@@ -192,10 +188,9 @@ void getStateEstimate() {
     Tank3 test = Tank3();
 
     // Initialize its
-    std::vector<double> x(test.getNumStates());
     std::vector<double> z(test.getNumOutputs());
     std::vector<double> u(test.getNumInputs());
-    test.initialize(x, u, z);
+    auto x = test.initialize(u, z);
 
     size_t N = 2000;
     std::vector<double> processNoise;
@@ -208,7 +203,7 @@ void getStateEstimate() {
     sensorNoise.push_back(1.0);
     sensorNoise.push_back(2.0);
 
-    ParticleFilter pf                = ParticleFilter(&test, N, processNoise, sensorNoise);
+    ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
     std::vector<UData> stateEstimate = pf.getStateEstimate();
     Assert::AreEqual(3, stateEstimate.size());
 }

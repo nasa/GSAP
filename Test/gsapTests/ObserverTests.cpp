@@ -51,12 +51,12 @@ void testUKFTankInitialize() {
     Tank3 TankModel = Tank3();
 
     // Set parameter values
-    TankModel.parameters.K1   = 1;
-    TankModel.parameters.K2   = 2;
-    TankModel.parameters.K3   = 3;
-    TankModel.parameters.R1   = 1;
-    TankModel.parameters.R2   = 2;
-    TankModel.parameters.R3   = 3;
+    TankModel.parameters.K1 = 1;
+    TankModel.parameters.K2 = 2;
+    TankModel.parameters.K3 = 3;
+    TankModel.parameters.R1 = 1;
+    TankModel.parameters.R2 = 2;
+    TankModel.parameters.R3 = 3;
     TankModel.parameters.R1c2 = 1;
     TankModel.parameters.R2c3 = 2;
 
@@ -88,7 +88,7 @@ void testUKFTankInitialize() {
 
     // Create a UKF
     UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&TankModel, Q, R);
-    double t                  = 0;
+    double t = 0;
 
     // Make sure that can't step without initializing first
     try {
@@ -108,7 +108,7 @@ void testUKFTankInitialize() {
     // Check x, z, P
     std::vector<double> xMean = UKF.getStateMean();
     std::vector<double> zMean = UKF.getOutputMean();
-    Matrix xCov               = UKF.getStateCovariance();
+    Matrix xCov = UKF.getStateCovariance();
     Assert::AreEqual(0, xMean[0], 1e-12);
     Assert::AreEqual(0, xMean[1], 1e-12);
     Assert::AreEqual(0, xMean[2], 1e-12);
@@ -123,12 +123,12 @@ void testUKFTankStep() {
     Tank3 TankModel = Tank3();
 
     // Set parameter values
-    TankModel.parameters.K1   = 1;
-    TankModel.parameters.K2   = 2;
-    TankModel.parameters.K3   = 3;
-    TankModel.parameters.R1   = 1;
-    TankModel.parameters.R2   = 2;
-    TankModel.parameters.R3   = 3;
+    TankModel.parameters.K1 = 1;
+    TankModel.parameters.K2 = 2;
+    TankModel.parameters.K3 = 3;
+    TankModel.parameters.R1 = 1;
+    TankModel.parameters.R2 = 2;
+    TankModel.parameters.R3 = 3;
     TankModel.parameters.R1c2 = 1;
     TankModel.parameters.R2c3 = 2;
 
@@ -182,7 +182,7 @@ void testUKFTankStep() {
     UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&TankModel, Q, R);
 
     // Initialize UKF
-    double t  = 0;
+    double t = 0;
     double dt = 0.1;
     UKF.initialize(t, x, u);
 
@@ -228,12 +228,12 @@ void testUKFTankGetInputs() {
     Tank3 TankModel = Tank3();
 
     // Set parameter values
-    TankModel.parameters.K1   = 1;
-    TankModel.parameters.K2   = 2;
-    TankModel.parameters.K3   = 3;
-    TankModel.parameters.R1   = 1;
-    TankModel.parameters.R2   = 2;
-    TankModel.parameters.R3   = 3;
+    TankModel.parameters.K1 = 1;
+    TankModel.parameters.K2 = 2;
+    TankModel.parameters.K3 = 3;
+    TankModel.parameters.R1 = 1;
+    TankModel.parameters.R2 = 2;
+    TankModel.parameters.R3 = 3;
     TankModel.parameters.R1c2 = 1;
     TankModel.parameters.R2c3 = 2;
 
@@ -287,7 +287,7 @@ void testUKFTankGetInputs() {
     UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&TankModel, Q, R);
 
     // Initialize UKF
-    double t  = 0;
+    double t = 0;
     double dt = 0.1;
     UKF.initialize(t, x, u);
 
@@ -313,16 +313,13 @@ void testUKFBatteryInitialize() {
     // Create battery model
     BatteryModel battery = BatteryModel();
 
-    // Set up state vector
-    std::vector<double> x(8);
-
     // Initialize
     std::vector<double> u0(1);
     std::vector<double> z0(2);
     u0[0] = 0;
     z0[0] = 20;
     z0[1] = 4.2;
-    battery.initialize(x, u0, z0);
+    auto x = battery.initialize(u0, z0);
 
     // Set up inputs
     std::vector<double> u(1);
@@ -367,16 +364,13 @@ void testUKFBatteryStep() {
     // Create battery model
     BatteryModel battery = BatteryModel();
 
-    // Set up state vector
-    std::vector<double> x(8);
-
     // Initialize
     std::vector<double> u0(1);
     std::vector<double> z0(2);
     u0[0] = 0;
     z0[0] = 20;
     z0[1] = 4.2;
-    battery.initialize(x, u0, z0);
+    auto x = battery.initialize(u0, z0);
 
     // Set up inputs
     std::vector<double> u(1);
@@ -411,7 +405,7 @@ void testUKFBatteryStep() {
 
     // Initialize UKF
     double dt = 1;
-    double t  = 0;
+    double t = 0;
     UKF.initialize(t, x, u);
 
     // Simulate to get outputs for time t
@@ -551,16 +545,13 @@ void testPFBatteryInitialize() {
     // Create battery model
     BatteryModel battery = BatteryModel();
 
-    // Set up state vector
-    std::vector<double> x(8);
-
     // Initialize
     std::vector<double> u0(1);
     std::vector<double> z0(2);
     u0[0] = 0;
     z0[0] = 20;
     z0[1] = 4.2;
-    battery.initialize(x, u0, z0);
+    auto x = battery.initialize(u0, z0);
 
     // Set up inputs
     std::vector<double> u(1);
@@ -578,7 +569,7 @@ void testPFBatteryInitialize() {
     }
 
     // Create a PF
-    size_t N          = 100;
+    size_t N = 100;
     ParticleFilter PF = ParticleFilter(&battery, N, pn, sn);
 
     // Initialize PF
@@ -600,7 +591,6 @@ void testPFBatteryStep() {
     BatteryModel battery = BatteryModel();
 
     // Set up state and output vectors
-    std::vector<double> x(battery.getNumStates());
     std::vector<double> z(battery.getNumOutputs());
 
     // Initialize
@@ -609,7 +599,7 @@ void testPFBatteryStep() {
     u0[0] = 0;
     z0[0] = 20;
     z0[1] = 4.2;
-    battery.initialize(x, u0, z0);
+    auto x = battery.initialize(u0, z0);
 
     // Set up inputs
     std::vector<double> u(1);
@@ -627,11 +617,11 @@ void testPFBatteryStep() {
     }
 
     // Create a PF
-    size_t N          = 100;
+    size_t N = 100;
     ParticleFilter PF = ParticleFilter(&battery, N, pn, sn);
 
     // Initialize PF
-    double t  = 0;
+    double t = 0;
     double dt = 1;
     PF.initialize(t, x, u);
 
