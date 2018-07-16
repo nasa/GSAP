@@ -34,10 +34,9 @@ void testTankInitialize() {
     Tank3 TankModel = Tank3();
 
     // Initialize it
-    std::vector<double> x(TankModel.getNumStates());
     std::vector<double> z(TankModel.getNumOutputs());
     std::vector<double> u(TankModel.getNumInputs());
-    TankModel.initialize(x, u, z);
+    auto x = TankModel.initialize(u, z);
 
     // Check all states set to zero
     Assert::AreEqual(0, x[0], 1e-12);
@@ -50,12 +49,12 @@ void testTankStateEqn() {
     Tank3 TankModel = Tank3();
 
     // Set parameter values
-    TankModel.parameters.K1   = 1;
-    TankModel.parameters.K2   = 2;
-    TankModel.parameters.K3   = 3;
-    TankModel.parameters.R1   = 1;
-    TankModel.parameters.R2   = 2;
-    TankModel.parameters.R3   = 3;
+    TankModel.parameters.K1 = 1;
+    TankModel.parameters.K2 = 2;
+    TankModel.parameters.K3 = 3;
+    TankModel.parameters.R1 = 1;
+    TankModel.parameters.R2 = 2;
+    TankModel.parameters.R3 = 3;
     TankModel.parameters.R1c2 = 1;
     TankModel.parameters.R2c3 = 2;
 
@@ -97,12 +96,12 @@ void testTankOutputEqn() {
     Tank3 TankModel = Tank3();
 
     // Set parameter values
-    TankModel.parameters.K1   = 1;
-    TankModel.parameters.K2   = 2;
-    TankModel.parameters.K3   = 3;
-    TankModel.parameters.R1   = 1;
-    TankModel.parameters.R2   = 2;
-    TankModel.parameters.R3   = 3;
+    TankModel.parameters.K1 = 1;
+    TankModel.parameters.K2 = 2;
+    TankModel.parameters.K3 = 3;
+    TankModel.parameters.R1 = 1;
+    TankModel.parameters.R2 = 2;
+    TankModel.parameters.R3 = 3;
     TankModel.parameters.R1c2 = 1;
     TankModel.parameters.R2c3 = 2;
 
@@ -158,16 +157,13 @@ void testBatteryInitialization() {
     // Create battery model
     BatteryModel battery = BatteryModel();
 
-    // Set up state vector
-    std::vector<double> x(8);
-
     // Initialize
     std::vector<double> u0(1);
     std::vector<double> z0(2);
     u0[0] = 0.4;
     z0[0] = 20;
     z0[1] = 4.0;
-    battery.initialize(x, u0, z0);
+    auto x = battery.initialize(u0, z0);
 
     // Check states
     Assert::AreEqual(293.15, x[battery.indices.states.Tb], 1e-12);
@@ -188,16 +184,13 @@ void testBatteryStateEqn() {
     // Create battery model
     BatteryModel battery = BatteryModel();
 
-    // Set up state vector
-    std::vector<double> x(8);
-
     // Initialize
     std::vector<double> u0(1);
     std::vector<double> z0(2);
     u0[0] = 0.4;
     z0[0] = 20;
     z0[1] = 4.0;
-    battery.initialize(x, u0, z0);
+    auto x = battery.initialize(u0, z0);
 
     // Set noise vector
     std::vector<double> zeroNoise(8);
@@ -230,10 +223,6 @@ void testBatteryStateEqn() {
 void testBatteryOutputEqn() {
     // Create battery model
     BatteryModel battery = BatteryModel();
-
-    // Set up state vector
-    std::vector<double> x(8);
-
     // Set up output vector
     std::vector<double> z(2);
 
@@ -243,7 +232,7 @@ void testBatteryOutputEqn() {
     u0[0] = 0.4;
     z0[0] = 20;
     z0[1] = 4.0;
-    battery.initialize(x, u0, z0);
+    auto x = battery.initialize(u0, z0);
 
     // Set noise vector
     std::vector<double> zeroNoise(2);
@@ -265,9 +254,6 @@ void testBatteryThresholdEqn() {
     // Create battery model
     BatteryModel battery = BatteryModel();
 
-    // Set up state vector
-    std::vector<double> x(8);
-
     // Set input vector
     std::vector<double> u(1);
     u[0] = 1;
@@ -278,7 +264,7 @@ void testBatteryThresholdEqn() {
     u0[0] = 0.4;
     z0[0] = 20;
     z0[1] = 4.0;
-    battery.initialize(x, u0, z0);
+    auto x = battery.initialize(u0, z0);
 
     // Check that not at threshold
     Assert::AreEqual(false, battery.thresholdEqn(0, x, u));
@@ -287,7 +273,7 @@ void testBatteryThresholdEqn() {
     u0[0] = 0.3;
     z0[0] = 20;
     z0[1] = 3.0;
-    battery.initialize(x, u0, z0);
+    x = battery.initialize(u0, z0);
     // battery.initialize(x,3.0,0.1,20);
 
     // Check that at threshold
@@ -314,9 +300,6 @@ void testBatteryPredictedOutputEqn() {
     // Create battery model
     BatteryModel battery = BatteryModel();
 
-    // Set up state vector
-    std::vector<double> x(8);
-
     // Set input vector
     std::vector<double> u(1);
     u[0] = 1;
@@ -327,7 +310,7 @@ void testBatteryPredictedOutputEqn() {
     u0[0] = 0;
     z0[0] = 20;
     z0[1] = 4.2;
-    battery.initialize(x, u0, z0);
+    auto x = battery.initialize(u0, z0);
 
     // Set up predicted outputs
     std::vector<double> z(battery.getNumPredictedOutputs());

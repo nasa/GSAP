@@ -1,17 +1,18 @@
-// Copyright © 2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
+// Copyright © 2018 United States Government as represented by the Administrator of the National
+// Aeronautics and Space Administration.  All Rights Reserved.
 #ifndef TANK3_H
 #define TANK3_H
 
-#include <vector>
 #include "Model.h"
+#include <vector>
 
 class Tank3 final : public PCOE::Model {
 public:
     // Constructor
     Tank3() {
         numStates = 3;
-        inputs = {"u1","u2","u3"};
-        outputs = {"p1m","p2m","p3m"};
+        inputs = {"u1", "u2", "u3"};
+        outputs = {"p1m", "p2m", "p3m"};
         m_dt = 1;
     }
 
@@ -52,8 +53,16 @@ public:
         double R2c3;
     } parameters;
 
-    void stateEqn(const double t, std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & n, const double dt);
-    void outputEqn(const double t, const std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & n, std::vector<double> & z);
-    void initialize(std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & z);
+    void stateEqn(const double t,
+                  std::vector<double>& x,
+                  const std::vector<double>& u,
+                  const std::vector<double>& n,
+                  const double dt);
+    void outputEqn(const double t,
+                   const std::vector<double>& x,
+                   const std::vector<double>& u,
+                   const std::vector<double>& n,
+                   std::vector<double>& z);
+    std::vector<double> initialize(const std::vector<double>& u, const std::vector<double>& z);
 };
 #endif

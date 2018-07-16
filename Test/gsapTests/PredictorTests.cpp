@@ -60,13 +60,12 @@ void testMonteCarloBatteryPredict() {
 
     // Create a battery model (to help set up inputs for predict)
     BatteryModel battery = BatteryModel();
-    std::vector<double> x(8);
     std::vector<double> u0(1);
     std::vector<double> z0(2);
     u0[0] = 0;
     z0[0] = 20;
     z0[1] = 4.2;
-    battery.initialize(x, u0, z0);
+    auto x = battery.initialize(u0, z0);
 
     // Create MonteCarloPredictor for battery
     MonteCarloPredictor MCP(configMap);

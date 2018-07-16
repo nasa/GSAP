@@ -172,8 +172,7 @@ namespace PCOE {
         // If this is the first step, will want to initialize the observer and the predictor
         if (!initialized) {
             log.WriteLine(LOG_DEBUG, moduleName, "Initializing ModelBasedPrognoser");
-            std::vector<double> x(model->getNumStates());
-            model->initialize(x, u, z);
+            auto x = model->initialize(u, z);
             observer->initialize(newT_s, x, u);
             initialized = true;
             lastTime = newT_s;

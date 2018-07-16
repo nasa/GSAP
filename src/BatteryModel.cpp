@@ -34,60 +34,60 @@ enum OUT { TEMP = 0, VOLTS = 1 };
 enum PRED_OUT { SOC = 0 };
 
 // Configuration Keys
-const std::string QMOBILE_KEY      = "Battery.qMobile";
-const std::string VOL_KEY          = "Battery.Vol";
-const std::string AN0_KEY          = "Battery.An0";
-const std::string AN1_KEY          = "Battery.An1";
-const std::string AN10_KEY         = "Battery.An10";
-const std::string AN11_KEY         = "Battery.An11";
-const std::string AN12_KEY         = "Battery.An12";
-const std::string AN2_KEY          = "Battery.An2";
-const std::string AN3_KEY          = "Battery.An3";
-const std::string AN4_KEY          = "Battery.An4";
-const std::string AN5_KEY          = "Battery.An5";
-const std::string AN6_KEY          = "Battery.An6";
-const std::string AN7_KEY          = "Battery.An7";
-const std::string AN8_KEY          = "Battery.An8";
-const std::string AN9_KEY          = "Battery.An9";
-const std::string AP0_KEY          = "Battery.Ap0";
-const std::string AP1_KEY          = "Battery.Ap1";
-const std::string AP10_KEY         = "Battery.Ap10";
-const std::string AP11_KEY         = "Battery.Ap11";
-const std::string AP12_KEY         = "Battery.Ap12";
-const std::string AP2_KEY          = "Battery.Ap2";
-const std::string AP3_KEY          = "Battery.Ap3";
-const std::string AP4_KEY          = "Battery.Ap4";
-const std::string AP5_KEY          = "Battery.Ap5";
-const std::string AP6_KEY          = "Battery.Ap6";
-const std::string AP7_KEY          = "Battery.Ap7";
-const std::string AP8_KEY          = "Battery.Ap8";
-const std::string AP9_KEY          = "Battery.Ap9";
-const std::string RO_KEY           = "Battery.Ro";
-const std::string SN_KEY           = "Battery.Sn";
-const std::string SP_KEY           = "Battery.Sp";
-const std::string U0N_KEY          = "Battery.U0n";
-const std::string U0P_KEY          = "Battery.U0p";
-const std::string VEOD_KEY         = "Battery.VEOD";
+const std::string QMOBILE_KEY = "Battery.qMobile";
+const std::string VOL_KEY = "Battery.Vol";
+const std::string AN0_KEY = "Battery.An0";
+const std::string AN1_KEY = "Battery.An1";
+const std::string AN10_KEY = "Battery.An10";
+const std::string AN11_KEY = "Battery.An11";
+const std::string AN12_KEY = "Battery.An12";
+const std::string AN2_KEY = "Battery.An2";
+const std::string AN3_KEY = "Battery.An3";
+const std::string AN4_KEY = "Battery.An4";
+const std::string AN5_KEY = "Battery.An5";
+const std::string AN6_KEY = "Battery.An6";
+const std::string AN7_KEY = "Battery.An7";
+const std::string AN8_KEY = "Battery.An8";
+const std::string AN9_KEY = "Battery.An9";
+const std::string AP0_KEY = "Battery.Ap0";
+const std::string AP1_KEY = "Battery.Ap1";
+const std::string AP10_KEY = "Battery.Ap10";
+const std::string AP11_KEY = "Battery.Ap11";
+const std::string AP12_KEY = "Battery.Ap12";
+const std::string AP2_KEY = "Battery.Ap2";
+const std::string AP3_KEY = "Battery.Ap3";
+const std::string AP4_KEY = "Battery.Ap4";
+const std::string AP5_KEY = "Battery.Ap5";
+const std::string AP6_KEY = "Battery.Ap6";
+const std::string AP7_KEY = "Battery.Ap7";
+const std::string AP8_KEY = "Battery.Ap8";
+const std::string AP9_KEY = "Battery.Ap9";
+const std::string RO_KEY = "Battery.Ro";
+const std::string SN_KEY = "Battery.Sn";
+const std::string SP_KEY = "Battery.Sp";
+const std::string U0N_KEY = "Battery.U0n";
+const std::string U0P_KEY = "Battery.U0p";
+const std::string VEOD_KEY = "Battery.VEOD";
 const std::string VOLSFRACTION_KEY = "Battery.VolSFraction";
-const std::string KN_KEY           = "Battery.kn";
-const std::string KP_KEY           = "Battery.kp";
-const std::string TDIFFUSION_KEY   = "Battery.tDiffusion";
-const std::string TO_KEY           = "Battery.to";
-const std::string TSN_KEY          = "Battery.tsn";
-const std::string TSP_KEY          = "Battery.tsp";
-const std::string XNMAX_KEY        = "Battery.xnMax";
-const std::string XNMIN_KEY        = "Battery.xnMin";
-const std::string XPMAX_KEY        = "Battery.xpMax";
-const std::string XPMIN_KEY        = "Battery.xpMin";
+const std::string KN_KEY = "Battery.kn";
+const std::string KP_KEY = "Battery.kp";
+const std::string TDIFFUSION_KEY = "Battery.tDiffusion";
+const std::string TO_KEY = "Battery.to";
+const std::string TSN_KEY = "Battery.tsn";
+const std::string TSP_KEY = "Battery.tsp";
+const std::string XNMAX_KEY = "Battery.xnMax";
+const std::string XNMIN_KEY = "Battery.xnMin";
+const std::string XPMAX_KEY = "Battery.xpMax";
+const std::string XPMIN_KEY = "Battery.xpMin";
 
 BatteryModel::BatteryModel() {
-    numStates           = 8;
-    numInputParameters  = 1;
+    numStates = 8;
+    numInputParameters = 1;
     numPredictedOutputs = 1;
-    m_dt                = 1;
+    m_dt = 1;
 
-    inputs              = {"power"};
-    outputs             = {"voltage", "temperature"};
+    inputs = {"power"};
+    outputs = {"voltage", "temperature"};
     events = {"EOD"};
     predictedOutputs = {"SOC"};
     // Set some default parameters
@@ -249,8 +249,8 @@ void BatteryModel::stateEqn(const double,
                             const std::vector<double>& n,
                             const double dt) {
     // Extract states
-    double Tb  = x[0];
-    double Vo  = x[1];
+    double Tb = x[0];
+    double Vo = x[1];
     double Vsn = x[2];
     double Vsp = x[3];
     double qnB = x[4];
@@ -262,25 +262,25 @@ void BatteryModel::stateEqn(const double,
     double P = u[0];
 
     // Constraints
-    double Tbdot     = 0;
-    double CpBulk    = qpB / parameters.VolB;
+    double Tbdot = 0;
+    double CpBulk = qpB / parameters.VolB;
     double CpSurface = qpS / parameters.VolS;
     double CnSurface = qnS / parameters.VolS;
-    double xSn       = qnS / parameters.qSMax;
-    double xnS       = qnS / parameters.qSMax;
-    auto xnS2        = xnS * xnS;
-    auto xnS2_1      = 2 * xnS - 1;
-    auto xnS2_xnS    = xnS2 - xnS;
+    double xSn = qnS / parameters.qSMax;
+    double xnS = qnS / parameters.qSMax;
+    auto xnS2 = xnS * xnS;
+    auto xnS2_1 = 2 * xnS - 1;
+    auto xnS2_xnS = xnS2 - xnS;
     double Ven11 =
         parameters.An11 * (22 * xnS2_1 * pow(xnS2_1, 10) + pow(xnS2_1, 12)) / parameters.F;
-    double Ven1   = parameters.An1 * (2 * xnS2_1 + pow(xnS2_1, 2)) / parameters.F;
+    double Ven1 = parameters.An1 * (2 * xnS2_1 + pow(xnS2_1, 2)) / parameters.F;
     double CnBulk = qnB / parameters.VolB;
-    double Ven6   = parameters.An6 * (12 * xnS2_1 * pow(xnS2_1, 5) + pow(xnS2_1, 7)) / parameters.F;
-    double xpS    = qpS / parameters.qSMax;
-    auto xpS2     = xpS * xpS;
-    auto xpS2_1   = 2 * xpS - 1;
+    double Ven6 = parameters.An6 * (12 * xnS2_1 * pow(xnS2_1, 5) + pow(xnS2_1, 7)) / parameters.F;
+    double xpS = qpS / parameters.qSMax;
+    auto xpS2 = xpS * xpS;
+    auto xpS2_1 = 2 * xpS - 1;
     auto xpS2_xpS = xpS2 - xpS;
-    double xSp    = qpS / parameters.qBMax;
+    double xSp = qpS / parameters.qBMax;
     double qdotDiffusionBSp = (CpBulk - CpSurface) / parameters.tDiffusion;
     double Ven8 = parameters.An8 * (16 * xnS2_xnS * pow(xnS2_1, 7) + pow(xnS2_1, 9)) / parameters.F;
     double Ven7 = parameters.An7 * (14 * xnS2_xnS * pow(xnS2_1, 6) + pow(xnS2_1, 8)) / parameters.F;
@@ -298,7 +298,7 @@ void BatteryModel::stateEqn(const double,
         parameters.Ap10 * (20 * xpS2_xpS * pow(xpS2_1, 9) + pow(xpS2_1, 11)) / parameters.F;
     double Vep12 =
         parameters.Ap12 * (24 * xpS2_xpS * pow(xpS2_1, 11) + pow(xpS2_1, 13)) / parameters.F;
-    double Jn0  = parameters.kn * pow(xSn, parameters.alpha) * pow(-xSn + 1, parameters.alpha);
+    double Jn0 = parameters.kn * pow(xSn, parameters.alpha) * pow(-xSn + 1, parameters.alpha);
     double Vep7 = parameters.Ap7 * (14 * xpS2_xpS * pow(xpS2_1, 6) + pow(xpS2_1, 8)) / parameters.F;
     double Vep2 = parameters.Ap2 * (4 * xpS2_xpS * (xpS2_1) + pow(xpS2_1, 3)) / parameters.F;
     double Vep11 =
@@ -313,29 +313,29 @@ void BatteryModel::stateEqn(const double,
     double Vep5 = parameters.Ap5 * (10 * xpS2_xpS * pow(xpS2_1, 4) + pow(xpS2_1, 6)) / parameters.F;
     double Vep8 = parameters.Ap8 * (16 * xpS2_xpS * pow(xpS2_1, 7) + pow(xpS2_1, 9)) / parameters.F;
     double Vep1 = parameters.Ap1 * (2 * xpS2_xpS + pow(xpS2_1, 2)) / parameters.F;
-    double Jp0  = parameters.kp * pow(xSp, parameters.alpha) * pow(-xSp + 1, parameters.alpha);
-    double Ven  = parameters.U0n + Ven0 + Ven1 + Ven10 + Ven11 + Ven12 + Ven2 + Ven3 + Ven4 + Ven5 +
+    double Jp0 = parameters.kp * pow(xSp, parameters.alpha) * pow(-xSp + 1, parameters.alpha);
+    double Ven = parameters.U0n + Ven0 + Ven1 + Ven10 + Ven11 + Ven12 + Ven2 + Ven3 + Ven4 + Ven5 +
                  Ven6 + Ven7 + Ven8 + Ven9 +
                  parameters.R * Tb * log((-xnS + 1) / xnS) / parameters.F;
     double Vep = parameters.U0p + Vep0 + Vep1 + Vep10 + Vep11 + Vep12 + Vep2 + Vep3 + Vep4 + Vep5 +
                  Vep6 + Vep7 + Vep8 + Vep9 +
                  parameters.R * Tb * log((-xpS + 1) / xpS) / parameters.F;
-    double V          = Vep - Vo - Vsn - Vsp - Ven;
-    double i          = P / V;
-    double qnSdot     = qdotDiffusionBSn - i;
-    double Jn         = i / parameters.Sn;
-    double VoNominal  = parameters.Ro * i;
-    double Jp         = i / parameters.Sp;
-    double qnBdot     = -qdotDiffusionBSn;
-    double qpBdot     = -qdotDiffusionBSp;
-    double qpSdot     = i + qdotDiffusionBSp;
-    double Vodot      = (VoNominal - Vo) / parameters.to;
+    double V = Vep - Vo - Vsn - Vsp - Ven;
+    double i = P / V;
+    double qnSdot = qdotDiffusionBSn - i;
+    double Jn = i / parameters.Sn;
+    double VoNominal = parameters.Ro * i;
+    double Jp = i / parameters.Sp;
+    double qnBdot = -qdotDiffusionBSn;
+    double qpBdot = -qdotDiffusionBSp;
+    double qpSdot = i + qdotDiffusionBSp;
+    double Vodot = (VoNominal - Vo) / parameters.to;
     double VsnNominal = static_cast<double>(parameters.R * Tb * asinh((1.0L / 2.0L) * Jn / Jn0) /
                                             (parameters.F * parameters.alpha));
     double VspNominal = static_cast<double>(parameters.R * Tb * asinh((1.0L / 2.0L) * Jp / Jp0) /
                                             (parameters.F * parameters.alpha));
-    double Vsndot     = (VsnNominal - Vsn) / parameters.tsn;
-    double Vspdot     = (VspNominal - Vsp) / parameters.tsp;
+    double Vsndot = (VsnNominal - Vsn) / parameters.tsn;
+    double Vspdot = (VspNominal - Vsp) / parameters.tsp;
 
     // Update state
     x[0] = Tb + Tbdot * dt;
@@ -361,8 +361,8 @@ void BatteryModel::outputEqn(const double,
 
                              std::vector<double>& z) {
     // Extract states
-    const double& Tb  = x[0];
-    const double& Vo  = x[1];
+    const double& Tb = x[0];
+    const double& Vo = x[1];
     const double& Vsn = x[2];
     const double& Vsp = x[3];
     // double qnB = x[4];
@@ -371,15 +371,15 @@ void BatteryModel::outputEqn(const double,
     const double& qpS = x[7];
 
     // Constraints
-    double xnS    = qnS / parameters.qSMax;
-    auto xnS2     = xnS * xnS;
-    auto xnS2_1   = 2 * xnS - 1;
+    double xnS = qnS / parameters.qSMax;
+    auto xnS2 = xnS * xnS;
+    auto xnS2_1 = 2 * xnS - 1;
     auto xnS2_xnS = xnS2 - xnS;
     double Ven11 =
         parameters.An11 * (22 * xnS2_xnS * pow(xnS2_1, 10) + pow(xnS2_1, 12)) / parameters.F;
-    double xpS    = qpS / parameters.qSMax;
-    auto xpS2     = xpS * xpS;
-    auto xpS2_1   = 2 * xpS - 1;
+    double xpS = qpS / parameters.qSMax;
+    auto xpS2 = xpS * xpS;
+    auto xpS2_1 = 2 * xpS - 1;
     auto xpS2_xpS = xpS2 - xpS;
 
     double Vep6 = parameters.Ap6 * (12 * xpS2_xpS * pow(xpS2_1, 5) + pow(xpS2_1, 7)) / parameters.F;
@@ -416,7 +416,7 @@ void BatteryModel::outputEqn(const double,
     double Vep1 = parameters.Ap1 * (6 * xpS2_xpS + 1) /
                   parameters.F; // was (-2 * xpS*(-xpS + 1) + pow(xpS2_1, 2)
     double Vep0 = parameters.Ap0 * (xpS2_1) / parameters.F;
-    double Ven  = parameters.U0n + Ven0 + Ven1 + Ven10 + Ven11 + Ven12 + Ven2 + Ven3 + Ven4 + Ven5 +
+    double Ven = parameters.U0n + Ven0 + Ven1 + Ven10 + Ven11 + Ven12 + Ven2 + Ven3 + Ven4 + Ven5 +
                  Ven6 + Ven7 + Ven8 + Ven9 +
                  parameters.R * Tb * log((-xnS + 1) / xnS) / parameters.F;
     double Vep = parameters.U0p + Vep0 + Vep1 + Vep10 + Vep11 + Vep12 + Vep2 + Vep3 + Vep4 + Vep5 +
@@ -424,7 +424,7 @@ void BatteryModel::outputEqn(const double,
                  parameters.R * Tb * log((-xpS + 1) / xpS) / parameters.F;
 
     // Set outputs
-    z[OUT::TEMP]  = Tb - 273.15;
+    z[OUT::TEMP] = Tb - 273.15;
     z[OUT::VOLTS] = -Ven + Vep - Vo - Vsn - Vsp;
 
     // Add noise
@@ -463,8 +463,8 @@ void BatteryModel::predictedOutputEqn(const double,
                                       std::vector<double>& z) {
     // SOC is the only predicted output
     // Compute "nominal" SOC
-    double qnS       = x[indices.states.qnS];
-    double qnB       = x[indices.states.qnB];
+    double qnS = x[indices.states.qnS];
+    double qnB = x[indices.states.qnB];
     z[PRED_OUT::SOC] = (qnS + qnB) / parameters.qnMax;
     ;
 }
@@ -489,12 +489,12 @@ void BatteryModel::setParameters(const double qMobile, const double Vol) {
     parameters.F = 96487; // Faraday's constant, C/mol
 
     // Li-ion parameters
-    parameters.alpha        = 0.5; // anodic/cathodic electrochemical transfer coefficient
-    parameters.Sn           = 0.000437545; // surface area (- electrode)
-    parameters.Sp           = 0.00030962; // surface area (+ electrode)
-    parameters.kn           = 2120.96; // lumped constant for BV (- electrode)
-    parameters.kp           = 248898; // lumped constant for BV (+ electrode)
-    parameters.Vol          = Vol; // total interior battery volume/2 (for computing concentrations)
+    parameters.alpha = 0.5; // anodic/cathodic electrochemical transfer coefficient
+    parameters.Sn = 0.000437545; // surface area (- electrode)
+    parameters.Sp = 0.00030962; // surface area (+ electrode)
+    parameters.kn = 2120.96; // lumped constant for BV (- electrode)
+    parameters.kp = 248898; // lumped constant for BV (+ electrode)
+    parameters.Vol = Vol; // total interior battery volume/2 (for computing concentrations)
     parameters.VolSFraction = 0.1; // fraction of total volume occupied by surface volume
 
     // Volumes (total volume is 2*parameters.Vol), assume volume at each electrode is the
@@ -531,38 +531,38 @@ void BatteryModel::setParameters(const double qMobile, const double Vol) {
     // time constants
     parameters.tDiffusion =
         7e6; // diffusion time constant (increasing this causes decrease in diffusion rate)
-    parameters.to  = 6.08671;
+    parameters.to = 6.08671;
     parameters.tsn = 1.00138e3;
     parameters.tsp = 46.4311;
 
     // Redlich-Kister parameters (positive electrode)
-    parameters.U0p  = 4.03;
-    parameters.Ap0  = -31593.7;
-    parameters.Ap1  = 0.106747;
-    parameters.Ap2  = 24606.4;
-    parameters.Ap3  = -78561.9;
-    parameters.Ap4  = 13317.9;
-    parameters.Ap5  = 307387;
-    parameters.Ap6  = 84916.1;
-    parameters.Ap7  = -1.07469e+06;
-    parameters.Ap8  = 2285.04;
-    parameters.Ap9  = 990894;
+    parameters.U0p = 4.03;
+    parameters.Ap0 = -31593.7;
+    parameters.Ap1 = 0.106747;
+    parameters.Ap2 = 24606.4;
+    parameters.Ap3 = -78561.9;
+    parameters.Ap4 = 13317.9;
+    parameters.Ap5 = 307387;
+    parameters.Ap6 = 84916.1;
+    parameters.Ap7 = -1.07469e+06;
+    parameters.Ap8 = 2285.04;
+    parameters.Ap9 = 990894;
     parameters.Ap10 = 283920;
     parameters.Ap11 = -161513;
     parameters.Ap12 = -469218;
 
     // Redlich-Kister parameters (negative electrode)
-    parameters.U0n  = 0.01;
-    parameters.An0  = 86.19;
-    parameters.An1  = 0;
-    parameters.An2  = 0;
-    parameters.An3  = 0;
-    parameters.An4  = 0;
-    parameters.An5  = 0;
-    parameters.An6  = 0;
-    parameters.An7  = 0;
-    parameters.An8  = 0;
-    parameters.An9  = 0;
+    parameters.U0n = 0.01;
+    parameters.An0 = 86.19;
+    parameters.An1 = 0;
+    parameters.An2 = 0;
+    parameters.An3 = 0;
+    parameters.An4 = 0;
+    parameters.An5 = 0;
+    parameters.An6 = 0;
+    parameters.An7 = 0;
+    parameters.An8 = 0;
+    parameters.An9 = 0;
     parameters.An10 = 0;
     parameters.An11 = 0;
     parameters.An12 = 0;
@@ -572,9 +572,8 @@ void BatteryModel::setParameters(const double qMobile, const double Vol) {
 }
 
 // Initialize state, given an initial voltage, current, and temperature
-void BatteryModel::initialize(std::vector<double>& x /*state*/,
-                              const std::vector<double>& u /*input*/,
-                              const std::vector<double>& z /*output*/) {
+std::vector<double> BatteryModel::initialize(const std::vector<double>& u /*input*/,
+                                             const std::vector<double>& z /*output*/) {
     // This is solved via a search procedure
     // Start by setting up an xp and xn vectors
     std::vector<double> xp, xn;
@@ -595,12 +594,12 @@ void BatteryModel::initialize(std::vector<double>& x /*state*/,
     // Account for voltage drop due to input current (assuming no concentration gradient)
     double voltage = z[indices.outputs.Vm];
     double current = u[indices.inputs.P] / voltage;
-    double Vo      = current * parameters.Ro;
+    double Vo = current * parameters.Ro;
 
     // Now, construct the equilibrium potential voltage for each value of xp and xn
     for (size_t i = 0; i < xp.size(); i++) {
         // For xp
-        double xpS  = xp[i];
+        double xpS = xp[i];
         double Vep0 = parameters.Ap0 * (2 * xpS - 1) / parameters.F;
         double Vep1 = parameters.Ap1 * (-2 * xpS * (-xpS + 1) + pow(2 * xpS - 1, 2)) / parameters.F;
         double Vep2 = parameters.Ap2 *
@@ -639,7 +638,7 @@ void BatteryModel::initialize(std::vector<double>& x /*state*/,
                      Vep5 + Vep6 + Vep7 + Vep8 + Vep9 +
                      parameters.R * Tb * log((-xpS + 1) / xpS) / parameters.F;
         // For xn
-        double xnS  = xn[i];
+        double xnS = xn[i];
         double Ven0 = parameters.An0 * (2 * xnS - 1) / parameters.F;
         double Ven1 = parameters.An1 * (-2 * xnS * (-xnS + 1) + pow(2 * xnS - 1, 2)) / parameters.F;
         double Ven2 = parameters.An2 *
@@ -703,14 +702,16 @@ void BatteryModel::initialize(std::vector<double>& x /*state*/,
     double qnB0 = qnS0 * parameters.VolB / parameters.VolS;
 
     // Set x
-    x[indices.states.Tb]  = Tb;
-    x[indices.states.Vo]  = Vo;
+    std::vector<double> x(8);
+    x[indices.states.Tb] = Tb;
+    x[indices.states.Vo] = Vo;
     x[indices.states.Vsn] = 0;
     x[indices.states.Vsp] = 0;
     x[indices.states.qnB] = qnB0;
     x[indices.states.qnS] = qnS0;
     x[indices.states.qpB] = qpB0;
     x[indices.states.qpS] = qpS0;
+    return x;
 }
 
 void BatteryModel::transform(std::vector<double>& u, std::vector<double>& z) {
