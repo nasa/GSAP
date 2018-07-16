@@ -53,16 +53,17 @@ public:
         double R2c3;
     } parameters;
 
-    void stateEqn(const double t,
-                  std::vector<double>& x,
-                  const std::vector<double>& u,
-                  const std::vector<double>& n,
-                  const double dt);
+    std::vector<double> stateEqn(const double t,
+                                 const std::vector<double>& x,
+                                 const std::vector<double>& u,
+                                 const std::vector<double>& n,
+                                 const double dt) const override;
     void outputEqn(const double t,
                    const std::vector<double>& x,
                    const std::vector<double>& u,
                    const std::vector<double>& n,
-                   std::vector<double>& z);
-    std::vector<double> initialize(const std::vector<double>& u, const std::vector<double>& z);
+                   std::vector<double>& z) const override;
+    std::vector<double> initialize(const std::vector<double>& u,
+                                   const std::vector<double>& z) const override;
 };
 #endif

@@ -243,11 +243,11 @@ BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryMo
 }
 
 // Battery State Equation
-void BatteryModel::stateEqn(const double,
-                            std::vector<double>& x,
-                            const std::vector<double>& u,
-                            const std::vector<double>& n,
-                            const double dt) {
+std::vector<double> BatteryModel::stateEqn(const double,
+                                           const std::vector<double>& x,
+                                           const std::vector<double>& u,
+                                           const std::vector<double>& n,
+                                           const double dt) const {
     // Extract states
     double Tb = x[0];
     double Vo = x[1];
@@ -338,19 +338,21 @@ void BatteryModel::stateEqn(const double,
     double Vspdot = (VspNominal - Vsp) / parameters.tsp;
 
     // Update state
-    x[0] = Tb + Tbdot * dt;
-    x[1] = Vo + Vodot * dt;
-    x[2] = Vsn + Vsndot * dt;
-    x[3] = Vsp + Vspdot * dt;
-    x[4] = qnB + qnBdot * dt;
-    x[5] = qnS + qnSdot * dt;
-    x[6] = qpB + qpBdot * dt;
-    x[7] = qpS + qpSdot * dt;
+    std::vector<double> x_new(numStates);
+    x_new[0] = Tb + Tbdot * dt;
+    x_new[1] = Vo + Vodot * dt;
+    x_new[2] = Vsn + Vsndot * dt;
+    x_new[3] = Vsp + Vspdot * dt;
+    x_new[4] = qnB + qnBdot * dt;
+    x_new[5] = qnS + qnSdot * dt;
+    x_new[6] = qpB + qpBdot * dt;
+    x_new[7] = qpS + qpSdot * dt;
 
     // Add process noise
     for (PCOE::ConfigMap::size_type it = 0; it <= 7; it++) {
-        x[it] += dt * n[it];
+        x_new[it] += dt * n[it];
     }
+    return x_new;
 }
 
 // Battery Output Equation
@@ -359,7 +361,7 @@ void BatteryModel::outputEqn(const double,
                              const std::vector<double>&,
                              const std::vector<double>& n,
 
-                             std::vector<double>& z) {
+                             std::vector<double>& z) const {
     // Extract states
     const double& Tb = x[0];
     const double& Vo = x[1];
@@ -435,7 +437,7 @@ void BatteryModel::outputEqn(const double,
 // Battery Threshold Equation
 bool BatteryModel::thresholdEqn(const double t,
                                 const std::vector<double>& x,
-                                const std::vector<double>& u) {
+                                const std::vector<double>& u) const {
     // Compute based on voltage, so use output equation to get voltage
     std::vector<double> z(2);
     outputEqn(t, x, u, std::vector<double>(2), z);
@@ -447,7 +449,7 @@ bool BatteryModel::thresholdEqn(const double t,
 // Battery Input Equation
 void BatteryModel::inputEqn(const double,
                             const std::vector<double>& inputParameters,
-                            std::vector<double>& u) {
+                            std::vector<double>& u) const {
     //    if (u[0] == NAN) {
     //        u[0] = inputParameters[1];
     //    } else {
@@ -460,13 +462,12 @@ void BatteryModel::inputEqn(const double,
 void BatteryModel::predictedOutputEqn(const double,
                                       const std::vector<double>& x,
                                       const std::vector<double>&,
-                                      std::vector<double>& z) {
+                                      std::vector<double>& z) const {
     // SOC is the only predicted output
     // Compute "nominal" SOC
     double qnS = x[indices.states.qnS];
     double qnB = x[indices.states.qnB];
     z[PRED_OUT::SOC] = (qnS + qnB) / parameters.qnMax;
-    ;
 }
 
 // Set model parameters, given qMobile
@@ -573,7 +574,7 @@ void BatteryModel::setParameters(const double qMobile, const double Vol) {
 
 // Initialize state, given an initial voltage, current, and temperature
 std::vector<double> BatteryModel::initialize(const std::vector<double>& u /*input*/,
-                                             const std::vector<double>& z /*output*/) {
+                                             const std::vector<double>& z /*output*/) const {
     // This is solved via a search procedure
     // Start by setting up an xp and xn vectors
     std::vector<double> xp, xn;

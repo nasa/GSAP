@@ -141,11 +141,11 @@ public:
      *   @param      n Process noise vector
      *   @param      dt Sampling time
      **/
-    void stateEqn(const double t,
-                  std::vector<double>& x,
-                  const std::vector<double>& u,
-                  const std::vector<double>& n,
-                  const double dt);
+    std::vector<double> stateEqn(const double t,
+                                 const std::vector<double>& x,
+                                 const std::vector<double>& u,
+                                 const std::vector<double>& n,
+                                 const double dt) const override;
     /** @brief      Execute output equation
      *   @param      t Time
      *   @param      x State vector
@@ -157,13 +157,15 @@ public:
                    const std::vector<double>& x,
                    const std::vector<double>& u,
                    const std::vector<double>& n,
-                   std::vector<double>& z);
+                   std::vector<double>& z) const override;
     /** @brief      Execute threshold equation
      *   @param      t Time
      *   @param      x State vector
      *   @param      u Input vector
      **/
-    bool thresholdEqn(const double t, const std::vector<double>& x, const std::vector<double>& u);
+    bool thresholdEqn(const double t,
+                      const std::vector<double>& x,
+                      const std::vector<double>& u) const override;
     /** @brief      Execute input equation.
      *               Determines what input (u) should be at the given time for the given input
      *parameters.
@@ -174,7 +176,7 @@ public:
      **/
     void inputEqn(const double t,
                   const std::vector<double>& inputParameters,
-                  std::vector<double>& u);
+                  std::vector<double>& u) const override;
     /** @brief      Execute predicted output equation.
      *               Predicted outputs are those that are not measured, but are interested in being
      *predicted for prognostics.
@@ -186,7 +188,7 @@ public:
     void predictedOutputEqn(const double t,
                             const std::vector<double>& x,
                             const std::vector<double>& u,
-                            std::vector<double>& z);
+                            std::vector<double>& z) const override;
 
     // Set default parameters, based on 18650 cells
     void setParameters(const double qMobile = QMOBILE_DEFAULT_VALUE, const double Vol = 2e-5);
@@ -197,7 +199,7 @@ public:
      *   @param      z Output vector
      **/
     std::vector<double> initialize(const std::vector<double>& u,
-                                   const std::vector<double>& z) override;
+                                   const std::vector<double>& z) const override;
 
     /** @brief      Transform inputs and outputs. Specifically, given current as input
      *              change it to power.
