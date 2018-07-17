@@ -197,6 +197,8 @@ public:
                                              const input_type& u,
                                              const output_type& z) const override;
 
+    event_state_type eventStateEqn(const state_type& x) const override;
+
     // Set default parameters, based on 18650 cells
     void setParameters(const double qMobile = QMOBILE_DEFAULT_VALUE, const double Vol = 2e-5);
 };

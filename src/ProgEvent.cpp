@@ -40,22 +40,32 @@ namespace PCOE {
     // |     Public Functions   |
     // *------------------------*
 
-    ProgEvent::ProgEvent() : ProgMeta(), nSamples(0) {}
+    ProgEvent::ProgEvent() : ProgMeta() {}
 
     void ProgEvent::setUncertainty(const UType uncertType) {
         // NOTE: LOSE ALL SAVED DATA
         timeOfEvent.uncertainty(uncertType);
+        eventState.uncertainty(uncertType);
     }
 
     UType ProgEvent::getUncertainty() const {
         return timeOfEvent.uncertainty();
     }
 
-    // *------------------------*
-    // |    Private Functions   |
-    // *------------------------*
+    void ProgEvent::setNPoints(const unsigned int sampleCount) {
+        timeOfEvent.npoints(sampleCount);
+        eventState.npoints(sampleCount);
+    }
 
-    void ProgEvent::setNPoints(const unsigned int nEvents) {
-        timeOfEvent.npoints(nEvents);
+    const UData &ProgEvent::getEventState() const {
+        return eventState;
+    }
+
+    UData& ProgEvent::getEventState() {
+        return eventState;
+    }
+
+    void ProgEvent::setEventState(const UData &eventState) {
+        ProgEvent::eventState = eventState;
     }
 }

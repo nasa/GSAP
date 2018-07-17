@@ -286,5 +286,5 @@ void testBatteryPredictedOutputEqn() {
     auto predictedOutput = battery.predictedOutputEqn(0, x, u, z);
 
     // Check values
-    Assert::AreEqual(1, predictedOutput[0], 1e-5);
+    Assert::AreEqual(0, predictedOutput.size());
 }

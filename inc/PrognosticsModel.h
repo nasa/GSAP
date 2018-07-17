@@ -97,6 +97,14 @@ namespace PCOE {
                                   const input_type& u) const = 0;
 
         /**
+         * Calculate event state.
+         *
+         * @param x  The model state vector at the current time step.
+         * @return   The
+         */
+        virtual event_state_type eventStateEqn(const state_type& x) const = 0;
+
+        /**
          * Derives the input vector from the given input parameters.
          *
          * @param t      The time at the current time step.
