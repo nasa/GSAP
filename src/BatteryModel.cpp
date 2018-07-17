@@ -235,11 +235,11 @@ BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryMo
 }
 
 // Battery State Equation
-Model::state_type BatteryModel::stateEqn(double t,
+Model::state_type BatteryModel::stateEqn(double,
                                          const state_type& x,
                                          const input_type& u,
                                          const noise_type& n,
-                                         double dt) const const {
+                                         double dt) const {
     // Extract states
     double Tb = x[0];
     double Vo = x[1];
@@ -348,10 +348,8 @@ Model::state_type BatteryModel::stateEqn(double t,
 }
 
 // Battery Output Equation
-Model::output_type BatteryModel::outputEqn(double t,
-                                           const state_type& x,
-                                           const input_type& u,
-                                           const noise_type& n) const {
+Model::output_type
+BatteryModel::outputEqn(double, const state_type& x, const input_type&, const noise_type& n) const {
     // Extract states
     const double& Tb = x[0];
     const double& Vo = x[1];
@@ -443,11 +441,10 @@ Model::input_type BatteryModel::inputEqn(double,
 }
 
 // Battery Predicted Outputs Equation
-PrognosticsModel::predicted_output_type
-BatteryModel::predictedOutputEqn(double t,
-                                 const state_type& x,
-                                 const input_type& u,
-                                 const output_type& z) const {
+PrognosticsModel::predicted_output_type BatteryModel::predictedOutputEqn(double,
+                                                                         const state_type& x,
+                                                                         const input_type&,
+                                                                         const output_type&) const {
     // SOC is the only predicted output
     // Compute "nominal" SOC
     double qnS = x[indices.states.qnS];
