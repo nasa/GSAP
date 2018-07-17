@@ -260,14 +260,12 @@ void testBatteryInputEqn() {
     // Create battery model
     BatteryModel battery = BatteryModel();
 
-    // Set input vector
-    auto u = std::vector<double>({0});
-
     // Set input parameters
     std::vector<double> inputParameters({1, 2, 3, 4, 5});
 
     // Run inputEqn for different time points and check values
-    battery.inputEqn(1, inputParameters, u);
+    std::vector<double> loadEstimate = {0}; // TODO (JW): Battery model doesn't actually use this?
+    auto u = battery.inputEqn(1, inputParameters, loadEstimate);
     Assert::AreEqual(1, u[0], 1e-12);
 }
 
