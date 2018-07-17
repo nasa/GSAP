@@ -57,6 +57,7 @@ void testMonteCarloBatteryPredict() {
     configMap["Model.processNoise"] = processNoise;
     configMap["Predictor.loadEstimator"] = std::vector<std::string>({"const"});
     configMap["LoadEstimator.loading"] = std::vector<std::string>({"8"});
+    configMap["Predictor.events"] = std::vector<std::string>({"EOD"});
 
     // Create a battery model (to help set up inputs for predict)
     BatteryModel battery = BatteryModel();
@@ -135,6 +136,7 @@ void testMonteCarloBatteryConfig() {
     configMap["Model.processNoise"] = processNoise;
     configMap["Predictor.loadEstimator"] = std::vector<std::string>({"const"});
     configMap["LoadEstimator.loading"] = std::vector<std::string>({"8"});
+    configMap["Predictor.events"] = std::vector<std::string>({"EOD"});
 
     // Create MonteCarloPredictor for battery
     MonteCarloPredictor MCP(configMap);

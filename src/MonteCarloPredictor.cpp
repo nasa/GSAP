@@ -31,6 +31,7 @@ namespace PCOE {
     const std::string PROCESSNOISE_KEY = "Model.processNoise";
     const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
     const std::string HORIZON_KEY = "Predictor.horizon";
+    const std::string EVENTS_KEY = "Predictor.events";
 
     // Other string constants
     const std::string MODULE_NAME = "MonteCarloPredictor";
@@ -55,6 +56,8 @@ namespace PCOE {
         for (unsigned int i = 0; i < processNoiseStrings.size(); i++) {
             processNoise.push_back(std::stod(processNoiseStrings[i]));
         }
+
+        events = configMap.at(EVENTS_KEY);
 
         log.WriteLine(LOG_INFO, MODULE_NAME, "MonteCarloPredictor created");
     }
@@ -96,7 +99,7 @@ namespace PCOE {
 
         Prediction prediction;
         prediction.events.push_back(ProgEvent());
-        for (auto& output : this->model->getOutputs()) {
+        for (auto& output : this->model->getPredictedOutputs()) {
             DataPoint sysTrajToAdd = DataPoint();
             sysTrajToAdd.setMeta(output, "");
             prediction.sysTrajectories.push_back(sysTrajToAdd);

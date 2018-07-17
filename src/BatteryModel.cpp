@@ -24,6 +24,7 @@
 #include <cmath>
 #include <vector>
 
+#include "Assert.h"
 #include "ConfigMap.h"
 
 using namespace PCOE;
@@ -437,6 +438,8 @@ bool BatteryModel::thresholdEqn(double t, const state_type& x, const input_type&
 Model::input_type BatteryModel::inputEqn(double,
                                          const std::vector<double>& params,
                                          const std::vector<double>&) const {
+    Expect(params.size() == getInputSize(),
+           "Input parameter size does not match input vector size.");
     return input_type(params);
 }
 
