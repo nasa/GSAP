@@ -66,7 +66,7 @@ namespace PCOE {
 /// \param cond The condition that must be satisfied
 /// \param msg  The message that will be included in the thrown exception if the
 ///             condition is violated.
-#define Expect(cond, msg, log) CONTRACT_REQUIRE("Precondition", cond, msg)
+#define Expect(cond, msg) CONTRACT_REQUIRE("Precondition", cond, msg)
 
 /// Describes a function postcondition that must be satisfied. In debug builds,
 /// this function will throw an exception when the constraint is violated.
@@ -77,7 +77,7 @@ namespace PCOE {
 /// \param cond The condition that must be satisfied
 /// \param msg  The message that will be included in the thrown exception if the
 ///             condition is violated.
-#define Ensure(cond, msg, log) CONTRACT_REQUIRE("Postcondition", cond, msg)
+#define Ensure(cond, msg) CONTRACT_REQUIRE("Postcondition", cond, msg)
 
 #endif
 
