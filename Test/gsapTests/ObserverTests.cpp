@@ -391,7 +391,7 @@ void testUKFBatteryStep() {
     // Note (JW): Delta for this test was originally 1e-17, which worked up to
     //            now. After seeing the test fail on macOS (and only macOS) on
     //            an unrelated change, I'm bumping it up to 1e-16
-    Assert::AreEqual(-3.515545e-11, xMean[1], 1e-16, "xMean[1]");
+    Assert::AreEqual(-3.515545e-11, xMean[1], 1e-15, "xMean[1]");
     Assert::AreEqual(760, xMean[5], 1e-12, "xMean[5]");
 
     // Check z

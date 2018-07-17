@@ -32,8 +32,6 @@ using namespace PCOE;
 // CONST: Outputs
 enum OUT { TEMP = 0, VOLTS = 1 };
 
-enum PRED_OUT { SOC = 0 };
-
 // Configuration Keys
 const std::string QMOBILE_KEY = "Battery.qMobile";
 const std::string VOL_KEY = "Battery.Vol";
@@ -82,7 +80,7 @@ const std::string XPMAX_KEY = "Battery.xpMax";
 const std::string XPMIN_KEY = "Battery.xpMin";
 
 BatteryModel::BatteryModel()
-    : PrognosticsModel(8, {"power"}, {"voltage", "temperature"}, {"SOC"}, {"EOD"}, 1) {
+    : PrognosticsModel(8, {"power"}, {"voltage", "temperature"}, {}, {"EOD"}, 1) {
     // Set some default parameters
     setParameters();
 }
@@ -448,14 +446,15 @@ PrognosticsModel::predicted_output_type BatteryModel::predictedOutputEqn(double,
                                                                          const state_type& x,
                                                                          const input_type&,
                                                                          const output_type&) const {
-    // SOC is the only predicted output
+    // Return empty vector because there are no predicted outputs.
+    return getPredictedOutputVector();
+}
+
+Model::event_state_type BatteryModel::eventStateEqn(const state_type& x) const {
     // Compute "nominal" SOC
     double qnS = x[indices.states.qnS];
     double qnB = x[indices.states.qnB];
-
-    auto z_new = getPredictedOutputVector();
-    z_new[PRED_OUT::SOC] = (qnS + qnB) / parameters.qnMax;
-    return z_new;
+    return (qnS + qnB) / parameters.qnMax;
 }
 
 // Set model parameters, given qMobile

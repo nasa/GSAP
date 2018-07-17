@@ -65,6 +65,7 @@ namespace PCOE {
         using input_type = InputVector;
         using output_type = OutputVector;
         using state_type = StateVector;
+        using event_state_type = double;
         using noise_type = std::vector<double>;
 
         /**

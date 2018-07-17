@@ -83,11 +83,14 @@ namespace PCOE {
         ProgEvent& predictionEvent = prediction.events[0];
         predictionEvent.setUncertainty(UType::Samples);
         predictionEvent.getTOE().npoints(sampleCount);
+        predictionEvent.setNPoints(sampleCount);
+        predictionEvent.getEventState().npoints(sampleCount);
 
-        DataPoint& predictionSysTraj = prediction.sysTrajectories[0];
-        predictionSysTraj.setUncertainty(UType::Samples);
-        predictionSysTraj.setNumTimes(ceil(horizon / model->getDefaultTimeStep()));
-        predictionSysTraj.setNPoints(sampleCount);
+        for (auto& trajectory : prediction.sysTrajectories) {
+            trajectory.setUncertainty(UType::Samples);
+            trajectory.setNumTimes(ceil(horizon / model->getDefaultTimeStep()));
+            trajectory.setNPoints(sampleCount);
+        }
 
         auto stateTimestamp = getLowestTimestamp(state);
 
@@ -171,8 +174,11 @@ namespace PCOE {
                 auto z = model->getOutputVector();
                 auto predictedOutput = model->predictedOutputEqn(t_s, x, u, z);
                 for (unsigned int p = 0; p < predictedOutput.size(); p++) {
-                    predictionSysTraj[timeIndex][sample] = z[p];
+                    prediction.sysTrajectories[p][timeIndex][sample] = z[p];
                 }
+
+                // Write to eventState property
+                predictionEvent.getEventState()[sample] = model->eventStateEqn(x);
 
                 // Sample process noise - for now, assuming independent
                 std::vector<double> noise(model->getStateSize());
