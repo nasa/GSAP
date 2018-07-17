@@ -118,6 +118,7 @@ if (UseOpenMP)
 endif()
 
 set (HEADERS
+	inc/Assert.h
 	inc/ConfigMap.h
 	inc/ConstLoadEstimator.h
 	inc/DataPoint.h

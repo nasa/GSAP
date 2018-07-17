@@ -261,7 +261,7 @@ void testBatteryInputEqn() {
     BatteryModel battery = BatteryModel();
 
     // Set input parameters
-    std::vector<double> inputParameters({1, 2, 3, 4, 5});
+    std::vector<double> inputParameters({1});
 
     // Run inputEqn for different time points and check values
     std::vector<double> loadEstimate = {0}; // TODO (JW): Battery model doesn't actually use this?
