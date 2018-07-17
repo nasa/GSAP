@@ -63,7 +63,7 @@ namespace PCOE {
         this->model = value;
 
         // Check that process noise was set consistent with this model
-        if (processNoise.size() != this->model->getNumStates()) {
+        if (processNoise.size() != this->model->getStateSize()) {
             log.WriteLine(LOG_ERROR,
                           MODULE_NAME,
                           "Process noise size does not equal number of model states");
@@ -83,8 +83,8 @@ namespace PCOE {
 
     // Predict function
     Prediction MonteCarloPredictor::predict(const double time_s,
-                                                  const std::vector<UData>& state,
-                                                  ProgData& data) {
+                                            const std::vector<UData>& state,
+                                            ProgData& data) {
         // @todo(MD): This is setup for only a single event to predict, need to extend to multiple
         // events
 
@@ -96,7 +96,7 @@ namespace PCOE {
 
         Prediction prediction;
         prediction.events.push_back(ProgEvent());
-        for (auto& output : this->model->predictedOutputs) {
+        for (auto& output : this->model->getOutputs()) {
             DataPoint sysTrajToAdd = DataPoint();
             sysTrajToAdd.setMeta(output, "");
             prediction.sysTrajectories.push_back(sysTrajToAdd);
@@ -108,7 +108,7 @@ namespace PCOE {
 
         DataPoint& predictionSysTraj = prediction.sysTrajectories[0];
         predictionSysTraj.setUncertainty(UType::Samples);
-        predictionSysTraj.setNumTimes(ceil(horizon / this->model->getDt()));
+        predictionSysTraj.setNumTimes(ceil(horizon / this->model->getDefaultTimeStep()));
         predictionSysTraj.setNPoints(numSamples);
 
         auto stateTimestamp = getLowestTimestamp(state);
@@ -119,15 +119,15 @@ namespace PCOE {
         static std::mt19937 generator(rDevice());
 #endif
 
-        Matrix xMean(this->model->getNumStates(), 1);
+        Matrix xMean(this->model->getStateSize(), 1);
 
         // Assume for now that UData is mean and covariance type, and so we are assuming
         // multivariate normal NOTE: Can check UData uncertainty type to see what it is and how to
         // handle. Perhaps it would be useful to have general code to deal with this, to get samples
         // from it directly? So don't have to check within here. First step is to construct the mean
         // vector and covariance matrix from the UDatas
-        Matrix Pxx(this->model->getNumStates(), this->model->getNumStates());
-        for (unsigned int xIndex = 0; xIndex < this->model->getNumStates(); xIndex++) {
+        Matrix Pxx(this->model->getStateSize(), this->model->getStateSize());
+        for (unsigned int xIndex = 0; xIndex < this->model->getStateSize(); xIndex++) {
             xMean[xIndex][0] = state[xIndex][MEAN];
             std::vector<double> covariance = state[xIndex].getVec(COVAR());
             Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
@@ -158,28 +158,28 @@ namespace PCOE {
             // Now we have mean vector (x) and covariance matrix (Pxx). We can use that to sample a
             // realization of the state. I need to generate a vector of random numbers, size of the
             // state vector Create standard normal distribution
-            Matrix xRandom(this->model->getNumStates(), 1);
+            Matrix xRandom(this->model->getStateSize(), 1);
             static std::normal_distribution<> standardDistribution(0, 1);
-            for (unsigned int xIndex = 0; xIndex < this->model->getNumStates(); xIndex++) {
+            for (unsigned int xIndex = 0; xIndex < this->model->getStateSize(); xIndex++) {
                 xRandom[xIndex][0] = standardDistribution(generator);
             }
             // Update with mean and covariance
             xRandom = xMean + PxxChol * xRandom;
-            std::vector<double> x = static_cast<std::vector<double>>(xRandom.col(0));
+            auto x = Model::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
 
             // 3. Simulate until time limit reached
-            std::vector<double> u(this->model->getNumInputs());
-            std::vector<double> z(this->model->getNumPredictedOutputs());
+            std::vector<double> inputParams(model->getInputParameterCount());
             unsigned int timeIndex = 0;
-            std::string event = this->model->events[0];
+            std::string event = this->events[0];
             data.events[event].getTOE()[sample] = INFINITY;
             predictionEvent.setMeta(event, "");
             predictionEvent.getTOE()[sample] = INFINITY;
 
-            for (double t_s = time_s; t_s <= time_s + horizon; t_s += this->model->getDt()) {
+            for (double t_s = time_s; t_s <= time_s + horizon;
+                 t_s += this->model->getDefaultTimeStep()) {
                 // Get inputs for time t
                 std::vector<double> loadEstimate = loadEstFcn(t_s, sample);
-                this->model->inputEqn(t_s, loadEstimate, u);
+                auto u = this->model->inputEqn(t_s, inputParams, loadEstimate);
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
@@ -196,22 +196,23 @@ namespace PCOE {
 
                 // Write to system trajectory (model variables for which we are interested in
                 // predicted values)
-                this->model->predictedOutputEqn(t_s, x, u, z);
-                for (unsigned int p = 0; p < this->model->getNumPredictedOutputs(); p++) {
-                    data.sysTrajectories[this->model->predictedOutputs[p]][timeIndex][sample] =
+                auto z = model->getOutputVector();
+                auto predictedOutput = this->model->predictedOutputEqn(t_s, x, u, z);
+                for (unsigned int p = 0; p < predictedOutput.size(); p++) {
+                    data.sysTrajectories[this->model->getPredictedOutputs()[p]][timeIndex][sample] =
                         z[p];
                     predictionSysTraj[timeIndex][sample] = z[p];
                 }
 
                 // Sample process noise - for now, assuming independent
-                std::vector<double> noise(this->model->getNumStates());
-                for (unsigned int xIndex = 0; xIndex < this->model->getNumStates(); xIndex++) {
+                std::vector<double> noise(this->model->getStateSize());
+                for (unsigned int xIndex = 0; xIndex < this->model->getStateSize(); xIndex++) {
                     std::normal_distribution<> noiseDistribution(0, sqrt(processNoise[xIndex]));
                     noise[xIndex] = noiseDistribution(generator);
                 }
 
                 // Update state for t to t+dt
-                this->model->stateEqn(t_s, x, u, noise, this->model->getDt());
+                this->model->stateEqn(t_s, x, u, noise, this->model->getDefaultTimeStep());
 
                 // Update time index
                 timeIndex++;

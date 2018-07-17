@@ -9,12 +9,7 @@
 class Tank3 final : public PCOE::Model {
 public:
     // Constructor
-    Tank3() {
-        numStates = 3;
-        inputs = {"u1", "u2", "u3"};
-        outputs = {"p1m", "p2m", "p3m"};
-        m_dt = 1;
-    }
+    Tank3() : PCOE::Model(3, {"u1", "u2", "u3"}, {"p1m", "p2m", "p3m"}) {}
 
     // State indices
     struct stateIndices {
@@ -53,17 +48,19 @@ public:
         double R2c3;
     } parameters;
 
-    std::vector<double> stateEqn(const double t,
-                                 const std::vector<double>& x,
-                                 const std::vector<double>& u,
-                                 const std::vector<double>& n,
-                                 const double dt) const override;
-    std::vector<double> outputEqn(const double t,
-                                  const std::vector<double>& x,
-                                  const std::vector<double>& u,
-                                  const std::vector<double>& n,
-                                  const std::vector<double>& z) const override;
-    std::vector<double> initialize(const std::vector<double>& u,
-                                   const std::vector<double>& z) const override;
+    using Model::stateEqn;
+
+    state_type stateEqn(const double t,
+                        const state_type& x,
+                        const input_type& u,
+                        const noise_type& n,
+                        const double dt) const override;
+
+    output_type outputEqn(const double t,
+                          const state_type& x,
+                          const input_type& u,
+                          const noise_type& n) const override;
+
+    state_type initialize(const input_type& u, const output_type& z) const override;
 };
 #endif

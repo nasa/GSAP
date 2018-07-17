@@ -46,8 +46,8 @@ namespace PCOE {
         std::vector<double> processNoiseVariance;
         std::vector<double> sensorNoiseVariance;
         Matrix R;
-        std::vector<double> m_xEstimated;
-        std::vector<double> m_zEstimated;
+        Model::state_type m_xEstimated;
+        Model::output_type m_zEstimated;
         std::mt19937 generator;
 
         /** @brief Check that noise vector sizes and model are consistent
@@ -73,8 +73,7 @@ namespace PCOE {
 
         /** @brief Compute likeihood of output sample given measurement
          **/
-        double likelihood(const std::vector<double>& zActual,
-                          const std::vector<double>& zPredicted);
+        double likelihood(const Model::output_type& zActual, const Model::output_type& zPredicted);
 
         /** @brief Set up sensor noise covariance matrix based on variance vector
          **/
@@ -82,9 +81,7 @@ namespace PCOE {
 
         /** @brief Compute weighted mean
          **/
-        void weightedMean(const Matrix& M,
-                          const std::vector<double>& weights,
-                          std::vector<double>& result);
+        Model::state_type weightedMean(const Matrix& M, const std::vector<double>& weights);
 
     public:
         /** @brief Constructor
@@ -112,16 +109,14 @@ namespace PCOE {
          *   @param x0 Initial state vector
          *   @param u0 Initial input vector
          **/
-        void initialize(const double t0,
-                        const std::vector<double>& x0,
-                        const std::vector<double>& u0);
+        void initialize(const double t0, const Model::state_type& x0, const Model::input_type& u0);
 
         /** @brief Estimation step. Updates xEstimated, zEsitmated, P, and sigmaX.
          *   @param newT Time value at new step
          *   @param u Input vector at current time
          *   @param z Output vector at current time
          **/
-        void step(const double newT, const std::vector<double>& u, const std::vector<double>& z);
+        void step(const double newT, const Model::input_type& u, const Model::output_type& z);
 
         /** @brief Set minimum number of effective particles
          *   @param N minimum number of effective particles
@@ -129,8 +124,8 @@ namespace PCOE {
         void setMinNEffective(size_t N);
 
         // Accessors
-        const std::vector<double>& getStateMean() const;
-        const std::vector<double>& getOutputMean() const;
+        const Model::state_type& getStateMean() const override;
+        const Model::output_type& getOutputMean() const override;
         std::vector<UData> getStateEstimate() const;
 
         size_t getNumParticles() const;

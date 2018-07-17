@@ -53,11 +53,11 @@ namespace PCOE {
         m_R = R;
 
         // Check that Q and R are the right size
-        if (m_Q.rows() != m_Q.cols() || m_Q.rows() != pModel->getNumStates()) {
+        if (m_Q.rows() != m_Q.cols() || m_Q.rows() != pModel->getStateSize()) {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "Q does not have the right number of values");
             throw std::range_error("Q does not have the right number of values");
         }
-        if (m_R.rows() != m_R.cols() || m_R.rows() != pModel->getNumOutputs()) {
+        if (m_R.rows() != m_R.cols() || m_R.rows() != pModel->getOutputSize()) {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "R does not have the right number of values");
             throw std::range_error("R does not have the right number of values");
         }
@@ -69,17 +69,17 @@ namespace PCOE {
         pModel = model;
 
         // Set up variables that are dependent on the model
-        m_xEstimated.resize(pModel->getNumStates());
-        m_uOld.resize(pModel->getNumInputs());
-        m_zEstimated.resize(pModel->getNumOutputs());
+        m_xEstimated = pModel->getStateVector();
+        m_uOld = pModel->getInputVector();
+        m_zEstimated = pModel->getOutputVector();
 
         // Set up sigma point matrices and weights for x
-        m_sigmaX.M.resize(pModel->getNumStates(), 2 * pModel->getNumStates() + 1);
-        m_sigmaX.w.resize(2 * pModel->getNumStates() + 1);
+        m_sigmaX.M.resize(pModel->getStateSize(), 2 * pModel->getStateSize() + 1);
+        m_sigmaX.w.resize(2 * pModel->getStateSize() + 1);
 
         // Set kappa to default value, unless has been configured already
         if (std::isnan(m_sigmaX.kappa)) {
-            m_sigmaX.kappa = 3.0 - pModel->getNumStates();
+            m_sigmaX.kappa = 3.0 - pModel->getStateSize();
         }
         // Set alpha to default value, unless has been configured already
         if (std::isnan(m_sigmaX.alpha)) {
@@ -165,8 +165,8 @@ namespace PCOE {
 
     // Initialize function (required by Observer interface)
     void UnscentedKalmanFilter::initialize(const double t0,
-                                           const std::vector<double>& x0,
-                                           const std::vector<double>& u0) {
+                                           const Model::state_type& x0,
+                                           const Model::input_type& u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
 
         // Check that model has been set
@@ -176,11 +176,11 @@ namespace PCOE {
         }
 
         // Check that Q and R were set consistent with the model
-        if (m_Q.rows() != pModel->getNumStates()) {
+        if (m_Q.rows() != pModel->getStateSize()) {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "Q does not have the right number of values");
             throw std::range_error("Q does not have the right number of values");
         }
-        if (m_R.rows() != pModel->getNumOutputs()) {
+        if (m_R.rows() != pModel->getOutputSize()) {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "R does not have the right number of values");
             throw std::range_error("R does not have the right number of values");
         }
@@ -198,8 +198,8 @@ namespace PCOE {
             m_xEstimated, m_P, m_sigmaX.kappa, m_sigmaX.alpha, m_sigmaX.M, m_sigmaX.w);
 
         // Compute corresponding output estimate
-        std::vector<double> zeroNoiseZ(pModel->getNumOutputs());
-        m_zEstimated = pModel->outputEqn(m_t, m_xEstimated, m_uOld, zeroNoiseZ, m_zEstimated);
+        std::vector<double> zeroNoiseZ(pModel->getOutputSize());
+        m_zEstimated = pModel->outputEqn(m_t, m_xEstimated, m_uOld, zeroNoiseZ);
 
         // Set initialized flag
         m_initialized = true;
@@ -207,7 +207,7 @@ namespace PCOE {
     }
 
     // Get state mean
-    const std::vector<double>& UnscentedKalmanFilter::getStateMean() const {
+    const Model::state_type& UnscentedKalmanFilter::getStateMean() const {
         return m_xEstimated;
     }
 
@@ -217,14 +217,14 @@ namespace PCOE {
     }
 
     // Get output mean
-    const std::vector<double>& UnscentedKalmanFilter::getOutputMean() const {
+    const Model::output_type& UnscentedKalmanFilter::getOutputMean() const {
         return m_zEstimated;
     }
 
     // Step function (required by Observer interface)
     void UnscentedKalmanFilter::step(const double newT_s,
-                                     const std::vector<double>& u,
-                                     const std::vector<double>& z) {
+                                     const Model::input_type& u,
+                                     const Model::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
 
         if (!isInitialized()) {
@@ -240,8 +240,8 @@ namespace PCOE {
             throw std::domain_error("UnscentedKalmanFilter::step dt is 0");
         }
 
-        unsigned int numStates = pModel->getNumStates();
-        unsigned int numOutputs = pModel->getNumOutputs();
+        unsigned int numStates = pModel->getStateSize();
+        unsigned int numOutputs = pModel->getOutputSize();
         unsigned int numSigmaPoints = static_cast<unsigned int>(m_sigmaX.M.cols());
 
         std::vector<double> zeroNoise(numStates);
@@ -257,11 +257,11 @@ namespace PCOE {
         Matrix Xkk1(numStates, numSigmaPoints);
         for (unsigned int i = 0; i < numSigmaPoints; i++) {
             // Get ith sigma point
-            std::vector<double> x = static_cast<std::vector<double>>(m_sigmaX.M.col(i));
+            auto x = Model::state_type(static_cast<std::vector<double>>(m_sigmaX.M.col(i)));
             // Apply state equation
             x = pModel->stateEqn(newT_s, x, m_uOld, zeroNoise, dt_s);
             // Set column in Xkk1
-            Xkk1.col(i, x);
+            Xkk1.col(i, x.vec());
         }
 
         // Recombine weighted sigma points to produce predicted state and covariance
@@ -274,15 +274,13 @@ namespace PCOE {
         Matrix Zkk1(numOutputs, numSigmaPoints);
         for (unsigned int i = 0; i < numSigmaPoints; i++) {
             // Get ith predicted sigma point
-            std::vector<double> zkk1(numOutputs);
-            // Apply state equation
-            zkk1 = pModel->outputEqn(newT_s,
-                                     static_cast<std::vector<double>>(Xkk1.col(i)),
-                                     u,
-                                     zeroNoise,
-                                     zkk1);
+            auto zkk1 =
+                pModel->outputEqn(newT_s,
+                                  Model::state_type(static_cast<std::vector<double>>(Xkk1.col(i))),
+                                  u,
+                                  zeroNoise);
             // Set column in Zkk1
-            Zkk1.col(i, zkk1);
+            Zkk1.col(i, zkk1.vec());
         }
 
         // Recombine weighted sigma points to produce predicted measurement and covariance
@@ -322,13 +320,13 @@ namespace PCOE {
         Matrix zm(numOutputs, 1);
         xkk1m.col(0, xkk1);
         zkk1m.col(0, zkk1);
-        zm.col(0, z);
+        zm.col(0, z.vec());
         Matrix xk1m = xkk1m + Kk * (zm - zkk1m);
-        m_xEstimated = static_cast<std::vector<double>>(xk1m.col(0));
+        m_xEstimated = Model::state_type(static_cast<std::vector<double>>(xk1m.col(0)));
 
         // Compute output estimate
         std::vector<double> zeroNoiseZ(numOutputs);
-        m_zEstimated = pModel->outputEqn(newT_s, m_xEstimated, u, zeroNoiseZ, m_zEstimated);
+        m_zEstimated = pModel->outputEqn(newT_s, m_xEstimated, u, zeroNoiseZ);
 
         // Compute covariance
         m_P = Pkk1 - Kk * Pzz * Kk.transpose();
@@ -339,7 +337,7 @@ namespace PCOE {
 
     // Compute sigma points: implements symmetric unscented transform, with scaling
     // Outputs are X and w, which are passed by reference
-    void UnscentedKalmanFilter::computeSigmaPoints(const std::vector<double>& mx,
+    void UnscentedKalmanFilter::computeSigmaPoints(const Model::state_type& mx,
                                                    const Matrix& Pxx,
                                                    const double kappa,
                                                    const double alpha,
@@ -405,10 +403,10 @@ namespace PCOE {
     }
 
     std::vector<UData> UnscentedKalmanFilter::getStateEstimate() const {
-        std::vector<UData> state(pModel->getNumStates());
-        for (unsigned int i = 0; i < pModel->getNumStates(); i++) {
+        std::vector<UData> state(pModel->getStateSize());
+        for (unsigned int i = 0; i < pModel->getStateSize(); i++) {
             state[i].uncertainty(UType::MeanCovar);
-            state[i].npoints(pModel->getNumStates());
+            state[i].npoints(pModel->getStateSize());
             state[i][MEAN] = m_xEstimated[i];
             state[i][COVAR()] = static_cast<std::vector<double>>(m_P.row(i));
         }

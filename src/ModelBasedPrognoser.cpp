@@ -87,10 +87,10 @@ namespace PCOE {
 
         // Set model stepsize
         if (configMap.includes(STEPSIZE_KEY)) {
-            model->setDt(std::stod(configMap[STEPSIZE_KEY][0]));
+            model->setDefaultTimeStep(std::stod(configMap[STEPSIZE_KEY][0]));
         }
         else {
-            model->setDt(DEFAULT_STEPSIZE_S);
+            model->setDefaultTimeStep(DEFAULT_STEPSIZE_S);
         }
 
         // Set load estimator
@@ -103,10 +103,10 @@ namespace PCOE {
         loadEstimator->setModel(model.get());
         predictor->setModel(model.get());
 
-        for (auto&& input : model->inputs) {
+        for (auto&& input : model->getInputs()) {
             comm.registerKey(input);
         }
-        for (auto&& output : model->outputs) {
+        for (auto&& output : model->getOutputs()) {
             comm.registerKey(output);
         }
 
@@ -117,11 +117,11 @@ namespace PCOE {
 
         // Create progdata
         results.setUncertainty(UType::Samples); // @todo(MD): do not force samples representation
-        for (std::string& event : model->events) {
+        for (const std::string& event : predictor->getEvents()) {
             results.addEvent(event);
             results.events[event].getTOE().npoints(numSamples);
         }
-        results.addSystemTrajectories(model->predictedOutputs); // predicted outputs
+        results.addSystemTrajectories(model->getOutputs()); // predicted outputs
         results.setPredictions(1, horizon); // interval, number of predictions
         results.sysTrajectories.setNSamples(numSamples);
     }
@@ -129,15 +129,15 @@ namespace PCOE {
     void ModelBasedPrognoser::step() {
         // Get new time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
-        double newT_s = getValue(model->outputs[0]).getTime() / 1.0e3;
+        double newT_s = getValue(model->getOutputs()[0]).getTime() / 1.0e3;
 
         // Fill in input and output data
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
-        std::vector<double> u(model->getNumInputs());
-        std::vector<double> z(model->getNumOutputs());
-        for (unsigned int i = 0; i < model->getNumInputs(); i++) {
+        auto u = model->getInputVector();
+        auto z = model->getOutputVector();
+        for (unsigned int i = 0; i < model->getInputSize(); i++) {
             log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %u", i);
-            const std::string& input_name = model->inputs[i];
+            const std::string& input_name = model->getInputs()[i];
             log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %s", input_name.c_str());
             Datum<double> input = getValue(input_name);
 
@@ -153,20 +153,20 @@ namespace PCOE {
                 return;
             }
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
-            u[i] = getValue(model->inputs[i]);
+            u[i] = getValue(model->getInputs()[i]);
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Adding load");
             if (loadEstimator->usesHistoricalLoading()) {
-                loadEstimator->addLoad(u);
+                loadEstimator->addLoad(u.vec());
             }
         }
-        for (unsigned int i = 0; i < model->getNumOutputs(); i++) {
+        for (unsigned int i = 0; i < model->getOutputSize(); i++) {
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Checking whether output is set");
-            if (!getValue(model->outputs[i]).isSet()) {
+            if (!getValue(model->getOutputs()[i]).isSet()) {
                 // Do nothing if data not yet available
                 return;
             }
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
-            z[i] = getValue(model->outputs[i]);
+            z[i] = getValue(model->getOutputs()[i]);
         }
 
         // If this is the first step, will want to initialize the observer and the predictor

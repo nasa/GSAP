@@ -39,16 +39,16 @@ namespace PCOE {
         virtual ~Observer() = default;
 
         virtual void initialize(const double t0,
-                                const std::vector<double>& x0,
-                                const std::vector<double>& u0) = 0;
+                                const Model::state_type& x0,
+                                const Model::input_type& u0) = 0;
         /** @brief	Step function for an Observer
          *  @param	newT New time
          *  @param	u Input vector at time newT
          *  @param	z Output vector at time newT
          **/
         virtual void step(const double newT,
-                          const std::vector<double>& u,
-                          const std::vector<double>& z) = 0;
+                          const Model::input_type& u,
+                          const Model::output_type& z) = 0;
 
         /** @brief Set model pointer
          * @param model given model pointer
@@ -56,17 +56,28 @@ namespace PCOE {
         virtual void setModel(Model* model) = 0;
 
         // Accessors
-        virtual const std::vector<double>& getStateMean() const = 0;
+        virtual const Model::state_type& getStateMean() const = 0;
+
         virtual std::vector<UData> getStateEstimate() const = 0;
-        virtual const std::vector<double>& getOutputMean() const = 0;
-        double getTime() const;
-        const std::vector<double>& getInputs() const;
-        bool isInitialized() const;
+
+        virtual const Model::output_type& getOutputMean() const = 0;
+
+        inline double getTime() const {
+            return m_t;
+        }
+
+        inline const Model::input_type& getInputs() const {
+            return m_uOld;
+        }
+
+        inline bool isInitialized() const {
+            return m_initialized;
+        }
 
     protected:
         bool m_initialized; // whether or not initialized
         double m_t; // time
-        std::vector<double> m_uOld; // inputs at previous time step
+        Model::input_type m_uOld; // inputs at previous time step
         Model* pModel; // Pointer to system model.
                        // Observer does not own this memory.
         Log& log; ///> Logger (Defined in ThreadSafeLog.h)

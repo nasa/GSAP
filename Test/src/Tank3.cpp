@@ -6,11 +6,11 @@
 using namespace std;
 
 // Tank3 State Equation
-std::vector<double> Tank3::stateEqn(const double,
-                                    const std::vector<double>& x,
-                                    const std::vector<double>& u,
-                                    const std::vector<double>& n,
-                                    const double dt) const {
+PCOE::Model::state_type Tank3::stateEqn(const double,
+                                        const state_type& x,
+                                        const input_type& u,
+                                        const noise_type& n,
+                                        const double dt) const {
     // Extract states
     double m1 = x[0];
     double m2 = x[1];
@@ -34,26 +34,23 @@ std::vector<double> Tank3::stateEqn(const double,
     double m2dot = q1c2 - q2 - q2c3 + u2;
     double m1dot = -q1 - q1c2 + u1;
 
-    std::vector<double> x_new(numStates);
     // Update state
-    x_new[0] = m1 + m1dot * dt;
-    x_new[1] = m2 + m2dot * dt;
-    x_new[2] = m3 + m3dot * dt;
+    auto x_out = getStateVector();
+    x_out[0] = m1 + m1dot * dt;
+    x_out[1] = m2 + m2dot * dt;
+    x_out[2] = m3 + m3dot * dt;
 
     // Add process noise
-    x_new[0] += dt * n[0];
-    x_new[1] += dt * n[1];
-    x_new[2] += dt * n[2];
+    x_out[0] += dt * n[0];
+    x_out[1] += dt * n[1];
+    x_out[2] += dt * n[2];
 
-    return x_new;
+    return x_out;
 }
 
 // Tank3 Output Equation
-std::vector<double> Tank3::outputEqn(const double,
-                                     const std::vector<double>& x,
-                                     const std::vector<double>&,
-                                     const std::vector<double>& n,
-                                     const std::vector<double>& z) const {
+PCOE::Model::output_type
+Tank3::outputEqn(const double, const state_type& x, const input_type&, const noise_type& n) const {
     // Extract states
     double m1 = x[0];
     double m2 = x[1];
@@ -67,21 +64,22 @@ std::vector<double> Tank3::outputEqn(const double,
     double p3m = p3;
     double p1m = p1;
 
-    std::vector<double> z_new(getNumOutputs());
+    auto z_out = getOutputVector();
     // Set outputs
-    z_new[0] = p1m;
-    z_new[1] = p2m;
-    z_new[2] = p3m;
+    z_out[0] = p1m;
+    z_out[1] = p2m;
+    z_out[2] = p3m;
 
     // Add noise
-    z_new[0] += n[0];
-    z_new[1] += n[1];
-    z_new[2] += n[2];
-    return z_new;
+    z_out[0] += n[0];
+    z_out[1] += n[1];
+    z_out[2] += n[2];
+
+    return z_out;
 }
 
-std::vector<double> Tank3::initialize(const vector<double>&, const vector<double>&) const {
-    std::vector<double> x(3);
+PCOE::Model::state_type Tank3::initialize(const input_type&, const output_type&) const {
+    auto x = getStateVector();
     x[0] = 0;
     x[1] = 0;
     x[2] = 0;

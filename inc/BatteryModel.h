@@ -1,44 +1,32 @@
-/**  Battery - Header
- *   @file       Battery.h
- *   @ingroup    GSAP-Support
- *
- *   @brief      Battery model class for prognostics
- *
- *   @author     Matthew Daigle
- *   @version    0.1.0
- *
- *   @pre        N/A
- *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: March 5, 2016
- *
- *   @copyright Copyright (c) 2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
-
-#ifndef BATTERY_H
-#define BATTERY_H
+// Copyright (c) 2017-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+#ifndef PCOE_BATTERYMODEL_H
+#define PCOE_BATTERYMODEL_H
 
 #include <cmath>
 #include <vector>
 
 #include "ConfigMap.h"
-#include "ModelFactory.h"
 #include "PrognosticsModel.h"
 
 // Default parameter values
 static const double QMOBILE_DEFAULT_VALUE = 7600;
 
+/**
+ * An electro-chemical model of a battery.
+ *
+ * @author Matthew Daigle
+ * @author Chris Teubert
+ * @author Jason Watkins
+ * @since 1.0
+ **/
 class BatteryModel final : public PCOE::PrognosticsModel {
 public:
-    // Constructor
     BatteryModel();
 
-    // Constructor based on configMap
     BatteryModel(const PCOE::ConfigMap& paramMap);
 
-    // State indices
     struct stateIndices {
         static const unsigned int Tb = 0;
         static const unsigned int Vo = 1;
@@ -49,23 +37,22 @@ public:
         static const unsigned int qpB = 6;
         static const unsigned int qpS = 7;
     };
-    // Input indices
+
     struct inputIndices {
         static const unsigned int P = 0;
     };
-    // Output indices
+
     struct outputIndices {
         static const unsigned int Tbm = 0;
         static const unsigned int Vm = 1;
     };
-    // Indices
+
     struct allIndices {
         struct stateIndices states;
         struct inputIndices inputs;
         struct outputIndices outputs;
     } indices;
 
-    // Parameters
     struct Parameters {
         double An2;
         double qnBMax;
@@ -134,76 +121,83 @@ public:
         double An3;
     } parameters;
 
-    /** @brief      Execute state equation. This version of the function uses a given sampling time.
-     *   @param      t Time
-     *   @param      x Current state vector. This gets updated to the state at the new time.
-     *   @param      u Input vector
-     *   @param      n Process noise vector
-     *   @param      dt Sampling time
+    /**
+     * Calculate the model state using the given sampling time.
+     *
+     * @param t  Time
+     * @param x  The model state vector at the current time step.
+     * @param u  The model input vector at the current time step.
+     * @param n  The process noise vector.
+     * @param dt The size of the time step to calculate
+     * @return   The model state vector at the next time step.
      **/
-    std::vector<double> stateEqn(const double t,
-                                 const std::vector<double>& x,
-                                 const std::vector<double>& u,
-                                 const std::vector<double>& n,
-                                 const double dt) const override;
-    /** @brief      Execute output equation
-     *   @param      t Time
-     *   @param      x State vector
-     *   @param      u Input vector
-     *   @param      n Sensor noise vector
-     *   @param      z Output vector. This gets updated to the new output at the given time.
+    state_type stateEqn(double t,
+                        const state_type& x,
+                        const input_type& u,
+                        const noise_type& n,
+                        double dt) const override;
+
+    /**
+     * Calculate the model output.
+     *
+     * @param t  Time
+     * @param x  The model state vector at the current time step.
+     * @param u  The model input vector at the current time step.
+     * @param n  The process noise vector.
+     * @param dt The size of the time step to calculate
+     * @return   The model output vector at the next time step.
      **/
-    std::vector<double> outputEqn(const double t,
-                                  const std::vector<double>& x,
-                                  const std::vector<double>& u,
-                                  const std::vector<double>& n,
-                                  const std::vector<double>& z) const override;
-    /** @brief      Execute threshold equation
-     *   @param      t Time
-     *   @param      x State vector
-     *   @param      u Input vector
+    output_type outputEqn(double t,
+                          const state_type& x,
+                          const input_type& u,
+                          const noise_type& n) const override;
+
+    /**
+     * Initialize the model state.
+     *
+     * @param u The model input vector.
+     * @param z The model output vector.
+     * @returns The initial model state vector.
      **/
-    bool thresholdEqn(const double t,
-                      const std::vector<double>& x,
-                      const std::vector<double>& u) const override;
-    /** @brief      Execute input equation.
-     *               Determines what input (u) should be at the given time for the given input
-     *parameters.
-     *   @param      t Time
-     *   @param      inputParameters Vector of input parameters, which are values that specify how
-     *to define u for the given time.
-     *   @param      u Input vector. Gets overwritten.
+    state_type initialize(const input_type& u, const output_type& z) const override;
+
+    /**
+     * Calculate whether the model threshold is reached.
+     *
+     * @param t  Time
+     * @param x  The model state vector at the current time step.
+     * @param u  The model input vector at the current time step.
+     * @return  true if the threshold is reached; otherwise, false.
      **/
-    void inputEqn(const double t,
-                  const std::vector<double>& inputParameters,
-                  std::vector<double>& u) const override;
-    /** @brief      Execute predicted output equation.
-     *               Predicted outputs are those that are not measured, but are interested in being
-     *predicted for prognostics.
-     *   @param      t Time
-     *   @param      x State vector
-     *   @param      u Input vector
-     *   @param      z Predicted output vector. Gets overwritten.
+    bool thresholdEqn(double t, const state_type& x, const input_type& u) const override;
+
+    /**
+     * Derives the input vector from the given input parameters.
+     *
+     * @param t      The time at the current time step.
+     * @param params The parameters needed by the model to derive the input
+     *               vector.
      **/
-    void predictedOutputEqn(const double t,
-                            const std::vector<double>& x,
-                            const std::vector<double>& u,
-                            std::vector<double>& z) const override;
+    input_type inputEqn(double t,
+                        const std::vector<double>& params,
+                        const std::vector<double>& loadEstimate) const override;
+
+    /** Calculate predicted outputs of the model. Predicted outputs are those
+     * that are not measured, but are interested in being predicted for
+     * prognostics.
+     *
+     * @param t  Time
+     * @param x  The model state vector at the current time step.
+     * @param u  The model input vector at the current time step.
+     * @param z  The model output vector at the current time step.
+     * @return   The model output vector at the next time step.
+     **/
+    predicted_output_type predictedOutputEqn(double t,
+                                             const state_type& x,
+                                             const input_type& u,
+                                             const output_type& z) const override;
 
     // Set default parameters, based on 18650 cells
     void setParameters(const double qMobile = QMOBILE_DEFAULT_VALUE, const double Vol = 2e-5);
-
-    /** @brief      Initialize state vector given initial inputs and outputs.
-     *   @param      x Current state vector. This gets updated.
-     *   @param      u Input vector
-     *   @param      z Output vector
-     **/
-    std::vector<double> initialize(const std::vector<double>& u,
-                                   const std::vector<double>& z) const override;
-
-    /** @brief      Transform inputs and outputs. Specifically, given current as input
-     *              change it to power.
-     */
-    virtual void transform(std::vector<double>& u, std::vector<double>& z);
 };
 #endif
