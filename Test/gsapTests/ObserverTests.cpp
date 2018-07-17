@@ -61,27 +61,27 @@ void testUKFTankInitialize() {
     TankModel.parameters.R2c3 = 2;
 
     // Set up u (input flows)
-    std::vector<double> u;
-    u.push_back(1);
-    u.push_back(1);
-    u.push_back(1);
+    auto u = TankModel.getInputVector();
+    u[0] = 1;
+    u[1] = 1;
+    u[2] = 1;
 
     // Set up x (masses)
-    std::vector<double> x;
-    x.push_back(0);
-    x.push_back(0);
-    x.push_back(0);
+    auto x = TankModel.getStateVector();
+    x[0] = 0;
+    x[1] = 0;
+    x[2] = 0;
 
     // Set up Q
-    Matrix Q(TankModel.getNumStates(), TankModel.getNumStates());
-    for (unsigned int i = 0; i < TankModel.getNumStates(); i++) {
+    Matrix Q(TankModel.getStateSize(), TankModel.getStateSize());
+    for (unsigned int i = 0; i < TankModel.getStateSize(); i++) {
         // Fill in diagonal
         Q[i][i] = 1e-5;
     }
 
     // Set up R
-    Matrix R(TankModel.getNumOutputs(), TankModel.getNumOutputs());
-    for (unsigned int i = 0; i < TankModel.getNumOutputs(); i++) {
+    Matrix R(TankModel.getOutputSize(), TankModel.getOutputSize());
+    for (unsigned int i = 0; i < TankModel.getOutputSize(); i++) {
         // Fill in diagonal
         R[i][i] = 1e-2;
     }
@@ -92,7 +92,7 @@ void testUKFTankInitialize() {
 
     // Make sure that can't step without initializing first
     try {
-        std::vector<double> z;
+        auto z = TankModel.getOutputVector();
         UKF.step(t, u, z);
         Assert::Fail();
     }
@@ -106,8 +106,8 @@ void testUKFTankInitialize() {
     Assert::AreEqual(t, UKF.getTime(), 1e-12);
 
     // Check x, z, P
-    std::vector<double> xMean = UKF.getStateMean();
-    std::vector<double> zMean = UKF.getOutputMean();
+    Model::state_type xMean = UKF.getStateMean();
+    Model::output_type zMean = UKF.getOutputMean();
     Matrix xCov = UKF.getStateCovariance();
     Assert::AreEqual(0, xMean[0], 1e-12);
     Assert::AreEqual(0, xMean[1], 1e-12);
@@ -133,16 +133,18 @@ void testUKFTankStep() {
     TankModel.parameters.R2c3 = 2;
 
     // Set up u (input flows)
-    std::vector<double> u;
-    u.push_back(1);
-    u.push_back(1);
-    u.push_back(1);
+    auto u = TankModel.getInputVector();
+    u[0] = 1;
+    u[1] = 1;
+    u[2] = 1;
 
     // Set up x (masses)
-    std::vector<double> x;
-    x.push_back(0);
-    x.push_back(0);
-    x.push_back(0);
+    auto x = TankModel.getStateVector();
+    x[0] = 0;
+    x[1] = 0;
+    x[2] = 0;
+
+    auto z = TankModel.getOutputVector();
 
     // Set up state noise
     std::vector<double> ns;
@@ -158,22 +160,16 @@ void testUKFTankStep() {
     no.push_back(noValue);
     no.push_back(noValue);
 
-    // Set up outputs
-    std::vector<double> z;
-    z.push_back(0);
-    z.push_back(0);
-    z.push_back(0);
-
     // Set up Q
-    Matrix Q(TankModel.getNumStates(), TankModel.getNumStates());
-    for (unsigned int i = 0; i < TankModel.getNumStates(); i++) {
+    Matrix Q(TankModel.getStateSize(), TankModel.getStateSize());
+    for (unsigned int i = 0; i < TankModel.getStateSize(); i++) {
         // Fill in diagonal
         Q[i][i] = 1e-5;
     }
 
     // Set up R
-    Matrix R(TankModel.getNumOutputs(), TankModel.getNumOutputs());
-    for (unsigned int i = 0; i < TankModel.getNumOutputs(); i++) {
+    Matrix R(TankModel.getOutputSize(), TankModel.getOutputSize());
+    for (unsigned int i = 0; i < TankModel.getOutputSize(); i++) {
         // Fill in diagonal
         R[i][i] = 1e-2;
     }
@@ -197,20 +193,20 @@ void testUKFTankStep() {
     // Simulate to get outputs for time t
     t += dt;
     x = TankModel.stateEqn(t, x, u, ns, dt);
-    z = TankModel.outputEqn(t, x, u, no, z);
+    z = TankModel.outputEqn(t, x, u, no);
 
     // Step UKF for time t
     UKF.step(t, u, z);
 
     // Check x
-    std::vector<double> xMean = UKF.getStateMean();
+    auto xMean = UKF.getStateMean();
 
     Assert::IsTrue(xMean[0] > 0.100007 && xMean[0] < 0.1000072);
     Assert::IsTrue(xMean[1] > 0.1000055 && xMean[1] < 0.100005512);
     Assert::IsTrue(xMean[2] > 0.10000336 && xMean[2] < 0.100003371);
 
     // Check z
-    std::vector<double> zMean = UKF.getOutputMean();
+    auto zMean = UKF.getOutputMean();
     Assert::IsTrue(zMean[0] > 0.100007 && zMean[0] < 0.1000072);
     Assert::IsTrue(zMean[1] > 0.0500027 && zMean[1] < 0.0500028);
     Assert::IsTrue(zMean[2] > 0.0333344 && zMean[2] < 0.333345);
@@ -238,16 +234,16 @@ void testUKFTankGetInputs() {
     TankModel.parameters.R2c3 = 2;
 
     // Set up u (input flows)
-    std::vector<double> u;
-    u.push_back(1);
-    u.push_back(1);
-    u.push_back(1);
+    auto u = TankModel.getInputVector();
+    u[0] = 1;
+    u[1] = 1;
+    u[2] = 1;
 
     // Set up x (masses)
-    std::vector<double> x;
-    x.push_back(0);
-    x.push_back(0);
-    x.push_back(0);
+    auto x = TankModel.getStateVector();
+    x[0] = 0;
+    x[1] = 0;
+    x[2] = 0;
 
     // Set up state noise
     std::vector<double> ns;
@@ -264,21 +260,18 @@ void testUKFTankGetInputs() {
     no.push_back(noValue);
 
     // Set up outputs
-    std::vector<double> z;
-    z.push_back(0);
-    z.push_back(0);
-    z.push_back(0);
+    auto z = TankModel.getOutputVector();
 
     // Set up Q
-    Matrix Q(TankModel.getNumStates(), TankModel.getNumStates());
-    for (unsigned int i = 0; i < TankModel.getNumStates(); i++) {
+    Matrix Q(TankModel.getStateSize(), TankModel.getStateSize());
+    for (unsigned int i = 0; i < TankModel.getStateSize(); i++) {
         // Fill in diagonal
         Q[i][i] = 1e-5;
     }
 
     // Set up R
-    Matrix R(TankModel.getNumOutputs(), TankModel.getNumOutputs());
-    for (unsigned int i = 0; i < TankModel.getNumOutputs(); i++) {
+    Matrix R(TankModel.getOutputSize(), TankModel.getOutputSize());
+    for (unsigned int i = 0; i < TankModel.getOutputSize(); i++) {
         // Fill in diagonal
         R[i][i] = 1e-2;
     }
@@ -294,7 +287,7 @@ void testUKFTankGetInputs() {
     // Simulate to get outputs for time t
     t += dt;
     x = TankModel.stateEqn(t, x, u, ns, dt);
-    z = TankModel.outputEqn(t, x, u, no, z);
+    z = TankModel.outputEqn(t, x, u, no);
 
     // Step UKF for time t
     u[0] = 1;
@@ -303,7 +296,7 @@ void testUKFTankGetInputs() {
     UKF.step(t, u, z);
 
     // Check that it remembers the inputs
-    std::vector<double> uOld = UKF.getInputs();
+    auto uOld = UKF.getInputs();
     Assert::AreEqual(1, uOld[0], 1e-12);
     Assert::AreEqual(2, uOld[1], 1e-12);
     Assert::AreEqual(3, uOld[2], 1e-12);
@@ -314,26 +307,23 @@ void testUKFBatteryInitialize() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    std::vector<double> u0(1);
-    std::vector<double> z0(2);
-    u0[0] = 0;
-    z0[0] = 20;
-    z0[1] = 4.2;
+    auto u0 = Model::input_type({0});
+    auto z0 = Model::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Set up inputs
-    std::vector<double> u(1);
+    auto u = battery.getInputVector();
 
     // Set up Q
-    Matrix Q(battery.getNumStates(), battery.getNumStates());
-    for (unsigned int i = 0; i < battery.getNumStates(); i++) {
+    Matrix Q(battery.getStateSize(), battery.getStateSize());
+    for (unsigned int i = 0; i < battery.getStateSize(); i++) {
         // Fill in diagonal
         Q[i][i] = 1e-10;
     }
 
     // Set up R
-    Matrix R(battery.getNumOutputs(), battery.getNumOutputs());
-    for (unsigned int i = 0; i < battery.getNumOutputs(); i++) {
+    Matrix R(battery.getOutputSize(), battery.getOutputSize());
+    for (unsigned int i = 0; i < battery.getOutputSize(); i++) {
         // Fill in diagonal
         R[i][i] = 1e-2;
     }
@@ -347,11 +337,11 @@ void testUKFBatteryInitialize() {
     UKF.initialize(t, x, u);
 
     // Check x
-    std::vector<double> xMean = UKF.getStateMean();
+    auto xMean = UKF.getStateMean();
     Assert::AreEqual(x, xMean);
 
     // Check z
-    std::vector<double> zMean = UKF.getOutputMean();
+    auto zMean = UKF.getOutputMean();
     Assert::IsTrue(zMean[1] > 4.191423 && zMean[1] < 4.1914237);
     Assert::AreEqual(20, zMean[0], 1e-12);
 
@@ -365,26 +355,23 @@ void testUKFBatteryStep() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    std::vector<double> u0(1);
-    std::vector<double> z0(2);
-    u0[0] = 0;
-    z0[0] = 20;
-    z0[1] = 4.2;
+    auto u0 = Model::input_type({0});
+    auto z0 = Model::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Set up inputs
-    std::vector<double> u(1);
+    auto u = battery.getInputVector();
 
     // Set up Q
-    Matrix Q(battery.getNumStates(), battery.getNumStates());
-    for (unsigned int i = 0; i < battery.getNumStates(); i++) {
+    Matrix Q(battery.getStateSize(), battery.getStateSize());
+    for (unsigned int i = 0; i < battery.getStateSize(); i++) {
         // Fill in diagonal
         Q[i][i] = 1e-10;
     }
 
     // Set up R
-    Matrix R(battery.getNumOutputs(), battery.getNumOutputs());
-    for (unsigned int i = 0; i < battery.getNumOutputs(); i++) {
+    Matrix R(battery.getOutputSize(), battery.getOutputSize());
+    for (unsigned int i = 0; i < battery.getOutputSize(); i++) {
         // Fill in diagonal
         R[i][i] = 1e-2;
     }
@@ -392,16 +379,13 @@ void testUKFBatteryStep() {
     // Create a UKF
     UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&battery, Q, R);
 
-    // Set up z
-    std::vector<double> z(battery.getNumOutputs());
-
     // Set up zNoise
-    std::vector<double> zNoise(battery.getNumOutputs());
+    std::vector<double> zNoise(battery.getOutputSize());
     zNoise[0] = 0.01;
     zNoise[1] = 0.01;
 
     // Set up xNoise
-    std::vector<double> xNoise(battery.getNumStates());
+    std::vector<double> xNoise(battery.getStateSize());
 
     // Initialize UKF
     double dt = 1;
@@ -412,18 +396,18 @@ void testUKFBatteryStep() {
     t += dt;
     u[0] = 1;
     x = battery.stateEqn(t, x, u, xNoise, dt);
-    z = battery.outputEqn(t, x, u, zNoise, z);
+    auto z = battery.outputEqn(t, x, u, zNoise);
 
     // Step UKF for time t
     UKF.step(t, u, z);
 
     // Check x
-    std::vector<double> xMean = UKF.getStateMean();
+    auto xMean = UKF.getStateMean();
     Assert::AreEqual(-3.515545e-11, xMean[1], 1e-17, "xMean[1]");
     Assert::AreEqual(760, xMean[5], 1e-12, "xMean[5]");
 
     // Check z
-    std::vector<double> zMean = UKF.getOutputMean();
+    auto zMean = UKF.getOutputMean();
     Assert::AreEqual(20, zMean[0], 1e-6, "zMean[0]");
     Assert::AreEqual(4.191423, zMean[1], 1e-6, "zMean[1]");
 
@@ -546,25 +530,22 @@ void testPFBatteryInitialize() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    std::vector<double> u0(1);
-    std::vector<double> z0(2);
-    u0[0] = 0;
-    z0[0] = 20;
-    z0[1] = 4.2;
+    auto u0 = Model::input_type({0});
+    auto z0 = Model::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Set up inputs
-    std::vector<double> u(1);
+    auto u = battery.getInputVector();
 
     // Set up process noise
-    std::vector<double> pn(battery.getNumStates());
-    for (unsigned int i = 0; i < battery.getNumStates(); i++) {
+    std::vector<double> pn(battery.getStateSize());
+    for (unsigned int i = 0; i < battery.getStateSize(); i++) {
         pn[i] = 1e-10;
     }
 
     // Set up process noise
-    std::vector<double> sn(battery.getNumOutputs());
-    for (unsigned int i = 0; i < battery.getNumOutputs(); i++) {
+    std::vector<double> sn(battery.getOutputSize());
+    for (unsigned int i = 0; i < battery.getOutputSize(); i++) {
         pn[i] = 1e-3;
     }
 
@@ -577,11 +558,11 @@ void testPFBatteryInitialize() {
     PF.initialize(t, x, u);
 
     // Check x
-    std::vector<double> xMean = PF.getStateMean();
+    auto xMean = PF.getStateMean();
     Assert::AreEqual(x, xMean);
 
     // Check z
-    std::vector<double> zMean = PF.getOutputMean();
+    auto zMean = PF.getOutputMean();
     Assert::IsTrue(zMean[1] > 4.191423 && zMean[1] < 4.1914237);
     Assert::AreEqual(20, zMean[0], 1e-12);
 }
@@ -590,29 +571,23 @@ void testPFBatteryStep() {
     // Create battery model
     BatteryModel battery = BatteryModel();
 
-    // Set up state and output vectors
-    std::vector<double> z(battery.getNumOutputs());
-
     // Initialize
-    std::vector<double> u0(1);
-    std::vector<double> z0(2);
-    u0[0] = 0;
-    z0[0] = 20;
-    z0[1] = 4.2;
+    auto u0 = Model::input_type({0});
+    auto z0 = Model::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Set up inputs
-    std::vector<double> u(1);
+    auto u = battery.getInputVector();
 
     // Set up process noise
-    std::vector<double> pn(battery.getNumStates());
-    for (unsigned int i = 0; i < battery.getNumStates(); i++) {
+    std::vector<double> pn(battery.getStateSize());
+    for (unsigned int i = 0; i < battery.getStateSize(); i++) {
         pn[i] = 1e-10;
     }
 
     // Set up process noise
-    std::vector<double> sn(battery.getNumOutputs());
-    for (unsigned int i = 0; i < battery.getNumOutputs(); i++) {
+    std::vector<double> sn(battery.getOutputSize());
+    for (unsigned int i = 0; i < battery.getOutputSize(); i++) {
         sn[i] = 1e-3;
     }
 
@@ -626,29 +601,29 @@ void testPFBatteryStep() {
     PF.initialize(t, x, u);
 
     // Set up zNoise
-    std::vector<double> zNoise(battery.getNumOutputs());
+    std::vector<double> zNoise(battery.getOutputSize());
     zNoise[0] = 0.01;
     zNoise[1] = 0.01;
 
     // Set up xNoise
-    std::vector<double> xNoise(battery.getNumStates());
+    std::vector<double> xNoise(battery.getStateSize());
 
     // Simulate to get outputs for time t
     t += dt;
     u[0] = 1;
     x = battery.stateEqn(t, x, u, xNoise, dt);
-    z = battery.outputEqn(t, x, u, zNoise, z);
+    auto z = battery.outputEqn(t, x, u, zNoise);
 
     // Step UKF for time t
     PF.step(t, u, z);
 
     // Check x
-    std::vector<double> xMean = PF.getStateMean();
+    auto xMean = PF.getStateMean();
     Assert::AreEqual(0, xMean[1], 1e-3, "xMean[1]");
     Assert::AreEqual(760, xMean[5], 1e-1, "xMean[5]");
 
     // Check z
-    std::vector<double> zMean = PF.getOutputMean();
+    auto zMean = PF.getOutputMean();
     Assert::AreEqual(20, zMean[0], 1e-6, "zMean[0]");
     Assert::AreEqual(4.191423, zMean[1], 1e-6, "zMean[1]");
 }

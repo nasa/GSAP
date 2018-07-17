@@ -34,8 +34,8 @@ void testTankInitialize() {
     Tank3 TankModel = Tank3();
 
     // Initialize it
-    std::vector<double> z(TankModel.getNumOutputs());
-    std::vector<double> u(TankModel.getNumInputs());
+    auto u = TankModel.getInputVector();
+    auto z = TankModel.getOutputVector();
     auto x = TankModel.initialize(u, z);
 
     // Check all states set to zero
@@ -59,16 +59,16 @@ void testTankStateEqn() {
     TankModel.parameters.R2c3 = 2;
 
     // Set up u (input flows)
-    std::vector<double> u;
-    u.push_back(1);
-    u.push_back(1);
-    u.push_back(1);
+    auto u = TankModel.getInputVector();
+    u[0] = 1;
+    u[1] = 1;
+    u[2] = 1;
 
     // Set up x (masses)
-    std::vector<double> x;
-    x.push_back(0);
-    x.push_back(0);
-    x.push_back(0);
+    auto x = TankModel.getStateVector();
+    x[0] = 0;
+    x[1] = 0;
+    x[2] = 0;
 
     // Set up state noise
     std::vector<double> ns;
@@ -79,8 +79,8 @@ void testTankStateEqn() {
 
     // Step state equation
     double t = 0;
-    TankModel.setDt(0.1);
-    x = TankModel.Model::stateEqn(t, x, u, ns);
+    TankModel.setDefaultTimeStep(0.1);
+    x = TankModel.stateEqn(t, x, u, ns);
 
     // Check values of x
     Assert::AreEqual(0.1, x[0], 1e-12);
@@ -88,7 +88,7 @@ void testTankStateEqn() {
     Assert::AreEqual(0.1, x[2], 1e-12);
 
     // Check that dt was set properly
-    Assert::AreEqual(0.1, TankModel.getDt(), 1e-12);
+    Assert::AreEqual(0.1, TankModel.getDefaultTimeStep(), 1e-12);
 }
 
 void testTankOutputEqn() {
@@ -106,16 +106,16 @@ void testTankOutputEqn() {
     TankModel.parameters.R2c3 = 2;
 
     // Set up u (input flows)
-    std::vector<double> u;
-    u.push_back(1);
-    u.push_back(1);
-    u.push_back(1);
+    auto u = TankModel.getInputVector();
+    u[0] = 1;
+    u[1] = 1;
+    u[2] = 1;
 
     // Set up x (masses)
-    std::vector<double> x;
-    x.push_back(0.1);
-    x.push_back(0.1);
-    x.push_back(0.1);
+    auto x = TankModel.getStateVector();
+    x[0] = 0.1;
+    x[1] = 0.1;
+    x[2] = 0.1;
 
     // Set up output noise
     std::vector<double> no;
@@ -124,15 +124,9 @@ void testTankOutputEqn() {
     no.push_back(noValue);
     no.push_back(noValue);
 
-    // Set up outputs
-    std::vector<double> z;
-    z.push_back(0);
-    z.push_back(0);
-    z.push_back(0);
-
     // Output equation
     double t = 0;
-    z = TankModel.outputEqn(t, x, u, no, z);
+    auto z = TankModel.outputEqn(t, x, u, no);
 
     // Check values of z
     Assert::AreEqual(0.1, z[0], 1e-12);
@@ -158,11 +152,8 @@ void testBatteryInitialization() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    std::vector<double> u0(1);
-    std::vector<double> z0(2);
-    u0[0] = 0.4;
-    z0[0] = 20;
-    z0[1] = 4.0;
+    auto u0 = Model::input_type({0.4});
+    auto z0 = Model::output_type({20, 4.0});
     auto x = battery.initialize(u0, z0);
 
     // Check states
@@ -185,19 +176,15 @@ void testBatteryStateEqn() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    std::vector<double> u0(1);
-    std::vector<double> z0(2);
-    u0[0] = 0.4;
-    z0[0] = 20;
-    z0[1] = 4.0;
+    auto u0 = Model::input_type({0.4});
+    auto z0 = Model::output_type({20, 4.0});
     auto x = battery.initialize(u0, z0);
 
     // Set noise vector
     std::vector<double> zeroNoise(8);
 
     // Set input vector
-    std::vector<double> u(1);
-    u[0] = 1;
+    auto u = Model::input_type({1});
 
     // Compute next state
     x = battery.Model::stateEqn(0, x, u, zeroNoise);
@@ -223,26 +210,20 @@ void testBatteryStateEqn() {
 void testBatteryOutputEqn() {
     // Create battery model
     BatteryModel battery = BatteryModel();
-    // Set up output vector
-    std::vector<double> z(2);
 
     // Initialize
-    std::vector<double> u0(1);
-    std::vector<double> z0(2);
-    u0[0] = 0.4;
-    z0[0] = 20;
-    z0[1] = 4.0;
+    auto u0 = Model::input_type({0.4});
+    auto z0 = Model::output_type({20, 4.0});
     auto x = battery.initialize(u0, z0);
 
     // Set noise vector
     std::vector<double> zeroNoise(2);
 
     // Set input vector
-    std::vector<double> u(1);
-    u[0] = 1;
+    auto u = Model::input_type({1});
 
     // Compute output
-    z = battery.outputEqn(0, x, u, zeroNoise, z);
+    auto z = battery.outputEqn(0, x, u, zeroNoise);
 
     // Check outputs
     Assert::IsTrue(z[battery.indices.outputs.Vm] > 3.999871 &&
@@ -255,15 +236,11 @@ void testBatteryThresholdEqn() {
     BatteryModel battery = BatteryModel();
 
     // Set input vector
-    std::vector<double> u(1);
-    u[0] = 1;
+    auto u = Model::input_type({1});
 
     // Initialize
-    std::vector<double> u0(1);
-    std::vector<double> z0(2);
-    u0[0] = 0.4;
-    z0[0] = 20;
-    z0[1] = 4.0;
+    auto u0 = Model::input_type({0.4});
+    auto z0 = Model::output_type({20, 4.0});
     auto x = battery.initialize(u0, z0);
 
     // Check that not at threshold
@@ -284,8 +261,7 @@ void testBatteryInputEqn() {
     BatteryModel battery = BatteryModel();
 
     // Set input vector
-    std::vector<double> u(1);
-    u[0] = 0;
+    auto u = std::vector<double>({0});
 
     // Set input parameters
     std::vector<double> inputParameters({1, 2, 3, 4, 5});
@@ -300,21 +276,17 @@ void testBatteryPredictedOutputEqn() {
     BatteryModel battery = BatteryModel();
 
     // Set input vector
-    std::vector<double> u(1);
-    u[0] = 1;
+    auto u = Model::input_type({1});
 
     // Initialize
-    std::vector<double> u0(1);
-    std::vector<double> z0(2);
-    u0[0] = 0;
-    z0[0] = 20;
-    z0[1] = 4.2;
+    auto u0 = Model::input_type({0.4});
+    auto z0 = Model::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Set up predicted outputs
-    std::vector<double> z(battery.getNumPredictedOutputs());
-    battery.predictedOutputEqn(0, x, u, z);
+    auto z = battery.getOutputVector();
+    auto predictedOutput = battery.predictedOutputEqn(0, x, u, z);
 
     // Check values
-    Assert::AreEqual(1, z[0], 1e-5);
+    Assert::AreEqual(1, predictedOutput[0], 1e-5);
 }

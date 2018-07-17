@@ -20,8 +20,8 @@ void ctor() {
     Tank3 test = Tank3();
 
     // Initialize its
-    std::vector<double> z(test.getNumOutputs());
-    std::vector<double> u(test.getNumInputs());
+    auto u = test.getInputVector();
+    auto z = test.getOutputVector();
     auto x = test.initialize(u, z);
 
     size_t N = 0;
@@ -40,8 +40,8 @@ void ctorWithNonemptyVectors() {
     Tank3 test = Tank3();
 
     // Initialize its
-    std::vector<double> z(test.getNumOutputs());
-    std::vector<double> u(test.getNumInputs());
+    auto u = test.getInputVector();
+    auto z = test.getOutputVector();
     auto x = test.initialize(u, z);
 
     size_t N = 0;
@@ -86,8 +86,8 @@ void PFinitialize() {
     Tank3 test = Tank3();
 
     // Initialize its
-    std::vector<double> z(test.getNumOutputs());
-    std::vector<double> u(test.getNumInputs());
+    auto u = test.getInputVector();
+    auto z = test.getOutputVector();
     auto x = test.initialize(u, z);
 
     size_t N = 200;
@@ -141,8 +141,8 @@ void step() {
     test.parameters.R2c3 = 2;
 
     // Initialize its
-    std::vector<double> z(test.getNumOutputs());
-    std::vector<double> u(test.getNumInputs());
+    auto u = test.getInputVector();
+    auto z = test.getOutputVector();
     auto x = test.initialize(u, z);
 
     size_t N = 20;
@@ -188,8 +188,8 @@ void getStateEstimate() {
     Tank3 test = Tank3();
 
     // Initialize its
-    std::vector<double> z(test.getNumOutputs());
-    std::vector<double> u(test.getNumInputs());
+    auto u = test.getInputVector();
+    auto z = test.getOutputVector();
     auto x = test.initialize(u, z);
 
     size_t N = 2000;

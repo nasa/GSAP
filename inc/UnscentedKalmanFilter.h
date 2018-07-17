@@ -42,8 +42,8 @@ namespace PCOE {
 
     class UnscentedKalmanFilter final : public Observer {
     private:
-        std::vector<double> m_xEstimated;
-        std::vector<double> m_zEstimated;
+        Model::state_type m_xEstimated;
+        Model::output_type m_zEstimated;
         Matrix m_Q;
         Matrix m_R;
         Matrix m_P;
@@ -87,16 +87,14 @@ namespace PCOE {
          *   @param x0 Initial state vector
          *   @param u0 Initial input vector
          **/
-        void initialize(const double t0,
-                        const std::vector<double>& x0,
-                        const std::vector<double>& u0);
+        void initialize(const double t0, const Model::state_type& x0, const Model::input_type& u0);
 
         /** @brief Estimation step. Updates xEstimated, zEsitmated, P, and sigmaX.
          *   @param newT Time value at new step
          *   @param u Input vector at current time
          *   @param z Output vector at current time
          **/
-        void step(const double newT, const std::vector<double>& u, const std::vector<double>& z);
+        void step(const double newT, const Model::input_type& u, const Model::output_type& z);
 
         /** @brief Compute sigma points given mean vector and covariance matrix.
          *          Implements symmetric unscented transform.
@@ -107,7 +105,7 @@ namespace PCOE {
          *   @param X Sigma point data matrix
          *   @param w Sigma point weight vector
          **/
-        void computeSigmaPoints(const std::vector<double>& mx,
+        void computeSigmaPoints(const Model::state_type& mx,
                                 const Matrix& Pxx,
                                 const double kappa,
                                 const double alpha,
@@ -119,8 +117,8 @@ namespace PCOE {
         void print() const;
 
         // Accessors
-        const std::vector<double>& getStateMean() const override;
-        const std::vector<double>& getOutputMean() const override;
+        const Model::state_type& getStateMean() const override;
+        const Model::output_type& getOutputMean() const override;
         const Matrix& getStateCovariance() const;
         std::vector<UData> getStateEstimate() const override;
     };

@@ -183,12 +183,10 @@ set(SRCS
 	src/GSAPConfigMap.cpp
 	src/LoadEstimator.cpp
 	src/Matrix.cpp
-	src/Model.cpp
 	src/MonteCarloPredictor.cpp
 	src/MovingAverageLoadEstimator.cpp
-	src/Observer.cpp
 	src/ParticleFilter.cpp
-        src/PContainer.cpp
+	src/PContainer.cpp
 	src/ProgData.cpp
 	src/ProgEvent.cpp
 	src/ProgEvents.cpp

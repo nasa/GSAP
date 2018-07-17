@@ -60,11 +60,8 @@ void testMonteCarloBatteryPredict() {
 
     // Create a battery model (to help set up inputs for predict)
     BatteryModel battery = BatteryModel();
-    std::vector<double> u0(1);
-    std::vector<double> z0(2);
-    u0[0] = 0;
-    z0[0] = 20;
-    z0[1] = 4.2;
+    auto u0 = Model::input_type({0});
+    auto z0 = Model::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Create MonteCarloPredictor for battery
@@ -78,16 +75,16 @@ void testMonteCarloBatteryPredict() {
 
     // Set up inputs for predict function
     double t = 0;
-    std::vector<UData> state(battery.getNumStates());
-    for (unsigned int i = 0; i < battery.getNumStates(); i++) {
+    std::vector<UData> state(battery.getStateSize());
+    for (unsigned int i = 0; i < battery.getStateSize(); i++) {
         // Set uncertainty type and size
         state[i].uncertainty(UType::MeanCovar);
-        state[i].npoints(battery.getNumStates());
+        state[i].npoints(battery.getStateSize());
         // Set mean
         state[i][MEAN] = x[i];
         // Set covariance
-        std::vector<double> covariance(battery.getNumStates());
-        for (unsigned int j = 0; j < battery.getNumStates(); j++) {
+        std::vector<double> covariance(battery.getStateSize());
+        for (unsigned int j = 0; j < battery.getStateSize(); j++) {
             if (i == j) {
                 covariance[j] = 1e-5;
             }

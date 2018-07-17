@@ -44,10 +44,11 @@ namespace PCOE {
         LoadEstFcn loadEstFcn;
         MovingAverageLoadEstimator defaultLoadEst;
         PrognosticsModel* model;
-        double horizon;            // time span of prediction
-        Log &log;  ///> Logger (Defined in ThreadSafeLog.h)
-        
-     public:
+        double horizon; // time span of prediction
+        Log& log; ///> Logger (Defined in ThreadSafeLog.h)
+        std::vector<std::string> events;
+
+    public:
         /** Constructor
          *  @param  configMap   Map of configuration parameters
          **/
@@ -81,7 +82,13 @@ namespace PCOE {
          *  @param    state state of system at time of prediction
          *  @param  data ProgData object, in which prediction results are stored
          **/
-        virtual Prediction predict(const double tP, const std::vector<UData>& state, ProgData& data) = 0;
+        virtual Prediction predict(const double tP,
+                                   const std::vector<UData>& state,
+                                   ProgData& data) = 0;
+
+        const std::vector<std::string>& getEvents() {
+            return events;
+        }
     };
 }
 

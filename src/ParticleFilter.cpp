@@ -73,14 +73,14 @@ namespace PCOE {
 
     void ParticleFilter::checkNoiseVectors() {
         // Check that noise variance vectors are the right size
-        if (processNoiseVariance.size() != pModel->getNumStates()) {
+        if (processNoiseVariance.size() != pModel->getStateSize()) {
             log.WriteLine(LOG_ERROR,
                           MODULE_NAME,
                           "Process noise variance vector does not have the right number of values");
             throw std::range_error(
                 "Process noise variance vector does not have the right number of values");
         }
-        if (sensorNoiseVariance.size() != pModel->getNumOutputs()) {
+        if (sensorNoiseVariance.size() != pModel->getOutputSize()) {
             log.WriteLine(LOG_ERROR,
                           MODULE_NAME,
                           "Sensor noise variance vector does not have the right number of values");
@@ -95,13 +95,13 @@ namespace PCOE {
         pModel = model;
 
         // Set up variables that are dependent on the model
-        m_xEstimated.resize(pModel->getNumStates());
-        m_uOld.resize(pModel->getNumInputs());
-        m_zEstimated.resize(pModel->getNumOutputs());
+        m_xEstimated = pModel->getStateVector();
+        m_uOld = pModel->getInputVector();
+        m_zEstimated = pModel->getOutputVector();
 
         // Set up sigma point matrices and weights for x
-        particles.X.resize(pModel->getNumStates(), numParticles);
-        particles.Z.resize(pModel->getNumOutputs(), numParticles);
+        particles.X.resize(pModel->getStateSize(), numParticles);
+        particles.Z.resize(pModel->getOutputSize(), numParticles);
         particles.w.resize(numParticles);
 
         // Check noise vectors
@@ -151,8 +151,8 @@ namespace PCOE {
 
     // Initialize function (required by Observer interface)
     void ParticleFilter::initialize(const double t0,
-                                    const std::vector<double>& x0,
-                                    const std::vector<double>& u0) {
+                                    const Model::state_type& x0,
+                                    const Model::input_type& u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
 
         // Check that model has been set
@@ -171,18 +171,17 @@ namespace PCOE {
         m_uOld = u0;
 
         // Compute corresponding output estimate
-        std::vector<double> zeroNoiseZ(pModel->getNumOutputs(), 0);
-        m_zEstimated = pModel->outputEqn(m_t, m_xEstimated, m_uOld, zeroNoiseZ, m_zEstimated);
+        std::vector<double> zeroNoiseZ(pModel->getOutputSize(), 0);
+        m_zEstimated = pModel->outputEqn(m_t, m_xEstimated, m_uOld, zeroNoiseZ);
 
         // Initialize particles
         for (size_t p = 0; p < numParticles; p++) {
             // Set x to x0
-            particles.X.col(p, x0);
+            particles.X.col(p, x0.vec());
             // Set z based on x
-            std::vector<double> z0(pModel->getNumOutputs());
-            std::vector<double> zeroNoise(pModel->getNumOutputs(), 0);
-            z0 = pModel->outputEqn(t0, x0, u0, zeroNoise, z0);
-            particles.Z.col(p, z0);
+            std::vector<double> zeroNoise(pModel->getOutputSize(), 0);
+            auto z0 = pModel->outputEqn(t0, x0, u0, zeroNoise);
+            particles.Z.col(p, z0.vec());
             // Set w all equal, since we aren't adding any noise
             particles.w[p] = 1.0 / numParticles;
         }
@@ -258,7 +257,7 @@ namespace PCOE {
     // Generate process noise
     void ParticleFilter::generateProcessNoise(std::vector<double>& noise) {
         // Ensure noise is the right size
-        noise.resize(pModel->getNumStates());
+        noise.resize(pModel->getStateSize());
         // Go through process noise variance vector and generate values
         for (size_t n = 0; n < processNoiseVariance.size(); n++) {
             std::normal_distribution<> distribution(0, sqrt(processNoiseVariance[n]));
@@ -267,13 +266,13 @@ namespace PCOE {
     }
 
     // Compute likelihood
-    double ParticleFilter::likelihood(const std::vector<double>& zActual,
-                                      const std::vector<double>& zPredicted) {
+    double ParticleFilter::likelihood(const Model::output_type& zActual,
+                                      const Model::output_type& zPredicted) {
         // Compute innovation
         Matrix zA(zActual.size(), 1);
         Matrix zP(zActual.size(), 1);
-        zA.col(0, zActual);
-        zP.col(0, zPredicted);
+        zA.col(0, zActual.vec());
+        zP.col(0, zPredicted.vec());
         Matrix I = zA - zP;
         Matrix expArgument = -0.5 * I.transpose() * R.inverse() * I;
         double lh = 1.0 / pow(2.0 * PI, zActual.size() / 2.0) * 1.0 / sqrt(R.determinant()) *
@@ -281,9 +280,8 @@ namespace PCOE {
         return lh;
     }
 
-    void ParticleFilter::weightedMean(const Matrix& M,
-                                      const std::vector<double>& weights,
-                                      std::vector<double>& result) {
+    Model::state_type ParticleFilter::weightedMean(const Matrix& M,
+                                                   const std::vector<double>& weights) {
         // Assumption is that samples are the columns of M
         // result must already be the correct size
         // Convert weights to matrix
@@ -292,15 +290,17 @@ namespace PCOE {
         // Compute result using matrix multiplication
         Matrix wMean = M * W;
         // Place in the result vector
+        auto result = pModel->getStateVector();
         for (size_t i = 0; i < result.size(); i++) {
             result[i] = wMean[0][i];
         }
+        return result;
     }
 
     // Step function (required by Observer interface)
     void ParticleFilter::step(const double newT,
-                              const std::vector<double>& u,
-                              const std::vector<double>& z) {
+                              const Model::input_type& u,
+                              const Model::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
 
         if (!isInitialized()) {
@@ -319,17 +319,16 @@ namespace PCOE {
         // For each particle
         for (size_t p = 0; p < numParticles; p++) {
             // Generate process noise
-            std::vector<double> noise(pModel->getNumStates());
+            std::vector<double> noise(pModel->getStateSize());
             generateProcessNoise(noise);
-            std::vector<double> zeroNoise(pModel->getNumOutputs());
+            std::vector<double> zeroNoise(pModel->getOutputSize());
 
             // Generate new particle
-            std::vector<double> xNew(particles.X.col(p));
+            auto xNew = Model::state_type(static_cast<std::vector<double>>(particles.X.col(p)));
             xNew = pModel->stateEqn(newT, xNew, m_uOld, noise, dt);
-            particles.X.col(p, xNew);
-            std::vector<double> zNew(particles.Z.col(p));
-            zNew = pModel->outputEqn(newT, xNew, u, zeroNoise, zNew);
-            particles.Z.col(p, zNew);
+            particles.X.col(p, xNew.vec());
+            auto zNew = pModel->outputEqn(newT, xNew, u, zeroNoise);
+            particles.Z.col(p, zNew.vec());
 
             // Set weight
             particles.w[p] = likelihood(z, zNew);
@@ -343,16 +342,15 @@ namespace PCOE {
         resample();
 
         // Compute weighted means
-        weightedMean(particles.X, particles.w, m_xEstimated);
-        weightedMean(particles.X, particles.w, m_xEstimated);
+        m_xEstimated = weightedMean(particles.X, particles.w);
 
         // Update uOld
         m_uOld = u;
     }
 
     std::vector<UData> ParticleFilter::getStateEstimate() const {
-        std::vector<UData> state(pModel->getNumStates());
-        for (unsigned int i = 0; i < pModel->getNumStates(); i++) {
+        std::vector<UData> state(pModel->getStateSize());
+        for (unsigned int i = 0; i < pModel->getStateSize(); i++) {
             state[i].uncertainty(UType::WeightedSamples);
             state[i].npoints(numParticles);
             for (size_t p = 0; p < numParticles; p++) {
@@ -380,12 +378,12 @@ namespace PCOE {
     }
 
     // Get state mean
-    const std::vector<double>& ParticleFilter::getStateMean() const {
+    const Model::state_type& ParticleFilter::getStateMean() const {
         return m_xEstimated;
     }
 
     // Get output mean
-    const std::vector<double>& ParticleFilter::getOutputMean() const {
+    const Model::output_type& ParticleFilter::getOutputMean() const {
         return m_zEstimated;
     }
 }
