@@ -33,7 +33,10 @@ namespace PCOE {
         }
 
         /**
-         * Virtual destructor required for safe inheritance.
+         * Default destructor. A virtual default destructor is necessary to
+         * ensure that resources in classes inherting from this class are
+         * cleaned up, even if the destructor is called through a pointer of the
+         * base class type.
          **/
         virtual ~Observer() = default;
 
