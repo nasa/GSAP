@@ -29,7 +29,7 @@
 #include "GSAPConfigMap.h"
 #include "LoadEstimatorFactory.h"
 #include "ModelBasedPrognoser.h"
-#include "ObserverFactory.h"
+#include "Observers/ObserverFactory.h"
 #include "PredictorFactory.h"
 #include "PrognosticsModelFactory.h"
 #include "UData.h"
@@ -57,33 +57,31 @@ namespace PCOE {
         // Create Model
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Model");
         PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
-        model = std::unique_ptr<PrognosticsModel>(
-            pProgModelFactory.Create(configMap[MODEL_KEY][0], configMap));
+        model = pProgModelFactory.Create(configMap[MODEL_KEY][0], configMap);
 
         // Create Observer
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Observer");
         ObserverFactory& pObserverFactory = ObserverFactory::instance();
-        observer = std::unique_ptr<Observer>(
-            pObserverFactory.Create(configMap[OBSERVER_KEY][0], configMap));
-
-        // Create Predictor
-        log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
-        PredictorFactory& pPredictorFactory = PredictorFactory::instance();
-        predictor = std::unique_ptr<Predictor>(
-            pPredictorFactory.Create(configMap[PREDICTOR_KEY][0], configMap));
+        observer = pObserverFactory.Create(configMap[OBSERVER_KEY][0], model.get(), configMap);
 
         // Create Load Estimator
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Load Estimator");
         LoadEstimatorFactory& loadEstFact = LoadEstimatorFactory::instance();
         if (configMap.includes(LOAD_EST_KEY)) {
-            loadEstimator = std::unique_ptr<LoadEstimator>(
-                loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap));
+            loadEstimator = loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap);
         }
         else {
             // If not specified, use default
-            loadEstimator =
-                std::unique_ptr<LoadEstimator>(loadEstFact.Create(DEFAULT_LOAD_EST, configMap));
+            loadEstimator = loadEstFact.Create(DEFAULT_LOAD_EST, configMap);
         }
+
+        // Create Predictor
+        log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
+        PredictorFactory& pPredictorFactory = PredictorFactory::instance();
+        predictor = pPredictorFactory.Create(configMap[PREDICTOR_KEY][0],
+                                             model.get(),
+                                             loadEstimator.get(),
+                                             configMap);
 
         // Set model stepsize
         if (configMap.includes(STEPSIZE_KEY)) {
@@ -93,15 +91,8 @@ namespace PCOE {
             model->setDefaultTimeStep(DEFAULT_STEPSIZE_S);
         }
 
-        // Set load estimator
-        using std::placeholders::_1;
-        using std::placeholders::_2;
-        predictor->setLoadEst(std::bind(&LoadEstimator::estimateLoad, loadEstimator.get(), _1, _2));
-
         // Set model for observer and predictor
-        observer->setModel(model.get());
         loadEstimator->setModel(model.get());
-        predictor->setModel(model.get());
 
         for (auto&& input : model->getInputs()) {
             comm.registerKey(input);

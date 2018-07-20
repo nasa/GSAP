@@ -5,12 +5,13 @@
 //  Created by Julian Vu on 2/28/17.
 
 #include "ParticleFilterTests.h"
+#include "BatteryModel.h"
+#include "Exceptions.h"
 #include "GSAPConfigMap.h"
 #include "Model.h"
-#include "ParticleFilter.h"
+#include "Observers/ParticleFilter.h"
 #include "Tank3.h"
 #include "Test.h"
-#include <Exceptions.h>
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -31,7 +32,7 @@ void ctor() {
         ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
         Assert::Fail("Constructor did not catch empty processNoise/sensorNoise vectors");
     }
-    catch (std::range_error&) {
+    catch (AssertException&) {
     }
 }
 
@@ -57,7 +58,7 @@ void ctorWithNonemptyVectors() {
 
     ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
 
-    Assert::AreEqual(0, pf.getNumParticles());
+    Assert::AreEqual(0, pf.getParticleCount());
     Assert::AreEqual(3, pf.getProcessNoiseVariance().size());
     Assert::AreEqual(3, pf.getSensorNoiseVariance().size());
     Assert::AreEqual(3, pf.getOutputMean().size());
@@ -68,17 +69,22 @@ void ctorWithNonemptyVectors() {
         ParticleFilter pf2 = ParticleFilter(&test, N, processNoise, emptySensorNoise);
         Assert::Fail("Constructor did not catch empty sensorNoise vector");
     }
-    catch (std::range_error&) {
+    catch (AssertException&) {
     }
 }
 
 void GSAPConfigMapCtor() {
     GSAPConfigMap theMap;
-    theMap.set("Observer.N", "200");
-    theMap.set("Observer.processNoise", "20.0");
-    theMap.set("Observer.sensorNoise", "20.0");
-    theMap.set("Observer.MinNEffective", "100");
-    ParticleFilter pf = ParticleFilter(theMap);
+    theMap.set("Observer.ParticleCount", "200");
+    theMap.insert(
+        std::make_pair("Observer.ProcessNoise",
+                       std::vector<std::string>({"1", "1", "1", "1", "1", "1", "1", "1"})));
+    theMap.insert(std::make_pair("Observer.SensorNoise", std::vector<std::string>({"1", "1"})));
+    theMap.set("Observer.MinEffective", "100");
+
+    BatteryModel battery;
+
+    ParticleFilter pf = ParticleFilter(&battery, theMap);
 }
 
 void PFinitialize() {
@@ -106,24 +112,8 @@ void PFinitialize() {
 
     pf.initialize(t0, x, u);
 
-    Assert::AreEqual(0, pf.getTime(), "Time is not 0");
     Assert::AreEqual(3, pf.getStateMean().size(), "Number of states is not 3");
-    Assert::AreEqual(3, pf.getInputs().size(), "Number of inputs is not 3");
-    Assert::AreEqual(200, pf.getNumParticles(), "Number of particles is not 200");
-
-    GSAPConfigMap theMap;
-    theMap.set("Observer.N", "200");
-    theMap.set("Observer.processNoise", "20.0");
-    theMap.set("Observer.sensorNoise", "20.0");
-    theMap.set("Observer.MinNEffective", "100");
-    ParticleFilter pf2 = ParticleFilter(theMap);
-
-    try {
-        pf2.initialize(t0, x, u);
-        Assert::Fail("initialize() didn't catch null model.");
-    }
-    catch (ConfigurationError&) {
-    }
+    Assert::AreEqual(200, pf.getParticleCount(), "Number of particles is not 200");
 }
 
 void step() {
@@ -165,7 +155,7 @@ void step() {
         pf.step(t1, u, z);
         Assert::Fail("step() did not catch uninitialized ParticleFilter.");
     }
-    catch (std::domain_error&) {
+    catch (AssertException&) {
     }
 
     pf.initialize(t0, x, u);
@@ -175,11 +165,11 @@ void step() {
         pf.step(t0, u, z);
         Assert::Fail("step() did not catch unchanged time.");
     }
-    catch (std::domain_error&) {
+    catch (AssertException&) {
     }
 
-    pf.setMinNEffective(2000);
-    Assert::AreEqual(2000, pf.getMinNEffective());
+    pf.setMinEffective(2000);
+    Assert::AreEqual(2000, pf.getMinEffective());
     pf.step(t1, u, z);
 }
 

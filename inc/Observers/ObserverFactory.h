@@ -1,25 +1,25 @@
 // Copyright (c) 2016-2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-#ifndef PCOE_PROGNOSTICSMODELFACTORY_H
-#define PCOE_PROGNOSTICSMODELFACTORY_H
+#ifndef PCOE_OBSERVERFACTORY_H
+#define PCOE_OBSERVERFACTORY_H
 
-#include "BatteryModel.h"
 #include "Factory.h"
-#include "PrognosticsModel.h"
+#include "Observers/Observer.h"
+#include "Observers/ParticleFilter.h"
+#include "Observers/UnscentedKalmanFilter.h"
 #include "Singleton.h"
 
 namespace PCOE {
     /**
-     * Creates new @{code PrognosticsModel} objects.
+     * Creates new @{code Observer} objects.
      *
-     * @author Mattew Daigle
      * @author Jason Watkins
      * @since 1.0
      **/
-    class PrognosticsModelFactory : public Factory<PrognosticsModel, const GSAPConfigMap&>,
-                                    public Singleton<PrognosticsModelFactory> {
-        friend class Singleton<PrognosticsModelFactory>;
+    class ObserverFactory : public Factory<Observer, const Model*, const GSAPConfigMap&>,
+                            public Singleton<ObserverFactory> {
+        friend class Singleton<ObserverFactory>;
 
     private:
         /**
@@ -27,9 +27,10 @@ namespace PCOE {
          * observers registered. This constructor should only be called once,
          * from the parent @{code Singleton} class.
          **/
-        PrognosticsModelFactory() {
-            Register<BatteryModel>("Battery");
-        };
+        ObserverFactory() {
+            Register<UnscentedKalmanFilter>("UKF");
+            Register<ParticleFilter>("PF");
+        }
     };
 }
 

@@ -21,7 +21,7 @@
 
 #include "BenchmarkTimer.h"
 #include "ModelBasedPrognoser.h"
-#include "Observer.h"
+#include "Observers/Observer.h"
 #include "Predictor.h"
 #include "PrognosticsModel.h"
 

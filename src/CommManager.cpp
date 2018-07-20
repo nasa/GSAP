@@ -45,7 +45,9 @@ namespace PCOE {
     void CommManager::configure(const GSAPConfigMap& params) {
         CommunicatorFactory& Factory = CommunicatorFactory::instance();
         for (auto& it : params.at(COMM_KEY)) {
-            comms.push_back(Factory.Create(it));
+            GSAPConfigMap config(it);
+            auto& name = config.at("type")[0];
+            comms.push_back(Factory.Create(name, config));
             comms.back()->subscribe([this](DataStore& ds) { this->updateLookup(ds); });
         }
 

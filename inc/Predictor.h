@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 
+#include "Assert.h"
 #include "Model.h"
 #include "MovingAverageLoadEstimator.h"
 #include "ProgData.h"
@@ -41,9 +42,8 @@ namespace PCOE {
     class Predictor {
     protected:
         typedef std::function<LoadEstimate(const double, const unsigned int)> LoadEstFcn;
-        LoadEstFcn loadEstFcn;
-        MovingAverageLoadEstimator defaultLoadEst;
-        PrognosticsModel* model;
+        LoadEstimator* loadEstimator;
+        const PrognosticsModel* model;
         double horizon; // time span of prediction
         Log& log; ///> Logger (Defined in ThreadSafeLog.h)
         std::vector<std::string> events;
@@ -52,30 +52,16 @@ namespace PCOE {
         /** Constructor
          *  @param  configMap   Map of configuration parameters
          **/
-        Predictor(GSAPConfigMap& configMap) : model(nullptr), log(Log::Instance()) {
+        Predictor(const PrognosticsModel* m, LoadEstimator* le, GSAPConfigMap& configMap)
+            : model(m), loadEstimator(le), log(Log::Instance()) {
+            Expect(m != nullptr, "Model is null");
+            Expect(le != nullptr, "Load Estimator is null");
             (void)configMap; // Suppress unused parameter warning. Future versions may need the map
-            using std::placeholders::_1;
-            using std::placeholders::_2;
-            loadEstFcn = std::bind(&LoadEstimator::estimateLoad, defaultLoadEst, _1, _2);
         }
 
         /** Destructor
          **/
         virtual ~Predictor() = default;
-
-        /** @brief Set Load Estimation Function
-         *  @param  fcn  load estimation function
-         **/
-        virtual void setLoadEst(LoadEstFcn fcn) {
-            loadEstFcn = fcn;
-        }
-
-        /** @brief Set model pointer
-         *  @param value given model pointer
-         **/
-        virtual void setModel(PrognosticsModel* value) {
-            this->model = value;
-        }
 
         /** @brief    Predict future events and values of system variables
          *  @param    tP Time of prediction

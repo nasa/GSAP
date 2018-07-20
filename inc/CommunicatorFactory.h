@@ -1,56 +1,41 @@
-/**  Communicator Factory - Header
- *   @class     CommunicatorFactory CommunicatorFactory.h
- *   @ingroup   GPIC++
- *   @ingroup   Framework
- *
- *   @brief     Communicator Factory Class - Factory pattern
- *   Handles the creation of new communicators
- *
- *   @author    Chris Teubert
- *   @version   1.1.0
- *
- *   @pre       Prognostic Configuration File and Communicator Configuration Files
- *
- *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
- *      Created: November 11, 2015
- *
- *   @copyright Copyright (c) 2013-2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
+// Copyright (c) 2015-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #ifndef PCOE_COMMUNICATORFACTORY_H
 #define PCOE_COMMUNICATORFACTORY_H
 
 #include "Communicator.h"
-#include "PlaybackCommunicator.h"
-#include "RecorderCommunicator.h"
-#include "RandomCommunicator.h"
 #include "Factory.h"
+#include "PlaybackCommunicator.h"
+#include "RandomCommunicator.h"
+#include "RecorderCommunicator.h"
 #include "Singleton.h"
 
 namespace PCOE {
     /**
-     *  @class      PrognoserFactory
-     *  @brief      Prognoser Factory Class - Factory pattern. Handles the creation of new prognosers
+     * Creates new @{code Communicator} objects.
      *
-     *  @see        Factory
-     *  @note       Uses Factory template parent class.
+     * @author Chris Teubert
+     * @author Jason Watkins
+     * @since 1.0
      **/
-    class CommunicatorFactory : public Factory<Communicator>,
-        public Singleton<CommunicatorFactory> {
+    class CommunicatorFactory : public Factory<Communicator, GSAPConfigMap&>,
+                                public Singleton<CommunicatorFactory> {
     private:
         friend class Singleton<CommunicatorFactory>;
+
+    private:
         /**
-         *  @brief      PrognoserFactory Constructor
-         *  @note       Is protected to prevent users from creating a new PrognoserFactory
-         *              Consistent with the singleton pattern
+         * Creates a new instance of the @{code CommunicatorFactory} with
+         * default communictors registered. This constructor should only be
+         * called once, from the parent @{code Singleton} class.
          **/
         CommunicatorFactory() {
-            Register("playback", CommunicatorFactory::Create<PlaybackCommunicator>);
-            Register("recorder", CommunicatorFactory::Create<RecorderCommunicator>);
-            Register("random", CommunicatorFactory::Create<RandomCommunicator>);
+            Register<PlaybackCommunicator>("playback");
+            Register<RecorderCommunicator>("recorder");
+            Register<RandomCommunicator>("random");
         };
     };
 }
 
-#endif // PCOE_COMMUNICATORFACTORY_H
+#endif

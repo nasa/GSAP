@@ -30,20 +30,21 @@
 
 namespace PCOE {
     class MovingAverageLoadEstimator : public LoadEstimator {
-     public:
-        static const std::string WINDOW_SIZE_KEY; // Key for window size (number of steps in average window)
+    public:
+        static const std::string
+            WINDOW_SIZE_KEY; // Key for window size (number of steps in average window)
         static const size_t DEFAULT_WINDOW_SIZE;
-        
+
         MovingAverageLoadEstimator() = default;
-        
+
         /** MovingAverageLoadEstimator constructor.
-         *  @param      configMap   Configuration map of configuration parameters in the prognoser configuration
-         *              file
+         *  @param      configMap   Configuration map of configuration parameters in the prognoser
+         *configuration file
          *
          *  The constructor configures the MovingAverageLoadEstimator
          **/
-        MovingAverageLoadEstimator(GSAPConfigMap & configMap);
-        
+        MovingAverageLoadEstimator(GSAPConfigMap& configMap);
+
         /**
          * @brief   Find if the load estimator uses historical loading.
          *          If doesn't use historical loading, its function requires the user call addLoad
@@ -56,22 +57,22 @@ namespace PCOE {
         virtual bool usesHistoricalLoading() {
             return true;
         }
-        
+
         /** @brief Set the load for that timestep
          *  @param  loadEstimate    Load estimate for the current timestep
          **/
-        void addLoad(const LoadEstimate & newLoads);
-        
+        void addLoad(const LoadEstimate& newLoads);
+
         /** Estimate Load
          *  @param      t           Time for estimate (s from start)
          *  @param      sample      Sample id (unsigned int)
          *  @return     Load estimate for time and sample
          **/
         LoadEstimate estimateLoad(const double, const unsigned int);
-        
-     protected:
+
+    protected:
         // Estimate buffer for single sample
-        std::vector<LoadEstimate>  estimateBuffer;
+        std::vector<LoadEstimate> estimateBuffer;
         size_t currentElement = 0;
         size_t windowSize = DEFAULT_WINDOW_SIZE;
         LoadEstimate lastEstimate;

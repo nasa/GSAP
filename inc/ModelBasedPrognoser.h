@@ -1,50 +1,51 @@
 /**  Model-based Prognoser - Header
-*   @class     ModelBasedPrognoser ModelBasedPrognoser.h
-*   @ingroup   GPIC++
-*   @ingroup   ProgLib
-*
-*   @brief     Model-based Prognoser Class
-*
-*   General model-based prognoser class. It gets created for a specified model, observer, and predictor.
-*
-*   @author    Matthew Daigle
-*   @version   1.1.0
-*
-*   @pre       Prognostic Configuration File and Prognoster Configuration Files
-*
-*      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
-*      Created: March 16, 2016
-*
-*   @copyright Copyright (c) 2018 United States Government as represented by
-*     the Administrator of the National Aeronautics and Space Administration.
-*     All Rights Reserved.
-*/
+ *   @class     ModelBasedPrognoser ModelBasedPrognoser.h
+ *   @ingroup   GPIC++
+ *   @ingroup   ProgLib
+ *
+ *   @brief     Model-based Prognoser Class
+ *
+ *   General model-based prognoser class. It gets created for a specified model, observer, and
+ * predictor.
+ *
+ *   @author    Matthew Daigle
+ *   @version   1.1.0
+ *
+ *   @pre       Prognostic Configuration File and Prognoster Configuration Files
+ *
+ *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
+ *      Created: March 16, 2016
+ *
+ *   @copyright Copyright (c) 2018 United States Government as represented by
+ *     the Administrator of the National Aeronautics and Space Administration.
+ *     All Rights Reserved.
+ */
 
 #ifndef PCOE_MODELBASEDPROGNOSER_H
 #define PCOE_MODELBASEDPROGNOSER_H
 
 #include <memory>
 
+#include "Observers/Observer.h"
+#include "Predictor.h"
 #include "Prognoser.h"
 #include "PrognosticsModel.h"
-#include "Observer.h"
-#include "Predictor.h"
 
 namespace PCOE {
-    class ModelBasedPrognoser : public Prognoser
-    {
-     private:
+    class ModelBasedPrognoser : public Prognoser {
+    private:
         std::unique_ptr<PrognosticsModel> model;
         std::unique_ptr<Observer> observer;
         std::unique_ptr<Predictor> predictor;
         std::unique_ptr<LoadEstimator> loadEstimator;
         bool initialized;
         double lastTime;
-     public:
+
+    public:
         /** @brief      Model-based Prognoser Constructor
          *  @param      config Map of config parameters from the prognoser config file
          */
-        ModelBasedPrognoser(GSAPConfigMap & config);
+        ModelBasedPrognoser(GSAPConfigMap& config);
 
         /** @brief     Prognostic Monitor Step
          *
@@ -64,27 +65,27 @@ namespace PCOE {
          *             analysis. By default this is not done- making this step
          *             optional in the component prognoser implementation
          */
-         //void checkInputValidity() {};
+        // void checkInputValidity() {};
 
-         /** @brief     check if there is enough new data to preform prognosis
-          *  @return    if there is enough data
-          *
-          *             Check if the data exists and is new enough to be used for
-          *             prognosis. If false is returned prognostics steps will be
-          *             skipped. By default this returns true- making this step
-          *             optional in the component prognoser implementation
-          */
-          //bool isEnoughData() {return true;};
+        /** @brief     check if there is enough new data to preform prognosis
+         *  @return    if there is enough data
+         *
+         *             Check if the data exists and is new enough to be used for
+         *             prognosis. If false is returned prognostics steps will be
+         *             skipped. By default this returns true- making this step
+         *             optional in the component prognoser implementation
+         */
+        // bool isEnoughData() {return true;};
 
-          /** @brief     check the validity of any prognostics results.
-           *
-           *             This could be as simple as bound checks or a complicated
-           *             analysis. By default this a simple bounds test on timeToEvent
-           *             - making this step optional in the component prognoser
-           *             implementation
-           *             Default implemented in Prognoser
-           */
-           //void checkResultValidity();
+        /** @brief     check the validity of any prognostics results.
+         *
+         *             This could be as simple as bound checks or a complicated
+         *             analysis. By default this a simple bounds test on timeToEvent
+         *             - making this step optional in the component prognoser
+         *             implementation
+         *             Default implemented in Prognoser
+         */
+        // void checkResultValidity();
     };
 
     extern bool regModelProg;

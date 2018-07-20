@@ -3,37 +3,36 @@
 //  UnitTestAll
 //
 //  Created by Chris Teubert on 4/6/16.
-//  Copyright (c) 2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
+//  Copyright (c) 2018 United States Government as represented by the Administrator of the National
+//  Aeronautics and Space Administration.  All Rights Reserved.
 //
 
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "Test.h"
-#include "FrameworkTests.h"
-#include "PrognoserFactory.h"
 #include "CommManager.h"
-#include "ProgManager.h"
+#include "FrameworkTests.h"
 #include "GSAPConfigMap.h"
+#include "ProgManager.h"
+#include "PrognoserFactory.h"
+#include "Test.h"
 #include "TestPrognoser.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
-void PrognoserFactoryTest()
-{
-    PrognoserFactory & theFactory = PrognoserFactory::instance();
-    theFactory.Register("Test", theFactory.Create<TestPrognoser>);
+void PrognoserFactoryTest() {
+    PrognoserFactory& theFactory = PrognoserFactory::instance();
+    theFactory.Register<TestPrognoser>("Test");
 }
 
-void PCOE::CommManagerTest()
-{
-    CommManager & comm = CommManager::instance();
+void PCOE::CommManagerTest() {
+    CommManager& comm = CommManager::instance();
     GSAPConfigMap theMap;
     theMap["Communicators"] = std::vector<std::string>();
     comm.configure(theMap);
     auto threadid = comm.getID();
-    theMap.set("commmanger.step_size","1000");
+    theMap.set("commmanger.step_size", "1000");
 
     comm.configure(theMap);
     Assert::AreEqual(1000, comm.stepSize);
@@ -56,7 +55,8 @@ void PCOE::CommManagerTest()
         comm.getValue("Test_CommManagerTest2"); // Shouldn't exist
         Assert::Fail();
     }
-    catch (...) {}
+    catch (...) {
+    }
 
     comm.stop();
     comm.join();
