@@ -26,10 +26,10 @@
 #include "Matrix.h"
 #include "ModelFactory.h"
 #include "ObserverTests.h"
-#include "ParticleFilter.h"
+#include "Observers/ParticleFilter.h"
+#include "Observers/UnscentedKalmanFilter.h"
 #include "Tank3.h"
 #include "ThreadSafeLog.h"
-#include "UnscentedKalmanFilter.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -38,12 +38,6 @@ void observerTestsInit() {
     // Set up the log
     Log& log = Log::Instance("ObserverTests.log");
     log.Initialize("ObserverTests", "1.0", "No comments.");
-
-    // Create the needed factories
-    ModelFactory& pModelFactory = ModelFactory::instance();
-
-    // Register battery model
-    pModelFactory.Register("Battery", ModelFactory::Create<BatteryModel>);
 }
 
 void testUKFTankInitialize() {
@@ -101,9 +95,6 @@ void testUKFTankInitialize() {
 
     // Initialize UKF
     UKF.initialize(t, x, u);
-
-    // Check t
-    Assert::AreEqual(t, UKF.getTime(), 1e-12);
 
     // Check x, z, P
     Model::state_type xMean = UKF.getStateMean();
@@ -294,12 +285,6 @@ void testUKFTankGetInputs() {
     u[1] = 2;
     u[2] = 3;
     UKF.step(t, u, z);
-
-    // Check that it remembers the inputs
-    auto uOld = UKF.getInputs();
-    Assert::AreEqual(1, uOld[0], 1e-12);
-    Assert::AreEqual(2, uOld[1], 1e-12);
-    Assert::AreEqual(3, uOld[2], 1e-12);
 }
 
 void testUKFBatteryInitialize() {
@@ -449,8 +434,10 @@ void testUKFBatteryFromConfig() {
     }
     paramMap["Observer.R"] = rStrings;
 
+    BatteryModel battery;
+
     // Construct a UKF from the config map
-    UnscentedKalmanFilter ukf(paramMap);
+    UnscentedKalmanFilter ukf(&battery, paramMap);
 
     // NOTE: These may not be relevant anymore, because it only does these checks now within
     // initialize...
@@ -459,7 +446,7 @@ void testUKFBatteryFromConfig() {
     rStrings.pop_back();
     paramMap["Observer.R"] = rStrings;
     try {
-        UnscentedKalmanFilter ukf2(paramMap);
+        UnscentedKalmanFilter ukf2(&battery, paramMap);
         Assert::Fail();
     }
     catch (...) {
@@ -470,7 +457,7 @@ void testUKFBatteryFromConfig() {
     qStrings.pop_back();
     paramMap["Observer.Q"] = qStrings;
     try {
-        UnscentedKalmanFilter ukf3(paramMap);
+        UnscentedKalmanFilter ukf3(&battery, paramMap);
         Assert::Fail();
     }
     catch (...) {
@@ -500,14 +487,16 @@ void testPFBatteryFromConfig() {
     // Set number of particles
     configMap.set("Observer.N", "100");
 
+    BatteryModel battery;
+
     // Construct a PF from the config map
-    ParticleFilter pf(configMap);
+    ParticleFilter pf(&battery, configMap);
 
     // Create a UKF with bad sn and ensure throws error
     snStrings.pop_back();
     configMap["Observer.sensorNoise"] = snStrings;
     try {
-        ParticleFilter pf2(configMap);
+        ParticleFilter pf2(&battery, configMap);
         Assert::Fail();
     }
     catch (...) {
@@ -518,7 +507,7 @@ void testPFBatteryFromConfig() {
     pnStrings.pop_back();
     configMap["Observer.processNoise"] = pnStrings;
     try {
-        ParticleFilter pf3(configMap);
+        ParticleFilter pf3(&battery, configMap);
         Assert::Fail();
     }
     catch (...) {

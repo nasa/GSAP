@@ -135,9 +135,10 @@ set (HEADERS
 	inc/Model.h
 	inc/MonteCarloPredictor.h
 	inc/MovingAverageLoadEstimator.h
-	inc/Observer.h
-	inc/ObserverFactory.h
-	inc/ParticleFilter.h
+	inc/Observers/Observer.h
+	inc/Observers/ObserverFactory.h
+	inc/Observers/ParticleFilter.h
+	inc/Observers/UnscentedKalmanFilter.h
 	inc/Predictor.h
 	inc/PredictorFactory.h
 	inc/PContainer.h
@@ -155,7 +156,6 @@ set (HEADERS
 	inc/UData.h
 	inc/UDataInterfaces.h
 	inc/UDPSocket.h
-	inc/UnscentedKalmanFilter.h
 	inc/BenchmarkTimer.h
 	inc/TCPSocket.h
 	inc/UDPSocket.h
@@ -186,7 +186,8 @@ set(SRCS
 	src/Matrix.cpp
 	src/MonteCarloPredictor.cpp
 	src/MovingAverageLoadEstimator.cpp
-	src/ParticleFilter.cpp
+	src/Observers/ParticleFilter.cpp
+	src/Observers/UnscentedKalmanFilter.cpp
 	src/PContainer.cpp
 	src/ProgData.cpp
 	src/ProgEvent.cpp
@@ -199,7 +200,6 @@ set(SRCS
 	src/UData.cpp
 	src/UDataInterfaces.cpp
 	src/UDPSocket.cpp
-	src/UnscentedKalmanFilter.cpp
 	src/TCPServer.cpp
 	src/BatteryModel.cpp
 	src/CommManager.cpp

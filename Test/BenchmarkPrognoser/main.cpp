@@ -25,7 +25,7 @@ int main() {
 
     // Specify Prognosers
     PrognoserFactory& prognoserFactory = PrognoserFactory::instance();
-    prognoserFactory.Register("BenchmarkPrognoser", PrognoserFactory::Create<BenchmarkPrognoser>);
+    prognoserFactory.Register<BenchmarkPrognoser>("BenchmarkPrognoser");
 
     ProgManager PM = ProgManager("bench.cfg");
 

@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "CommManager.h"
+#include "GSAPConfigMap.h"
 #include "ProgManager.h"
 #include "PrognoserFactory.h"
 #include "StringUtils.h"
@@ -34,7 +35,7 @@
 namespace PCOE {
     /// CONFIGURABLE PARAMETERS
     const std::string PACKAGE_NAME = "C++ Generic Prognostic Infrastructure";
-    const std::string VERSION      = "1.1.0";
+    const std::string VERSION = "1.1.0";
     const std::string NOTE =
         "If you have technical issues with the plugin, "
         "please report them by \nemailing Christopher Teubert (christopher.a.teubert@nasa.gov).";
@@ -60,7 +61,7 @@ namespace PCOE {
 
     void ProgManager::setConfig(const GSAPConfigMap& config) {
         configValues = config;
-        configSet    = true;
+        configSet = true;
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting config map");
     }
 
@@ -98,7 +99,9 @@ namespace PCOE {
 
     void ProgManager::addPrognoser(const std::string& path) {
         PrognoserFactory& factory = PrognoserFactory::instance();
-        prognosers.push_back(factory.Create(path));
+        GSAPConfigMap config(path);
+        auto& name = config.at("type")[0];
+        prognosers.push_back(factory.Create(name, config));
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Adding new prognoser");
     }
 
@@ -194,7 +197,7 @@ namespace PCOE {
             return c;
         }
 
-        const auto marker   = input.find_first_of(" \t");
+        const auto marker = input.find_first_of(" \t");
         std::string command = (input.substr(0, marker));
         toLower(command);
 

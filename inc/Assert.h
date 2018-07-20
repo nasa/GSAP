@@ -57,8 +57,10 @@ namespace PCOE {
          ? static_cast<void>(0) \
          : LogAndThrow(type " violated at " __FILE__ ": " MAKE_STRING(__LINE__) ". " msg))
 
-/// Describes a function precondition that must be satisfied. In debug builds,
-/// this function will throw an exception when the constraint is violated.
+/// Describes a function precondition that must be satisfied. Preconditions
+/// should be stated immediately at the begining of the function body. In debug
+/// builds, this function will throw an exception when the constraint is
+/// violated.
 ///
 /// \author Jason Watkins
 /// \since 1.2
@@ -68,8 +70,23 @@ namespace PCOE {
 ///             condition is violated.
 #define Expect(cond, msg) CONTRACT_REQUIRE("Precondition", cond, msg)
 
-/// Describes a function postcondition that must be satisfied. In debug builds,
-/// this function will throw an exception when the constraint is violated.
+/// Describes a function condition that must be satisfied. @{code Require}
+/// should be used to describe intermediate conditions of a function. In debug
+/// builds, this function will throw an exception when the constraint is
+/// violated.
+///
+/// \author Jason Watkins
+/// \since 1.2
+///
+/// \param cond The condition that must be satisfied
+/// \param msg  The message that will be included in the thrown exception if the
+///             condition is violated.
+#define Require(cond, msg) CONTRACT_REQUIRE("Condition", cond, msg)
+
+/// Describes a function postcondition that must be satisfied. Postconditions
+/// should be stated as near to the return point of the function as practical.
+/// In debug builds, this function will throw an exception when the constraint
+/// is violated.
 ///
 /// \author Jason Watkins
 /// \since 1.2

@@ -38,7 +38,9 @@ namespace PCOE {
         /** @brief    Constructor for a MonteCarloPredictor based on a configMap
          *  @param  configMap Configuration map specifying predictor parameters
          **/
-        explicit MonteCarloPredictor(GSAPConfigMap& configMap);
+        explicit MonteCarloPredictor(const PrognosticsModel* m,
+                                     LoadEstimator* le,
+                                     GSAPConfigMap& configMap);
 
         /** @brief Set model pointer
          *  @param value given model pointer

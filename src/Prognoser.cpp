@@ -42,19 +42,19 @@
 namespace PCOE {
     // DEFAULTS
     const unsigned int DEFAULT_INTERVAL_DELAY = 100; // ms
-    const unsigned int DEFAULT_SAVE_INTERVAL  = 60; // loops
-    const bool DEFAULT_SAVE_ENABLE            = false;
+    const unsigned int DEFAULT_SAVE_INTERVAL = 60; // loops
+    const bool DEFAULT_SAVE_ENABLE = false;
 
     // CONFIGURATION KEYS
-    const std::string TYPE_KEY           = "type";
-    const std::string NAME_KEY           = "name";
-    const std::string ID_KEY             = "id";
-    const std::string HIST_PATH_KEY      = "histPath";
-    const std::string TAG_KEY            = "inTags";
-    const std::string RESET_HIST_KEY     = "resetHist";
+    const std::string TYPE_KEY = "type";
+    const std::string NAME_KEY = "name";
+    const std::string ID_KEY = "id";
+    const std::string HIST_PATH_KEY = "histPath";
+    const std::string TAG_KEY = "inTags";
+    const std::string RESET_HIST_KEY = "resetHist";
     const std::string INTERVAL_DELAY_KEY = "intervalDelay";
-    const std::string SAVE_INTERVAL_KEY  = "saveInterval";
-    const std::string SAVE_ENABLE_KEY    = "saveEnable";
+    const std::string SAVE_INTERVAL_KEY = "saveInterval";
+    const std::string SAVE_ENABLE_KEY = "saveEnable";
 
     std::string MODULE_NAME;
 
@@ -102,9 +102,9 @@ namespace PCOE {
         // to global conversion.
         if (configParams.includes(TAG_KEY)) {
             for (auto& it : configParams.at(TAG_KEY)) {
-                size_t pos             = it.find_first_of(':');
+                size_t pos = it.find_first_of(':');
                 std::string commonName = it.substr(0, pos);
-                std::string tagName    = it.substr(pos + 1, it.length() - pos + 1);
+                std::string tagName = it.substr(pos + 1, it.length() - pos + 1);
                 log.FormatLine(LOG_TRACE,
                                MODULE_NAME,
                                "Registering tag common=%s, tag=%s",
@@ -118,7 +118,7 @@ namespace PCOE {
 
         histFileName = configParams.at(HIST_PATH_KEY)[0] + PATH_SEPARATOR +
                        results.getPrognoserName() + "_" + results.getUniqueId() + ".txt";
-        moduleName  = results.getComponentName() + " " + results.getPrognoserName() + " Prognoser";
+        moduleName = results.getComponentName() + " " + results.getPrognoserName() + " Prognoser";
         MODULE_NAME = moduleName + "-Common";
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Read configuration file");
 
@@ -404,7 +404,7 @@ namespace PCOE {
                         break;
                     }
                     theTraj.setUncertainty(static_cast<UType>(std::stoi(type)));
-                    double value             = std::stod(entry);
+                    double value = std::stod(entry);
                     unsigned int sampleIndex = static_cast<unsigned int>(std::stoul(uIndex));
 
                     if (sampleIndex >= theTraj[0].size()) {
@@ -458,7 +458,7 @@ namespace PCOE {
         using std::chrono::system_clock;
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Resetting History");
 
-        char numstr[21]    = {0}; // enough to hold all numbers up to 64-bits
+        char numstr[21] = {0}; // enough to hold all numbers up to 64-bits
         long long int time = system_clock::now().time_since_epoch() / seconds(1);
         snprintf(numstr, 21, "%lld", time);
         std::string newName = histFileName + "_old" + numstr;

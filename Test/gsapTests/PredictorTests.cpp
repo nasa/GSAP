@@ -23,14 +23,14 @@
 #include <vector>
 
 #include "BatteryModel.h"
+#include "ConstLoadEstimator.h"
+#include "Factory.h"
 #include "GSAPConfigMap.h"
 #include "MonteCarloPredictor.h"
 #include "PredictorTests.h"
-#include "UData.h"
-
-#include "Factory.h"
 #include "PrognosticsModelFactory.h"
 #include "Test.h"
+#include "UData.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -39,10 +39,6 @@ void predictorTestInit() {
     // Set up the log
     Log& log = Log::Instance("PredictorTests.log");
     log.Initialize("PredictorTests", "1.0", "No comments.");
-
-    // Create the model factory and register battery model
-    PrognosticsModelFactory& modelFactory = PrognosticsModelFactory::instance();
-    modelFactory.Register("Battery", PrognosticsModelFactory::Create<BatteryModel>);
 }
 
 void testMonteCarloBatteryPredict() {
@@ -60,13 +56,15 @@ void testMonteCarloBatteryPredict() {
     configMap["Predictor.events"] = std::vector<std::string>({"EOD"});
 
     // Create a battery model (to help set up inputs for predict)
-    BatteryModel battery = BatteryModel();
+    BatteryModel battery;
     auto u0 = Model::input_type({0});
     auto z0 = Model::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
+    ConstLoadEstimator le(configMap);
+
     // Create MonteCarloPredictor for battery
-    MonteCarloPredictor MCP(configMap);
+    MonteCarloPredictor MCP(&battery, &le, configMap);
 
     // Create and set the model
     PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
@@ -138,6 +136,10 @@ void testMonteCarloBatteryConfig() {
     configMap["LoadEstimator.loading"] = std::vector<std::string>({"8"});
     configMap["Predictor.events"] = std::vector<std::string>({"EOD"});
 
+    BatteryModel battery;
+
+    ConstLoadEstimator le(configMap);
+
     // Create MonteCarloPredictor for battery
-    MonteCarloPredictor MCP(configMap);
+    MonteCarloPredictor MCP(&battery, &le, configMap);
 }

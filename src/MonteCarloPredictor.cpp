@@ -37,7 +37,10 @@ namespace PCOE {
     const std::string MODULE_NAME = "MonteCarloPredictor";
 
     // ConfigMap-based Constructor
-    MonteCarloPredictor::MonteCarloPredictor(GSAPConfigMap& configMap) : Predictor(configMap) {
+    MonteCarloPredictor::MonteCarloPredictor(const PrognosticsModel* m,
+                                             LoadEstimator* le,
+                                             GSAPConfigMap& configMap)
+        : Predictor(m, le, configMap) {
         // Check for required parameters:
         // model = model to be used for simulation
         // numSamples = number of samples used for prediction
@@ -181,7 +184,7 @@ namespace PCOE {
             for (double t_s = time_s; t_s <= time_s + horizon;
                  t_s += this->model->getDefaultTimeStep()) {
                 // Get inputs for time t
-                std::vector<double> loadEstimate = loadEstFcn(t_s, sample);
+                std::vector<double> loadEstimate = loadEstimator->estimateLoad(t_s, sample);
                 auto u = this->model->inputEqn(t_s, inputParams, loadEstimate);
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time
