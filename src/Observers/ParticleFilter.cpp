@@ -102,19 +102,6 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Created particle filter");
     }
 
-    void ParticleFilter::setSensorCovariance() {
-        // Resize R and fill with 0s
-        R = Matrix(sensorNoiseVariance.size(), sensorNoiseVariance.size(), 0);
-        // Fill diagonals
-        for (std::size_t i = 0; i < sensorNoiseVariance.size(); i++) {
-            R[i][i] = sensorNoiseVariance[i];
-        }
-    }
-
-    void ParticleFilter::setMinEffective(std::size_t value) {
-        minEffective = value;
-    }
-
     void ParticleFilter::initialize(const double t0,
                                     const Model::state_type& x0,
                                     const Model::input_type& u0) {
@@ -153,6 +140,52 @@ namespace PCOE {
 
         initialized = true;
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initialize completed");
+    }
+
+    void ParticleFilter::step(const double newT,
+                              const Model::input_type& u,
+                              const Model::output_type& z) {
+        log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
+        Expect(initialized, "Step before initialization");
+        Expect(newT - lastTime > 0, "Time has not advanced");
+
+        double dt = newT - lastTime;
+        lastTime = newT;
+
+        std::vector<double> noise(model->getStateSize());
+        std::vector<double> zeroNoise(model->getOutputSize());
+        for (std::size_t p = 0; p < particleCount; p++) {
+            generateProcessNoise(noise);
+
+            // Generate new particle
+            auto xNew = Model::state_type(static_cast<std::vector<double>>(particles.X.col(p)));
+            xNew = model->stateEqn(newT, xNew, uPrev, noise, dt);
+            particles.X.col(p, xNew.vec());
+            auto zNew = model->outputEqn(newT, xNew, u, zeroNoise);
+            particles.Z.col(p, zNew.vec());
+
+            // Set weight
+            particles.w[p] = likelihood(z, zNew);
+            particles.w[p] = likelihood(z, zNew);
+        }
+
+        normalize();
+        resample();
+        xEstimated = weightedMean(particles.X, particles.w);
+        uPrev = u;
+    }
+
+    std::vector<UData> ParticleFilter::getStateEstimate() const {
+        std::vector<UData> state(model->getStateSize());
+        for (unsigned int i = 0; i < model->getStateSize(); i++) {
+            state[i].uncertainty(UType::WeightedSamples);
+            state[i].npoints(particleCount);
+            for (std::size_t p = 0; p < particleCount; p++) {
+                state[i][SAMPLE(p)] = particles.X[i][p];
+                state[i][WEIGHT(p)] = particles.w[p];
+            }
+        }
+        return state;
     }
 
     // Normalize particle weighs
@@ -244,6 +277,15 @@ namespace PCOE {
         return lh;
     }
 
+    void ParticleFilter::setSensorCovariance() {
+        // Resize R and fill with 0s
+        R = Matrix(sensorNoiseVariance.size(), sensorNoiseVariance.size(), 0);
+        // Fill diagonals
+        for (std::size_t i = 0; i < sensorNoiseVariance.size(); i++) {
+            R[i][i] = sensorNoiseVariance[i];
+        }
+    }
+
     Model::state_type ParticleFilter::weightedMean(const Matrix& M,
                                                    const std::vector<double>& weights) {
         Expect(M.rows() == model->getStateSize(), "M rows does not match model state size");
@@ -259,51 +301,5 @@ namespace PCOE {
             result[i] = wMean[0][i];
         }
         return result;
-    }
-
-    void ParticleFilter::step(const double newT,
-                              const Model::input_type& u,
-                              const Model::output_type& z) {
-        log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
-        Expect(initialized, "Step before initialization");
-        Expect(newT - lastTime > 0, "Time has not advanced");
-
-        double dt = newT - lastTime;
-        lastTime = newT;
-
-        std::vector<double> noise(model->getStateSize());
-        std::vector<double> zeroNoise(model->getOutputSize());
-        for (std::size_t p = 0; p < particleCount; p++) {
-            generateProcessNoise(noise);
-
-            // Generate new particle
-            auto xNew = Model::state_type(static_cast<std::vector<double>>(particles.X.col(p)));
-            xNew = model->stateEqn(newT, xNew, uPrev, noise, dt);
-            particles.X.col(p, xNew.vec());
-            auto zNew = model->outputEqn(newT, xNew, u, zeroNoise);
-            particles.Z.col(p, zNew.vec());
-
-            // Set weight
-            particles.w[p] = likelihood(z, zNew);
-            particles.w[p] = likelihood(z, zNew);
-        }
-
-        normalize();
-        resample();
-        xEstimated = weightedMean(particles.X, particles.w);
-        uPrev = u;
-    }
-
-    std::vector<UData> ParticleFilter::getStateEstimate() const {
-        std::vector<UData> state(model->getStateSize());
-        for (unsigned int i = 0; i < model->getStateSize(); i++) {
-            state[i].uncertainty(UType::WeightedSamples);
-            state[i].npoints(particleCount);
-            for (std::size_t p = 0; p < particleCount; p++) {
-                state[i][SAMPLE(p)] = particles.X[i][p];
-                state[i][WEIGHT(p)] = particles.w[p];
-            }
-        }
-        return state;
     }
 }
