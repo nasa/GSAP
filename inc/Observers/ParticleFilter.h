@@ -14,8 +14,8 @@ namespace PCOE {
     class GSAPConfigMap;
 
     struct Particles {
-        Matrix X; // state matrix, numStates x N
-        Matrix Z; // output matrix, numOutputs x N
+        Matrix X; // state matrix, numStates x particleCount
+        Matrix Z; // output matrix, numOutputs x particleCount
         std::vector<double> w; // weights
     };
 
@@ -88,7 +88,9 @@ namespace PCOE {
         /**
          * Sets the miniumn effective number of particles.
          **/
-        void setMinEffective(std::size_t value);
+        inline void setMinEffective(std::size_t value) {
+            minEffective = value;
+        }
 
         /**
          * Returns the current mean state estimate of the observer.
