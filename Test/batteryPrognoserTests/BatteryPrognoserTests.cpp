@@ -14,11 +14,11 @@
 #include "GSAPConfigMap.h"
 #include "ModelBasedPrognoser.h"
 #include "ModelFactory.h"
-#include "MonteCarloPredictor.h"
 #include "Observers/ObserverFactory.h"
 #include "Observers/UnscentedKalmanFilter.h"
 #include "PlaybackCommunicator.h"
-#include "PredictorFactory.h"
+#include "Predictors/MonteCarloPredictor.h"
+#include "Predictors/PredictorFactory.h"
 #include "PrognosticsModelFactory.h"
 #include "Test.h"
 
@@ -26,13 +26,6 @@ using namespace PCOE;
 using namespace PCOE::Test;
 
 void batteryPrognoserInit() {
-    // Create the needed factories
-    ModelFactory& pModelFactory = ModelFactory::instance();
-    PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
-    ObserverFactory& pObserverFactory = ObserverFactory::instance();
-    PredictorFactory& pPredictorFactory = PredictorFactory::instance();
-    CommunicatorFactory& pCommFactory = CommunicatorFactory::instance();
-
     // Set up comm manager
     CommManager& pTheComm = CommManager::instance();
     GSAPConfigMap paramMap;

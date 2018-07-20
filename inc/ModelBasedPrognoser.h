@@ -27,7 +27,7 @@
 #include <memory>
 
 #include "Observers/Observer.h"
-#include "Predictor.h"
+#include "Predictors/Predictor.h"
 #include "Prognoser.h"
 #include "PrognosticsModel.h"
 
