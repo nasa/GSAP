@@ -29,8 +29,8 @@ namespace PCOE {
      *
      * @example @code
      * Factory<Model> factory;
-     * fatory.Register("Battery", Factory<Model>::Create<BatteryModel>);
-     * std::unique_ptr<BatteryModel> model = factory.Create("Battery");
+     * fatory.Register<BatteryModel>("Battery");
+     * std::unique_ptr<Model> model = factory.Create("Battery");
      * @endcode
      *
      * @author Chris Teubert
@@ -75,6 +75,10 @@ namespace PCOE {
          * Registers a new concrete type with the factory using an explicit
          * creation function.
          *
+         * @remarks This method is generally useful for registering derived
+         *          types which do not have a constructor that preciesely
+         *          matches the factory's @{code CtorParams}.
+         *
          * @param name The name of the new type. This name must be unique among
          *             the types registered to a given factory.
          * @param fn   A function that returns a new instance of the type being
@@ -89,8 +93,7 @@ namespace PCOE {
          * registered with the specified name.
          *
          * @param name The name of the concrete type to create.
-         * @param   config    Parameter map of the contents of the config
-         * parameter
+         * @param args The argument(s) used to construct the new instance.
          * @return     An owned pointer to the newly created instance.
          */
         unique_ptr Create(const std::string& name, CtorParams&&... args) const {
@@ -99,10 +102,10 @@ namespace PCOE {
 
     private:
         /**
-         * @brief   Function to make a component of type2. This function also configures
-         *          the newly created component as specified in the same map.
-         * @param   config The component config map
-         * @return  The newly created and configured component
+         * Helper function to construt and instance of @{code TDerived}.
+         *
+         * @param args The argument(s) used to construct the new instance.
+         * @return     An owned pointer to the newly created instance.
          *
          * @note    Generally this is used for Registration. Examples:
          *          Factory::Register("type", Create<type>);
