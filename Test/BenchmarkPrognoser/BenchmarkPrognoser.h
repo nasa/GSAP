@@ -22,7 +22,7 @@
 #include "BenchmarkTimer.h"
 #include "ModelBasedPrognoser.h"
 #include "Observers/Observer.h"
-#include "Predictor.h"
+#include "Predictors/Predictor.h"
 #include "PrognosticsModel.h"
 
 namespace PCOE {

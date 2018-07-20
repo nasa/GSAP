@@ -1,80 +1,61 @@
-/**  MonteCarloPredictor - Header
- *   @file      MonteCarloPredictor Class
- *   @ingroup   GPIC++
- *   @ingroup    Predictors
- *
- *   @brief     MonteCarloPredictor Class - Class defining the MonteCarloPredictor
- *
- *   @author    Matthew Daigle
- *   @version   1.1.0
- *
- *   @pre       N/A
- *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: March 22, 2016
- *
- *   @copyright Copyright (c) 2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
-
+// Copyright (c) 2016-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #include <random>
 #include <string>
 #include <vector>
 
+#include "Assert.h"
 #include "Exceptions.h"
 #include "Matrix.h"
-#include "MonteCarloPredictor.h"
+#include "Predictors/MonteCarloPredictor.h"
+#include "ThreadSafeLog.h"
 
 namespace PCOE {
+    const Log& log = Log::Instance();
+
     // Configuration Keys
-    const std::string PROCESSNOISE_KEY = "Model.processNoise";
-    const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
-    const std::string HORIZON_KEY = "Predictor.horizon";
-    const std::string EVENTS_KEY = "Predictor.events";
+    const std::string PROCESSNOISE_KEY = "Model.ProcessNoise";
+    const std::string NUMSAMPLES_KEY = "Predictor.SampleCount";
+    const std::string HORIZON_KEY = "Predictor.Horizon";
+    const std::string EVENTS_KEY = "Predictor.Events";
 
     // Other string constants
-    const std::string MODULE_NAME = "MonteCarloPredictor";
+    const std::string MODULE_NAME = "PRED-MC";
 
-    // ConfigMap-based Constructor
     MonteCarloPredictor::MonteCarloPredictor(const PrognosticsModel* m,
                                              LoadEstimator* le,
-                                             GSAPConfigMap& configMap)
-        : Predictor(m, le, configMap) {
+                                             GSAPConfigMap& config)
+        : Predictor(m, le, config) {
+        Expect(m != nullptr, "Model is null");
+        Expect(le != nullptr, "Load Estimator is null");
         // Check for required parameters:
         // model = model to be used for simulation
-        // numSamples = number of samples used for prediction
+        // sampleCount = number of samples used for prediction
         // horizon = prediction horizon (time units)
         // processNoise = list of variance values for process noise, one for each state (zero-mean
         // assumption) event = name of event to predict inputUncertainty = specification of
-        // uncertainty associated with inputParameters in this->model->inputEqn
-        configMap.checkRequiredParams({NUMSAMPLES_KEY, HORIZON_KEY, PROCESSNOISE_KEY});
+        // uncertainty associated with inputParameters in model->inputEqn
+        config.checkRequiredParams({NUMSAMPLES_KEY, HORIZON_KEY, PROCESSNOISE_KEY});
 
         // Set configuration parameters
-        numSamples = static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
-        horizon = std::stoul(configMap[HORIZON_KEY][0]);
+        sampleCount = static_cast<unsigned int>(std::stoul(config[NUMSAMPLES_KEY][0]));
+        horizon = std::stoul(config[HORIZON_KEY][0]);
 
         // Set up process noise
-        std::vector<std::string> processNoiseStrings = configMap[PROCESSNOISE_KEY];
+        std::vector<std::string> processNoiseStrings = config[PROCESSNOISE_KEY];
         for (unsigned int i = 0; i < processNoiseStrings.size(); i++) {
             processNoise.push_back(std::stod(processNoiseStrings[i]));
         }
 
-        events = configMap.at(EVENTS_KEY);
+        setEvents(config.at(EVENTS_KEY));
 
+        Ensure(horizon > 0, "Non-positive horizon");
+        Ensure(sampleCount > 0, "Non-positive sample count");
+        Ensure(getEvents().size() > 0, "No events");
+        Ensure(processNoise.size() == model->getStateSize(),
+               "Process noise size not equal to model state size");
         log.WriteLine(LOG_INFO, MODULE_NAME, "MonteCarloPredictor created");
-    }
-
-    void MonteCarloPredictor::setModel(PrognosticsModel* value) {
-        this->model = value;
-
-        // Check that process noise was set consistent with this model
-        if (processNoise.size() != this->model->getStateSize()) {
-            log.WriteLine(LOG_ERROR,
-                          MODULE_NAME,
-                          "Process noise size does not equal number of model states");
-            throw std::range_error("Process noise size does not equal number of model states");
-        }
     }
 
     UData::size_type getLowestTimestamp(const std::vector<UData>& data) {
@@ -87,22 +68,17 @@ namespace PCOE {
         return result;
     }
 
-    // Predict function
-    Prediction MonteCarloPredictor::predict(const double time_s,
-                                            const std::vector<UData>& state,
-                                            ProgData& data) {
-        // @todo(MD): This is setup for only a single event to predict, need to extend to multiple
-        // events
+    Prediction MonteCarloPredictor::predict(const double time_s, const std::vector<UData>& state) {
+        // TODO (MD): This is setup for only a single event to predict, need to extend to multiple
+        //            events
 
-        // Check that model has been set
-        if (this->model == NULL) {
-            log.WriteLine(LOG_ERROR, MODULE_NAME, "MonteCarloPredictor does not have a model!");
-            throw ConfigurationError("MonteCarloPredictor does not have a model!");
-        }
+        // TODO (JW): Contract has been changed so that this is checked in the
+        //            constructor. Shouldn't be possible here.
+        Expect(model != nullptr, "Model is null");
 
         Prediction prediction;
         prediction.events.push_back(ProgEvent());
-        for (auto& output : this->model->getPredictedOutputs()) {
+        for (auto& output : model->getPredictedOutputs()) {
             DataPoint sysTrajToAdd = DataPoint();
             sysTrajToAdd.setMeta(output, "");
             prediction.sysTrajectories.push_back(sysTrajToAdd);
@@ -110,12 +86,12 @@ namespace PCOE {
 
         ProgEvent& predictionEvent = prediction.events[0];
         predictionEvent.setUncertainty(UType::Samples);
-        predictionEvent.getTOE().npoints(numSamples);
+        predictionEvent.getTOE().npoints(sampleCount);
 
         DataPoint& predictionSysTraj = prediction.sysTrajectories[0];
         predictionSysTraj.setUncertainty(UType::Samples);
-        predictionSysTraj.setNumTimes(ceil(horizon / this->model->getDefaultTimeStep()));
-        predictionSysTraj.setNPoints(numSamples);
+        predictionSysTraj.setNumTimes(ceil(horizon / model->getDefaultTimeStep()));
+        predictionSysTraj.setNPoints(sampleCount);
 
         auto stateTimestamp = getLowestTimestamp(state);
 
@@ -125,15 +101,15 @@ namespace PCOE {
         static std::mt19937 generator(rDevice());
 #endif
 
-        Matrix xMean(this->model->getStateSize(), 1);
+        Matrix xMean(model->getStateSize(), 1);
 
         // Assume for now that UData is mean and covariance type, and so we are assuming
         // multivariate normal NOTE: Can check UData uncertainty type to see what it is and how to
         // handle. Perhaps it would be useful to have general code to deal with this, to get samples
         // from it directly? So don't have to check within here. First step is to construct the mean
         // vector and covariance matrix from the UDatas
-        Matrix Pxx(this->model->getStateSize(), this->model->getStateSize());
-        for (unsigned int xIndex = 0; xIndex < this->model->getStateSize(); xIndex++) {
+        Matrix Pxx(model->getStateSize(), model->getStateSize());
+        for (unsigned int xIndex = 0; xIndex < model->getStateSize(); xIndex++) {
             xMean[xIndex][0] = state[xIndex][MEAN];
             std::vector<double> covariance = state[xIndex].getVec(COVAR());
             Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
@@ -152,7 +128,7 @@ namespace PCOE {
  */
 // For each sample
 #pragma omp parallel for shared(data)
-        for (unsigned int sample = 0; sample < numSamples; sample++) {
+        for (unsigned int sample = 0; sample < sampleCount; sample++) {
 // 0. Create random number generator if operating in parallel
 #ifdef USING_OPENMP
             std::random_device rDevice;
@@ -164,9 +140,9 @@ namespace PCOE {
             // Now we have mean vector (x) and covariance matrix (Pxx). We can use that to sample a
             // realization of the state. I need to generate a vector of random numbers, size of the
             // state vector Create standard normal distribution
-            Matrix xRandom(this->model->getStateSize(), 1);
+            Matrix xRandom(model->getStateSize(), 1);
             static std::normal_distribution<> standardDistribution(0, 1);
-            for (unsigned int xIndex = 0; xIndex < this->model->getStateSize(); xIndex++) {
+            for (unsigned int xIndex = 0; xIndex < model->getStateSize(); xIndex++) {
                 xRandom[xIndex][0] = standardDistribution(generator);
             }
             // Update with mean and covariance
@@ -176,25 +152,19 @@ namespace PCOE {
             // 3. Simulate until time limit reached
             std::vector<double> inputParams(model->getInputParameterCount());
             unsigned int timeIndex = 0;
-            std::string event = this->events[0];
-            data.events[event].getTOE()[sample] = INFINITY;
+            std::string event = getEvents()[0];
             predictionEvent.setMeta(event, "");
             predictionEvent.getTOE()[sample] = INFINITY;
 
-            for (double t_s = time_s; t_s <= time_s + horizon;
-                 t_s += this->model->getDefaultTimeStep()) {
+            for (double t_s = time_s; t_s <= time_s + horizon; t_s += model->getDefaultTimeStep()) {
                 // Get inputs for time t
                 std::vector<double> loadEstimate = loadEstimator->estimateLoad(t_s, sample);
-                auto u = this->model->inputEqn(t_s, inputParams, loadEstimate);
+                auto u = model->inputEqn(t_s, inputParams, loadEstimate);
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
-                auto& theEvent = data.events[event];
-                if (this->model->thresholdEqn(t_s, x, u)) {
-                    theEvent.getTOE()[sample] = t_s;
-                    theEvent.getTOE().updated(stateTimestamp);
-
+                if (model->thresholdEqn(t_s, x, u)) {
                     predictionEvent.getTOE()[sample] = t_s;
                     predictionEvent.getTOE().updated(stateTimestamp);
                     break;
@@ -203,22 +173,20 @@ namespace PCOE {
                 // Write to system trajectory (model variables for which we are interested in
                 // predicted values)
                 auto z = model->getOutputVector();
-                auto predictedOutput = this->model->predictedOutputEqn(t_s, x, u, z);
+                auto predictedOutput = model->predictedOutputEqn(t_s, x, u, z);
                 for (unsigned int p = 0; p < predictedOutput.size(); p++) {
-                    data.sysTrajectories[this->model->getPredictedOutputs()[p]][timeIndex][sample] =
-                        z[p];
                     predictionSysTraj[timeIndex][sample] = z[p];
                 }
 
                 // Sample process noise - for now, assuming independent
-                std::vector<double> noise(this->model->getStateSize());
-                for (unsigned int xIndex = 0; xIndex < this->model->getStateSize(); xIndex++) {
+                std::vector<double> noise(model->getStateSize());
+                for (unsigned int xIndex = 0; xIndex < model->getStateSize(); xIndex++) {
                     std::normal_distribution<> noiseDistribution(0, sqrt(processNoise[xIndex]));
                     noise[xIndex] = noiseDistribution(generator);
                 }
 
                 // Update state for t to t+dt
-                this->model->stateEqn(t_s, x, u, noise, this->model->getDefaultTimeStep());
+                model->stateEqn(t_s, x, u, noise, model->getDefaultTimeStep());
 
                 // Update time index
                 timeIndex++;

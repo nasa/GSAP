@@ -133,14 +133,14 @@ set (HEADERS
 	inc/LoadEstimatorFactory.h
 	inc/Matrix.h
 	inc/Model.h
-	inc/MonteCarloPredictor.h
 	inc/MovingAverageLoadEstimator.h
 	inc/Observers/Observer.h
 	inc/Observers/ObserverFactory.h
 	inc/Observers/ParticleFilter.h
 	inc/Observers/UnscentedKalmanFilter.h
-	inc/Predictor.h
-	inc/PredictorFactory.h
+	inc/Predictors/MonteCarloPredictor.h
+	inc/Predictors/Predictor.h
+	inc/Predictors/PredictorFactory.h
 	inc/PContainer.h
 	inc/ProgData.h
 	inc/ProgEvent.h
@@ -184,11 +184,11 @@ set(SRCS
 	src/GSAPConfigMap.cpp
 	src/LoadEstimator.cpp
 	src/Matrix.cpp
-	src/MonteCarloPredictor.cpp
 	src/MovingAverageLoadEstimator.cpp
 	src/Observers/ParticleFilter.cpp
 	src/Observers/UnscentedKalmanFilter.cpp
 	src/PContainer.cpp
+	src/Predictors/MonteCarloPredictor.cpp
 	src/ProgData.cpp
 	src/ProgEvent.cpp
 	src/ProgEvents.cpp

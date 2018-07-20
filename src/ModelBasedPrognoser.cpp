@@ -30,7 +30,7 @@
 #include "LoadEstimatorFactory.h"
 #include "ModelBasedPrognoser.h"
 #include "Observers/ObserverFactory.h"
-#include "PredictorFactory.h"
+#include "Predictors/PredictorFactory.h"
 #include "PrognosticsModelFactory.h"
 #include "UData.h"
 
@@ -185,7 +185,8 @@ namespace PCOE {
                 log.WriteLine(LOG_DEBUG, moduleName, "Running Prediction Step");
                 // Set up state
                 std::vector<UData> stateEst = observer->getStateEstimate();
-                predictor->predict(newT_s, stateEst, results);
+                Prediction prediction = predictor->predict(newT_s, stateEst);
+                // TODO (JW): need to move prediction into results.
                 log.WriteLine(LOG_DEBUG, moduleName, "Done Running Prediction Step");
 
                 // Set lastTime
