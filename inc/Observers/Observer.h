@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "Assert.h"
+#include "GSAPAssert.h"
 #include "Model.h"
 #include "ThreadSafeLog.h"
 #include "UData.h"

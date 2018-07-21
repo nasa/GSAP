@@ -1,8 +1,8 @@
 // Copyright (c) 2017-2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-#ifndef PCOE_ASSERT_H
-#define PCOE_ASSERT_H
+#ifndef PCOE_GSAPASSERT_H
+#define PCOE_GSAPASSERT_H
 
 #include "ThreadSafeLog.h"
 #include <stdexcept>

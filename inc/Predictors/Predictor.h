@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "Assert.h"
+#include "GSAPAssert.h"
 #include "LoadEstimator.h"
 #include "ProgData.h"
 #include "PrognosticsModel.h"
