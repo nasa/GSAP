@@ -24,7 +24,7 @@
 #include <cmath>
 #include <vector>
 
-#include "GSAPAssert.h"
+#include "Contracts.h"
 #include "ConfigMap.h"
 
 using namespace PCOE;

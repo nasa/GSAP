@@ -118,9 +118,9 @@ if (UseOpenMP)
 endif()
 
 set (HEADERS
-	inc/GSAPAssert.h
 	inc/ConfigMap.h
 	inc/ConstLoadEstimator.h
+        inc/Contracts.h
 	inc/DataPoint.h
 	inc/DataPoints.h
 	inc/DataStore.h
