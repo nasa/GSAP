@@ -1,10 +1,10 @@
 set(HEADERS
-	CommTests.h
+    CommTests.h
 )
 
 set(SRCS
-	CommTests.cpp
-	main.cpp
+    CommTests.cpp
+    main.cpp
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/support/inc/)
