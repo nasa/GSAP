@@ -1,12 +1,12 @@
 set(HEADERS
-	inc/Tank3.h
-	inc/Test.h
-	inc/TestPrognoser.h
+    inc/Tank3.h
+    inc/Test.h
+    inc/TestPrognoser.h
 )
 
 set(SRCS
-	src/Tank3.cpp
-	src/TestPrognoser.cpp
+    src/Tank3.cpp
+    src/TestPrognoser.cpp
 )
 
 

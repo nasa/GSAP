@@ -1,10 +1,10 @@
 set(HEADERS
-	BatteryPrognoserTests.h
+    BatteryPrognoserTests.h
 )
 
 set(SRCS
-	BatteryPrognoserTests.cpp
-	main.cpp
+    BatteryPrognoserTests.cpp
+    main.cpp
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/support/inc/)

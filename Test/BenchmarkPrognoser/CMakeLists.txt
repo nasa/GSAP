@@ -1,10 +1,10 @@
 set(HEADERS
-	BenchmarkPrognoser.h
+    BenchmarkPrognoser.h
 )
 
 set(SRCS
-	BenchmarkPrognoser.cpp
-	main.cpp
+    BenchmarkPrognoser.cpp
+    main.cpp
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/support/inc/)
