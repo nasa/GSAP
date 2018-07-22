@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "GSAPAssert.h"
+#include "Contracts.h"
 #include "Exceptions.h"
 #include "Matrix.h"
 #include "Predictors/MonteCarloPredictor.h"
