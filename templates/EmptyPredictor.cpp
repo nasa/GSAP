@@ -17,32 +17,24 @@
 #include "Matrix.h"
 
 namespace PCOE {
+    const Log& log = Log::Instance();
+    
+    const std::string MODULE_NAME = "PRED-MC";
 
     // ConfigMap-based Constructor
-    EmptyPredictor::EmptyPredictor(GSAPConfigMap & configMap) : Predictor() {
+    EmptyPredictor::EmptyPredictor(const PrognosticsModel* m, LoadEstimator* le, GSAPConfigMap& config) : Predictor(m, le, config) {
         // Setup based on configuration parameters
         // ...
 
         log.WriteLine(LOG_INFO, MODULE_NAME, "EmptyPredictor created");
     }
 
-    // Set model
-    void EmptyPredictor::setModel(PrognosticsModel * model) {
-        pModel = model;
-
-        // Perform some checks on the model
-        // ...
-    }
-
     // Predict function
-    void EmptyPredictor::predict(const double tP, const std::vector<UData> & state, ProgData & data) {
-        // Check that model has been set
-        if (pModel == NULL) {
-            log.WriteLine(LOG_ERROR, MODULE_NAME, "EmptyPredictor does not have a model!");
-            throw ConfigurationError("EmptyPredictor does not have a model!");
-        }
+    Prediction EmptyPredictor::predict(double t, const std::vector<UData>& state) {
+        Prediction prediction;
         
-        // Run prediction, and fill in the prog data
-        // ...
+        // Fill prediction here
+        
+        return prediction;
     }
 }

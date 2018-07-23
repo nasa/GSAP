@@ -20,12 +20,8 @@
 #ifndef EmptyModel_H
 #define EmptyModel_H
 
-#include <cmath>
-#include <vector>
-
 #include "ConfigMap.h"
 #include "Model.h"
-#include "ModelFactory.h"
 
 class EmptyModel final : public PCOE::Model {
 public:
@@ -35,39 +31,45 @@ public:
     // Constructor based on configMap
     EmptyModel(const PCOE::ConfigMap& paramMap);
 
-    /** @brief      Execute state equation. This version of the function uses a given sampling time.
-     *   @param      t Time
-     *   @param      x Current state vector. This gets updated to the state at the new time.
-     *   @param      u Input vector
-     *   @param      n Process noise vector
-     *   @param      dt Sampling time
+    /**
+     * Calculate the model state using the given sampling time.
+     *
+     * @param t  Time
+     * @param x  The model state vector at the current time step.
+     * @param u  The model input vector at the current time step.
+     * @param n  The process noise vector.
+     * @param dt The size of the time step to calculate
+     * @return   The model state vector at the next time step.
      **/
-    std::vector<double> stateEqn(const double t,
-                                 const std::vector<double>& x,
-                                 const std::vector<double>& u,
-                                 const std::vector<double>& n,
-                                 const double dt) const override;
+    state_type stateEqn(double t,
+                        const state_type& x,
+                        const input_type& u,
+                        const noise_type& n,
+                        double dt) const override;
 
-    /** @brief      Execute output equation
-     *   @param      t Time
-     *   @param      x State vector
-     *   @param      u Input vector
-     *   @param      n Sensor noise vector
-     *   @param      z Output vector. This gets updated to the new output at the given time.
+    /**
+     * Calculate the model output.
+     *
+     * @param t  Time
+     * @param x  The model state vector at the current time step.
+     * @param u  The model input vector at the current time step.
+     * @param n  The process noise vector.
+     * @param dt The size of the time step to calculate
+     * @return   The model output vector at the next time step.
      **/
-    std::vector<double> outputEqn(const double t,
-                                  const std::vector<double>& x,
-                                  const std::vector<double>& u,
-                                  const std::vector<double>& n,
-                                  const std::vector<double>& z) const override;
-
-    /** @brief      Initialize state vector given initial inputs and outputs.
-     *   @param      x Current state vector. This gets updated.
-     *   @param      u Input vector
-     *   @param      z Output vector
+    output_type outputEqn(double t,
+                          const state_type& x,
+                          const input_type& u,
+                          const noise_type& n) const override;
+    
+    /**
+     * Initialize the model state.
+     *
+     * @param u The model input vector.
+     * @param z The model output vector.
+     * @returns The initial model state vector.
      **/
-    std::vector<double> initialize(const std::vector<double>& u,
-                                   const std::vector<double>& z) const override;
+    state_type initialize(const input_type& u, const output_type& z) const override;
 };
 
 #endif

@@ -35,32 +35,52 @@ class EmptyPrognosticsModel final : public PCOE::PrognosticsModel {
     // Constructor based on configMap
     EmptyPrognosticsModel(const PCOE::ConfigMap & paramMap);
 
-    /** @brief      Execute state equation. This version of the function uses a given sampling time.
-    *   @param      t Time
-    *   @param      x Current state vector. This gets updated to the state at the new time.
-    *   @param      u Input vector
-    *   @param      n Process noise vector
-    *   @param      dt Sampling time
-    **/
-    void stateEqn(const double t, std::vector<double> & x, const std::vector<double> & u,
-                  const std::vector<double> & n, const double dt);
+    /**
+     * Calculate the model state using the given sampling time.
+     *
+     * @param t  Time
+     * @param x  The model state vector at the current time step.
+     * @param u  The model input vector at the current time step.
+     * @param n  The process noise vector.
+     * @param dt The size of the time step to calculate
+     * @return   The model state vector at the next time step.
+     **/
+    state_type stateEqn(double t,
+                        const state_type& x,
+                        const input_type& u,
+                        const noise_type& n,
+                        double dt) const override;
     
-    /** @brief      Execute output equation
-    *   @param      t Time
-    *   @param      x State vector
-    *   @param      u Input vector
-    *   @param      n Sensor noise vector
-    *   @param      z Output vector. This gets updated to the new output at the given time.
-    **/
-    void outputEqn(const double t, const std::vector<double> & x, const std::vector<double> & u,
-                   const std::vector<double> & n, std::vector<double> & z);
+    /**
+     * Calculate the model output.
+     *
+     * @param t  Time
+     * @param x  The model state vector at the current time step.
+     * @param u  The model input vector at the current time step.
+     * @param n  The process noise vector.
+     * @param dt The size of the time step to calculate
+     * @return   The model output vector at the next time step.
+     **/
+    output_type outputEqn(double t,
+                          const state_type& x,
+                          const input_type& u,
+                          const noise_type& n) const override;
+    
+    /**
+     * Initialize the model state.
+     *
+     * @param u The model input vector.
+     * @param z The model output vector.
+     * @returns The initial model state vector.
+     **/
+    state_type initialize(const input_type& u, const output_type& z) const override;
     
     /** @brief      Execute threshold equation
     *   @param      t Time
     *   @param      x State vector
     *   @param      u Input vector
     **/
-    bool thresholdEqn(const double t, const std::vector<double> & x, const std::vector<double> & u);
+    bool thresholdEqn(const double t, const Model::state_type & x, const Model::input_type & u);
     
     /** @brief      Execute input equation.
     *               Determines what input (u) should be at the given time for the given input parameters.
@@ -68,25 +88,23 @@ class EmptyPrognosticsModel final : public PCOE::PrognosticsModel {
     *   @param      inputParameters Vector of input parameters, which are values that specify how to define u for the given time.
     *   @param      u Input vector. Gets overwritten.
     **/
-    void inputEqn(const double t, const std::vector<double> & inputParameters, std::vector<double> & u);
+    input_type inputEqn(double t,
+                        const std::vector<double>& params,
+                        const std::vector<double>& loadEstimate) const override;
     
-    /** @brief      Execute predicted output equation.
-    *               Predicted outputs are those that are not measured, but are interested in being predicted for prognostics.
-    *   @param      t Time
-    *   @param      x State vector
-    *   @param      u Input vector
-    *   @param      z Predicted output vector. Gets overwritten.
-    **/
-    void predictedOutputEqn(const double t, const std::vector<double> & x,
-                            const std::vector<double> & u, std::vector<double> & z);
-
-    /** @brief      Initialize state vector given initial inputs and outputs.
-    *   @param      x Current state vector. This gets updated.
-    *   @param      u Input vector
-    *   @param      z Output vector
-    **/
-    void initialize(std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & z);
+    /** Calculate predicted outputs of the model. Predicted outputs are those
+     * that are not measured, but are interested in being predicted for
+     * prognostics.
+     *
+     * @param t  Time
+     * @param x  The model state vector at the current time step.
+     * @param u  The model input vector at the current time step.
+     * @param z  The model output vector at the current time step.
+     * @return   The model output vector at the next time step.
+     **/
+    predicted_output_type predictedOutputEqn(double t,
+                                             const state_type& x,
+                                             const input_type& u,
+                                             const output_type& z) const override;
 };
-
-
 #endif
