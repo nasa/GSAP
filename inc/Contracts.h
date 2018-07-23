@@ -33,8 +33,7 @@ namespace PCOE {
 #define ASSUME(x) static_cast<void>(0)
 #endif
 
-#define Expect(cond, msg) ASSUME(cond)
-#define Ensure(cond, msg) ASSUME(cond)
+#define CONTRACT_REQUIRE(type, cond, msg) ASSUME(cond)
 
 #else
 
@@ -56,6 +55,8 @@ namespace PCOE {
     (LIKELY(cond) \
          ? static_cast<void>(0) \
          : LogAndThrow(type " violated at " __FILE__ ": " MAKE_STRING(__LINE__) ". " msg))
+
+#endif
 
 /// Describes a function precondition that must be satisfied. Preconditions
 /// should be stated immediately at the begining of the function body. In debug
@@ -96,6 +97,25 @@ namespace PCOE {
 ///             condition is violated.
 #define Ensure(cond, msg) CONTRACT_REQUIRE("Postcondition", cond, msg)
 
-#endif
+/// Marks a function, block of code, or other construct that has not yet been
+/// implemented. The result of reach this contract will always be to throw an
+/// exception unconditionally.
+///
+/// \author Jason Watkins \since 1.2
+///
+/// \param msg  The message that will be included in the thrown exception if the
+///             condition is violated.
+#define Unimplemented(msg) \
+    LogAndThrow("Unimplemented at " __FILE__ ": " MAKE_STRING(__LINE__) ". " msg)
+
+/// Marks a position in the code that should not be reachable. The result of
+/// reach this contract will always be to throw an exception unconditionally.
+///
+/// \author Jason Watkins \since 1.2
+///
+/// \param msg  The message that will be included in the thrown exception if the
+///             condition is violated.
+#define Unreachable(msg) \
+    LogAndThrow("Reached 'unreachable' code at " __FILE__ ": " MAKE_STRING(__LINE__) ". " msg)
 
 #endif

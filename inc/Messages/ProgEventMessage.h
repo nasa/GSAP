@@ -4,6 +4,7 @@
 #ifndef PCOE_MESSAGES_PROGEVENT_H
 #define PCOE_MESSAGES_PROGEVENT_H
 
+#include "Contracts.h"
 #include "Messages/Message.h"
 #include "ProgEvent.h"
 
@@ -48,11 +49,11 @@ namespace PCOE {
 
     protected:
         std::uint16_t getPayloadSize() const override final {
-            throw std::domain_error("Note serializable");
+            Unimplemented("Not serializable");
         }
 
         void serializePayload(std::ostream& os) const override final {
-            throw std::domain_error("Note serializable");
+            Unimplemented("Not serializable");
         }
 
     private:

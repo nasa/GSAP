@@ -4,6 +4,7 @@
 #ifndef PCOE_MESSAGES_UDATAVECMESSAGE_H
 #define PCOE_MESSAGES_UDATAVECMESSAGE_H
 
+#include "Contracts.h"
 #include "Messages/Message.h"
 #include "UData.h"
 
@@ -50,12 +51,12 @@ namespace PCOE {
 
     protected:
         std::uint16_t getPayloadSize() const override final {
-            return 0;
+            Unimplemented("Not serializable");
         }
 
         void serializePayload(std::ostream& os) const override final {
             // TODO (JW): Distinguish between serializable and non-serializable messages?
-            return;
+            Unimplemented("Not serializable");
         }
 
     private:
