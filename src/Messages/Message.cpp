@@ -1,0 +1,23 @@
+// Copyright (c) 2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+#include "Messages/Message.h"
+
+namespace PCOE {
+    void Message::serialize(std::ostream& os) const {
+        os.write(reinterpret_cast<const char*>(&id), 8);
+
+        if (source.length() > std::numeric_limits<std::uint16_t>::max()) {
+            // TODO: Handle error and die?
+        }
+        std::uint16_t sourceLen = static_cast<std::uint16_t>(source.length());
+        os.write(reinterpret_cast<const char*>(&sourceLen), 2);
+        os.write(source.c_str(), sourceLen);
+
+        std::uint64_t raw_time = timestamp.time_since_epoch().count();
+        os.write(reinterpret_cast<const char*>(&raw_time), 8);
+
+        std::uint16_t payloadLen = getPayloadSize();
+        os.write(reinterpret_cast<const char*>(&payloadLen), 2);
+    }
+}
