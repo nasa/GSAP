@@ -18,12 +18,12 @@ set(GSAP_INSTALL_LIB_DIR lib)
 set(GSAP_INSTALL_INCLUDE_DIR include)
 set(GSAP_INSTALL_EXAMPLE_DIR example)
 
-# This hootenanny is to give the user a better default value for the 
+# This hootenanny is to give the user a better default value for the
 # install path in the GUI window. It seems we can't do this directly
-# with SET for built-in variables like CMAKE_INSTALL_PREFIX. 
+# with SET for built-in variables like CMAKE_INSTALL_PREFIX.
 set(INSTALL_DIRECTORY "${PROJECT_BINARY_DIR}/install" CACHE PATH
     "Directory to install to.")
-set(CMAKE_INSTALL_PREFIX ${INSTALL_DIRECTORY} CACHE INTERNAL 
+set(CMAKE_INSTALL_PREFIX ${INSTALL_DIRECTORY} CACHE INTERNAL
     "Install path prefix, prepended onto install directories." FORCE)
 
 # Build option for enabling compiler and linker flags for gathering coverage data
@@ -66,6 +66,17 @@ set (HEADERS
     inc/LoadEstimator.h
     inc/LoadEstimatorFactory.h
     inc/Matrix.h
+    inc/Messages/DoubleMessage.h
+    inc/Messages/IMessageProcessor.h
+    inc/Messages/IMessagePublisher.h
+    inc/Messages/Message.h
+    inc/Messages/MessageBus.h
+    inc/Messages/MessageClock.h
+    inc/Messages/MessageId.h
+    inc/Messages/MessageWatcher.h
+    inc/Messages/ProgEventMessage.h
+    inc/Messages/UDataMessage.h
+    inc/Messages/UDataVecMessage.h
     inc/Model.h
     inc/MovingAverageLoadEstimator.h
     inc/Observers/Observer.h
@@ -118,6 +129,9 @@ set(SRCS
     src/GSAPConfigMap.cpp
     src/LoadEstimator.cpp
     src/Matrix.cpp
+    src/Messages/Message.cpp
+    src/Messages/MessageBus.cpp
+    src/Messages/MessageId.cpp
     src/MovingAverageLoadEstimator.cpp
     src/Observers/ParticleFilter.cpp
     src/Observers/UnscentedKalmanFilter.cpp
@@ -158,5 +172,5 @@ install(TARGETS gsap
   LIBRARY DESTINATION ${GSAP_INSTALL_LIB_DIR}
   ARCHIVE DESTINATION ${GSAP_INSTALL_LIB_DIR})
 install(FILES ${HEADERS} DESTINATION ${GSAP_INSTALL_INCLUDE_DIR})
- 
+
 install(FILES compiler_flags.cmake DESTINATION ${GSAP_INSTALL_EXAMPLE_DIR} )
