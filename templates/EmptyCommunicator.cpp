@@ -52,7 +52,7 @@ namespace PCOE {
         // Uncommenting the above line will cause read() to be called
     }
 
-    void EmptyCommunicator::write(AllData data) {
+    void EmptyCommunicator::write(AllData dataIn) {
         ///------------------------------------
         /// HERE IS WHERE YOU SEND DATA
         ///     Send any of the data in the DataStore data or progData

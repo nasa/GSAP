@@ -7,21 +7,19 @@
  *     All Rights Reserved.
  */
 
+#include <vector>
+#include <string>
+
 #include "EmptyModel.h"
-#include "ConfigMap.h"
 
 using namespace PCOE;
 
-EmptyModel::EmptyModel() {
-    // Default constructor
-    inputs = {} // SET MODEL INPUT TAG NAMES
-    // e.g., inputs = {"power"}
-    outputs = {} // SET MODEL OUTPUT TAG NAMES
-    // e.g., outputs = {"voltage", "temperature"}
-    events = {} // SET EVENT NAMES
-    // e.g., events = {"EOD"}
-    predictedOutputs = {} // SET PREDICTED OUTPUT NAMES
-    // e.g., predictedOutputs = {"SOC"}
+const Model::state_type::size_type STATE_SIZE = 2; // Number of state variables
+const std::vector<std::string> INPUTS = {"input1", "input2"}; // Inputs to model (e.g., current)
+const std::vector<std::string> OUTPUTS = {"output1", "output2"}; // Outputs of model (e.g., voltage)
+
+EmptyModel::EmptyModel(): Model(STATE_SIZE, INPUTS, OUTPUTS) {
+
 }
 
 // Constructor based on configMap
@@ -30,74 +28,38 @@ EmptyModel::EmptyModel(const ConfigMap& configMap) : EmptyModel::EmptyModel() {
 }
 
 // EmptyModel State Equation
-std::vector<double> EmptyModel::stateEqn(const double,
-                                         std::vector<double>& x,
-                                         const std::vector<double>& u,
-                                         const std::vector<double>& n,
-                                         const double dt) const {
-    // Extract states
-    // double a = x[0];
-    // double b = x[1];
-    // ...
-
-    // Extract inputs
-    // double c = u[0];
-    // ...
-
-    // State equations
-    // double adot = a + b;
-    // double bdot = c;
-    // ...
-
-    // Update state
-    // x[0] = a + adot*dt;
-    // x[1] = b + bdot*dt;
-    // ...
-
-    // Add process noise
-    // x[0] += dt*n[0];
-    // x[1] += dt*n[1];
-    // ...
+Model::state_type EmptyModel::stateEqn(double t,
+                                       const Model::state_type& x,
+                                       const Model::input_type& u,
+                                       const Model::noise_type& n,
+                                       double dt) const {
+    auto new_state = getStateVector();
+    
+    // Fill new_state
+    // e.g., new_state[0] = SOMEVALUE;
+    
+    return new_state;
 }
 
 // EmptyModel Output Equation
-std::vector<double> EmptyModel::outputEqn(const double,
-                                          const std::vector<double>& x,
-                                          const std::vector<double>&,
-                                          const std::vector<double>& n,
-                                          const std::vector<double>& z) const {
-    // Extract states
-    // double a = x[0];
-    // double b = x[1];
-    // ...
-
-    // Extract inputs
-    // double c = u[0];
-    // ...
-
-    // Output equations
-    // double d = a + b + c;
-    // ...
-
-    // Set outputs
-    // z[0] = d;
-    // ...
-
-    // Add noise
-    // z[0] += n[0];
-    // ...
+Model::output_type EmptyModel::outputEqn(double t,
+                                         const Model::state_type& x,
+                                         const Model::input_type& u,
+                                         const Model::noise_type& n) const {
+    auto output = getOutputVector();
+    
+    // Fill output
+    // e.g., output[0] = SOMEVALUE;
+    
+    return output;
 }
 
 // Initialize state, given initial inputs and outputs
-std::vector<double> EmptyModel::initialize(const std::vector<double>& u,
-                                           const std::vector<double>& z) const {
-    // Determine x from u and z (model-dependent) or as fixed values
-    // double a0 = 1;
-    // double b0 = 2;
-    // ...
-
-    // Set x
-    // x[0] = a0;
-    // x[1] = b0;
-    // ...
+Model::state_type EmptyModel::initialize(const Model::input_type& u, const Model::output_type& z) const {
+    Model::state_type initialized_state = getStateVector();
+    
+    // Fill initialized_state
+    // e.g., initialized_state[0] = SOMEVALUE;
+    
+    return initialized_state;
 }

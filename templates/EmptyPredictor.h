@@ -25,28 +25,29 @@
 #include <string>
 
 #include "Model.h"
-#include "Predictor.h"
+#include "Predictors/Predictor.h"
 #include "GSAPConfigMap.h"
 
 namespace PCOE {
     class EmptyPredictor final : public Predictor {
 
     public:
-        /** @brief    Constructor for a EmptyPredictor based on a configMap
-        *   @param  configMap Configuration map specifying predictor parameters
-        **/
-        explicit EmptyPredictor(GSAPConfigMap & configMap);
-        /** @brief Set model pointer
-        *   @param model given model pointer
-        **/
-        void setModel(PrognosticsModel * model);
+        /**
+         * Initializes a new @{code EmptyPredictor}.
+         *
+         * @param m      The model used by the predictor.
+         * @param le     The load estimator used by the predictor.
+         * @param config Configuration map specifying predictor parameters.
+         **/
+        explicit EmptyPredictor(const PrognosticsModel* m, LoadEstimator* le, GSAPConfigMap& config);
 
-        /** @brief    Predict function for a Predictor
-        *   @param    tP Time of prediction
-        *    @param    state state of system at time of prediction
-        *   @param  data ProgData object, in which prediction results are stored
-        **/
-        void predict(const double tP, const std::vector<UData> & state, ProgData & data);
+        /**
+         * Predict future events and values of system variables
+         *
+         * @param t     Time of prediction
+         * @param state State of system at time of prediction
+         **/
+        Prediction predict(double t, const std::vector<UData>& state) override;
     };
 }
 

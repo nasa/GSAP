@@ -23,37 +23,66 @@
 
 #include <vector>
 #include <cmath>
-#include "Observer.h"
+#include "Observers/Observer.h"
 
 namespace PCOE {
     class EmptyObserver final : public Observer {
 
     public:
-        /** @brief Set model pointer
-        *   @param model given model pointer
-        **/
-        void setModel(Model *model);
-
+        /**
+         * Constructs a new @{code EmptyObserver} instance with the
+         * given model and covariance matrices.
+         *
+         * @param m A valid pointer to a model on which state estimation will be
+         *          performed. The EmptyObserver does not take ownership of the model.
+         * @param Q Process noise covariance matrix
+         * @param R Sensor noise covariance matrix
+         **/
+        EmptyObserver(const Model* m, const Matrix Q, const Matrix R);
+        
         /** @brief Initialize UKF
         *   @param t0 Initial time
         *   @param x0 Initial state vector
         *   @param u0 Initial input vector
         **/
-        void initialize(const double t0, const std::vector<double> & x0,
-            const std::vector<double> & u0);
+        void initialize(const double t0,
+                        const Model::state_type & x0,
+                        const Model::input_type & u0) override;
 
-        /** @brief Estimation step. Updates xEstimated, zEsitmated, P, and sigmaX.
-        *   @param newT Time value at new step
-        *   @param u Input vector at current time
-        *   @param z Output vector at current time
-        **/
-        void step(const double newT, const std::vector<double> & u,
-            const std::vector<double> & z);
+        /**
+         * Performs a single state estimation with the given model inputs and
+         * outputs.
+         *
+         * @param t The time at which to make a prediction.
+         * @param u The model input vector at time @{code t}.
+         * @param z The model output vector at time @{code t}.
+         **/
+        void step(double t, const Model::input_type& u, const Model::output_type& z) override;
+
 
         // Accessors
-        const std::vector<double> & getStateMean() const;
-        const std::vector<double> & getOutputMean() const;
+        /**
+         * Returns the current mean state estimate of the observer.
+         *
+         * @return The last calculated state estimate.
+         **/
+        inline const Model::state_type& getStateMean() const override {
+            return xEstimated;
+        }
+        
+        /**
+         * Returns the current mean output estimate of the observer.
+         *
+         * @return The last output estimate calcualted by the observer..
+         **/
+        inline const Model::output_type& getOutputMean() const override {
+            return zEstimated;
+        }
+        
         std::vector<UData> getStateEstimate() const;
+    private:
+        Model::state_type xEstimated;
+        Model::output_type zEstimated;
     };
 }
 
