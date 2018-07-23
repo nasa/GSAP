@@ -31,11 +31,11 @@ EmptyPrognosticsModel::EmptyPrognosticsModel(const ConfigMap & configMap) : Empt
 }
 
 Model::state_type EmptyPrognosticsModel::stateEqn(double t,
-                                       const Model::state_type& x,
-                                       const Model::input_type& u,
-                                       const Model::noise_type& n,
-                                       double dt) const {
-    Model::state_type new_state;
+                                                  const Model::state_type& x,
+                                                  const Model::input_type& u,
+                                                  const Model::noise_type& n,
+                                                  double dt) const {
+    auto new_state = getStateVector();
     
     // Fill new_state
     
@@ -43,10 +43,10 @@ Model::state_type EmptyPrognosticsModel::stateEqn(double t,
 }
 
 Model::output_type EmptyPrognosticsModel::outputEqn(double t,
-                                         const Model::state_type& x,
-                                         const Model::input_type& u,
-                                         const Model::noise_type& n) const {
-    Model::output_type output;
+                                                    const Model::state_type& x,
+                                                    const Model::input_type& u,
+                                                    const Model::noise_type& n) const {
+    auto output = getOutputVector();
     
     // Fill output
     
@@ -55,7 +55,7 @@ Model::output_type EmptyPrognosticsModel::outputEqn(double t,
 
 // Initialize state, given initial inputs and outputs
 Model::state_type EmptyPrognosticsModel::initialize(const Model::input_type& u, const Model::output_type& z) const {
-    Model::state_type initialized_state;
+    auto initialized_state = getStateVector();
     
     // Fill initialized_state
     
@@ -75,7 +75,7 @@ bool EmptyPrognosticsModel::thresholdEqn(const double t, const Model::state_type
 Model::input_type EmptyPrognosticsModel::inputEqn(double t,
                                      const std::vector<double>& params,
                                      const std::vector<double>& loadEstimate) const {
-    Model::input_type input;
+    auto input = getInputVector();
     
     // Determine what the system input should be given the current time and a set of "input parameters"
     // Fill input
@@ -87,7 +87,7 @@ PrognosticsModel::predicted_output_type EmptyPrognosticsModel::predictedOutputEq
                                                const state_type& x,
                                                const input_type& u,
                                                const output_type& z) const {
-    PrognosticsModel::predicted_output_type predictedOutputs;
+    auto predictedOutputs = getPredictedOutputVector();
     // Fill predictedOutputs
     
     return predictedOutputs;

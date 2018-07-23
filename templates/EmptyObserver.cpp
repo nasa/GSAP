@@ -29,10 +29,10 @@ namespace PCOE {
     
     // Initialize function (required by Observer interface)
     void EmptyObserver::initialize(const double t0,
-                                                const Model::state_type & x0,
-                                                const Model::input_type & u0) {
+                                   const Model::state_type & x0,
+                                   const Model::input_type & u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
-        Model::state_type initialized_state;
+        auto initialized_state = model->getStateVector();
         
         // Initialization activities
         // ...

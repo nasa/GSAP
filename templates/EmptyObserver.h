@@ -46,8 +46,8 @@ namespace PCOE {
         *   @param u0 Initial input vector
         **/
         void initialize(const double t0,
-                                     const Model::state_type & x0,
-                                     const Model::input_type & u0) override;
+                        const Model::state_type & x0,
+                        const Model::input_type & u0) override;
 
         /**
          * Performs a single state estimation with the given model inputs and

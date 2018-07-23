@@ -29,13 +29,14 @@ EmptyModel::EmptyModel(const ConfigMap& configMap) : EmptyModel::EmptyModel() {
 
 // EmptyModel State Equation
 Model::state_type EmptyModel::stateEqn(double t,
-                                         const Model::state_type& x,
-                                         const Model::input_type& u,
+                                       const Model::state_type& x,
+                                       const Model::input_type& u,
                                        const Model::noise_type& n,
-                                         double dt) const {
-    Model::state_type new_state;
+                                       double dt) const {
+    auto new_state = getStateVector();
     
     // Fill new_state
+    // e.g., new_state[0] = SOMEVALUE;
     
     return new_state;
 }
@@ -45,18 +46,20 @@ Model::output_type EmptyModel::outputEqn(double t,
                                          const Model::state_type& x,
                                          const Model::input_type& u,
                                          const Model::noise_type& n) const {
-    Model::output_type output;
+    auto output = getOutputVector();
     
     // Fill output
+    // e.g., output[0] = SOMEVALUE;
     
     return output;
 }
 
 // Initialize state, given initial inputs and outputs
 Model::state_type EmptyModel::initialize(const Model::input_type& u, const Model::output_type& z) const {
-    Model::state_type initialized_state;
+    Model::state_type initialized_state = getStateVector();
     
     // Fill initialized_state
+    // e.g., initialized_state[0] = SOMEVALUE;
     
     return initialized_state;
 }
