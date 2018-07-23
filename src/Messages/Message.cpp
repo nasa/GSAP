@@ -19,5 +19,6 @@ namespace PCOE {
 
         std::uint16_t payloadLen = getPayloadSize();
         os.write(reinterpret_cast<const char*>(&payloadLen), 2);
+        serializePayload(os);
     }
 }
