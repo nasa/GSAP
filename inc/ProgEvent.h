@@ -20,12 +20,13 @@
  *
  *   @author    Chris Teubert
  *   @author    Jason Watkins
+ *   @author    Julian Vu
  *   @version   1.1.0
  *
  *   Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *   Created: March 3, 2016
  *
- *   @copyright Copyright (c) 2013-2018 United States Government as represented by
+ *   @copyright Copyright (c) 2016-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  **/
@@ -72,13 +73,13 @@ namespace PCOE {
             return timeOfEvent;
         }
 
-        /** @brief Set the number of timestamps for which prognostic relevant prognostic data
+        /** @brief Set the number of timestamps for which prognostic-relevant data
          *         will be recorded
          *  @param timestampCount Number of timestamps
          **/
         void setNumTimes(const unsigned int timestampCount);
 
-        /** @brief  Get the number of timestamps for which prognostic relevant prognostic data
+        /** @brief  Get the number of timestamps for which prognostic-relevant data
          *          will be recorded
          *  @return Number of timestamps
          **/
