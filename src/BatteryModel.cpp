@@ -24,8 +24,8 @@
 #include <cmath>
 #include <vector>
 
-#include "Contracts.h"
 #include "ConfigMap.h"
+#include "Contracts.h"
 
 using namespace PCOE;
 
@@ -82,7 +82,7 @@ const std::string XPMAX_KEY = "Battery.xpMax";
 const std::string XPMIN_KEY = "Battery.xpMin";
 
 BatteryModel::BatteryModel()
-    : PrognosticsModel(8, {"power"}, {"voltage", "temperature"}, {"SOC"}, 1) {
+    : PrognosticsModel(8, {"power"}, {"voltage", "temperature"}, {"SOC"}, {"EOD"}, 1) {
     // Set some default parameters
     setParameters();
 }
