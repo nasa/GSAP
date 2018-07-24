@@ -89,7 +89,6 @@ set (HEADERS
     inc/PContainer.h
     inc/ProgData.h
     inc/ProgEvent.h
-    inc/ProgEvents.h
         inc/PrognosticsModel.h
     inc/PrognosticsModelFactory.h
     inc/Singleton.h
@@ -138,7 +137,6 @@ set(SRCS
     src/Predictors/MonteCarloPredictor.cpp
     src/ProgData.cpp
     src/ProgEvent.cpp
-    src/ProgEvents.cpp
         src/StatisticalTools.cpp
     src/TCPSocket.cpp
     src/Thread.cpp

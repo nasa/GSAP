@@ -19,7 +19,6 @@
 #include <cmath> // For NAN
 
 #include "PContainer.h"
-#include "ProgEvents.h"
 namespace PCOE {
     // *------------------------*
     // |       PContainer       |

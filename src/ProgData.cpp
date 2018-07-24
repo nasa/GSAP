@@ -25,13 +25,11 @@ namespace PCOE {
 
     void ProgData::setUncertainty(const UType uncertType) {
         // Set uncertainty at each lower level.
-        events.setUncertainty(uncertType);
         sysTrajectories.setUncertainty(uncertType);
     }
 
     void ProgData::setPredictions(const double interval, const unsigned int nPredictions) {
         // Set number of predictions at each lower level
-        events.setNTimes(nPredictions);
         sysTrajectories.setNTimes(nPredictions);
 
         times.resize(nPredictions + 1);
@@ -42,20 +40,12 @@ namespace PCOE {
 
     void ProgData::setPredictions(const std::vector<double> & pred) {
         // Set number of predictions at each lower level
-        events.setNTimes(static_cast<unsigned int>(pred.size()));
         sysTrajectories.setNTimes(static_cast<unsigned int>(pred.size()));
 
         times.resize(pred.size() + 1);
         for (unsigned int i = 1; i <= pred.size(); i++) {
             // @note: times[0] is allways current time
             times[i] = pred[i - 1];
-        }
-    }
-
-    void ProgData::addEvents(const std::vector<std::string> & names) {
-        // Add vector of events
-        for (const auto & it : names) {
-            events.addNew(it);  // Note: No description
         }
     }
 
