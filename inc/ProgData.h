@@ -29,7 +29,6 @@
 
 #include "PContainer.h"
 #include "DataPoints.h"
-#include "ProgEvents.h"
 namespace PCOE {
     // *------------------------*
     // |        Classes         |
@@ -101,32 +100,6 @@ namespace PCOE {
 
         /// @brief      Set the uniqueid of the component
         void setUniqueId(const std::string & uniqueIdIn) { uniqueId = uniqueIdIn; }
-
-        // *-----------------------*
-        // |        Events         |
-        // *-----------------------*
-
-        /** @brief      Add an event to the progDataStruct
-         *  @param      name The name of the event
-         *  @param      desc OPTIONAL: A description of the event
-         **/
-        inline void addEvent(const std::string & name, const std::string & desc = "") {
-            events.addNew(name);  // Add to events object
-        }
-
-        /** @brief      Add multiple events to the progDataStruct
-         *  @param      names A vector of the names of the events
-         **/
-        void addEvents(const std::vector<std::string> & names);
-
-        /** @brief      Lookup the events considered (ex: EOL, ...)
-         *  @return     A vector of the events considered
-         **/
-        inline std::vector<std::string> getEventNames() const {
-            return events.getLabels();
-        }
-
-        ProgEvents events;      ///< The event objects and associated data
 
         // *-----------------------*
         // |  System Trajectories  |
