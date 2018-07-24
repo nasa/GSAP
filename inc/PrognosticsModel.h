@@ -49,8 +49,10 @@ namespace PCOE {
                          std::vector<std::string> inputs,
                          std::vector<std::string> outputs,
                          std::vector<std::string> predictedOutputs,
+                         std::vector<std::string> events,
                          size_type inputParamCount)
             : Model(stateSize, inputs, outputs),
+              events(events),
               predictedOutputs(predictedOutputs),
               inputParameterCount(inputParamCount) {}
 
@@ -71,8 +73,14 @@ namespace PCOE {
         PrognosticsModel(state_type::size_type stateSize,
                          std::vector<std::string> inputs,
                          std::vector<std::string> outputs,
-                         std::vector<std::string> predictedOutputs)
-            : PrognosticsModel(stateSize, inputs, outputs, predictedOutputs, inputs.size()) {}
+                         std::vector<std::string> predictedOutputs,
+                         std::vector<std::string> events)
+            : PrognosticsModel(stateSize,
+                               inputs,
+                               outputs,
+                               predictedOutputs,
+                               events,
+                               inputs.size()) {}
 
         virtual ~PrognosticsModel() = default;
 
@@ -129,7 +137,12 @@ namespace PCOE {
             return predictedOutputs;
         }
 
+        inline const std::vector<std::string>& getEvents() const {
+            return events;
+        }
+
     private:
+        std::vector<std::string> events;
         std::vector<std::string> predictedOutputs;
         size_type inputParameterCount;
     };

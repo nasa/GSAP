@@ -108,7 +108,7 @@ namespace PCOE {
 
         // Create progdata
         results.setUncertainty(UType::Samples); // @todo(MD): do not force samples representation
-        for (const std::string& event : predictor->getEvents()) {
+        for (const std::string& event : model->getEvents()) {
             results.addEvent(event);
             results.events[event].getTOE().npoints(numSamples);
         }

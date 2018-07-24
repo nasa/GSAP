@@ -36,7 +36,7 @@ namespace PCOE {
          *               the predictor.
          **/
         Predictor(const PrognosticsModel* m, LoadEstimator* le, GSAPConfigMap& config)
-            : model(m), loadEstimator(le) {
+            : loadEstimator(le), model(m) {
             Expect(m != nullptr, "Model is null");
             Expect(le != nullptr, "Load Estimator is null");
             // Note (JW):
@@ -62,13 +62,6 @@ namespace PCOE {
         virtual Prediction predict(double t, const std::vector<UData>& state) = 0;
 
         /**
-         * Gets a list of the events predicted by the current predictor.
-         **/
-        inline const std::vector<std::string>& getEvents() {
-            return events;
-        }
-
-        /**
          * Gets a list of the outputs (system trajectories) predicted by the
          * current predictor.
          **/
@@ -77,13 +70,6 @@ namespace PCOE {
         }
 
     protected:
-        /**
-         * Sets the events predicted by the current predictor.
-         **/
-        inline void setEvents(std::vector<std::string> value) {
-            events = std::move(value);
-        }
-
         /**
          * Sets the outputs (system trajectories) predicted by the current
          * predictor.
@@ -96,7 +82,6 @@ namespace PCOE {
         const PrognosticsModel* model;
 
     private:
-        std::vector<std::string> events;
         std::vector<std::string> predictedOutputs;
     };
 }

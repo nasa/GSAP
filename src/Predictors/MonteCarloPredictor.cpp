@@ -18,7 +18,6 @@ namespace PCOE {
     const std::string PROCESSNOISE_KEY = "Model.ProcessNoise";
     const std::string NUMSAMPLES_KEY = "Predictor.SampleCount";
     const std::string HORIZON_KEY = "Predictor.Horizon";
-    const std::string EVENTS_KEY = "Predictor.Events";
 
     // Other string constants
     const std::string MODULE_NAME = "PRED-MC";
@@ -48,11 +47,8 @@ namespace PCOE {
             processNoise.push_back(std::stod(processNoiseStrings[i]));
         }
 
-        setEvents(config.at(EVENTS_KEY));
-
         Ensure(horizon > 0, "Non-positive horizon");
         Ensure(sampleCount > 0, "Non-positive sample count");
-        Ensure(getEvents().size() > 0, "No events");
         Ensure(processNoise.size() == model->getStateSize(),
                "Process noise size not equal to model state size");
         log.WriteLine(LOG_INFO, MODULE_NAME, "MonteCarloPredictor created");
@@ -152,7 +148,7 @@ namespace PCOE {
             // 3. Simulate until time limit reached
             std::vector<double> inputParams(model->getInputParameterCount());
             unsigned int timeIndex = 0;
-            std::string event = getEvents()[0];
+            std::string event = model->getEvents()[0];
             predictionEvent.setMeta(event, "");
             predictionEvent.getTOE()[sample] = INFINITY;
 
