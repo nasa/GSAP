@@ -1,14 +1,14 @@
-/// @class      TCPSocketServer
+/// @class      TCPServer
 /// @brief      A wrapper around a TCP socket for servers
 /// @details    The TCPSocketServer class provides methods for creating
 ///             sockets meant to be servers, sending, and receiving
 ///             stream data over a network.
 /// @remarks    This class is meant to be used in conjunction with the
 ///             TCPSocket class. The TCPSocket class is meant for creating
-///             client sockets. This class assumes Linux.
+///             client sockets.
 ///
 /// @author     Julian Vu <julian.vu@sjsu.edu>
-/// @version    0.1.0
+/// @since      1.0.0
 /// @date       2018-03-27
 ///
 /// @copyright  Copyright (c) 2018 United States Government as represented by

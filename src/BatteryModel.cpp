@@ -1,24 +1,6 @@
-/**  Battery - Body
- *   @file       Battery.cpp
- *   @ingroup    GSAP-Support
- *
- *   @brief      Battery model class for prognostics
- *
- *   @author     Matthew Daigle
- *   @version    0.1.0
- *
- *   @pre        N/A
- *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: March 5, 2016
- *
- *   https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20140009120.pdf
- *
- *   @copyright Copyright (c) 2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
-
+// Copyright (c) 2016-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #include "BatteryModel.h"
 
 #include <cmath>
