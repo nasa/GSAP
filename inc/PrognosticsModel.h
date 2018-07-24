@@ -24,6 +24,7 @@ namespace PCOE {
      *
      * @author Matthew Daigle
      * @author Jason Watkins
+     * @author Julian Vu
      * @since 1.0
      **/
     class PrognosticsModel : public Model {

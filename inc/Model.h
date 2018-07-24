@@ -57,6 +57,7 @@ namespace PCOE {
      * @see https://en.wikipedia.org/wiki/State-space_representation
      * @author Mattew Daigle
      * @author Jason Watkins
+     * @author Julian Vu
      * @since 1.0
      **/
     class Model {

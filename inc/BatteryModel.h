@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 United States Government as represented by the
+// Copyright (c) 2016-2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #ifndef PCOE_BATTERYMODEL_H
@@ -19,6 +19,7 @@ static const double QMOBILE_DEFAULT_VALUE = 7600;
  * @author Matthew Daigle
  * @author Chris Teubert
  * @author Jason Watkins
+ * @author Julian Vu
  * @since 1.0
  **/
 class BatteryModel final : public PCOE::PrognosticsModel {
