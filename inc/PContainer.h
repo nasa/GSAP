@@ -69,7 +69,7 @@ namespace PCOE {
          *  @param      name The name of the new element
          *  @param      description A description of the element
          **/
-        virtual void addNew(const std::string& name, const std::string& description = "") = 0;
+        virtual void addNew(const std::string& name) = 0;
 
         /** @brief      Get a list of the labels used in the DataPoints object (Events,
          *SystemTrajectories, etc.)

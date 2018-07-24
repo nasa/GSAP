@@ -48,19 +48,3 @@ void testPEventUpdate() {
     //    Assert::AreEqual(3, test.timeOfEvent.getNPoints());
     //    Assert::AreEqual(6, test.timeOfEvent.size());
 }
-
-void testPEventMeta() {
-    ProgEvent test;
-    Assert::AreEqual(0, test.getName().compare("")); // Test Default
-    Assert::AreEqual(0, test.getDesc().compare("")); // Test Default
-
-    test.setMeta("Test", "Test Desc"); // Set Together
-    Assert::AreEqual(0, test.getName().compare("Test"));
-    Assert::AreEqual(0, test.getDesc().compare("Test Desc"));
-
-    test.setDesc("Test Desc 2");
-    Assert::AreEqual(0, test.getDesc().compare("Test Desc 2"));
-
-    test.setName("Test 2 This is a very long name");
-    Assert::AreEqual(0, test.getName().compare("Test 2 This is a very long name"));
-}

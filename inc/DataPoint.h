@@ -21,7 +21,6 @@
 #ifndef PCOE_DATAPOINT_H
 #define PCOE_DATAPOINT_H
 
-#include "ProgMeta.h"
 #include "UData.h"
 
 namespace PCOE {
@@ -32,7 +31,7 @@ namespace PCOE {
     /** @class      DataPoint
      *  @brief      Used to store data for future inputs and prognostic sysTrajectories. Encapsulates data of 2 dimensions (time & uncertainty)
      */
-    class DataPoint : public ProgMeta {
+    class DataPoint {
         friend class DataPoints;        // Container Class for DataPoint
 
     public:

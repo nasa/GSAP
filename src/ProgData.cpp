@@ -55,13 +55,13 @@ namespace PCOE {
     void ProgData::addEvents(const std::vector<std::string> & names) {
         // Add vector of events
         for (const auto & it : names) {
-            events.addNew(it, "");  // Note: No description
+            events.addNew(it);  // Note: No description
         }
     }
 
     void ProgData::addSystemTrajectories(const std::vector<std::string> & names) {
         for (const auto & it : names) {
-            sysTrajectories.addNew(it, "");
+            sysTrajectories.addNew(it);
         }
     }
 

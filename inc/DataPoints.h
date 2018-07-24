@@ -50,7 +50,7 @@ namespace PCOE {
          *  @param      name The name of the new element
          *  @param      description A description of the element
          **/
-        void addNew(const std::string & name, const std::string & description);
+        void addNew(const std::string & name);
         
         /** @brief      Get a list of the labels used in the DataPoints object (Events, SystemTrajectories, etc.)
          *  @return     Vector of labels

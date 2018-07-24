@@ -77,7 +77,7 @@ void progDataTest()
     // Adding SystemTrajectories
     test.addSystemTrajectory("Test SystemTrajectory");
     Assert::AreEqual(1, test.getSystemTrajectoryNames().size()); // 1 SystemTrajectory
-    test.addSystemTrajectory("Test SystemTrajectory 2", "Description of said SystemTrajectory");
+    test.addSystemTrajectory("Test SystemTrajectory 2");
     Assert::AreEqual(2, test.getSystemTrajectoryNames().size()); // 2 SystemTrajectories
     std::vector<std::string> extraSystemTrajectories;
     extraSystemTrajectories.push_back("Test SystemTrajectory 3");

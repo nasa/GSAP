@@ -99,7 +99,6 @@ int main() {
 
     // DPoint Tests
     context.AddTest("Initialization", testDPointInit, "DPoint");
-    context.AddTest("Meta", testDPointMeta, "DPoint");
     context.AddTest("Update", testDPointUpdate, "DPoint");
 
     // Matrix Tests
@@ -191,7 +190,6 @@ int main() {
 
     // PEvent Tests
     context.AddTest("Initialization", testPEventInit, "PEvent");
-    context.AddTest("Meta Data", testPEventMeta, "PEvent");
     context.AddTest("Update", testPEventUpdate, "PEvent");
 
     // ProgData Tests

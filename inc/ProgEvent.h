@@ -34,7 +34,7 @@
 #ifndef PCOE_PROGEVENT_H
 #define PCOE_PROGEVENT_H
 
-#include "ProgMeta.h"
+#include <string>
 #include "UData.h"
 
 namespace PCOE {
@@ -51,7 +51,7 @@ namespace PCOE {
     /** @class      ProgEvent
      *  @brief      Used to store data about a specific Prognostic Event (ex: EOL)
      */
-    class ProgEvent : public ProgMeta {
+    class ProgEvent {
         friend class ProgEvents; // Container class for ProgEvent
 
     public:

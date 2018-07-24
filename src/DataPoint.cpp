@@ -27,8 +27,7 @@ namespace PCOE {
     // |     Public Functions   |
     // *------------------------*
 
-    DataPoint::DataPoint() : ProgMeta(),
-        uType(UType::Point),
+    DataPoint::DataPoint() : uType(UType::Point),
         nPoints(0) {
         setNumTimes(0);  // Default = 1 timestep (NOW)
     }

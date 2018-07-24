@@ -76,7 +76,6 @@ namespace PCOE {
         prediction.events.push_back(ProgEvent());
         for (auto& output : model->getPredictedOutputs()) {
             DataPoint sysTrajToAdd = DataPoint();
-            sysTrajToAdd.setMeta(output, "");
             prediction.sysTrajectories.push_back(sysTrajToAdd);
         }
 
@@ -152,7 +151,6 @@ namespace PCOE {
             std::vector<double> inputParams(model->getInputParameterCount());
             unsigned int timeIndex = 0;
             std::string event = model->getEvents()[0];
-            predictionEvent.setMeta(event, "");
             predictionEvent.getTOE()[sample] = INFINITY;
 
             for (double t_s = time_s; t_s <= time_s + horizon; t_s += model->getDefaultTimeStep()) {
