@@ -60,9 +60,8 @@ void ProgEvents::setNTimes(const unsigned int nTimesIn) {
     nTimes = nTimesIn;
 }
 
-void ProgEvents::addNew(const std::string& name, const std::string& description = "") {
+void ProgEvents::addNew(const std::string& name) {
     dataPts.insert(std::make_pair(name, ProgEvent()));
-    dataPts[name].setMeta(name, description);
     dataPts[name].setUncertainty(uType);
 
     // Resize

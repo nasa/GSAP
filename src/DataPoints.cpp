@@ -66,9 +66,8 @@ namespace PCOE{
         }
     }
 
-    void DataPoints::addNew(const std::string & name, const std::string & description = "") {
+    void DataPoints::addNew(const std::string & name) {
         dataPts.insert(std::make_pair(name, DataPoint()));
-        dataPts[name].setMeta(name, description);
         dataPts[name].setUncertainty(uType);
         dataPts[name].setNumTimes(nTimes);
 

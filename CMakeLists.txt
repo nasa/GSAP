@@ -90,8 +90,7 @@ set (HEADERS
     inc/ProgData.h
     inc/ProgEvent.h
     inc/ProgEvents.h
-    inc/ProgMeta.h
-    inc/PrognosticsModel.h
+        inc/PrognosticsModel.h
     inc/PrognosticsModelFactory.h
     inc/Singleton.h
     inc/StatisticalTools.h
@@ -140,8 +139,7 @@ set(SRCS
     src/ProgData.cpp
     src/ProgEvent.cpp
     src/ProgEvents.cpp
-    src/ProgMeta.cpp
-    src/StatisticalTools.cpp
+        src/StatisticalTools.cpp
     src/TCPSocket.cpp
     src/Thread.cpp
     src/ThreadSafeLog.cpp

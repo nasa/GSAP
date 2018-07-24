@@ -111,7 +111,7 @@ namespace PCOE {
          *  @param      desc OPTIONAL: A description of the event
          **/
         inline void addEvent(const std::string & name, const std::string & desc = "") {
-            events.addNew(name, desc);  // Add to events object
+            events.addNew(name);  // Add to events object
         }
 
         /** @brief      Add multiple events to the progDataStruct
@@ -136,8 +136,8 @@ namespace PCOE {
          *  @param      name The name of the SystemTrajectory
          *  @param      desc OPTIONAL: A description of the SystemTrajectory
          **/
-        inline void addSystemTrajectory(const std::string & name, const std::string desc = "") {
-            sysTrajectories.addNew(name, desc);
+        inline void addSystemTrajectory(const std::string & name) {
+            sysTrajectories.addNew(name);
         }
 
         /** @brief      Add multiple SystemTrajectories to the progDataStruct

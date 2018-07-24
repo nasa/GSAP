@@ -10,7 +10,7 @@ namespace PCOE {
     // |     Public Functions   |
     // *------------------------*
 
-    ProgEvent::ProgEvent() : ProgMeta() {}
+    ProgEvent::ProgEvent() {}
 
     void ProgEvent::setUncertainty(const UType uncertType) {
         // NOTE: LOSE ALL SAVED DATA

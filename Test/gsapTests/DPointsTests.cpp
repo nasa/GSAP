@@ -27,7 +27,7 @@ void testPEventsInit() {
     Assert::AreEqual(0, test.size()); // No Events yet
 
     // Add New
-    test.addNew("Test", "Test Desc");
+    test.addNew("Test");
     Assert::AreEqual(1, test.size()); // Just added an event
     Assert::AreEqual(UType::Point, test["Test"].getUncertainty()); // Should be point type
     Assert::AreEqual(1, test["Test"].getTOE().npoints());
@@ -37,7 +37,7 @@ void testPEventsInit() {
     Assert::AreEqual(UType::MeanCovar, test.getUncertainty());
     Assert::AreEqual(UType::MeanCovar, test["Test"].getUncertainty()); // Should have changed type
 
-    test.addNew("TestNew", "Test Desc");
+    test.addNew("TestNew");
     Assert::AreEqual(UType::MeanCovar,
                      test["TestNew"].getUncertainty()); // Should have updated type- not old one
     Assert::AreEqual(2, test["Test"].getTOE().npoints());
@@ -62,7 +62,7 @@ void testDPointsInit() {
     Assert::AreEqual(0, test.size()); // No Events yet
 
     // Add New
-    test.addNew("Test", "Test Desc");
+    test.addNew("Test");
     Assert::AreEqual(1, test.size()); // Just added an event
     Assert::AreEqual(UType::Point, test["Test"].getUncertainty()); // Should be point type
     Assert::AreEqual(1, test["Test"].getNPoints());
@@ -72,7 +72,7 @@ void testDPointsInit() {
     Assert::AreEqual(UType::MeanCovar, test.getUncertainty());
     Assert::AreEqual(UType::MeanCovar, test["Test"].getUncertainty()); // Should have changed type
 
-    test.addNew("TestNew", "Test Desc");
+    test.addNew("TestNew");
     Assert::AreEqual(UType::MeanCovar,
                      test["TestNew"].getUncertainty()); // Should have updated type- not old one
     Assert::AreEqual(2, test["Test"].getNPoints());
@@ -82,7 +82,7 @@ void testDPointsInit() {
     test.setNTimes(5);
     Assert::AreEqual(5, test.getNTimes());
     Assert::AreEqual(5, test["Test"].getNumTimes());
-    test.addNew("TestNew2", "Test Desc");
+    test.addNew("TestNew2");
     Assert::AreEqual(5, test["TestNew2"].getNumTimes());
 
     // Set N Samples
@@ -91,7 +91,7 @@ void testDPointsInit() {
     Assert::AreEqual(3, test["Test"].getNPoints());
     test.setUncertainty(UType::WSamples);
     Assert::AreEqual(100, test["Test"].getNPoints()); // Uses NSamples
-    test.addNew("TestNew3", "Test Desc");
+    test.addNew("TestNew3");
     Assert::AreEqual(100, test["TestNew3"].getNPoints()); // Uses NSamples
 }
 
@@ -99,8 +99,8 @@ void testPEventsUpdate() {
     ProgEvents test;
     test.setUncertainty(UType::WSamples);
 
-    test.addNew("Test1", "Blah");
-    test.addNew("Test2", "Blah2");
+    test.addNew("Test1");
+    test.addNew("Test2");
     test.setNSamples(1000);
 
     Assert::IsNaN(static_cast<double>(test["Test1"].getTOE()[0]));
@@ -112,8 +112,8 @@ void testDPointsUpdate() {
     DataPoints test;
     test.setUncertainty(UType::WSamples);
 
-    test.addNew("Test1", "Blah");
-    test.addNew("Test2", "Blah2");
+    test.addNew("Test1");
+    test.addNew("Test2");
     test.setNSamples(1000);
 
     Assert::IsNaN(test["Test1"][0].get());
@@ -121,14 +121,14 @@ void testDPointsUpdate() {
 
 void testPEventsIncludes() {
     ProgEvents test;
-    test.addNew("Test", "Test Desc");
+    test.addNew("Test");
     Assert::IsTrue(test.includes("Test"));
     Assert::IsFalse(test.includes("Test2"));
 }
 
 void testDPointsIncludes() {
     DataPoints test;
-    test.addNew("Test", "Test Desc");
+    test.addNew("Test");
     Assert::IsTrue(test.includes("Test"));
     Assert::IsFalse(test.includes("Test2"));
 }
