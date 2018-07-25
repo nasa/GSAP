@@ -19,10 +19,10 @@ using namespace PCOE;
 const Model::state_type::size_type STATE_SIZE = 2;
 
 // Inputs to model (e.g., current)
-const auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
+auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
 
 // Outputs of model (e.g., voltage)
-const auto OUTPUTS = {MessageId::TestOutput0, MessageId::TestOutput1};
+auto OUTPUTS = {MessageId::TestOutput0, MessageId::TestOutput1};
 
 const std::vector<std::string> PREDICTED_OUTPUTS = {"pOutput1"};
 const std::vector<std::string> EVENTS = {"event1"};
