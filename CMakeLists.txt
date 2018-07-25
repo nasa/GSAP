@@ -87,8 +87,8 @@ set (HEADERS
     inc/Predictors/Predictor.h
     inc/Predictors/PredictorFactory.h
     inc/PContainer.h
-        inc/ProgEvent.h
-        inc/PrognosticsModel.h
+    inc/ProgEvent.h
+    inc/PrognosticsModel.h
     inc/PrognosticsModelFactory.h
     inc/Singleton.h
     inc/StatisticalTools.h
@@ -103,7 +103,7 @@ set (HEADERS
     inc/UDPSocket.h
     inc/TCPServer.h
     inc/BatteryModel.h
-        inc/Communicator.h
+    inc/Communicator.h
     inc/Prognoser.h
     inc/CommunicatorFactory.h
     inc/ModelBasedPrognoser.h
@@ -133,8 +133,8 @@ set(SRCS
     src/Observers/UnscentedKalmanFilter.cpp
     src/PContainer.cpp
     src/Predictors/MonteCarloPredictor.cpp
-        src/ProgEvent.cpp
-        src/StatisticalTools.cpp
+    src/ProgEvent.cpp
+    src/StatisticalTools.cpp
     src/TCPSocket.cpp
     src/Thread.cpp
     src/ThreadSafeLog.cpp
@@ -143,7 +143,7 @@ set(SRCS
     src/UDPSocket.cpp
     src/TCPServer.cpp
     src/BatteryModel.cpp
-        src/Communicator.cpp
+    src/Communicator.cpp
     src/Prognoser.cpp
     src/ModelBasedPrognoser.cpp
     src/ProgManager.cpp
