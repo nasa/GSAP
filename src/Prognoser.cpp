@@ -286,91 +286,87 @@ namespace PCOE {
                 std::getline(ss, entry, ',');
                 break;
                 // @todo: Refactor for event-driven architecture
-                //                {
-                //                case 'e': // Event
-                //                    std::string eventName, subEntry, value;
-                //                    std::istringstream sss(entry);
-                //
-                //                    std::getline(sss, eventName, '[');
-                //                    std::getline(sss, eventName, ']');
-                //                    if (!lastState.events.includes(eventName)) {
-                //                        lastState.addEvent(eventName);
-                //                    }
-                //                    ProgEvent& theEvent = lastState.events[eventName];
-                //
-                //                    std::getline(sss, subEntry, '[');
-                //                    char identifier = subEntry[1];
-                //                    std::getline(sss, subEntry, ']');
-                //                    std::getline(ss, entry, ','); // Get the value
-                //
-                //                    switch (identifier) {
-                //                        {
-                //                        case 'T':
-                //                            std::string type;
-                //                            std::getline(sss, type, '(');
-                //                            std::getline(sss, type, ')');
-                //                            theEvent.getTOE().uncertainty(static_cast<UType>(std::stoi(type)));
-                //                            if (std::stoul(subEntry) >=
-                //                            theEvent.getTOE().npoints()) {
-                //                                theEvent.getTOE().npoints(
-                //                                    static_cast<unsigned int>(std::stoul(subEntry)
-                //                                    + 1));
-                //                            }
-                //                            theEvent.getTOE()[std::stoul(subEntry)] =
-                //                            std::stod(entry);
-                //
-                //                            break;
-                //                        }
-                //
-                //                    default:
-                //                        log.WriteLine(LOG_ERROR,
-                //                                      MODULE_NAME,
-                //                                      "Unknown Event parameter in history file");
-                //                        break;
-                //                    }
-                //                    break;
-                //                }
-                //
-                //                {
-                //                case 's': // System Trajectories
-                //                    std::string trajName, timeStampStr, uIndex, type;
-                //                    std::istringstream sss(entry);
-                //
-                //                    std::getline(sss, trajName, '[');
-                //                    std::getline(sss, trajName, ']');
-                //                    if (!lastState.sysTrajectories.includes(trajName)) {
-                //                        lastState.addSystemTrajectory(trajName);
-                //                    }
-                //                    DataPoint& theTraj = lastState.sysTrajectories[trajName];
-                //
-                //                    std::getline(sss, timeStampStr, '[');
-                //                    std::getline(sss, timeStampStr, ']');
-                //                    std::getline(sss, uIndex, '[');
-                //                    std::getline(sss, uIndex, ']');
-                //                    std::getline(sss, type, '(');
-                //                    std::getline(sss, type, ')');
-                //                    std::getline(ss, entry, ',');
-                //
-                //                    if (entry.empty() || type.empty() || uIndex.empty()) {
+                // {
+                // case 'e': // Event
+                //     std::string eventName, subEntry, value;
+                //     std::istringstream sss(entry);
+
+                //     std::getline(sss, eventName, '[');
+                //     std::getline(sss, eventName, ']');
+                //     if (!lastState.events.includes(eventName)) {
+                //         lastState.addEvent(eventName);
+                //     }
+                //     ProgEvent& theEvent = lastState.events[eventName];
+
+                //     std::getline(sss, subEntry, '[');
+                //     char identifier = subEntry[1];
+                //     std::getline(sss, subEntry, ']');
+                //     std::getline(ss, entry, ','); // Get the value
+
+                //     switch (identifier) {
+                //         {
+                //         case 'T':
+                //             std::string type;
+                //             std::getline(sss, type, '(');
+                //             std::getline(sss, type, ')');
+                //             theEvent.getTOE().uncertainty(static_cast<UType>(std::stoi(type)));
+                //             if (std::stoul(subEntry) >= theEvent.getTOE().npoints()) {
+                //                 theEvent.getTOE().npoints(
+                //                     static_cast<unsigned int>(std::stoul(subEntry) + 1));
+                //             }
+                //             theEvent.getTOE()[std::stoul(subEntry)] = std::stod(entry);
+
+                //             break;
+                //         }
+
+                //     default:
+                //         log.WriteLine(LOG_ERROR,
+                //                       MODULE_NAME,
+                //                       "Unknown Event parameter in history file");
+                //         break;
+                //     }
+                //     break;
+                // }
+
+                // {
+                // case 's': // System Trajectories
+                //     std::string trajName, timeStampStr, uIndex, type;
+                //     std::istringstream sss(entry);
+
+                //     std::getline(sss, trajName, '[');
+                //     std::getline(sss, trajName, ']');
+                //     if (!lastState.sysTrajectories.includes(trajName)) {
+                //         lastState.addSystemTrajectory(trajName);
+                //     }
+                //     DataPoint& theTraj = lastState.sysTrajectories[trajName];
+
+                //     std::getline(sss, timeStampStr, '[');
+                //     std::getline(sss, timeStampStr, ']');
+                //     std::getline(sss, uIndex, '[');
+                //     std::getline(sss, uIndex, ']');
+                //     std::getline(sss, type, '(');
+                //     std::getline(sss, type, ')');
+                //     std::getline(ss, entry, ',');
+
+                //     if (entry.empty() || type.empty() || uIndex.empty()) {
                 //                        log.FormatLine(LOG_WARN,
                 //                                       MODULE_NAME,
                 //                                       "Found element of improper format: %s.
                 //                                       Skipping", entry.c_str());
                 //                        break;
-                //                    }
-                //                    theTraj.setUncertainty(static_cast<UType>(std::stoi(type)));
-                //                    double value = std::stod(entry);
-                //                    unsigned int sampleIndex = static_cast<unsigned
-                //                    int>(std::stoul(uIndex));
-                //
-                //                    if (sampleIndex >= theTraj[0].size()) {
-                //                        theTraj[0].npoints(sampleIndex + 1);
-                //                        /// @todo(CT): resize above for efficiency
-                //                    }
-                //                    theTraj[0][sampleIndex] = value;
-                //
-                //                    break;
-                //                }
+                //     }
+                //     theTraj.setUncertainty(static_cast<UType>(std::stoi(type)));
+                //     double value = std::stod(entry);
+                //     unsigned int sampleIndex = static_cast<unsigned int>(std::stoul(uIndex));
+
+                //     if (sampleIndex >= theTraj[0].size()) {
+                //         theTraj[0].npoints(sampleIndex + 1);
+                //         /// @todo(CT): resize above for efficiency
+                //     }
+                //     theTraj[0][sampleIndex] = value;
+
+                //     break;
+                // }
 
                 {
                 case 'i': // Internal
