@@ -48,13 +48,6 @@ if ($lastExitCode -ne 0) {
 }
 $failedTests += $lastExitCode;
 
-./batteryPrognoserTests.exe;
-Write-Host "";
-if ($lastExitCode -ne 0) {
-    Write-Warning "$lastExitCode tests failed.`n`n`n";
-}
-$failedTests += $lastExitCode;
-
 Write-Host "`n${failedTests} tests failed." -ForegroundColor Yellow;
 Pop-Location;
 

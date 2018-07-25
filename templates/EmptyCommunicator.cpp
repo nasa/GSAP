@@ -59,9 +59,7 @@ namespace PCOE {
         ///
         /// ADD COMMUNICATOR PUBLISHER CODE BELOW:
         ///------------------------------------
-        DataStore& data          = dataIn.doubleDatastore;
-        ProgDataMap& progDataMap = dataIn.progData;
-
+        DataStore& data = dataIn.doubleDatastore;
         ///------------------------------------
     }
 

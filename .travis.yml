@@ -49,4 +49,5 @@ script:
   - popd
   - pushd bin
   - ./gsapTests
+  - ./commCollectionTests
 

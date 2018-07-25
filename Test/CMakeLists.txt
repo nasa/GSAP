@@ -19,5 +19,4 @@ add_library(testLib ${HEADERS} ${SRCS})
 #Test Executables
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/gsapTests/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/commCollectionTests/)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/batteryPrognoserTests/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/BenchmarkPrognoser/)
