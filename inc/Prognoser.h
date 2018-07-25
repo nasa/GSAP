@@ -35,7 +35,6 @@
 #include <string>
 #include <vector>
 
-#include "CommManager.h"
 #include "DataStore.h"
 #include "Thread.h" // For Start, Stop, pause, ... etc.
 
@@ -46,20 +45,6 @@ namespace PCOE {
     // cannot be provided for CommManager (is deleted).
     // The wrapper has a copy constructor to allow this. The getValue method calls
     // getvalue for the wrapped CommManager
-    class CommManagerWrapper {
-    public:
-        CommManagerWrapper(CommManager* cIn) : c(cIn) {}
-
-        CommManagerWrapper(const CommManagerWrapper& in) {
-            c = in.c;
-        }
-
-        Datum<double> getValue(const std::string& key) const {
-            return c->getValue(key);
-        }
-
-        CommManager* c;
-    };
 
     class Prognoser : public Thread {
     public:
@@ -136,7 +121,6 @@ namespace PCOE {
     protected:
 
         Datum<double> getValue(const std::string& key);
-        CommManager& comm; ///> Communciations Manager
 
     private:
         std::string histFileName; ///< Name of history file
@@ -145,8 +129,6 @@ namespace PCOE {
         unsigned int loopInterval; ///< Time between prognostic loops (ms)
         unsigned int saveInterval; ///< Loops between saves
         bool saveEnabled;
-
-        CommManagerWrapper cWrapper;
 
         std::map<std::string, std::function<Datum<double>(void)>> lookup;
     };

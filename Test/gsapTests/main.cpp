@@ -252,7 +252,6 @@ int main() {
     context.AddTest("UDPSocket Exception Handling", testExceptionHandling, "UDPSocket");
 
     context.AddTest("Prognoser Factory", PrognoserFactoryTest);
-    context.AddTest("CommManagerTest", PCOE::CommManagerTest);
 
     // ProgManager
     context.AddTest("construct_default", TestProgManager::construct_default, "ProgManager");

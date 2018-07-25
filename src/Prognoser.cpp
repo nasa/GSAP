@@ -62,9 +62,7 @@ namespace PCOE {
         : Thread(),
           loopInterval(DEFAULT_INTERVAL_DELAY),
           saveInterval(DEFAULT_SAVE_INTERVAL),
-          saveEnabled(DEFAULT_SAVE_ENABLE),
-          cWrapper(&CommManager::instance()),
-          comm(CommManager::instance()) {
+          saveEnabled(DEFAULT_SAVE_ENABLE) {
         configParams.checkRequiredParams({NAME_KEY, ID_KEY, TYPE_KEY});
 
         // Fill in Defaults
@@ -105,8 +103,6 @@ namespace PCOE {
                                "Registering tag common=%s, tag=%s",
                                commonName.c_str(),
                                tagName.c_str());
-                comm.registerKey(tagName);
-                lookup[commonName] = std::bind(&CommManagerWrapper::getValue, cWrapper, tagName);
             }
         }
 
