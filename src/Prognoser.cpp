@@ -106,8 +106,8 @@ namespace PCOE {
             }
         }
 
-        histFileName = configParams.at(HIST_PATH_KEY)[0] + PATH_SEPARATOR +
-        MODULE_NAME = moduleName + "-Common";
+        histFileName = configParams.at(HIST_PATH_KEY)[0] + PATH_SEPARATOR + MODULE_NAME =
+                           moduleName + "-Common";
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Read configuration file");
 
         // Handle History file
@@ -286,87 +286,91 @@ namespace PCOE {
                 std::getline(ss, entry, ',');
                 break;
                 // @todo: Refactor for event-driven architecture
-//                {
-//                case 'e': // Event
-//                    std::string eventName, subEntry, value;
-//                    std::istringstream sss(entry);
-//
-//                    std::getline(sss, eventName, '[');
-//                    std::getline(sss, eventName, ']');
-//                    if (!lastState.events.includes(eventName)) {
-//                        lastState.addEvent(eventName);
-//                    }
-//                    ProgEvent& theEvent = lastState.events[eventName];
-//
-//                    std::getline(sss, subEntry, '[');
-//                    char identifier = subEntry[1];
-//                    std::getline(sss, subEntry, ']');
-//                    std::getline(ss, entry, ','); // Get the value
-//
-//                    switch (identifier) {
-//                        {
-//                        case 'T':
-//                            std::string type;
-//                            std::getline(sss, type, '(');
-//                            std::getline(sss, type, ')');
-//                            theEvent.getTOE().uncertainty(static_cast<UType>(std::stoi(type)));
-//                            if (std::stoul(subEntry) >= theEvent.getTOE().npoints()) {
-//                                theEvent.getTOE().npoints(
-//                                    static_cast<unsigned int>(std::stoul(subEntry) + 1));
-//                            }
-//                            theEvent.getTOE()[std::stoul(subEntry)] = std::stod(entry);
-//
-//                            break;
-//                        }
-//
-//                    default:
-//                        log.WriteLine(LOG_ERROR,
-//                                      MODULE_NAME,
-//                                      "Unknown Event parameter in history file");
-//                        break;
-//                    }
-//                    break;
-//                }
-//
-//                {
-//                case 's': // System Trajectories
-//                    std::string trajName, timeStampStr, uIndex, type;
-//                    std::istringstream sss(entry);
-//
-//                    std::getline(sss, trajName, '[');
-//                    std::getline(sss, trajName, ']');
-//                    if (!lastState.sysTrajectories.includes(trajName)) {
-//                        lastState.addSystemTrajectory(trajName);
-//                    }
-//                    DataPoint& theTraj = lastState.sysTrajectories[trajName];
-//
-//                    std::getline(sss, timeStampStr, '[');
-//                    std::getline(sss, timeStampStr, ']');
-//                    std::getline(sss, uIndex, '[');
-//                    std::getline(sss, uIndex, ']');
-//                    std::getline(sss, type, '(');
-//                    std::getline(sss, type, ')');
-//                    std::getline(ss, entry, ',');
-//
-//                    if (entry.empty() || type.empty() || uIndex.empty()) {
-//                        log.FormatLine(LOG_WARN,
-//                                       MODULE_NAME,
-//                                       "Found element of improper format: %s. Skipping",
-//                                       entry.c_str());
-//                        break;
-//                    }
-//                    theTraj.setUncertainty(static_cast<UType>(std::stoi(type)));
-//                    double value = std::stod(entry);
-//                    unsigned int sampleIndex = static_cast<unsigned int>(std::stoul(uIndex));
-//
-//                    if (sampleIndex >= theTraj[0].size()) {
-//                        theTraj[0].npoints(sampleIndex + 1);
-//                        /// @todo(CT): resize above for efficiency
-//                    }
-//                    theTraj[0][sampleIndex] = value;
-//
-//                    break;
-//                }
+                //                {
+                //                case 'e': // Event
+                //                    std::string eventName, subEntry, value;
+                //                    std::istringstream sss(entry);
+                //
+                //                    std::getline(sss, eventName, '[');
+                //                    std::getline(sss, eventName, ']');
+                //                    if (!lastState.events.includes(eventName)) {
+                //                        lastState.addEvent(eventName);
+                //                    }
+                //                    ProgEvent& theEvent = lastState.events[eventName];
+                //
+                //                    std::getline(sss, subEntry, '[');
+                //                    char identifier = subEntry[1];
+                //                    std::getline(sss, subEntry, ']');
+                //                    std::getline(ss, entry, ','); // Get the value
+                //
+                //                    switch (identifier) {
+                //                        {
+                //                        case 'T':
+                //                            std::string type;
+                //                            std::getline(sss, type, '(');
+                //                            std::getline(sss, type, ')');
+                //                            theEvent.getTOE().uncertainty(static_cast<UType>(std::stoi(type)));
+                //                            if (std::stoul(subEntry) >=
+                //                            theEvent.getTOE().npoints()) {
+                //                                theEvent.getTOE().npoints(
+                //                                    static_cast<unsigned int>(std::stoul(subEntry)
+                //                                    + 1));
+                //                            }
+                //                            theEvent.getTOE()[std::stoul(subEntry)] =
+                //                            std::stod(entry);
+                //
+                //                            break;
+                //                        }
+                //
+                //                    default:
+                //                        log.WriteLine(LOG_ERROR,
+                //                                      MODULE_NAME,
+                //                                      "Unknown Event parameter in history file");
+                //                        break;
+                //                    }
+                //                    break;
+                //                }
+                //
+                //                {
+                //                case 's': // System Trajectories
+                //                    std::string trajName, timeStampStr, uIndex, type;
+                //                    std::istringstream sss(entry);
+                //
+                //                    std::getline(sss, trajName, '[');
+                //                    std::getline(sss, trajName, ']');
+                //                    if (!lastState.sysTrajectories.includes(trajName)) {
+                //                        lastState.addSystemTrajectory(trajName);
+                //                    }
+                //                    DataPoint& theTraj = lastState.sysTrajectories[trajName];
+                //
+                //                    std::getline(sss, timeStampStr, '[');
+                //                    std::getline(sss, timeStampStr, ']');
+                //                    std::getline(sss, uIndex, '[');
+                //                    std::getline(sss, uIndex, ']');
+                //                    std::getline(sss, type, '(');
+                //                    std::getline(sss, type, ')');
+                //                    std::getline(ss, entry, ',');
+                //
+                //                    if (entry.empty() || type.empty() || uIndex.empty()) {
+                //                        log.FormatLine(LOG_WARN,
+                //                                       MODULE_NAME,
+                //                                       "Found element of improper format: %s.
+                //                                       Skipping", entry.c_str());
+                //                        break;
+                //                    }
+                //                    theTraj.setUncertainty(static_cast<UType>(std::stoi(type)));
+                //                    double value = std::stod(entry);
+                //                    unsigned int sampleIndex = static_cast<unsigned
+                //                    int>(std::stoul(uIndex));
+                //
+                //                    if (sampleIndex >= theTraj[0].size()) {
+                //                        theTraj[0].npoints(sampleIndex + 1);
+                //                        /// @todo(CT): resize above for efficiency
+                //                    }
+                //                    theTraj[0][sampleIndex] = value;
+                //
+                //                    break;
+                //                }
 
                 {
                 case 'i': // Internal
@@ -393,10 +397,10 @@ namespace PCOE {
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Finished loading history from file");
     }
 
-    Datum<double> Prognoser::getValue(const std::string& key) {
-        log.FormatLine(LOG_TRACE, MODULE_NAME, "Getting lookup function for key %s", key.c_str());
+    Datum<double> Prognoser::getValue(MessageId key) {
+        log.FormatLine(LOG_TRACE, MODULE_NAME, "Getting lookup function for key %ull", key);
         std::function<Datum<double>()> fn = lookup[key];
-        log.FormatLine(LOG_TRACE, MODULE_NAME, "Getting value for key %s", key.c_str());
+        log.FormatLine(LOG_TRACE, MODULE_NAME, "Getting value for key %ull", key);
         Datum<double> result = fn();
         log.FormatLine(LOG_TRACE, MODULE_NAME, "Getting value ", result.get());
         return result;

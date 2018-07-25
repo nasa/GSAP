@@ -9,6 +9,7 @@
 
 #include "DynamicArray.h"
 #include "Matrix.h"
+#include "Messages/MessageId.h"
 
 namespace PCOE {
     class InputVector final : public DynamicArray<double> {
@@ -81,10 +82,16 @@ namespace PCOE {
          *                  the output vector.
          **/
         Model(state_type::size_type stateSize,
-              std::vector<std::string> inputs,
-              std::vector<std::string> outputs)
-            : stateSize(stateSize), inputs(inputs), outputs(outputs) {}
+              std::vector<MessageId> inputs,
+              std::vector<MessageId> outputs)
+            : stateSize(stateSize), inputs(std::move(inputs)), outputs(std::move(outputs)) {}
 
+        /**
+         * Default destructor. A virtual default destructor is necessary to
+         * ensure that resources in classes inherting from this class are
+         * cleaned up, even if the destructor is called through a pointer of the
+         * base class type.
+         **/
         virtual ~Model() = default;
 
         /**
@@ -204,22 +211,22 @@ namespace PCOE {
         /**
          * Gets the names of the inputs.
          **/
-        inline const std::vector<std::string>& getInputs() const {
+        inline const std::vector<MessageId>& getInputs() const {
             return inputs;
         }
 
         /**
          * Gets the names of the outputs.
          **/
-        inline const std::vector<std::string>& getOutputs() const {
+        inline const std::vector<MessageId>& getOutputs() const {
             return outputs;
         }
 
     private:
         double defaultTimeStep = 1.0;
         state_type::size_type stateSize;
-        std::vector<std::string> inputs;
-        std::vector<std::string> outputs;
+        std::vector<MessageId> inputs;
+        std::vector<MessageId> outputs;
     };
 }
 

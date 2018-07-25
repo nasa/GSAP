@@ -43,7 +43,7 @@ namespace PCOE {
          *
          *  The constructor configures the MovingAverageLoadEstimator
          **/
-        MovingAverageLoadEstimator(GSAPConfigMap& configMap);
+        MovingAverageLoadEstimator(const GSAPConfigMap& configMap);
 
         /**
          * @brief   Find if the load estimator uses historical loading.

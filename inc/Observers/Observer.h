@@ -105,6 +105,13 @@ namespace PCOE {
             return initialized;
         }
 
+        /**
+         * Gets a pointer to the model used by the observer.
+         **/
+        inline const Model* getModel() const {
+            return model;
+        }
+
     protected:
         bool initialized = false;
 

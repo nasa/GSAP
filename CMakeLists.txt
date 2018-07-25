@@ -59,6 +59,7 @@ set (HEADERS
     inc/DataPoints.h
     inc/DataStore.h
     inc/Datum.h
+    inc/EventDrivenPrognoser.h
     inc/Exceptions.h
     inc/Factory.h
     inc/GaussianVariable.h
@@ -79,10 +80,12 @@ set (HEADERS
     inc/Messages/UDataVecMessage.h
     inc/Model.h
     inc/MovingAverageLoadEstimator.h
+    inc/Observers/EventDrivenObserver.h
     inc/Observers/Observer.h
     inc/Observers/ObserverFactory.h
     inc/Observers/ParticleFilter.h
     inc/Observers/UnscentedKalmanFilter.h
+    inc/Predictors/EventDrivenPredictor.h
     inc/Predictors/MonteCarloPredictor.h
     inc/Predictors/Predictor.h
     inc/Predictors/PredictorFactory.h
@@ -129,9 +132,11 @@ set(SRCS
     src/Messages/MessageBus.cpp
     src/Messages/MessageId.cpp
     src/MovingAverageLoadEstimator.cpp
+    src/Observers/EventDrivenObserver.cpp
     src/Observers/ParticleFilter.cpp
     src/Observers/UnscentedKalmanFilter.cpp
     src/PContainer.cpp
+    src/Predictors/EventDrivenPredictor.cpp
     src/Predictors/MonteCarloPredictor.cpp
     src/ProgEvent.cpp
     src/StatisticalTools.cpp

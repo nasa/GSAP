@@ -37,7 +37,7 @@ namespace PCOE {
             : messageBus(messageBus), values(container) {
             for (std::size_t i = 0; i < messages.size(); ++i) {
                 msgIndices.insert(std::make_pair(messages[i], i));
-                messageBus.subscribe(sourceName, messages[i], this);
+                messageBus.subscribe(this, sourceName, messages[i]);
             }
         }
 
@@ -105,8 +105,8 @@ namespace PCOE {
         std::unordered_map<MessageId, std::size_t> msgIndices;
         TContainer values;
         std::vector<bool> present;
-        bool allPresentCached;
-        bool allPresentValue;
+        mutable bool allPresentCached;
+        mutable bool allPresentValue;
     };
 }
 #endif

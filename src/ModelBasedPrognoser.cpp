@@ -100,15 +100,15 @@ namespace PCOE {
         unsigned int horizon = static_cast<unsigned int>(std::stoul(configMap[HORIZON_KEY][0]));
 
         // @todo: Refactor for event-driven architecture
-//        // Create progdata
-//        results.setUncertainty(UType::Samples); // @todo(MD): do not force samples representation
-//        for (const std::string& event : model->getEvents()) {
-//            results.addEvent(event);
-//            results.events[event].getTOE().npoints(numSamples);
-//        }
-//        results.addSystemTrajectories(model->getOutputs()); // predicted outputs
-//        results.setPredictions(1, horizon); // interval, number of predictions
-//        results.sysTrajectories.setNSamples(numSamples);
+        //        // Create progdata
+        //        results.setUncertainty(UType::Samples); // @todo(MD): do not force samples
+        //        representation for (const std::string& event : model->getEvents()) {
+        //            results.addEvent(event);
+        //            results.events[event].getTOE().npoints(numSamples);
+        //        }
+        //        results.addSystemTrajectories(model->getOutputs()); // predicted outputs
+        //        results.setPredictions(1, horizon); // interval, number of predictions
+        //        results.sysTrajectories.setNSamples(numSamples);
     }
 
     void ModelBasedPrognoser::step() {
@@ -122,8 +122,8 @@ namespace PCOE {
         auto z = model->getOutputVector();
         for (unsigned int i = 0; i < model->getInputSize(); i++) {
             log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %u", i);
-            const std::string& input_name = model->getInputs()[i];
-            log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %s", input_name.c_str());
+            MessageId input_name = model->getInputs()[i];
+            log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %ull", input_name);
             Datum<double> input = getValue(input_name);
 
             log.FormatLine(LOG_TRACE,

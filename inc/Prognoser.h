@@ -37,6 +37,7 @@
 #include <vector>
 
 #include "DataStore.h"
+#include "Messages/MessageId.h"
 #include "Thread.h" // For Start, Stop, pause, ... etc.
 
 namespace PCOE {
@@ -120,7 +121,7 @@ namespace PCOE {
         virtual void checkResultValidity();
 
     protected:
-        Datum<double> getValue(const std::string& key);
+        Datum<double> getValue(MessageId key);
 
     private:
         std::string histFileName; ///< Name of history file
@@ -130,7 +131,7 @@ namespace PCOE {
         unsigned int saveInterval; ///< Loops between saves
         bool saveEnabled;
 
-        std::map<std::string, std::function<Datum<double>(void)>> lookup;
+        std::map<MessageId, std::function<Datum<double>(void)>> lookup;
     };
 }
 

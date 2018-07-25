@@ -60,7 +60,7 @@ namespace PCOE {
          *                be valid for its lifetime. No attempt is made to manage
          *                the lifetime of the message.
          **/
-        void publish(std::shared_ptr<Message> message) const;
+        void publish(std::shared_ptr<Message> message) const override;
 
     private:
         using callback_pair = std::pair<MessageId, IMessageProcessor*>;
