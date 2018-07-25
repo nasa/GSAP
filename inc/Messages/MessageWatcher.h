@@ -3,6 +3,8 @@
 // All Rights Reserved.
 #ifndef PCOE_MESSAGEWATCHER_H
 #define PCOE_MESSAGEWATCHER_H
+#include <map>
+
 #include "Messages/MessageBus.h"
 
 namespace PCOE {
@@ -102,7 +104,7 @@ namespace PCOE {
 
     private:
         MessageBus& messageBus;
-        std::unordered_map<MessageId, std::size_t> msgIndices;
+        std::map<MessageId, std::size_t> msgIndices;
         TContainer values;
         std::vector<bool> present;
         mutable bool allPresentCached;
