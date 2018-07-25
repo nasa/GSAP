@@ -42,6 +42,9 @@ namespace PCOE {
                             std::unique_ptr<Observer>&& observer,
                             std::string source);
 
+        /**
+         * Unsubscribes the {@code EventDrivenObserver} from the message bus.
+         **/
         ~EventDrivenObserver();
 
         /**
