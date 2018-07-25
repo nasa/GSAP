@@ -42,7 +42,7 @@ namespace PCOE {
          *
          * @param configMap Configuration used to set up the load esitmator.
          **/
-        ConstLoadEstimator(GSAPConfigMap& configMap);
+        ConstLoadEstimator(const GSAPConfigMap& configMap);
 
         /**
          * @brief   Find if the load estimator is sample based (i.e., if you must use setNSamples)
@@ -53,10 +53,10 @@ namespace PCOE {
          *
          * @see     setNSamples
          **/
-        bool isSampleBased(){
+        bool isSampleBased() {
             return true;
         }
-        
+
         /**
          * @brief Set the number of samples for the loadEstimator
          *

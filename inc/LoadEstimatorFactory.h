@@ -18,7 +18,7 @@ namespace PCOE {
      * @author Jason Watkins
      * @since 1.1
      **/
-    class LoadEstimatorFactory : public Factory<LoadEstimator, GSAPConfigMap&>,
+    class LoadEstimatorFactory : public Factory<LoadEstimator, const GSAPConfigMap&>,
                                  public Singleton<LoadEstimatorFactory> {
         friend class Singleton<LoadEstimatorFactory>;
 

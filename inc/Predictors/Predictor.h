@@ -8,9 +8,9 @@
 #include <vector>
 
 #include "Contracts.h"
+#include "DataPoint.h"
 #include "LoadEstimator.h"
 #include "ProgEvent.h"
-#include "DataPoint.h"
 #include "PrognosticsModel.h"
 
 namespace PCOE {
@@ -36,7 +36,7 @@ namespace PCOE {
          * @param config A config map containing configuration parameters for
          *               the predictor.
          **/
-        Predictor(const PrognosticsModel* m, LoadEstimator* le, GSAPConfigMap& config)
+        Predictor(const PrognosticsModel* m, LoadEstimator* le, const GSAPConfigMap& config)
             : loadEstimator(le), model(m) {
             Expect(m != nullptr, "Model is null");
             Expect(le != nullptr, "Load Estimator is null");

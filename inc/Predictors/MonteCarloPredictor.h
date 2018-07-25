@@ -26,7 +26,9 @@ namespace PCOE {
          * @param le     The load estimator used by the predictor.
          * @param config Configuration map specifying predictor parameters.
          **/
-        MonteCarloPredictor(const PrognosticsModel* m, LoadEstimator* le, GSAPConfigMap& config);
+        MonteCarloPredictor(const PrognosticsModel* m,
+                            LoadEstimator* le,
+                            const GSAPConfigMap& config);
 
         /**
          * Predict future events and values of system variables

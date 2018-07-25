@@ -47,8 +47,8 @@ namespace PCOE {
          *                         inputEqn.
          **/
         PrognosticsModel(state_type::size_type stateSize,
-                         std::vector<std::string> inputs,
-                         std::vector<std::string> outputs,
+                         std::vector<MessageId> inputs,
+                         std::vector<MessageId> outputs,
                          std::vector<std::string> predictedOutputs,
                          std::vector<std::string> events,
                          size_type inputParamCount)
@@ -72,8 +72,8 @@ namespace PCOE {
          *                         by the model.
          **/
         PrognosticsModel(state_type::size_type stateSize,
-                         std::vector<std::string> inputs,
-                         std::vector<std::string> outputs,
+                         std::vector<MessageId> inputs,
+                         std::vector<MessageId> outputs,
                          std::vector<std::string> predictedOutputs,
                          std::vector<std::string> events)
             : PrognosticsModel(stateSize,

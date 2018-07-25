@@ -28,7 +28,7 @@
 
 namespace PCOE {
     const std::string ConstLoadEstimator::LOADING_KEY = "LoadEstimator.loading";
-    const std::string ConstLoadEstimator::STDDEV_KEY  = "LoadEstimator.noise_sigma";
+    const std::string ConstLoadEstimator::STDDEV_KEY = "LoadEstimator.noise_sigma";
 
     const std::string DEBUG_TAG = "Const Load Estimator";
 
@@ -45,10 +45,10 @@ namespace PCOE {
         return estimate;
     }
 
-    ConstLoadEstimator::ConstLoadEstimator(GSAPConfigMap& configMap) {
+    ConstLoadEstimator::ConstLoadEstimator(const GSAPConfigMap& configMap) {
         log.WriteLine(LOG_INFO, DEBUG_TAG, "Configuring");
         configMap.checkRequiredParams({LOADING_KEY});
-        std::vector<std::string>& profileStrs = configMap[LOADING_KEY];
+        const std::vector<std::string>& profileStrs = configMap.at(LOADING_KEY);
         for (auto&& profileStr : profileStrs) {
             double profileItem = std::stod(profileStr);
             raw_profile.push_back(profileItem);
@@ -56,7 +56,7 @@ namespace PCOE {
 
         if (configMap.includes(STDDEV_KEY)) {
             log.WriteLine(LOG_INFO, DEBUG_TAG, "Inferred uncertainty type: gaussian");
-            std::vector<std::string>& stdStrs = configMap[STDDEV_KEY];
+            const std::vector<std::string>& stdStrs = configMap.at(STDDEV_KEY);
             for (auto&& stdStr : stdStrs) {
                 stddev.push_back(std::stod(stdStr));
             }

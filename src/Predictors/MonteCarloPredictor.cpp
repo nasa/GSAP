@@ -24,7 +24,7 @@ namespace PCOE {
 
     MonteCarloPredictor::MonteCarloPredictor(const PrognosticsModel* m,
                                              LoadEstimator* le,
-                                             GSAPConfigMap& config)
+                                             const GSAPConfigMap& config)
         : Predictor(m, le, config) {
         Expect(m != nullptr, "Model is null");
         Expect(le != nullptr, "Load Estimator is null");
@@ -38,11 +38,11 @@ namespace PCOE {
         config.checkRequiredParams({NUMSAMPLES_KEY, HORIZON_KEY, PROCESSNOISE_KEY});
 
         // Set configuration parameters
-        sampleCount = static_cast<unsigned int>(std::stoul(config[NUMSAMPLES_KEY][0]));
-        horizon = std::stoul(config[HORIZON_KEY][0]);
+        sampleCount = static_cast<unsigned int>(std::stoul(config.at(NUMSAMPLES_KEY)[0]));
+        horizon = std::stoul(config.at(HORIZON_KEY)[0]);
 
         // Set up process noise
-        std::vector<std::string> processNoiseStrings = config[PROCESSNOISE_KEY];
+        std::vector<std::string> processNoiseStrings = config.at(PROCESSNOISE_KEY);
         for (unsigned int i = 0; i < processNoiseStrings.size(); i++) {
             processNoise.push_back(std::stod(processNoiseStrings[i]));
         }

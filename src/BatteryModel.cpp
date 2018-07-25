@@ -62,7 +62,12 @@ const std::string XPMAX_KEY = "Battery.xpMax";
 const std::string XPMIN_KEY = "Battery.xpMin";
 
 BatteryModel::BatteryModel()
-    : PrognosticsModel(8, {"power"}, {"voltage", "temperature"}, {}, {"EOD"}, 1) {
+    : PrognosticsModel(8,
+                       {MessageId::Watts},
+                       {MessageId::Volts, MessageId::Centigrade},
+                       {},
+                       {"EOD"},
+                       1) {
     // Set some default parameters
     setParameters();
 }

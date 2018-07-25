@@ -2,14 +2,21 @@
 // Aeronautics and Space Administration.  All Rights Reserved.
 #ifndef TANK3_H
 #define TANK3_H
+#include <vector>
 
 #include "Model.h"
-#include <vector>
 
 class Tank3 final : public PCOE::Model {
 public:
     // Constructor
-    Tank3() : PCOE::Model(3, {"u1", "u2", "u3"}, {"p1m", "p2m", "p3m"}) {}
+    Tank3()
+        : PCOE::Model(3,
+                      {PCOE::MessageId::TestInput0,
+                       PCOE::MessageId::TestInput1,
+                       PCOE::MessageId::TestInput2},
+                      {PCOE::MessageId::TestOutput0,
+                       PCOE::MessageId::TestOutput1,
+                       PCOE::MessageId::TestOutput2}) {}
 
     // State indices
     struct stateIndices {
