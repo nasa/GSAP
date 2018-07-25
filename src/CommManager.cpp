@@ -80,7 +80,7 @@ namespace PCOE {
                 lock_guard lookuplock(lookupMutex, std::adopt_lock);
                 lock_guard proglock(progDataMutex, std::adopt_lock);
 
-                AllData data(lookup, stringLookup, progData);
+                AllData data(lookup, stringLookup);
                 for (auto& it : comms) {
                     it->enqueue(data);
                 }
@@ -110,23 +110,6 @@ namespace PCOE {
                            "Tag already registered, skipping: %s",
                            tagName.c_str());
         }
-    }
-
-    bool CommManager::registerProgData(const std::string& componentName, ProgData* pDataIn) {
-        lock_guard lock(progDataMutex);
-        if (progData.find(componentName) == progData.end()) {
-            // A new component
-            progData[componentName] = pDataIn;
-        }
-        else {
-            log.WriteLine(LOG_ERROR,
-                          moduleName,
-                          "Attemped to register prognoser under the name"
-                          " of a previously registered prognoser, skipping");
-            return false;
-        }
-
-        return true;
     }
 
     Datum<double> CommManager::getValue(const std::string& tagName) const {

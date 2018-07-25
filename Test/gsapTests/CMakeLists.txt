@@ -9,8 +9,7 @@ set(HEADERS
     ObserverTests.h
     PEventTests.h
     PredictorTests.h
-    ProgDataTests.h
-    ThreadTests.h
+        ThreadTests.h
     UDataTests.h
     StatisticalToolsTests.h
     GaussianVariableTests.h
@@ -31,8 +30,7 @@ set(SRCS
     ObserverTests.cpp
     PEventTests.cpp
     PredictorTests.cpp
-    ProgDataTests.cpp
-    ThreadTests.cpp
+        ThreadTests.cpp
     UDataTests.cpp
     StatisticalToolsTests.cpp
     GaussianVariableTests.cpp

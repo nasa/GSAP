@@ -106,15 +106,16 @@ namespace PCOE {
             static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
         unsigned int horizon = static_cast<unsigned int>(std::stoul(configMap[HORIZON_KEY][0]));
 
-        // Create progdata
-        results.setUncertainty(UType::Samples); // @todo(MD): do not force samples representation
-        for (const std::string& event : model->getEvents()) {
-            results.addEvent(event);
-            results.events[event].getTOE().npoints(numSamples);
-        }
-        results.addSystemTrajectories(model->getOutputs()); // predicted outputs
-        results.setPredictions(1, horizon); // interval, number of predictions
-        results.sysTrajectories.setNSamples(numSamples);
+        // @todo: Refactor for event-driven architecture
+//        // Create progdata
+//        results.setUncertainty(UType::Samples); // @todo(MD): do not force samples representation
+//        for (const std::string& event : model->getEvents()) {
+//            results.addEvent(event);
+//            results.events[event].getTOE().npoints(numSamples);
+//        }
+//        results.addSystemTrajectories(model->getOutputs()); // predicted outputs
+//        results.setPredictions(1, horizon); // interval, number of predictions
+//        results.sysTrajectories.setNSamples(numSamples);
     }
 
     void ModelBasedPrognoser::step() {

@@ -30,7 +30,6 @@
 #include "PEventTests.h"
 #include "ParticleFilterTests.h"
 #include "PredictorTests.h"
-#include "ProgDataTests.h"
 #include "ProgManagerTests.h"
 #include "StatisticalToolsTests.h"
 #include "TCPSocketTests.h"
@@ -90,11 +89,8 @@ int main() {
     context.AddTest("Use", DStoreUse, "DStore");
 
     // DPoints Tests
-    context.AddTest("Initialization", testPEventsInit, "DPoints");
     context.AddTest("DPoint Init", testDPointsInit, "DPoints");
-    context.AddTest("P Event Update", testPEventsUpdate, "DPoints");
     context.AddTest("D Point Update", testDPointsUpdate, "DPoints");
-    context.AddTest("P Event Includes", testPEventsIncludes, "DPoints");
     context.AddTest("D Points Includes", testDPointsIncludes, "DPoints");
 
     // DPoint Tests
@@ -191,10 +187,6 @@ int main() {
     // PEvent Tests
     context.AddTest("Initialization", testPEventInit, "PEvent");
     context.AddTest("Update", testPEventUpdate, "PEvent");
-
-    // ProgData Tests
-    context.AddTest("Prog Data", progDataTest, "ProgData");
-    context.AddTest("Prog Data Copy", progDataCopyTest, "ProgData");
 
     // Thread Tests
     context.AddTest("treadctrl", tctrltests, "Thread");

@@ -29,27 +29,20 @@
 
 #include "ConfigMap.h"
 #include "DataStore.h"
-#include "ProgData.h"
 #include "Thread.h"
 #include "ThreadSafeLog.h"
 
 namespace PCOE {
 
-    /** @brief Repository of ProgData from every prognoser. (name, data) */
-    using ProgDataMap = std::unordered_map<std::string, ProgData*>;
-
     class AllData { ///@todo(CT): Better name
     public:
         DataStore doubleDatastore;
         DataStoreString stringDataStore;
-        ProgDataMap progData;
 
         AllData(const DataStore& doubleDatastoreIn,
-                const DataStoreString& stringDataStoreIn,
-                const ProgDataMap& progDataIn)
+                const DataStoreString& stringDataStoreIn)
             : doubleDatastore(doubleDatastoreIn),
-              stringDataStore(stringDataStoreIn),
-              progData(progDataIn) {}
+              stringDataStore(stringDataStoreIn) {}
     };
 
     class Communicator : private Thread {

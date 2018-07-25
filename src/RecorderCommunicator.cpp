@@ -209,7 +209,6 @@ namespace PCOE {
     void RecorderCommunicator::write(AllData dataIn) {
         using namespace std::chrono;
         DataStore& data          = dataIn.doubleDatastore;
-        ProgDataMap& progDataMap = dataIn.progData;
         if (!init) {
             log.WriteLine(LOG_DEBUG, MODULE_NAME, "Printing Header");
 
@@ -219,64 +218,6 @@ namespace PCOE {
                 fprintf(theFile, "%s, ", itData.first.c_str());
             }
 
-            // Header for Prognostic Outputs
-            for (auto& itPD : progDataMap) {
-                const auto progName = itPD.first.c_str();
-                const auto times    = itPD.second->getTimes();
-
-                // For each Event
-                for (auto& itEvents : itPD.second->getEventNames()) {
-                    const auto& event    = itPD.second->events[itEvents];
-                    const auto eventName = itEvents.c_str();
-                    // timeOfEvent
-                    fprintf(theFile,
-                            toeFormatString,
-                            progName,
-                            eventName,
-                            static_cast<int>(event.getTOE().uncertainty()));
-
-                    // Probability of Occurrence
-                    if (writeProbOccur) {
-                        if (writePredictions) {
-                            for (auto& theTime : times) {
-                                fprintf(theFile, probFormatString, progName, eventName, theTime);
-                            }
-                        }
-                        else {
-                            fprintf(theFile, probFormatString, progName, eventName, times[0]);
-                        }
-                    }
-
-
-                } // end for each event
-
-                // For System Trajectories
-                if (writeSysTraj) {
-                    for (auto& itOutputs : itPD.second->getSystemTrajectoryNames()) {
-                        const auto outputName = itOutputs.c_str();
-                        const auto uCert      = static_cast<int>(
-                            itPD.second->sysTrajectories[itOutputs][0].uncertainty());
-                        if (writePredictions) {
-                            for (auto& theTime : times) {
-                                fprintf(theFile,
-                                        sysTrajFormatString,
-                                        progName,
-                                        outputName,
-                                        theTime,
-                                        uCert);
-                            }
-                        }
-                        else {
-                            fprintf(theFile,
-                                    sysTrajFormatString,
-                                    progName,
-                                    outputName,
-                                    times[0],
-                                    uCert);
-                        }
-                    } // end for each output
-                }
-            }
             // Header for timestamp
             fprintf(theFile, "Running Time\n");
 
@@ -291,61 +232,6 @@ namespace PCOE {
         // Print Input Data
         for (auto& itData : data) {
             fprintf(theFile, dataWithTime, itData.second.get(), itData.second.getTime());
-        }
-
-        // Print Prognostics Outputs
-        for (auto& itPD : progDataMap) {
-            const auto times = itPD.second->getTimes();
-
-            // Write all only if writePredictions == true
-            const auto nTimes = writePredictions ? times.size() : 1;
-
-            // Events
-            for (auto& itEvents : itPD.second->getEventNames()) {
-                const auto& event = itPD.second->events[itEvents];
-
-                // timeOfEvent
-                const auto vec = event.getTOE().getVec(0);
-                // @note(CT): For one character put is more efficient (doesn't have to scan for
-                //      endstring character)
-                fputc('[', theFile);
-
-                // Below values do not change inside loop, so there are accessed here for efficiency
-                const auto&& timeofEventLastUpdate = event.getTOE().updated();
-                const auto&& timeofEventValidity   = event.getTOE().valid();
-                for (unsigned long it = 0; it < vec.size(); ++it) {
-                    fprintf(theFile,
-                            dataWithValidityAndTimeSpace,
-                            vec[it],
-                            timeofEventValidity,
-                            timeofEventLastUpdate);
-                }
-                fprintf(theFile, "], ");
-            }
-
-            // System Trajectories
-            if (writeSysTraj) {
-                for (auto& itOutputs : itPD.second->getSystemTrajectoryNames()) {
-                    for (unsigned int theTime = 0; theTime < nTimes; theTime++) {
-                        const auto vec = itPD.second->sysTrajectories[itOutputs][theTime].getVec(0);
-                        fputc('[', theFile); // for single character fputc is more efficient
-
-                        // Calculate outside of loop for speed
-                        const auto&& trajValidity =
-                            itPD.second->sysTrajectories[itOutputs][theTime].valid();
-                        const auto&& trajLastUpdate =
-                            itPD.second->sysTrajectories[itOutputs][theTime].updated();
-                        for (const auto& it : vec) {
-                            fprintf(theFile,
-                                    dataWithValidityAndTimeSpace,
-                                    it,
-                                    trajValidity,
-                                    trajLastUpdate);
-                        }
-                        fprintf(theFile, "], ");
-                    }
-                }
-            }
         }
 
         // Print Timestamp

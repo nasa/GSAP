@@ -29,17 +29,14 @@ namespace TestCommunicator {
     void enqueue() {
         DataStore ds;
         ds["a"] = 42;
-        ProgDataMap pdm;
-        pdm["x"] = nullptr;
         DataStoreString dss;
 
         TestCommunicator tc;
-        AllData ad(ds, dss, pdm);
+        AllData ad(ds, dss);
         tc.enqueue(ad);
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         Assert::AreEqual(1, tc.writeCount, "Write count");
         Assert::AreEqual(ds, tc.writeData, "Write data");
-        Assert::AreEqual(pdm, tc.writeProgData, "Write prog data");
     }
 
     void subscribe() {
