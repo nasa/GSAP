@@ -31,6 +31,7 @@
 #ifndef PCOE_Prognoser_H
 #define PCOE_Prognoser_H
 
+#include <functional>
 #include <map>
 #include <string>
 #include <vector>
@@ -119,7 +120,6 @@ namespace PCOE {
         virtual void checkResultValidity();
 
     protected:
-
         Datum<double> getValue(const std::string& key);
 
     private:

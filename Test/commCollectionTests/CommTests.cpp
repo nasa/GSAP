@@ -34,7 +34,7 @@ void RandomCommTest() {
 
     a["Test1"] = -1.0;
 
-    theComm.enqueue(AllData(a, DataStoreString(), ProgDataMap()));
+    theComm.enqueue(AllData(a, DataStoreString()));
     theComm.poll();
     lock.unlock();
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -49,7 +49,7 @@ void RandomCommTest() {
         std::lock_guard<std::mutex> guard(m);
         a = ds;
     });
-    theComm2.enqueue(AllData(a, DataStoreString(), ProgDataMap()));
+    theComm2.enqueue(AllData(a, DataStoreString()));
 
     for (int i = 0; i < 100; i++) {
         theComm2.poll();
@@ -66,7 +66,7 @@ void RandomCommTest() {
         std::lock_guard<std::mutex> guard(m);
         a = ds;
     });
-    theComm3.enqueue(AllData(a, DataStoreString(), ProgDataMap()));
+    theComm3.enqueue(AllData(a, DataStoreString()));
 
     for (auto i = 0; i < 100; i++) {
         theComm3.poll();
