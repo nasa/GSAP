@@ -37,7 +37,6 @@
 
 #include "CommManager.h"
 #include "DataStore.h"
-#include "ProgData.h"
 #include "Thread.h" // For Start, Stop, pause, ... etc.
 
 namespace PCOE {
@@ -134,19 +133,7 @@ namespace PCOE {
          */
         virtual void checkResultValidity();
 
-        /** @brief     Supply the last state to the prognoser
-         *
-         *  @param     lastState    A ProgData structure filled with the last entry
-         *                          from the components history file
-         */
-        virtual void setHistory(const ProgData&) {}
-
-        const ProgData& getResults() const {
-            return results;
-        }
-
     protected:
-        ProgData results; ///> Prognostic Results
 
         Datum<double> getValue(const std::string& key);
         CommManager& comm; ///> Communciations Manager

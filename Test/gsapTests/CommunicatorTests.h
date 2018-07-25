@@ -15,6 +15,8 @@
 
 #include "Communicator.h"
 
+using namespace PCOE;
+
 namespace TestCommunicator {
     class TestCommunicator : public Communicator {
     public:
@@ -30,14 +32,12 @@ namespace TestCommunicator {
         void write(AllData aData) override {
             ++writeCount;
             writeData     = aData.doubleDatastore;
-            writeProgData = aData.progData;
         }
 
         int readCount  = 0;
         int writeCount = 0;
         DataStore readData;
         DataStore writeData;
-        ProgDataMap writeProgData;
     };
 
     void construct();

@@ -87,8 +87,7 @@ set (HEADERS
     inc/Predictors/Predictor.h
     inc/Predictors/PredictorFactory.h
     inc/PContainer.h
-    inc/ProgData.h
-    inc/ProgEvent.h
+        inc/ProgEvent.h
         inc/PrognosticsModel.h
     inc/PrognosticsModelFactory.h
     inc/Singleton.h
@@ -135,8 +134,7 @@ set(SRCS
     src/Observers/UnscentedKalmanFilter.cpp
     src/PContainer.cpp
     src/Predictors/MonteCarloPredictor.cpp
-    src/ProgData.cpp
-    src/ProgEvent.cpp
+        src/ProgEvent.cpp
         src/StatisticalTools.cpp
     src/TCPSocket.cpp
     src/Thread.cpp

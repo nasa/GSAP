@@ -54,8 +54,6 @@ namespace PCOE {
          */
         void registerKey(const std::string & key);
 
-        bool registerProgData(const std::string & key, ProgData * pData);
-
         /** @brief      Get the value associated with a key
          *  @param[in]  key Key for which the value is requested
          *
@@ -80,8 +78,6 @@ namespace PCOE {
         CommManager();
 
         void updateLookup(DataStore & ds);
-
-        ProgDataMap progData;
 
         DataStore lookup;
         DataStoreString stringLookup;

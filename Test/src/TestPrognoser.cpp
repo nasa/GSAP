@@ -27,10 +27,6 @@ Prognoser(paramMap) {
 void TestPrognoser::step() {
 }
 
-void TestPrognoser::setHistory(const ProgData&) {
-    log.WriteLine(LOG_INFO, MODULE_NAME, "Received History");
-}
-
 void TestPrognoser::checkResultValidity() {
     log.WriteLine(LOG_INFO, MODULE_NAME, "Checking Result Validity");
 }

@@ -9,7 +9,8 @@
 
 #include "Contracts.h"
 #include "LoadEstimator.h"
-#include "ProgData.h"
+#include "ProgEvent.h"
+#include "DataPoint.h"
 #include "PrognosticsModel.h"
 
 namespace PCOE {

@@ -11,7 +11,6 @@
 
 #include "Prognoser.h"
 #include "ThreadSafeLog.h"
-#include "ProgData.h"
 #include "PrognoserFactory.h"
 
 namespace PCOE {
@@ -22,7 +21,6 @@ class TestPrognoser: public PCOE::Prognoser {
  public:
     TestPrognoser(PCOE::GSAPConfigMap & paramMap);
     void step();
-    void setHistory(const PCOE::ProgData &);
     void checkResultValidity();
     void checkInputValidity();
 };
