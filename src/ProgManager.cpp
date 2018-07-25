@@ -26,7 +26,6 @@
 #include <string>
 #include <vector>
 
-#include "CommManager.h"
 #include "GSAPConfigMap.h"
 #include "ProgManager.h"
 #include "PrognoserFactory.h"
@@ -48,12 +47,12 @@ namespace PCOE {
     static Log& logger = Log::Instance();
 
     ProgManager::ProgManager()
-        : configValues(), configSet(false), theComm(CommManager::instance()) {}
+        : configValues(), configSet(false) {}
 
     ProgManager::ProgManager(const std::string& path) : ProgManager(GSAPConfigMap(path)) {}
 
     ProgManager::ProgManager(const GSAPConfigMap& config)
-        : configValues(config), configSet(true), theComm(CommManager::instance()) {}
+        : configValues(config), configSet(true) {}
 
     void ProgManager::setConfig(const std::string& path) {
         setConfig(GSAPConfigMap(path));
@@ -126,11 +125,6 @@ namespace PCOE {
             }
         }
 
-        /// Setup COMMUNICATION
-        // Note: This must be done after the prognosers
-        theComm.configure(configValues);
-        theComm.start();
-
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Enabled");
     }
 
@@ -169,12 +163,6 @@ namespace PCOE {
             logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Waiting for Prognoser thread to stop");
             prognoser->join(); // Wait for thread to end
         }
-
-        // Stop Communication Manager
-        // NOTE: This has to be done after the other threads that used it are stopped
-        theComm.stop();
-        logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Waiting for Comm thread to stop");
-        theComm.join();
 
         // Stop Log, exit thread
         logger.WriteLine(LOG_INFO, MODULE_NAME, "Stopped");

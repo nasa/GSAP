@@ -9,7 +9,6 @@
 
 #include "BatteryModel.h"
 #include "BatteryPrognoserTests.h"
-#include "CommManager.h"
 #include "CommunicatorFactory.h"
 #include "GSAPConfigMap.h"
 #include "ModelBasedPrognoser.h"
@@ -26,12 +25,9 @@ using namespace PCOE;
 using namespace PCOE::Test;
 
 void batteryPrognoserInit() {
-    // Set up comm manager
-    CommManager& pTheComm = CommManager::instance();
     GSAPConfigMap paramMap;
     paramMap.set("Communicators", "../cfg/BatteryPlayback.cfg");
     // paramMap.set("commmanager.step_size", "1000");
-    pTheComm.configure(paramMap);
 }
 
 PCOE::ModelBasedPrognoser* createBatteryPrognoser() {
@@ -141,22 +137,6 @@ void testBatteryPrognoserStep() {
 
     // Do another step (will run observer and predictor)
     p->step();
-
-    const ProgData& pData = p->getResults();
-
-    // Compute mean of timeOfEvent and SOC at different time points
-    double meanEOD = 0;
-    double meanSOCAt1 = 0;
-    double meanSOCAt500 = 0;
-    for (unsigned int i = 0; i < pData.events["EOD"].getTOE().npoints(); i++) {
-        meanEOD += pData.events["EOD"].getTOE()[i] / pData.events["EOD"].getTOE().npoints();
-    }
-    for (unsigned int i = 0; i < pData.sysTrajectories["SOC"].getNPoints(); i++) {
-        meanSOCAt1 +=
-            pData.sysTrajectories["SOC"][1][i] / pData.sysTrajectories["SOC"].getNPoints();
-        meanSOCAt500 +=
-            pData.sysTrajectories["SOC"][500][i] / pData.sysTrajectories["SOC"].getNPoints();
-    }
 
     // Check results (NOTE: These are lower than for PredictorTests since the data file is being run
     // very fast)

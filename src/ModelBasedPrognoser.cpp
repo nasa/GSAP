@@ -94,13 +94,6 @@ namespace PCOE {
         // Set model for observer and predictor
         loadEstimator->setModel(model.get());
 
-        for (auto&& input : model->getInputs()) {
-            comm.registerKey(input);
-        }
-        for (auto&& output : model->getOutputs()) {
-            comm.registerKey(output);
-        }
-
         // Set configuration parameters
         unsigned int numSamples =
             static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));

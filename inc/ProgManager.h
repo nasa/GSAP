@@ -43,7 +43,6 @@ namespace PCOE {
     };
 
     class Log;
-    class CommManager;
 
     /**
      *  @class      ProgManager
@@ -115,8 +114,6 @@ namespace PCOE {
         Cmd control();
 
         std::vector<std::unique_ptr<Prognoser>> prognosers;
-
-        CommManager& theComm;
     };
 }
 

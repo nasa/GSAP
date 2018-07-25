@@ -103,8 +103,7 @@ set (HEADERS
     inc/UDPSocket.h
     inc/TCPServer.h
     inc/BatteryModel.h
-    inc/CommManager.h
-    inc/Communicator.h
+        inc/Communicator.h
     inc/Prognoser.h
     inc/CommunicatorFactory.h
     inc/ModelBasedPrognoser.h
@@ -144,8 +143,7 @@ set(SRCS
     src/UDPSocket.cpp
     src/TCPServer.cpp
     src/BatteryModel.cpp
-    src/CommManager.cpp
-    src/Communicator.cpp
+        src/Communicator.cpp
     src/Prognoser.cpp
     src/ModelBasedPrognoser.cpp
     src/ProgManager.cpp
