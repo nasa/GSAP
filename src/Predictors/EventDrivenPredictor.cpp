@@ -12,7 +12,7 @@ namespace PCOE {
                                                std::string source)
         : bus(messageBus), pred(std::move(predictor)), source(std::move(source)) {
         Expect(pred, "Predictor pointer is empty");
-        bus.subscribe(this, this->source);
+        bus.subscribe(this, this->source, MessageId::ModelStateEstimate);
     }
 
     EventDrivenPredictor::~EventDrivenPredictor() {
@@ -20,19 +20,13 @@ namespace PCOE {
     }
 
     void EventDrivenPredictor::processMessage(const std::shared_ptr<Message>& message) {
-        switch (message->getMessageId()) {
-        case MessageId::ModelStateEstimate: {
-            UDataVecMessage* m = reinterpret_cast<UDataVecMessage*>(message.get());
+        Expect(message->getMessageId() == MessageId::ModelStateEstimate, "Unexpected message id");
+        UDataVecMessage* m = dynamic_cast<UDataVecMessage*>(message.get());
+        Expect(m != nullptr, "Unexpected message type");
 
-            Prediction prediction = pred->predict(seconds(m->getTimestamp()), m->getValue());
-            auto peMsg = std::shared_ptr<ProgEventMessage>(
-                new ProgEventMessage(MessageId::BatteryEod, source, prediction.events[0]));
-            bus.publish(peMsg);
-            break;
-        }
-        default:
-            // Ignore messages we aren't interested in.
-            break;
-        }
+        Prediction prediction = pred->predict(seconds(m->getTimestamp()), m->getValue());
+        auto peMsg = std::shared_ptr<ProgEventMessage>(
+            new ProgEventMessage(MessageId::BatteryEod, source, prediction.events[0]));
+        bus.publish(peMsg);
     }
 }
