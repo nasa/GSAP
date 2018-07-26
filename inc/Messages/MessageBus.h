@@ -17,8 +17,26 @@ namespace PCOE {
      * @author Jason Watkins
      * @since 1.2
      **/
-    class MessageBus : public IMessagePublisher {
+    class MessageBus final : public IMessagePublisher {
     public:
+        /**
+         * Constructs a new {@code MessageBus} instance.
+         **/
+        MessageBus() = default;
+
+        /**
+         * Deleted copy constructor. The {@code MessageBus} may use mutexes
+         * internally, which are not copyable.
+         **/
+        MessageBus(const MessageBus&) = delete;
+
+        /**
+         * Constructs a new {@code MessageBus} instance that takes its internal
+         * state from the provided {@code MessageBus} and leaves that instance
+         * in a default state.
+         **/
+        MessageBus(MessageBus&&) = default;
+
         /**
          * Registers the given consumer to receive messages with the given Id.
          *
@@ -55,16 +73,13 @@ namespace PCOE {
          * Publishes a message to subscribers. Subscribers receive only messages
          * to which they have subscribed.
          *
-         * @param message A pointer to a message to publish. The pointer is a raw,
-         *                unmanaged pointer, which the message bus assumes will
-         *                be valid for its lifetime. No attempt is made to manage
-         *                the lifetime of the message.
+         * @param message A pointer to a message to publish.
          **/
         void publish(std::shared_ptr<Message> message) const override;
 
     private:
         using callback_pair = std::pair<MessageId, IMessageProcessor*>;
-        using mutex = std::mutex;
+        using mutex = std::recursive_mutex;
         using lock_guard = std::lock_guard<mutex>;
 
         std::unordered_map<std::string, std::vector<callback_pair>> subscribers;

@@ -1,19 +1,6 @@
-/**  supportTests - Entry point
- *   @file      main.cpp
- *
- *   @brief     Run unit tests for support classes
- *
- *   @author    Jason Watkins <jason-watkins@outlook.com>
- *   @version   1.1.0
- *   @date      2016-07-08
- *
- *   @pre       N/A
- *
- *   @copyright Copyright (c) 2018 United States Government as represented by
- *              the Administrator of the National Aeronautics and Space
- *              Administration. All Rights Reserved.
- */
-
+// Copyright (c) 2016-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #include <fstream>
 
 #include "CommunicatorTests.h"
@@ -25,6 +12,8 @@
 #include "GaussianVariableTests.h"
 #include "LoadTests.hpp"
 #include "MatrixTests.h"
+#include "Messages/MessageBusTests.h"
+#include "Messages/MessageWatcherTests.h"
 #include "ModelTests.h"
 #include "ObserverTests.h"
 #include "PEventTests.h"
@@ -46,14 +35,10 @@ int main() {
     context.AddTest("Init", configMapInit, "Config Map");
     context.AddTest("Load Arguments", configMapLoadArgs, "Config Map");
     context.AddTest("Use", configMapUse, "Config Map");
-    context.AddTest("Load", configMapLoad, "Config Map"); // Filled test case - Julian
-    context.AddTest("Load Nonexistent",
-                    configMapLoadNonexistent,
-                    "ConfigMap"); // Added test case - Julian
-    context.AddTest("Add Bad Search Path",
-                    configMapAddBadSearchPath,
-                    "Config Map"); // Added test case - Julian
-    context.AddTest("Trim", configMapTrim, "Config Map"); // Added test case - Julian
+    context.AddTest("Load", configMapLoad, "Config Map");
+    context.AddTest("Load Nonexistent", configMapLoadNonexistent, "ConfigMap");
+    context.AddTest("Add Bad Search Path", configMapAddBadSearchPath, "Config Map");
+    context.AddTest("Trim", configMapTrim, "Config Map");
     context.AddTest("GSAP Init", gsapConfigMapInit, "Config Map");
     context.AddTest("GSAP Use", gsapConfigMapUse, "Config Map");
 
@@ -179,11 +164,6 @@ int main() {
     context.AddTest("UKF Initialization for Battery", testUKFBatteryInitialize, "Observer");
     context.AddTest("UKF Step for Battery", testUKFBatteryStep, "Observer");
 
-    /*    // PF Battery tests
-        context.AddTest("PF Battery Construction from ConfigMap", testPFBatteryFromConfig,
-       "Observer"); context.AddTest("PF Initialization for Battery", testPFBatteryInitialize,
-       "Observer"); context.AddTest("PF Step for Battery", testPFBatteryStep, "Observer"); */
-
     // PEvent Tests
     context.AddTest("Initialization", testPEventInit, "PEvent");
     context.AddTest("Update", testPEventUpdate, "PEvent");
@@ -264,6 +244,17 @@ int main() {
     context.AddTest("enqueue", TestCommunicator::enqueue, "Common Communicator");
     context.AddTest("subscribe", TestCommunicator::subscribe, "Common Communicator");
     context.AddTest("stop", TestCommunicator::stop, "Common Communicator");
+
+    context.AddTest("construct", MessageBusTests::constructor, "MessageBus");
+    context.AddTest("publish", MessageBusTests::publish, "MessageBus");
+    context.AddTest("subscribeAll", MessageBusTests::subscribeAll, "MessageBus");
+    context.AddTest("subscribeMultiSource", MessageBusTests::subscribeMultiSource, "MessageBus");
+    context.AddTest("subscribe", MessageBusTests::subscribe, "MessageBus");
+    context.AddTest("unsubscribe", MessageBusTests::unsubscribe, "MessageBus");
+    context.AddTest("unsubscribePartial", MessageBusTests::unsubscribePartial, "MessageBus");
+
+    context.AddTest("construct", MessageWatcherTests::constructor, "MessageWatcher");
+    context.AddTest("allPresent", MessageWatcherTests::allPresent, "MessageWatcher");
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");

@@ -5,6 +5,7 @@
 #define PCOE_MESSAGEWATCHER_H
 #include <map>
 
+#include "Contracts.h"
 #include "Messages/MessageBus.h"
 
 namespace PCOE {
@@ -36,7 +37,8 @@ namespace PCOE {
                        const std::string& sourceName,
                        const std::vector<MessageId> messages,
                        TContainer container)
-            : messageBus(messageBus), values(container) {
+            : messageBus(messageBus), values(std::move(container)) {
+            Expect(messages.size() == container.size(), "Mismatched container sizes");
             for (std::size_t i = 0; i < messages.size(); ++i) {
                 msgIndices.insert(std::make_pair(messages[i], i));
                 messageBus.subscribe(this, sourceName, messages[i]);
@@ -55,7 +57,8 @@ namespace PCOE {
          * it present.
          **/
         void processMessage(const std::shared_ptr<Message>& message) override {
-            const DoubleMessage* dmsg = reinterpret_cast<DoubleMessage*>(message.get());
+            const DoubleMessage* dmsg = dynamic_cast<DoubleMessage*>(message.get());
+            Expect(dmsg != nullptr, "Unexpected message type");
 
             std::size_t i = msgIndices.at(message->getMessageId());
             values[i] = dmsg->getValue();
