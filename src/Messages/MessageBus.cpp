@@ -20,7 +20,12 @@ namespace PCOE {
 
     void MessageBus::unsubscribe(IMessageProcessor* consumer, const std::string& source) {
         lock_guard guard(m);
-        auto& vec = subscribers[source];
+        auto srcSubs = subscribers.find(source);
+        if (srcSubs == subscribers.cend()) {
+            return;
+        }
+        auto& vec = (*srcSubs).second;
+
         vec.erase(std::remove_if(vec.begin(),
                                  vec.end(),
                                  [consumer](const callback_pair& i) {
@@ -31,8 +36,14 @@ namespace PCOE {
 
     void MessageBus::publish(std::shared_ptr<Message> message) const {
         lock_guard guard(m);
-        for (auto it : subscribers.at(message->getSource())) {
+        auto srcSubs = subscribers.find(message->getSource());
+        if (srcSubs == subscribers.cend()) {
+            return;
+        }
+
+        for (auto it : (*srcSubs).second) {
             if (it.first == MessageId::All || it.first == message->getMessageId()) {
+                // TODO (JW): Process messages asynchronously
                 it.second->processMessage(message);
             }
         }

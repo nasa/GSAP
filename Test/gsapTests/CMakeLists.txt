@@ -5,15 +5,19 @@ set(HEADERS
     DPointsTests.h
     DPointTests.h
     MatrixTests.h
+    Messages/MessageBusTests.h
+    Messages/MessageWatcherTests.h
     ModelTests.h
     ObserverTests.h
     PEventTests.h
     PredictorTests.h
-        ThreadTests.h
+    ThreadTests.h
     UDataTests.h
     StatisticalToolsTests.h
     GaussianVariableTests.h
-    ParticleFilterTests.h TCPSocketTests.h UDPSocketTests.h
+    ParticleFilterTests.h
+    TCPSocketTests.h
+    UDPSocketTests.h
     ProgManagerTests.h
 )
 
@@ -26,11 +30,13 @@ set(SRCS
     DPointTests.cpp
     main.cpp
     MatrixTests.cpp
+    Messages/MessageBusTests.cpp
+    Messages/MessageWatcherTests.cpp
     ModelTests.cpp
     ObserverTests.cpp
     PEventTests.cpp
     PredictorTests.cpp
-        ThreadTests.cpp
+    ThreadTests.cpp
     UDataTests.cpp
     StatisticalToolsTests.cpp
     GaussianVariableTests.cpp
