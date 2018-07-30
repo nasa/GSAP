@@ -57,7 +57,7 @@ namespace PCOE {
 
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
         // Read Configuration Map
-        if (config.includes(FILE_KEY)) {
+        if (config.hasKey(FILE_KEY)) {
             playbackFile = config.at(FILE_KEY)[0];
             log.FormatLine(LOG_DEBUG,
                            MODULE_NAME,
@@ -65,7 +65,7 @@ namespace PCOE {
                            playbackFile.c_str());
         }
 
-        if (config.includes(DELIM_KEY)) {
+        if (config.hasKey(DELIM_KEY)) {
             log.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting delimiter");
 
             if (config.at(DELIM_KEY).size() == 0) {
@@ -80,14 +80,14 @@ namespace PCOE {
             }
         }
 
-        if (config.includes(TIMESTAMP_KEY)) {
+        if (config.hasKey(TIMESTAMP_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Timestamp key received");
 
             timestampFromFile = ((config.at(TIMESTAMP_KEY)[0].compare("true") == 0) ||
                                  (config.at(TIMESTAMP_KEY)[0].compare("1") == 0));
         }
 
-        if (config.includes(TIMESTAMP_BASE)) {
+        if (config.hasKey(TIMESTAMP_BASE)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Timestamp add absolute key received");
 
             timestampAddAbsolute = ((config.at(TIMESTAMP_BASE)[0].compare("true") == 0) ||

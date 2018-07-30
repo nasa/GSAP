@@ -47,13 +47,13 @@ namespace PCOE {
         stepSize(DEFAULT_STEP_SIZE) {
         // Handle Configuration
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Configuring");
-        if (config.includes(STEP_KEY)) {
+        if (config.hasKey(STEP_KEY)) {
             stepSize = std::stod(config.at(STEP_KEY)[0]);
             log.FormatLine(LOG_DEBUG, MODULE_NAME,
                 "Configuring- Step size set to %f", stepSize);
         }
 
-        if (config.includes(MAX_KEY)) {
+        if (config.hasKey(MAX_KEY)) {
             maxRand = std::stoul(config.at(MAX_KEY)[0]);
             log.FormatLine(LOG_DEBUG, MODULE_NAME,
                 "Configuring- Max Rand set to %ul", maxRand);

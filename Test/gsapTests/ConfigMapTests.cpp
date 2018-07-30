@@ -36,9 +36,9 @@ void configMapUse() {
     theMap.set("test2", "blah");
     Assert::AreEqual(0, theMap["test2"][0].compare("blah"));
 
-    Assert::IsTrue(theMap.includes({"test"}));
-    Assert::IsTrue(theMap.includes({"test2"}));
-    Assert::IsFalse(theMap.includes({"test3"}));
+    Assert::IsTrue(theMap.hasKeys({"test"}));
+    Assert::IsTrue(theMap.hasKeys({"test2"}));
+    Assert::IsFalse(theMap.hasKeys({"test3"}));
 
     // std::string exampleLine("test3:a,b,dslfjs,d");
     // theMap.add(exampleLine);

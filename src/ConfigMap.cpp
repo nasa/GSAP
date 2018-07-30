@@ -134,9 +134,9 @@ namespace PCOE {
         (*this)[key] = {value};
     }
 
-    bool ConfigMap::containsAllKeys(std::initializer_list<std::string> list) const {
+    bool ConfigMap::hasKeys(std::initializer_list<std::string> list) const {
         for (auto& elem : list) {
-            if (!containsKey(elem)) {
+            if (!hasKey(elem)) {
                 return false;
             }
         }

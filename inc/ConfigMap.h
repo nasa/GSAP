@@ -55,28 +55,13 @@ namespace PCOE {
          **/
         void set(const std::string& key, const std::string& value);
 
-        /** @function   includes
-         *  @brief      Check if a specific key is included in the map. This
-         *              function is deprecated and will be removed in a future
-         *              version of GSAP.
-         *  @param      key     Identifier to be checked
-         *  @return     If the key exists (bool)
-         **/
-        inline bool includes(const std::string& key) const {
-            return containsKey(key);
-        }
-
-        inline bool includes(std::initializer_list<std::string> list) const {
-            return containsAllKeys(list);
-        }
-
-        /** @function containsKey
+        /** @function hasKey
          *  @brief Check if the specified key is contained in the map.
          *
          *  @param key A string that may be used as a key in the map.
          *  @return    true if the key exists; othwerwise, false.
          **/
-        inline bool containsKey(const std::string& key) const {
+        inline bool hasKey(const std::string &key) const {
             return find(key) != end();
         }
 
@@ -88,7 +73,7 @@ namespace PCOE {
          * @return true if all keys in the list are contained in the map;
          *         otherwise, false.
          **/
-        bool containsAllKeys(std::initializer_list<std::string> list) const;
+        bool hasKeys(std::initializer_list<std::string> list) const;
 
         /** @brief      Add a path in which to look for config files.
          *  @param path A string containing a directory which should be searched

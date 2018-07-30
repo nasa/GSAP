@@ -67,7 +67,7 @@ namespace PCOE {
         // Create Load Estimator
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Load Estimator");
         LoadEstimatorFactory& loadEstFact = LoadEstimatorFactory::instance();
-        if (configMap.includes(LOAD_EST_KEY)) {
+        if (configMap.hasKey(LOAD_EST_KEY)) {
             loadEstimator = loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap);
         }
         else {
@@ -84,7 +84,7 @@ namespace PCOE {
                                              configMap);
 
         // Set model stepsize
-        if (configMap.includes(STEPSIZE_KEY)) {
+        if (configMap.hasKey(STEPSIZE_KEY)) {
             model->setDefaultTimeStep(std::stod(configMap[STEPSIZE_KEY][0]));
         }
         else {

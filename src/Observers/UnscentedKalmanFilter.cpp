@@ -87,15 +87,15 @@ namespace PCOE {
         }
 
         // Set kappa (optional)
-        if (config.includes(K_KEY)) {
+        if (config.hasKey(K_KEY)) {
             setKappa(std::stod(config.at(K_KEY)[0]));
         }
         // Set alpha (optional)
-        if (config.includes(K_KEY)) {
+        if (config.hasKey(K_KEY)) {
             setAlpha(std::stod(config.at(A_KEY)[0]));
         }
         // Set beta (optional)
-        if (config.includes(K_KEY)) {
+        if (config.hasKey(K_KEY)) {
             setBeta(std::stod(config.at(B_KEY)[0]));
         }
 

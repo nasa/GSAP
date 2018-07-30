@@ -118,7 +118,7 @@ namespace PCOE {
 
         /// SETUP PROGNOSERS
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting Up Prognosers");
-        if (configValues.includes("Prognosers")) {
+        if (configValues.hasKey("Prognosers")) {
             for (auto& itStrs : configValues.at("Prognosers")) {
                 addPrognoser(itStrs);
                 // @todo(CT): Add check that component was made correctly

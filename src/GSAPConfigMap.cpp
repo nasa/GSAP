@@ -35,7 +35,7 @@ namespace PCOE {
         std::string missingParams;
         for (auto & elem : list) {
             // Check if each element is there
-            if (!includes(elem)) {
+            if (!hasKey(elem)) {
                 missingParams += elem + ", ";
             }
         }
