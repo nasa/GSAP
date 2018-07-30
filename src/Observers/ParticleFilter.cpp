@@ -91,7 +91,7 @@ namespace PCOE {
         setSensorCovariance();
 
         // Set minNEff (optional)
-        if (config.includes(NEFF_KEY)) {
+        if (config.hasKey(NEFF_KEY)) {
             setMinEffective(static_cast<std::size_t>(std::stod(config.at(NEFF_KEY)[0])));
         }
 

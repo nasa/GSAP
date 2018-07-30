@@ -54,7 +54,7 @@ namespace PCOE {
             raw_profile.push_back(profileItem);
         }
 
-        if (configMap.includes(STDDEV_KEY)) {
+        if (configMap.hasKey(STDDEV_KEY)) {
             log.WriteLine(LOG_INFO, DEBUG_TAG, "Inferred uncertainty type: gaussian");
             const std::vector<std::string>& stdStrs = configMap.at(STDDEV_KEY);
             for (auto&& stdStr : stdStrs) {

@@ -19,7 +19,7 @@ TestPrognoser::TestPrognoser(PCOE::GSAPConfigMap & paramMap):
 Prognoser(paramMap) {
     log.WriteLine(LOG_DEBUG, MODULE_NAME, "Creating");
 
-    if (paramMap.includes("futureLoading")) {
+    if (paramMap.hasKey("futureLoading")) {
         log.FormatLine(LOG_DEBUG, MODULE_NAME, "Received Future Loading: %s", paramMap["futureLoading"][0].c_str());
     }
 }

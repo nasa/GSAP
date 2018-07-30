@@ -66,25 +66,25 @@ namespace PCOE {
         configParams.checkRequiredParams({NAME_KEY, ID_KEY, TYPE_KEY});
 
         // Fill in Defaults
-        if (configParams.includes(INTERVAL_DELAY_KEY)) {
+        if (configParams.hasKey(INTERVAL_DELAY_KEY)) {
             loopInterval = static_cast<unsigned int>(
                 std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str()));
         }
 
-        if (configParams.includes(SAVE_INTERVAL_KEY)) {
+        if (configParams.hasKey(SAVE_INTERVAL_KEY)) {
             saveInterval = static_cast<unsigned int>(
                 std::stoi((configParams.at(SAVE_INTERVAL_KEY)[0]).c_str()));
         }
 
-        if (configParams.includes(SAVE_ENABLE_KEY)) {
+        if (configParams.hasKey(SAVE_ENABLE_KEY)) {
             saveEnabled = (configParams.at(SAVE_ENABLE_KEY)[0].compare("true") == 0) ||
                           (configParams.at(SAVE_ENABLE_KEY)[0].compare("0") == 0);
         }
 
-        if (!configParams.includes(HIST_PATH_KEY)) {
+        if (!configParams.hasKey(HIST_PATH_KEY)) {
             configParams.set(HIST_PATH_KEY, ".");
         }
-        if (!configParams.includes(RESET_HIST_KEY)) {
+        if (!configParams.hasKey(RESET_HIST_KEY)) {
             configParams.set(RESET_HIST_KEY, "false");
         }
 
@@ -93,7 +93,7 @@ namespace PCOE {
         // For each tag in (local:global) format, add a function to the lookup table to get the
         // value by the global name when requesting it by the local name. This handles the local
         // to global conversion.
-        if (configParams.includes(TAG_KEY)) {
+        if (configParams.hasKey(TAG_KEY)) {
             for (auto& it : configParams.at(TAG_KEY)) {
                 size_t pos = it.find_first_of(':');
                 std::string commonName = it.substr(0, pos);

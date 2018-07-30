@@ -122,7 +122,7 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
 
         // Read Configuration Map
-        if (config.includes(FILE_KEY)) {
+        if (config.hasKey(FILE_KEY)) {
             configFile = config.at(FILE_KEY)[0];
             log.FormatLine(LOG_DEBUG,
                            MODULE_NAME,
@@ -130,7 +130,7 @@ namespace PCOE {
                            configFile.c_str());
         }
 
-        if (config.includes(PROB_OCCUR_KEY)) {
+        if (config.hasKey(PROB_OCCUR_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Probability of occurence key present");
 
             if (config.at(PROB_OCCUR_KEY)[0] == "true" || config.at(PROB_OCCUR_KEY)[0] == "1") {
@@ -147,7 +147,7 @@ namespace PCOE {
             }
         }
 
-        if (config.includes(OCCUR_KEY)) {
+        if (config.hasKey(OCCUR_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Occurance Matrix key present");
 
             if (config.at(OCCUR_KEY)[0] == "true" || config.at(OCCUR_KEY)[0] == "1") {
@@ -160,7 +160,7 @@ namespace PCOE {
             }
         }
 
-        if (config.includes(PREDICT_KEY)) {
+        if (config.hasKey(PREDICT_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Prediction key present");
 
             if (config.at(PREDICT_KEY)[0] == "true" || config.at(PREDICT_KEY)[0] == "1") {
@@ -173,7 +173,7 @@ namespace PCOE {
             }
         }
 
-        if (config.includes(SYS_TRAJ_KEY)) {
+        if (config.hasKey(SYS_TRAJ_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "System Trajectory key present");
 
             if (config.at(SYS_TRAJ_KEY)[0] == "true" || config.at(SYS_TRAJ_KEY)[0] == "1") {

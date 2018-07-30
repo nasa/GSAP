@@ -78,144 +78,144 @@ BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryMo
     // There are default values available, so call to setParameters is different depending
     // on which are given in the configMap.
 
-    if (configMap.includes(QMOBILE_KEY) && configMap.includes(VOL_KEY)) {
+    if (configMap.hasKey(QMOBILE_KEY) && configMap.hasKey(VOL_KEY)) {
         setParameters(std::stod(configMap.at(QMOBILE_KEY)[0]), std::stod(configMap.at(VOL_KEY)[0]));
     }
-    else if (configMap.includes(QMOBILE_KEY) && !configMap.includes(VOL_KEY)) {
+    else if (configMap.hasKey(QMOBILE_KEY) && !configMap.hasKey(VOL_KEY)) {
         setParameters(std::stod(configMap.at(QMOBILE_KEY)[0]));
     }
-    else if (!configMap.includes(QMOBILE_KEY) && configMap.includes(VOL_KEY)) {
+    else if (!configMap.hasKey(QMOBILE_KEY) && configMap.hasKey(VOL_KEY)) {
         setParameters(QMOBILE_DEFAULT_VALUE, std::stod(configMap.at(VOL_KEY)[0]));
     }
     // For the remaining parameters, we set them after the call to setParameters,
     // because no other parameter values are derived from them.
-    if (configMap.includes(AN0_KEY)) {
+    if (configMap.hasKey(AN0_KEY)) {
         parameters.An0 = std::stod(configMap.at(AN0_KEY)[0]);
     }
-    if (configMap.includes(AN1_KEY)) {
+    if (configMap.hasKey(AN1_KEY)) {
         parameters.An1 = std::stod(configMap.at(AN1_KEY)[0]);
     }
-    if (configMap.includes(AN10_KEY)) {
+    if (configMap.hasKey(AN10_KEY)) {
         parameters.An10 = std::stod(configMap.at(AN10_KEY)[0]);
     }
-    if (configMap.includes(AN11_KEY)) {
+    if (configMap.hasKey(AN11_KEY)) {
         parameters.An11 = std::stod(configMap.at(AN11_KEY)[0]);
     }
-    if (configMap.includes(AN12_KEY)) {
+    if (configMap.hasKey(AN12_KEY)) {
         parameters.An12 = std::stod(configMap.at(AN12_KEY)[0]);
     }
-    if (configMap.includes(AN2_KEY)) {
+    if (configMap.hasKey(AN2_KEY)) {
         parameters.An2 = std::stod(configMap.at(AN2_KEY)[0]);
     }
-    if (configMap.includes(AN3_KEY)) {
+    if (configMap.hasKey(AN3_KEY)) {
         parameters.An3 = std::stod(configMap.at(AN3_KEY)[0]);
     }
-    if (configMap.includes(AN4_KEY)) {
+    if (configMap.hasKey(AN4_KEY)) {
         parameters.An4 = std::stod(configMap.at(AN4_KEY)[0]);
     }
-    if (configMap.includes(AN5_KEY)) {
+    if (configMap.hasKey(AN5_KEY)) {
         parameters.An5 = std::stod(configMap.at(AN5_KEY)[0]);
     }
-    if (configMap.includes(AN6_KEY)) {
+    if (configMap.hasKey(AN6_KEY)) {
         parameters.An6 = std::stod(configMap.at(AN6_KEY)[0]);
     }
-    if (configMap.includes(AN7_KEY)) {
+    if (configMap.hasKey(AN7_KEY)) {
         parameters.An7 = std::stod(configMap.at(AN7_KEY)[0]);
     }
-    if (configMap.includes(AN8_KEY)) {
+    if (configMap.hasKey(AN8_KEY)) {
         parameters.An8 = std::stod(configMap.at(AN8_KEY)[0]);
     }
-    if (configMap.includes(AN9_KEY)) {
+    if (configMap.hasKey(AN9_KEY)) {
         parameters.An9 = std::stod(configMap.at(AN9_KEY)[0]);
     }
-    if (configMap.includes(AP0_KEY)) {
+    if (configMap.hasKey(AP0_KEY)) {
         parameters.Ap0 = std::stod(configMap.at(AP0_KEY)[0]);
     }
-    if (configMap.includes(AP1_KEY)) {
+    if (configMap.hasKey(AP1_KEY)) {
         parameters.Ap1 = std::stod(configMap.at(AP1_KEY)[0]);
     }
-    if (configMap.includes(AP10_KEY)) {
+    if (configMap.hasKey(AP10_KEY)) {
         parameters.Ap10 = std::stod(configMap.at(AP10_KEY)[0]);
     }
-    if (configMap.includes(AP11_KEY)) {
+    if (configMap.hasKey(AP11_KEY)) {
         parameters.Ap11 = std::stod(configMap.at(AP11_KEY)[0]);
     }
-    if (configMap.includes(AP12_KEY)) {
+    if (configMap.hasKey(AP12_KEY)) {
         parameters.Ap12 = std::stod(configMap.at(AP12_KEY)[0]);
     }
-    if (configMap.includes(AP2_KEY)) {
+    if (configMap.hasKey(AP2_KEY)) {
         parameters.Ap2 = std::stod(configMap.at(AP2_KEY)[0]);
     }
-    if (configMap.includes(AP3_KEY)) {
+    if (configMap.hasKey(AP3_KEY)) {
         parameters.Ap3 = std::stod(configMap.at(AP3_KEY)[0]);
     }
-    if (configMap.includes(AP4_KEY)) {
+    if (configMap.hasKey(AP4_KEY)) {
         parameters.Ap4 = std::stod(configMap.at(AP4_KEY)[0]);
     }
-    if (configMap.includes(AP5_KEY)) {
+    if (configMap.hasKey(AP5_KEY)) {
         parameters.Ap5 = std::stod(configMap.at(AP5_KEY)[0]);
     }
-    if (configMap.includes(AP6_KEY)) {
+    if (configMap.hasKey(AP6_KEY)) {
         parameters.Ap6 = std::stod(configMap.at(AP6_KEY)[0]);
     }
-    if (configMap.includes(AP7_KEY)) {
+    if (configMap.hasKey(AP7_KEY)) {
         parameters.Ap7 = std::stod(configMap.at(AP7_KEY)[0]);
     }
-    if (configMap.includes(AP8_KEY)) {
+    if (configMap.hasKey(AP8_KEY)) {
         parameters.Ap8 = std::stod(configMap.at(AP8_KEY)[0]);
     }
-    if (configMap.includes(AP9_KEY)) {
+    if (configMap.hasKey(AP9_KEY)) {
         parameters.Ap9 = std::stod(configMap.at(AP9_KEY)[0]);
     }
-    if (configMap.includes(RO_KEY)) {
+    if (configMap.hasKey(RO_KEY)) {
         parameters.Ro = std::stod(configMap.at(RO_KEY)[0]);
     }
-    if (configMap.includes(SN_KEY)) {
+    if (configMap.hasKey(SN_KEY)) {
         parameters.Sn = std::stod(configMap.at(SN_KEY)[0]);
     }
-    if (configMap.includes(SP_KEY)) {
+    if (configMap.hasKey(SP_KEY)) {
         parameters.Sp = std::stod(configMap.at(SP_KEY)[0]);
     }
-    if (configMap.includes(U0N_KEY)) {
+    if (configMap.hasKey(U0N_KEY)) {
         parameters.U0n = std::stod(configMap.at(U0N_KEY)[0]);
     }
-    if (configMap.includes(U0P_KEY)) {
+    if (configMap.hasKey(U0P_KEY)) {
         parameters.U0p = std::stod(configMap.at(U0P_KEY)[0]);
     }
-    if (configMap.includes(VEOD_KEY)) {
+    if (configMap.hasKey(VEOD_KEY)) {
         parameters.VEOD = std::stod(configMap.at(VEOD_KEY)[0]);
     }
-    if (configMap.includes(VOLSFRACTION_KEY)) {
+    if (configMap.hasKey(VOLSFRACTION_KEY)) {
         parameters.VolSFraction = std::stod(configMap.at(VOLSFRACTION_KEY)[0]);
     }
-    if (configMap.includes(KN_KEY)) {
+    if (configMap.hasKey(KN_KEY)) {
         parameters.kn = std::stod(configMap.at(KN_KEY)[0]);
     }
-    if (configMap.includes(KP_KEY)) {
+    if (configMap.hasKey(KP_KEY)) {
         parameters.kp = std::stod(configMap.at(KP_KEY)[0]);
     }
-    if (configMap.includes(TDIFFUSION_KEY)) {
+    if (configMap.hasKey(TDIFFUSION_KEY)) {
         parameters.tDiffusion = std::stod(configMap.at(TDIFFUSION_KEY)[0]);
     }
-    if (configMap.includes(TO_KEY)) {
+    if (configMap.hasKey(TO_KEY)) {
         parameters.to = std::stod(configMap.at(TO_KEY)[0]);
     }
-    if (configMap.includes(TSN_KEY)) {
+    if (configMap.hasKey(TSN_KEY)) {
         parameters.tsn = std::stod(configMap.at(TSN_KEY)[0]);
     }
-    if (configMap.includes(TSP_KEY)) {
+    if (configMap.hasKey(TSP_KEY)) {
         parameters.tsp = std::stod(configMap.at(TSP_KEY)[0]);
     }
-    if (configMap.includes(XNMAX_KEY)) {
+    if (configMap.hasKey(XNMAX_KEY)) {
         parameters.xnMax = std::stod(configMap.at(XNMAX_KEY)[0]);
     }
-    if (configMap.includes(XNMIN_KEY)) {
+    if (configMap.hasKey(XNMIN_KEY)) {
         parameters.xnMin = std::stod(configMap.at(XNMIN_KEY)[0]);
     }
-    if (configMap.includes(XPMAX_KEY)) {
+    if (configMap.hasKey(XPMAX_KEY)) {
         parameters.xpMax = std::stod(configMap.at(XPMAX_KEY)[0]);
     }
-    if (configMap.includes(XPMIN_KEY)) {
+    if (configMap.hasKey(XPMIN_KEY)) {
         parameters.xpMin = std::stod(configMap.at(XPMIN_KEY)[0]);
     }
 }
