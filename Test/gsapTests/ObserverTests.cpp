@@ -19,6 +19,7 @@
  */
 
 #include <iostream>
+#include <sstream>
 
 #include "Test.h"
 
@@ -391,7 +392,12 @@ void testUKFBatteryStep() {
     // Note (JW): Delta for this test was originally 1e-17, which worked up to
     //            now. After seeing the test fail on macOS (and only macOS) on
     //            an unrelated change, I'm bumping it up to 1e-16
-    Assert::AreEqual(-3.515545e-11, xMean[1], 1e-15, "xMean[1]");
+    // Update 2018-07-30 (JW): Still failing occasionally at delta=1e-15. Adding
+    // a detailed message to asses how far off the value is when it fails.
+    std::stringstream ss;
+    ss << "xMean[1] expected -3.515545e-11. Got " << xMean[1] << ". Delta "
+       << std::abs(-3.515545e-11 - xMean[1]);
+    Assert::AreEqual(-3.515545e-11, xMean[1], 1e-15, ss.str());
     Assert::AreEqual(760, xMean[5], 1e-12, "xMean[5]");
 
     // Check z
