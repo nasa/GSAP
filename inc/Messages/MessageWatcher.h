@@ -38,11 +38,13 @@ namespace PCOE {
                        const std::vector<MessageId> messages,
                        TContainer container)
             : messageBus(messageBus), values(std::move(container)) {
-            Expect(messages.size() == container.size(), "Mismatched container sizes");
+            Expect(messages.size() == values.size(), "Mismatched container sizes");
             for (std::size_t i = 0; i < messages.size(); ++i) {
+                present.push_back(false);
                 msgIndices.insert(std::make_pair(messages[i], i));
                 messageBus.subscribe(this, sourceName, messages[i]);
             }
+            Ensure(present.size() == values.size(), "Mismatched present and value sizes");
         }
 
         /**
@@ -110,8 +112,8 @@ namespace PCOE {
         std::map<MessageId, std::size_t> msgIndices;
         TContainer values;
         std::vector<bool> present;
-        mutable bool allPresentCached;
-        mutable bool allPresentValue;
+        mutable bool allPresentCached = false;
+        mutable bool allPresentValue = false;
     };
 }
 #endif

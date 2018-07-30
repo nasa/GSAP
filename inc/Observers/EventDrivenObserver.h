@@ -58,7 +58,7 @@ namespace PCOE {
 
     private:
         MessageBus& bus;
-        std::unique_ptr<Observer> obs;
+        std::unique_ptr<Observer> observer;
         std::string source;
         MessageWatcher<Model::input_type> inputWatcher;
         MessageWatcher<Model::output_type> outputWatcher;

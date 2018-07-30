@@ -5,27 +5,27 @@
 
 namespace PCOE {
     EventDrivenObserver::EventDrivenObserver(MessageBus& messageBus,
-                                             std::unique_ptr<Observer>&& observer,
-                                             std::string source)
+                                             std::unique_ptr<Observer>&& obs,
+                                             std::string src)
         : bus(messageBus),
-          obs(std::move(observer)),
-          source(std::move(source)),
+          observer(std::move(obs)),
+          source(std::move(src)),
           inputWatcher(bus,
                        source,
-                       obs->getModel()->getInputs(),
-                       obs->getModel()->getInputVector()),
+                       observer->getModel()->getInputs(),
+                       observer->getModel()->getInputVector()),
           outputWatcher(bus,
                         source,
-                        obs->getModel()->getOutputs(),
-                        obs->getModel()->getOutputVector()) {
-        Expect(obs, "Observer pointer is empty");
-        auto inputs = obs->getModel()->getInputs();
+                        observer->getModel()->getOutputs(),
+                        observer->getModel()->getOutputVector()) {
+        Expect(observer, "Observer pointer is empty");
+        auto inputs = observer->getModel()->getInputs();
         for (auto i : inputs) {
-            bus.subscribe(this, this->source, i);
+            bus.subscribe(this, source, i);
         }
-        auto outputs = obs->getModel()->getOutputs();
+        auto outputs = observer->getModel()->getOutputs();
         for (auto o : outputs) {
-            bus.subscribe(this, this->source, o);
+            bus.subscribe(this, source, o);
         }
     }
 
@@ -39,17 +39,19 @@ namespace PCOE {
         if (inputWatcher.allPresent() && outputWatcher.allPresent()) {
             auto u = inputWatcher.getValues();
             auto z = outputWatcher.getValues();
-            if (!obs->isInitialized()) {
-                auto x = obs->getModel()->initialize(u, z);
-                obs->initialize(latestTimestamp, x, u);
+            if (!observer->isInitialized()) {
+                auto x = observer->getModel()->initialize(u, z);
+                observer->initialize(latestTimestamp, x, u);
             }
             else {
-                obs->step(latestTimestamp, u, z);
+                observer->step(latestTimestamp, u, z);
                 UDataVecMessage* stateEst = new UDataVecMessage(MessageId::ModelStateEstimate,
                                                                 source,
-                                                                obs->getStateEstimate());
+                                                                observer->getStateEstimate());
                 bus.publish(std::shared_ptr<Message>(stateEst));
             }
+            inputWatcher.reset();
+            outputWatcher.reset();
         }
     }
 }
