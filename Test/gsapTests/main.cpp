@@ -16,6 +16,7 @@
 #include "Messages/MessageWatcherTests.h"
 #include "ModelTests.h"
 #include "ObserverTests.h"
+#include "Observers/EventDrivenObserverTests.h"
 #include "PEventTests.h"
 #include "ParticleFilterTests.h"
 #include "PredictorTests.h"
@@ -255,6 +256,13 @@ int main() {
 
     context.AddTest("construct", MessageWatcherTests::constructor, "MessageWatcher");
     context.AddTest("allPresent", MessageWatcherTests::allPresent, "MessageWatcher");
+    context.AddTest("reset", MessageWatcherTests::reset, "MessageWatcher");
+    context.AddTest("getValues", MessageWatcherTests::getValues, "MessageWatcher");
+
+    context.AddTest("construct", EventDrivenObserverTests::constructor, "EventDrivenObserver");
+    context.AddTest("processMessage",
+                    EventDrivenObserverTests::processMessage,
+                    "EventDrivenObserver");
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");

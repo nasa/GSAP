@@ -2,12 +2,8 @@
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 
-namespace MessageWatcherTests {
+namespace EventDrivenObserverTests {
     void constructor();
 
-    void allPresent();
-
-    void reset();
-
-    void getValues();
+    void processMessage();
 }
