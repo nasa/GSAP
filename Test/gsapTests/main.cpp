@@ -20,6 +20,7 @@
 #include "PEventTests.h"
 #include "ParticleFilterTests.h"
 #include "PredictorTests.h"
+#include "Predictors/EventDrivenPredictorTests.h"
 #include "ProgManagerTests.h"
 #include "StatisticalToolsTests.h"
 #include "TCPSocketTests.h"
@@ -263,6 +264,11 @@ int main() {
     context.AddTest("processMessage",
                     EventDrivenObserverTests::processMessage,
                     "EventDrivenObserver");
+
+    context.AddTest("construct", EventDrivenPredictorTests::constructor, "EventDrivenPredictor");
+    context.AddTest("processMessage",
+                    EventDrivenPredictorTests::processMessage,
+                    "EventDrivenPredictor");
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");
