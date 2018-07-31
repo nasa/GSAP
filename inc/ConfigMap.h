@@ -8,6 +8,7 @@
  *
  *   @author    Chris Teubert <christopher.a.teubert@nasa.gov>
  *   @author    Jason Watkins <jason-watkins@outlook.com>
+ *   @author    Julian Vu     <julianvu@outlook.com>
  *   @version   1.1.1
  *   @date      2016-06-22
  *
@@ -24,11 +25,26 @@
 #include <vector>
 
 namespace PCOE {
-    class ConfigMap : public std::unordered_map<std::string, std::vector<std::string>> {
+    class ConfigMap {
     public:
         ConfigMap() = default;
         ConfigMap(const std::string& filename);
         ConfigMap(const int argc, char* argv[]);
+
+        /**
+         * @brief       Gets string vector at given key
+         * @param       key     The key from which the vector is retrieved
+         * @return      The string vector corresponding to the given key
+         */
+        const std::vector<std::string>& getVector(const std::string key) const;
+
+        std::vector<std::string>& getVector(const std::string key);
+
+        double getDouble(const std::string key) const;
+
+        std::uint64_t getU64(const std::string key) const;
+
+        int getI32(const std::string key) const;
 
         /** @function   loadFile
          *  @brief      Load the contents of a file into the configuration map
@@ -61,8 +77,8 @@ namespace PCOE {
          *  @param key A string that may be used as a key in the map.
          *  @return    true if the key exists; othwerwise, false.
          **/
-        inline bool hasKey(const std::string &key) const {
-            return find(key) != end();
+        inline bool hasKey(const std::string& key) const {
+            return map.find(key) != map.end();
         }
 
         /**
@@ -82,6 +98,10 @@ namespace PCOE {
          */
         static void addSearchPath(const std::string& path);
 
+        unsigned long size();
+
+        void insert(std::pair<std::string, std::vector<std::string>> pair);
+
     private:
         /** @function   parseLine
          *  @brief      Parse a line, and add the result to the configmap
@@ -90,6 +110,8 @@ namespace PCOE {
         void parseLine(const std::string& line);
 
         static std::vector<std::string> searchPaths;
+
+        std::unordered_map<std::string, std::vector<std::string>> map;
     };
 }
 
