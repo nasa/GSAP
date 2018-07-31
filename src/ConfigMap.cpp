@@ -1,18 +1,6 @@
-/**  Configuration Map - Body
- *   @class     ConfigMap ConfigMap.h
- *
- *   @brief     Configuration Map- Map for loading accessing, and parsing configuration parameters
- * from a key:value1, value2, ... style file
- *
- *   @author    Chris Teubert <christopher.a.teubert@nasa.gov>
- *   @author    Jason Watkins <jason-watkins@outlook.com>
- *   @version   1.1.1
- *   @date      2016-06-22
- *
- *   @copyright Copyright (c) 2013-2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
+// @copyright Copyright (c) 2013-2018 United States Government as represented by
+// the Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 
 #include <algorithm>
 #include <cctype>
@@ -20,17 +8,15 @@
 #include <functional>
 #include <iostream>
 #include <locale>
-#include <string>
 #include <sys/stat.h>
-#include <sys/types.h>
-#include <utility> // For Pair
 #include <vector>
+#include <climits>
 
 #include "ConfigMap.h"
 
 namespace PCOE {
     std::vector<std::string> ConfigMap::searchPaths;
-    
+
     const std::string IMPORT_KEY = "importConfig";
 
     void trim(std::string& str) {
@@ -66,8 +52,8 @@ namespace PCOE {
         else {
             // Whitespace on both ends
             diff_type frontDiff = static_cast<diff_type>(front);
-            diff_type backDiff  = static_cast<diff_type>(back);
-            str                 = std::string(str.begin() + frontDiff, str.begin() + backDiff);
+            diff_type backDiff = static_cast<diff_type>(back);
+            str = std::string(str.begin() + frontDiff, str.begin() + backDiff);
         }
     }
 
@@ -77,6 +63,36 @@ namespace PCOE {
 
     ConfigMap::ConfigMap(const int argc, char* argv[]) {
         loadArguments(argc, argv);
+    }
+
+    const std::vector<std::string>& ConfigMap::getVector(const std::string key) const {
+        return map.at(key);
+    }
+
+    std::vector<std::string> &ConfigMap::getVector(const std::string key) {
+        return map[key];
+    }
+
+    double ConfigMap::getDouble(const std::string key) const {
+        if (map.at(key).size() > 1) {
+            throw std::invalid_argument("Size of vector at " + key + " is not 1.");
+        }
+        return std::stod(map.at(key)[0]);
+    }
+
+    std::uint64_t ConfigMap::getU64(const std::string key) const {
+        static_assert(sizeof(unsigned long long) == 64 / CHAR_BIT, "Unsigned long long not 64 bits");
+        if (map.at(key).size() > 1) {
+            throw std::invalid_argument("Size of vector at " + key + " is not 1.");
+        }
+        return std::stoull(map.at(key)[0]);
+    }
+
+    int ConfigMap::getI32(const std::string key) const {
+        if (map.at(key).size() > 1) {
+            throw std::invalid_argument("Size of vector at " + key + " is not 1.");
+        }
+        return std::stoi(map.at(key)[0]);
     }
 
     void ConfigMap::loadFile(const std::string& filename) {
@@ -126,12 +142,12 @@ namespace PCOE {
             }
 
             std::string value = argv[i];
-            (*this)[key].push_back(value);
+            (*this).map[key].push_back(value);
         }
     }
 
     void ConfigMap::set(const std::string& key, const std::string& value) {
-        (*this)[key] = {value};
+        (*this).map[key] = {value};
     }
 
     bool ConfigMap::hasKeys(std::initializer_list<std::string> list) const {
@@ -175,7 +191,7 @@ namespace PCOE {
             }
         }
         else {
-            insert(std::move(kv));
+            map.insert(std::move(kv));
         }
     }
 
@@ -194,5 +210,13 @@ namespace PCOE {
         else {
             searchPaths.push_back(path);
         }
+    }
+
+    unsigned long ConfigMap::size() {
+        return map.size();
+    }
+
+    void ConfigMap::insert(std::pair<std::string, std::vector<std::string>> pair) {
+        map.insert(pair);
     }
 }
