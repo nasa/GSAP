@@ -48,7 +48,7 @@ namespace PCOE {
     ConstLoadEstimator::ConstLoadEstimator(const GSAPConfigMap& configMap) {
         log.WriteLine(LOG_INFO, DEBUG_TAG, "Configuring");
         configMap.checkRequiredParams({LOADING_KEY});
-        const std::vector<std::string>& profileStrs = configMap.at(LOADING_KEY);
+        const std::vector<std::string>& profileStrs = configMap.getVector(LOADING_KEY);
         for (auto&& profileStr : profileStrs) {
             double profileItem = std::stod(profileStr);
             raw_profile.push_back(profileItem);
@@ -56,7 +56,7 @@ namespace PCOE {
 
         if (configMap.hasKey(STDDEV_KEY)) {
             log.WriteLine(LOG_INFO, DEBUG_TAG, "Inferred uncertainty type: gaussian");
-            const std::vector<std::string>& stdStrs = configMap.at(STDDEV_KEY);
+            const std::vector<std::string>& stdStrs = configMap.getVector(STDDEV_KEY);
             for (auto&& stdStr : stdStrs) {
                 stddev.push_back(std::stod(stdStr));
             }

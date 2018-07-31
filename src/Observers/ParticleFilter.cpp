@@ -64,7 +64,7 @@ namespace PCOE {
         config.checkRequiredParams({N_KEY, PN_KEY, SN_KEY});
 
         // Set N
-        particleCount = static_cast<std::size_t>(std::stoull(config.at(N_KEY)[0]));
+        particleCount = static_cast<std::size_t>(config.getU64(N_KEY));
         setMinEffective(particleCount / 3);
 
         particles.X.resize(model->getStateSize(), particleCount);
@@ -73,7 +73,7 @@ namespace PCOE {
 
         // Set process noise variance
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Setting process noise variance vector");
-        std::vector<std::string> PNValues = config.at(PN_KEY);
+        std::vector<std::string> PNValues = config.getVector(PN_KEY);
         std::size_t dimension = PNValues.size();
         processNoiseVariance.resize(dimension);
         for (size_t i = 0; i < dimension; i++) {
@@ -82,7 +82,7 @@ namespace PCOE {
 
         // Set sensor noise variance
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Setting sensor noise variance vector");
-        std::vector<std::string> SNValues = config.at(SN_KEY);
+        std::vector<std::string> SNValues = config.getVector(SN_KEY);
         dimension = SNValues.size();
         sensorNoiseVariance.resize(dimension);
         for (size_t i = 0; i < dimension; i++) {
@@ -92,7 +92,7 @@ namespace PCOE {
 
         // Set minNEff (optional)
         if (config.hasKey(NEFF_KEY)) {
-            setMinEffective(static_cast<std::size_t>(std::stod(config.at(NEFF_KEY)[0])));
+            setMinEffective(static_cast<std::size_t>(config.getDouble(NEFF_KEY)));
         }
 
         Ensure(processNoiseVariance.size() == model->getStateSize(),

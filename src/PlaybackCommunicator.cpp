@@ -58,7 +58,7 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
         // Read Configuration Map
         if (config.hasKey(FILE_KEY)) {
-            playbackFile = config.at(FILE_KEY)[0];
+            playbackFile = config.getVector(FILE_KEY)[0];
             log.FormatLine(LOG_DEBUG,
                            MODULE_NAME,
                            "Configuring- Playback File Name %s",
@@ -68,30 +68,30 @@ namespace PCOE {
         if (config.hasKey(DELIM_KEY)) {
             log.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting delimiter");
 
-            if (config.at(DELIM_KEY).size() == 0) {
+            if (config.getVector(DELIM_KEY).size() == 0) {
                 // Comma
                 delim = ',';
             }
-            else if (config.at(DELIM_KEY)[0].compare("\\t") == 0) {
+            else if (config.getVector(DELIM_KEY)[0].compare("\\t") == 0) {
                 delim = '\t';
             }
             else {
-                delim = config.at(DELIM_KEY)[0].c_str()[0];
+                delim = config.getVector(DELIM_KEY)[0].c_str()[0];
             }
         }
 
         if (config.hasKey(TIMESTAMP_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Timestamp key received");
 
-            timestampFromFile = ((config.at(TIMESTAMP_KEY)[0].compare("true") == 0) ||
-                                 (config.at(TIMESTAMP_KEY)[0].compare("1") == 0));
+            timestampFromFile = ((config.getVector(TIMESTAMP_KEY)[0].compare("true") == 0) ||
+                                 (config.getVector(TIMESTAMP_KEY)[0].compare("1") == 0));
         }
 
         if (config.hasKey(TIMESTAMP_BASE)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Timestamp add absolute key received");
 
-            timestampAddAbsolute = ((config.at(TIMESTAMP_BASE)[0].compare("true") == 0) ||
-                                    (config.at(TIMESTAMP_BASE)[0].compare("1") == 0));
+            timestampAddAbsolute = ((config.getVector(TIMESTAMP_BASE)[0].compare("true") == 0) ||
+                                    (config.getVector(TIMESTAMP_BASE)[0].compare("1") == 0));
         }
 
         log.FormatLine(LOG_INFO, MODULE_NAME, "Opening playback file %s", playbackFile.c_str());
