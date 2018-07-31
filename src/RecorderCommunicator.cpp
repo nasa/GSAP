@@ -123,7 +123,7 @@ namespace PCOE {
 
         // Read Configuration Map
         if (config.hasKey(FILE_KEY)) {
-            configFile = config.at(FILE_KEY)[0];
+            configFile = config.getVector(FILE_KEY)[0];
             log.FormatLine(LOG_DEBUG,
                            MODULE_NAME,
                            "Configuring recorder file to %s",
@@ -133,7 +133,7 @@ namespace PCOE {
         if (config.hasKey(PROB_OCCUR_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Probability of occurence key present");
 
-            if (config.at(PROB_OCCUR_KEY)[0] == "true" || config.at(PROB_OCCUR_KEY)[0] == "1") {
+            if (config.getVector(PROB_OCCUR_KEY)[0] == "true" || config.getVector(PROB_OCCUR_KEY)[0] == "1") {
                 writeProbOccur = true;
                 log.WriteLine(LOG_DEBUG,
                               MODULE_NAME,
@@ -150,7 +150,7 @@ namespace PCOE {
         if (config.hasKey(OCCUR_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Occurance Matrix key present");
 
-            if (config.at(OCCUR_KEY)[0] == "true" || config.at(OCCUR_KEY)[0] == "1") {
+            if (config.getVector(OCCUR_KEY)[0] == "true" || config.getVector(OCCUR_KEY)[0] == "1") {
                 writeOccur = true;
                 log.WriteLine(LOG_DEBUG, MODULE_NAME, "Configuring to write occurence matrix");
             }
@@ -163,7 +163,7 @@ namespace PCOE {
         if (config.hasKey(PREDICT_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Prediction key present");
 
-            if (config.at(PREDICT_KEY)[0] == "true" || config.at(PREDICT_KEY)[0] == "1") {
+            if (config.getVector(PREDICT_KEY)[0] == "true" || config.getVector(PREDICT_KEY)[0] == "1") {
                 writePredictions = true;
                 log.WriteLine(LOG_DEBUG, MODULE_NAME, "Configuring to write predictions");
             }
@@ -176,7 +176,7 @@ namespace PCOE {
         if (config.hasKey(SYS_TRAJ_KEY)) {
             log.WriteLine(LOG_TRACE, MODULE_NAME, "System Trajectory key present");
 
-            if (config.at(SYS_TRAJ_KEY)[0] == "true" || config.at(SYS_TRAJ_KEY)[0] == "1") {
+            if (config.getVector(SYS_TRAJ_KEY)[0] == "true" || config.getVector(SYS_TRAJ_KEY)[0] == "1") {
                 writeSysTraj = true;
                 log.WriteLine(LOG_DEBUG, MODULE_NAME, "Configuring to write system trajectories");
             }

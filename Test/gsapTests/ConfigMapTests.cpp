@@ -29,12 +29,12 @@ void configMapLoadArgs() {
 
 void configMapUse() {
     ConfigMap theMap;
-    theMap["test"] = std::vector<std::string>({"test"});
-    Assert::AreEqual(1, theMap["test"].size());
-    Assert::AreEqual(0, theMap["test"][0].compare("test"));
+    theMap.getVector("test") = std::vector<std::string>({"test"});
+    Assert::AreEqual(1, theMap.getVector("test").size());
+    Assert::AreEqual(0, theMap.getVector("test")[0].compare("test"));
 
     theMap.set("test2", "blah");
-    Assert::AreEqual(0, theMap["test2"][0].compare("blah"));
+    Assert::AreEqual(0, theMap.getVector("test2")[0].compare("blah"));
 
     Assert::IsTrue(theMap.hasKeys({"test"}));
     Assert::IsTrue(theMap.hasKeys({"test2"}));
@@ -56,7 +56,7 @@ void configMapLoad() {
     ConfigMap theMap;
     theMap.addSearchPath("../Test/gsapTests");
     theMap = ConfigMap("Test.cfg");
-    Assert::AreNotEqual(0, theMap["test"][0].compare("modelBasedPrognoser"));
+    Assert::AreNotEqual(0, theMap.getVector("test")[0].compare("modelBasedPrognoser"));
 }
 
 void configMapLoadNonexistent() {

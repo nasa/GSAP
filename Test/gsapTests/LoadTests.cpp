@@ -33,7 +33,7 @@ namespace PCOE {
         for (auto&& testElement : test) {
             testStr.push_back(std::to_string(testElement));
         }
-        configMap[ConstLoadEstimator::LOADING_KEY] = testStr;
+        configMap.getVector(ConstLoadEstimator::LOADING_KEY) = testStr;
 
         ConstLoadEstimator c = ConstLoadEstimator(configMap);
 
@@ -51,7 +51,7 @@ namespace PCOE {
 
         Assert::AreEqual(test, test2, "Sampling not correct");
 
-        configMap[ConstLoadEstimator::LOADING_KEY] = {};
+        configMap.getVector(ConstLoadEstimator::LOADING_KEY) = {};
 
         ConstLoadEstimator c2 = ConstLoadEstimator(configMap);
 
@@ -63,7 +63,7 @@ namespace PCOE {
         GSAPConfigMap configMap;
 
         LoadEstimate test = {1, 2, 3};
-        LoadEstimate std  = {0.1, 0.1, 0.1};
+        LoadEstimate std = {0.1, 0.1, 0.1};
         std::vector<std::string> testStr, stdStr;
         for (auto&& testElement : test) {
             testStr.push_back(std::to_string(testElement));
@@ -71,9 +71,9 @@ namespace PCOE {
         for (auto&& stdElement : std) {
             stdStr.push_back(std::to_string(stdElement));
         }
-        configMap[ConstLoadEstimator::LOADING_KEY] = testStr;
-        configMap[ConstLoadEstimator::STDDEV_KEY]  = stdStr;
-        ConstLoadEstimator c                       = ConstLoadEstimator(configMap);
+        configMap.getVector(ConstLoadEstimator::LOADING_KEY) = testStr;
+        configMap.getVector(ConstLoadEstimator::STDDEV_KEY) = stdStr;
+        ConstLoadEstimator c = ConstLoadEstimator(configMap);
         Assert::AreEqual(c.getUncertaintyMode(), ConstLoadEstimator::GAUSSIAN);
 
         //      TODO(CT): test uncertainty sampling in some meaningful way
@@ -86,11 +86,11 @@ namespace PCOE {
         Assert::IsTrue(c2.usesHistoricalLoading());
         Assert::IsFalse(c2.isSampleBased());
 
-        configMap[MovingAverageLoadEstimator::WINDOW_SIZE_KEY] =
+        configMap.getVector(MovingAverageLoadEstimator::WINDOW_SIZE_KEY) =
             std::vector<std::string>({"2"}); // Set window size key;
         MovingAverageLoadEstimator c = MovingAverageLoadEstimator(configMap);
 
-        configMap[MovingAverageLoadEstimator::WINDOW_SIZE_KEY] =
+        configMap.getVector(MovingAverageLoadEstimator::WINDOW_SIZE_KEY) =
             std::vector<std::string>({"-1"}); // Set window size key;
         MovingAverageLoadEstimator c3 = MovingAverageLoadEstimator(configMap);
 

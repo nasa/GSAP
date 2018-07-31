@@ -99,7 +99,7 @@ namespace PCOE {
     void ProgManager::addPrognoser(const std::string& path) {
         PrognoserFactory& factory = PrognoserFactory::instance();
         GSAPConfigMap config(path);
-        auto& name = config.at("type")[0];
+        auto& name = config.getVector("type")[0];
         prognosers.push_back(factory.Create(name, config));
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Adding new prognoser");
     }
@@ -119,7 +119,7 @@ namespace PCOE {
         /// SETUP PROGNOSERS
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting Up Prognosers");
         if (configValues.hasKey("Prognosers")) {
-            for (auto& itStrs : configValues.at("Prognosers")) {
+            for (auto& itStrs : configValues.getVector("Prognosers")) {
                 addPrognoser(itStrs);
                 // @todo(CT): Add check that component was made correctly
             }
