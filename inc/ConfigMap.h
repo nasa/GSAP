@@ -129,7 +129,7 @@ namespace PCOE {
      * @param map   ConfigMap from which to check against list
      * @param list  List of keys to check
      */
-    void requireKeys(ConfigMap map, std::initializer_list<std::string> list);
+    void requireKeys(const ConfigMap& map, std::initializer_list<std::string> list);
 }
 
 #endif // PCOE_CONFIGMAP_H
