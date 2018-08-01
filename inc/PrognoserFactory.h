@@ -16,7 +16,7 @@ namespace PCOE {
      * @author Jason Watkins
      * @since 1.0
      **/
-    class PrognoserFactory : public Factory<Prognoser, GSAPConfigMap&>,
+    class PrognoserFactory : public Factory<Prognoser, ConfigMap&>,
                              public Singleton<PrognoserFactory> {
         friend class Singleton<PrognoserFactory>; // Needed for singleton
     private:

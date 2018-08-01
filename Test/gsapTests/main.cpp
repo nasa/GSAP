@@ -41,8 +41,7 @@ int main() {
     context.AddTest("Load Nonexistent", configMapLoadNonexistent, "ConfigMap");
     context.AddTest("Add Bad Search Path", configMapAddBadSearchPath, "Config Map");
     context.AddTest("Trim", configMapTrim, "Config Map");
-    context.AddTest("GSAP Init", gsapConfigMapInit, "Config Map");
-    context.AddTest("GSAP Use", gsapConfigMapUse, "Config Map");
+    context.AddTest("Require Keys", configMapRequireKeys, "Config Map");
 
     // UData Tests
     context.AddTest("construct_default", TestUData::construct_default, "UData");

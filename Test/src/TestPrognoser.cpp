@@ -9,13 +9,13 @@
 #include <string>
 
 #include "TestPrognoser.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 
 using namespace PCOE;
 
 const std::string MODULE_NAME   = "TestPrognoser";
 
-TestPrognoser::TestPrognoser(PCOE::GSAPConfigMap & paramMap):
+TestPrognoser::TestPrognoser(PCOE::ConfigMap & paramMap):
 Prognoser(paramMap) {
     log.WriteLine(LOG_DEBUG, MODULE_NAME, "Creating");
 

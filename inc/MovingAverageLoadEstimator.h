@@ -27,6 +27,7 @@
 #define MovingAverageLoadEstimator_h
 
 #include "LoadEstimator.h"
+#include "ConfigMap.h"
 
 namespace PCOE {
     class MovingAverageLoadEstimator : public LoadEstimator {
@@ -43,7 +44,7 @@ namespace PCOE {
          *
          *  The constructor configures the MovingAverageLoadEstimator
          **/
-        MovingAverageLoadEstimator(const GSAPConfigMap& configMap);
+        MovingAverageLoadEstimator(const ConfigMap& configMap);
 
         /**
          * @brief   Find if the load estimator uses historical loading.

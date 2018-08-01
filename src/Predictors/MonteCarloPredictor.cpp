@@ -24,7 +24,7 @@ namespace PCOE {
 
     MonteCarloPredictor::MonteCarloPredictor(const PrognosticsModel* m,
                                              LoadEstimator* le,
-                                             const GSAPConfigMap& config)
+                                             const ConfigMap& config)
         : Predictor(m, le, config) {
         Expect(m != nullptr, "Model is null");
         Expect(le != nullptr, "Load Estimator is null");
@@ -35,7 +35,7 @@ namespace PCOE {
         // processNoise = list of variance values for process noise, one for each state (zero-mean
         // assumption) event = name of event to predict inputUncertainty = specification of
         // uncertainty associated with inputParameters in model->inputEqn
-        config.checkRequiredParams({NUMSAMPLES_KEY, HORIZON_KEY, PROCESSNOISE_KEY});
+        requireKeys(config, {NUMSAMPLES_KEY, HORIZON_KEY, PROCESSNOISE_KEY});
 
         // Set configuration parameters
         sampleCount = static_cast<unsigned int>(config.getU64(NUMSAMPLES_KEY));

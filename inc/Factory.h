@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <utility>
 
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 
 namespace PCOE {
     /**

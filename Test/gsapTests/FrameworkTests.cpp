@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "FrameworkTests.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "ProgManager.h"
 #include "PrognoserFactory.h"
 #include "Test.h"

@@ -25,7 +25,7 @@
 #include "BatteryModel.h"
 #include "ConstLoadEstimator.h"
 #include "Factory.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "PredictorTests.h"
 #include "Predictors/MonteCarloPredictor.h"
 #include "PrognosticsModelFactory.h"
@@ -43,7 +43,7 @@ void predictorTestInit() {
 
 void testMonteCarloBatteryPredict() {
     // Set up configMap
-    GSAPConfigMap configMap;
+    ConfigMap configMap;
     configMap.set("Predictor.SampleCount", "10");
     configMap.set("Predictor.Horizon", "5000");
     std::vector<std::string> processNoise;
@@ -103,7 +103,7 @@ void testMonteCarloBatteryPredict() {
 // Test error cases with config parameters
 void testMonteCarloBatteryConfig() {
     // Set up configMap
-    GSAPConfigMap configMap;
+    ConfigMap configMap;
     configMap.set("Predictor.SampleCount", "100");
     configMap.set("Predictor.Horizon", "5000");
     std::vector<std::string> processNoise;

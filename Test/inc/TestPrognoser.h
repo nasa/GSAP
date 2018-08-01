@@ -14,12 +14,12 @@
 #include "PrognoserFactory.h"
 
 namespace PCOE {
-    class GSAPConfigMap;
+    class ConfigMap;
 }
 
 class TestPrognoser: public PCOE::Prognoser {
  public:
-    TestPrognoser(PCOE::GSAPConfigMap & paramMap);
+    TestPrognoser(PCOE::ConfigMap & paramMap);
     void step();
     void checkResultValidity();
     void checkInputValidity();

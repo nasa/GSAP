@@ -412,7 +412,7 @@ void testUKFBatteryStep() {
 }
 
 void testUKFBatteryFromConfig() {
-    GSAPConfigMap paramMap;
+    ConfigMap paramMap;
 
     // Observer parameters
     paramMap.set("observer", "UKF");
@@ -474,7 +474,7 @@ void testUKFBatteryFromConfig() {
 }
 
 void testPFBatteryFromConfig() {
-    GSAPConfigMap configMap;
+    ConfigMap configMap;
 
     // Observer parameters
     configMap.set("observer", "ParticleFilter");

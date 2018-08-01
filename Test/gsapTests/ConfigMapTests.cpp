@@ -8,7 +8,6 @@
 //
 
 #include "ConfigMap.h"
-#include "GSAPConfigMap.h"
 #include "Test.h"
 
 #include "ConfigMapTests.h"
@@ -86,31 +85,27 @@ void configMapTrim() {
     theMap = ConfigMap("Test.cfg");
 }
 
-void gsapConfigMapInit() {
-    GSAPConfigMap theMap;
-}
-
-void gsapConfigMapUse() {
-    GSAPConfigMap theMap;
+void configMapRequireKeys() {
+    ConfigMap theMap;
 
     // checkRequiredParams- Dont exist
     try {
-        theMap.checkRequiredParams({"test1", "test2"});
+        requireKeys(theMap, {"test1", "test2"});
         Assert::Fail("Found params that shouldn't exist [0]");
     }
-    catch (std::runtime_error) {
+    catch (std::range_error) {
     }
 
     // checkRequiredParams- Mix exist
     theMap.set("test1", "blah");
     try {
-        theMap.checkRequiredParams({"test1", "test2"});
+        requireKeys(theMap, {"test1", "test2"});
         Assert::Fail("Found params that shouldn't exist [1]");
     }
-    catch (std::runtime_error) {
+    catch (std::range_error) {
     }
 
     // checkRequiredParams- Do exist
     theMap.set("test2", "blah");
-    theMap.checkRequiredParams({"test1", "test2"});
+    requireKeys(theMap, {"test1", "test2"});
 }

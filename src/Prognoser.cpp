@@ -35,7 +35,7 @@
 #include <thread> // For thread sleep
 #include <vector>
 
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "Prognoser.h"
 #include "StringUtils.h"
 
@@ -58,12 +58,12 @@ namespace PCOE {
 
     std::string MODULE_NAME;
 
-    Prognoser::Prognoser(GSAPConfigMap& configParams)
+    Prognoser::Prognoser(ConfigMap& configParams)
         : Thread(),
           loopInterval(DEFAULT_INTERVAL_DELAY),
           saveInterval(DEFAULT_SAVE_INTERVAL),
           saveEnabled(DEFAULT_SAVE_ENABLE) {
-        configParams.checkRequiredParams({NAME_KEY, ID_KEY, TYPE_KEY});
+        requireKeys(configParams, {NAME_KEY, ID_KEY, TYPE_KEY});
 
         // Fill in Defaults
         if (configParams.hasKey(INTERVAL_DELAY_KEY)) {

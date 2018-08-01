@@ -28,7 +28,7 @@ namespace PCOE {
          **/
         MonteCarloPredictor(const PrognosticsModel* m,
                             LoadEstimator* le,
-                            const GSAPConfigMap& config);
+                            const ConfigMap& config);
 
         /**
          * Predict future events and values of system variables
