@@ -19,7 +19,7 @@ namespace PCOE {
      * @author Jason Watkins
      * @since 1.0
      **/
-    class CommunicatorFactory : public Factory<Communicator, GSAPConfigMap&>,
+    class CommunicatorFactory : public Factory<Communicator, ConfigMap&>,
                                 public Singleton<CommunicatorFactory> {
     private:
         friend class Singleton<CommunicatorFactory>;
