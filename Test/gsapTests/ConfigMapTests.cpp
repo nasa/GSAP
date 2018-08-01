@@ -30,14 +30,14 @@ void configMapUse() {
     ConfigMap theMap;
     theMap.setVector("test", std::vector<std::string>({"test"}));
     Assert::AreEqual(1, theMap.getVector("test").size());
-    Assert::AreEqual(0, theMap.getVector("test")[0].compare("test"));
+    Assert::AreEqual(0, theMap.getString("test").compare("test"));
 
     theMap.setString("test2", "blah");
     Assert::AreEqual(0, theMap.getVector("test2")[0].compare("blah"));
 
-    Assert::IsTrue(theMap.hasKeys({"test"}));
-    Assert::IsTrue(theMap.hasKeys({"test2"}));
-    Assert::IsFalse(theMap.hasKeys({"test3"}));
+    Assert::IsTrue(theMap.hasKey("test"));
+    Assert::IsTrue(theMap.hasKey("test2"));
+    Assert::IsFalse(theMap.hasKey("test3"));
 
     // std::string exampleLine("test3:a,b,dslfjs,d");
     // theMap.add(exampleLine);
