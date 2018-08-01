@@ -7,7 +7,7 @@
 #include "ParticleFilterTests.h"
 #include "BatteryModel.h"
 #include "Exceptions.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "Model.h"
 #include "Observers/ParticleFilter.h"
 #include "Tank3.h"
@@ -74,7 +74,7 @@ void ctorWithNonemptyVectors() {
 }
 
 void GSAPConfigMapCtor() {
-    GSAPConfigMap theMap;
+    ConfigMap theMap;
     theMap.set("Observer.ParticleCount", "200");
     theMap.insert(
         std::make_pair("Observer.ProcessNoise",

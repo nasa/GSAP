@@ -163,7 +163,7 @@ private:
 
 class TestPredictor final : public Predictor {
 public:
-    TestPredictor(const PrognosticsModel* m, LoadEstimator* le, const GSAPConfigMap& config)
+    TestPredictor(const PrognosticsModel* m, LoadEstimator* le, const ConfigMap& config)
         : Predictor(m, le, config) {}
 
     Prediction predict(double, const std::vector<UData>& state) override {

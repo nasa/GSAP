@@ -11,7 +11,7 @@
 #include "Observers/Observer.h"
 
 namespace PCOE {
-    class GSAPConfigMap;
+    class ConfigMap;
 
     struct Particles {
         Matrix X; // state matrix, numStates x particleCount
@@ -62,7 +62,7 @@ namespace PCOE {
          * @param config A config from which particle count, process noise, and
          *               sensor noise will be read.
          **/
-        ParticleFilter(const Model* m, const GSAPConfigMap& config);
+        ParticleFilter(const Model* m, const ConfigMap& config);
 
         /**
          * Initializes the particles and sets the initial state estimate.

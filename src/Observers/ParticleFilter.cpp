@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "Observers/ParticleFilter.h"
 #include "UData.h"
 
@@ -58,10 +58,10 @@ namespace PCOE {
         particles.w.resize(particleCount);
     }
 
-    ParticleFilter::ParticleFilter(const Model* m, const GSAPConfigMap& config)
+    ParticleFilter::ParticleFilter(const Model* m, const ConfigMap& config)
         : ParticleFilter(m) {
         Expect(m != nullptr, "Model is null");
-        config.checkRequiredParams({N_KEY, PN_KEY, SN_KEY});
+        requireKeys(config, {N_KEY, PN_KEY, SN_KEY});
 
         // Set N
         particleCount = static_cast<std::size_t>(config.getU64(N_KEY));

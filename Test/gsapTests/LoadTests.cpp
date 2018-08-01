@@ -8,7 +8,7 @@
 
 #include "LoadTests.hpp"
 #include "ConstLoadEstimator.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "LoadEstimatorFactory.h"
 #include "MovingAverageLoadEstimator.h"
 #include "Test.h"
@@ -19,7 +19,7 @@ namespace PCOE {
     void LoadTestInit() {}
 
     void testConstLoad() {
-        GSAPConfigMap configMap;
+        ConfigMap configMap;
 
         try {
             ConstLoadEstimator c = ConstLoadEstimator(configMap);
@@ -60,7 +60,7 @@ namespace PCOE {
     }
 
     void testConstLoadWithUncert() {
-        GSAPConfigMap configMap;
+        ConfigMap configMap;
 
         LoadEstimate test = {1, 2, 3};
         LoadEstimate std = {0.1, 0.1, 0.1};
@@ -80,7 +80,7 @@ namespace PCOE {
     }
 
     void testMovingAverage() {
-        GSAPConfigMap configMap;
+        ConfigMap configMap;
 
         MovingAverageLoadEstimator c2 = MovingAverageLoadEstimator(configMap);
         Assert::IsTrue(c2.usesHistoricalLoading());
@@ -141,7 +141,7 @@ namespace PCOE {
     }
 
     void testFactory() {
-        GSAPConfigMap configMap;
+        ConfigMap configMap;
         LoadEstimate test = {1, 2, 3};
         std::vector<std::string> testStr;
         for (auto&& testElement : test) {

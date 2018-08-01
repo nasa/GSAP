@@ -5,7 +5,7 @@
 #define PCOE_EVENTDRIVENPROGNOSER_H
 #include <memory>
 
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "LoadEstimatorFactory.h"
 #include "Messages/MessageBus.h"
 #include "Observers/EventDrivenObserver.h"
@@ -30,22 +30,22 @@ namespace PCOE {
     class EventDrivenPrognoser {
     public:
         // TODO (JW): Figure out how to make this sane
-        EventDrivenPrognoser(MessageBus& bus, const GSAPConfigMap& config)
+        EventDrivenPrognoser(MessageBus& bus, const ConfigMap& config)
             : bus(bus),
-              model(PrognosticsModelFactory::instance().Create(config.at(MODEL_KEY)[0], config)),
+              model(PrognosticsModelFactory::instance().Create(config.getVector(MODEL_KEY)[0], config)),
               loadEstimator(
-                  LoadEstimatorFactory::instance().Create(config.at(LOAD_EST_KEY)[0], config)),
+                  LoadEstimatorFactory::instance().Create(config.getVector(LOAD_EST_KEY)[0], config)),
               observer(bus,
-                       ObserverFactory::instance().Create(config.at(OBSERVER_KEY)[0],
+                       ObserverFactory::instance().Create(config.getVector(OBSERVER_KEY)[0],
                                                           model.get(),
                                                           config),
-                       config.at(SOURCE_KEY)[0]),
+                       config.getVector(SOURCE_KEY)[0]),
               predictor(bus,
-                        PredictorFactory::instance().Create(config.at(PREDICTOR_KEY)[0],
+                        PredictorFactory::instance().Create(config.getVector(PREDICTOR_KEY)[0],
                                                             model.get(),
                                                             loadEstimator.get(),
                                                             config),
-                        config.at(SOURCE_KEY)[0]) {}
+                        config.getVector(SOURCE_KEY)[0]) {}
 
     private:
         MessageBus& bus;

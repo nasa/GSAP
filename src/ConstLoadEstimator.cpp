@@ -45,9 +45,9 @@ namespace PCOE {
         return estimate;
     }
 
-    ConstLoadEstimator::ConstLoadEstimator(const GSAPConfigMap& configMap) {
+    ConstLoadEstimator::ConstLoadEstimator(const ConfigMap& configMap) {
         log.WriteLine(LOG_INFO, DEBUG_TAG, "Configuring");
-        configMap.checkRequiredParams({LOADING_KEY});
+        requireKeys(configMap, {LOADING_KEY});
         const std::vector<std::string>& profileStrs = configMap.getVector(LOADING_KEY);
         for (auto&& profileStr : profileStrs) {
             double profileItem = std::stod(profileStr);

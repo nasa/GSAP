@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "Exceptions.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "Observers/UnscentedKalmanFilter.h"
 #include "ThreadSafeLog.h"
 #include "UData.h"
@@ -51,10 +51,10 @@ namespace PCOE {
         R = std::move(r);
     }
 
-    // GSAPConfigMap-based Constructor
-    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model* model, const GSAPConfigMap& config)
+    // ConfigMap-based Constructor
+    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model* model, const ConfigMap& config)
         : UnscentedKalmanFilter(model) {
-        config.checkRequiredParams({Q_KEY, R_KEY});
+        requireKeys(config, {Q_KEY, R_KEY});
 
         // Set Q
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Setting Q");

@@ -28,7 +28,7 @@
 #include <string>
 #include <vector>
 
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "Prognoser.h"
 
 namespace PCOE {
@@ -68,7 +68,7 @@ namespace PCOE {
          *
          *  @param config The configuration used by the progManager
          */
-        ProgManager(const GSAPConfigMap& config);
+        ProgManager(const ConfigMap& config);
 
         /** @brief Sets the configuration of the current progManager by
          *         opening the configuration file at the given path.
@@ -81,7 +81,7 @@ namespace PCOE {
          *
          *  @param config The configuration used by the progManager
          */
-        void setConfig(const GSAPConfigMap& config);
+        void setConfig(const ConfigMap& config);
 
         /** @brief Add a new prognoser
          *
@@ -105,7 +105,7 @@ namespace PCOE {
         void stop();
 
     private:
-        GSAPConfigMap configValues;
+        ConfigMap configValues;
         bool configSet;
 
         /// @function   control

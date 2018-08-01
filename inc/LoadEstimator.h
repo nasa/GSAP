@@ -27,7 +27,6 @@
 #include <stdexcept>
 #include <vector>
 
-#include "GSAPConfigMap.h"
 #include "PrognosticsModel.h"
 
 namespace PCOE {

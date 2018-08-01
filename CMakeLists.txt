@@ -63,7 +63,6 @@ set (HEADERS
     inc/Exceptions.h
     inc/Factory.h
     inc/GaussianVariable.h
-    inc/GSAPConfigMap.h
     inc/LoadEstimator.h
     inc/LoadEstimatorFactory.h
     inc/Matrix.h
@@ -123,7 +122,6 @@ set(SRCS
     src/DataPoint.cpp
     src/DataPoints.cpp
     src/GaussianVariable.cpp
-    src/GSAPConfigMap.cpp
     src/LoadEstimator.cpp
     src/Matrix.cpp
     src/Messages/Message.cpp

@@ -41,7 +41,7 @@
 #include "Thread.h" // For Start, Stop, pause, ... etc.
 
 namespace PCOE {
-    class GSAPConfigMap;
+    class ConfigMap;
 
     // This class is needed to bind getValue. Bind requires const copy constructor, which
     // cannot be provided for CommManager (is deleted).
@@ -61,7 +61,7 @@ namespace PCOE {
          *      2. initializes the communications manager and logger, which both the
          *         common and component prognosers use.
          */
-        Prognoser(GSAPConfigMap& config);
+        Prognoser(ConfigMap& config);
 
         /**  @brief       Main Prognostics Thread
          *

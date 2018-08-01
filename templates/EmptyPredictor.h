@@ -26,7 +26,7 @@
 
 #include "Model.h"
 #include "Predictors/Predictor.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 
 namespace PCOE {
     class EmptyPredictor final : public Predictor {
@@ -39,7 +39,7 @@ namespace PCOE {
          * @param le     The load estimator used by the predictor.
          * @param config Configuration map specifying predictor parameters.
          **/
-        explicit EmptyPredictor(const PrognosticsModel* m, LoadEstimator* le, GSAPConfigMap& config);
+        explicit EmptyPredictor(const PrognosticsModel* m, LoadEstimator* le, ConfigMap& config);
 
         /**
          * Predict future events and values of system variables

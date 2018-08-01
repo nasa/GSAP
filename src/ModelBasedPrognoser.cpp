@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "LoadEstimatorFactory.h"
 #include "ModelBasedPrognoser.h"
 #include "Observers/ObserverFactory.h"
@@ -47,10 +47,10 @@ namespace PCOE {
     const std::string DEFAULT_LOAD_EST = "movingAverage";
     const double DEFAULT_STEPSIZE_S = 1; // seconds
 
-    ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
+    ModelBasedPrognoser::ModelBasedPrognoser(ConfigMap& configMap)
         : Prognoser(configMap), initialized(false) {
         // Check for required config parameters
-        configMap.checkRequiredParams(
+        requireKeys(configMap,
             {MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY, NUMSAMPLES_KEY, HORIZON_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
