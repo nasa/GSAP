@@ -54,7 +54,7 @@ namespace PCOE {
         }
 
         if (config.hasKey(MAX_KEY)) {
-            maxRand = config.getU64(MAX_KEY);
+            maxRand = config.getUInt64(MAX_KEY);
             log.FormatLine(LOG_DEBUG, MODULE_NAME,
                 "Configuring- Max Rand set to %ul", maxRand);
         }

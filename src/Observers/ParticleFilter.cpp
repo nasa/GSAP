@@ -64,7 +64,7 @@ namespace PCOE {
         requireKeys(config, {N_KEY, PN_KEY, SN_KEY});
 
         // Set N
-        particleCount = static_cast<std::size_t>(config.getU64(N_KEY));
+        particleCount = static_cast<std::size_t>(config.getUInt64(N_KEY));
         setMinEffective(particleCount / 3);
 
         particles.X.resize(model->getStateSize(), particleCount);

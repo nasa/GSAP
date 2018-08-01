@@ -75,43 +75,43 @@ namespace PCOE {
 
     double ConfigMap::getDouble(const std::string& key) const {
         if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Size of vector at " + key + " is not 1.");
+            throw std::domain_error("Cannot get " + key + " as double since " + key + " maps to a vector.");
         }
         return std::stod(map.at(key)[0]);
     }
 
     void ConfigMap::setDouble(const std::string &key, const double &value) {
         if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Size of vector at " + key + " is not 1.");
+            throw std::domain_error("Cannot set " + key + " to double since " + key + " maps to a vector.");
         }
         map.at(key)[0] = value;
     }
 
-    std::uint64_t ConfigMap::getU64(const std::string& key) const {
+    std::uint64_t ConfigMap::getUInt64(const std::string &key) const {
         static_assert(sizeof(unsigned long long) == 64 / CHAR_BIT, "Unsigned long long not 64 bits");
         if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Size of vector at " + key + " is not 1.");
+            throw std::domain_error("Cannot get " + key + " as scalar since " + key + " maps to a vector.");
         }
         return std::stoull(map.at(key)[0]);
     }
 
-    void ConfigMap::setU64(const std::string &key, const uint64_t &value) {
+    void ConfigMap::setUInt64(const std::string &key, const uint64_t &value) {
         if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Size of vector at " + key + " is not 1.");
+            throw std::invalid_argument("Cannot set " + key + " to scalar since " + key + " maps to a vector.");
         }
         map.at(key)[0] = value;
     }
 
-    int ConfigMap::getI32(const std::string& key) const {
+    int ConfigMap::getInt32(const std::string &key) const {
         if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Size of vector at " + key + " is not 1.");
+            throw std::invalid_argument("Cannot get " + key + " as scalar since " + key + " maps to a vector.");
         }
         return std::stoi(map.at(key)[0]);
     }
 
-    void ConfigMap::setI32(const std::string &key, const int &value) {
+    void ConfigMap::setInt32(const std::string &key, const int &value) {
         if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Size of vector at " + key + " is not 1.");
+            throw std::invalid_argument("Cannot set " + key + " to scalar since " + key + " maps to a vector.");
         }
         map[key][0] = value;
     }
@@ -169,7 +169,7 @@ namespace PCOE {
 
     std::string ConfigMap::getString(const std::string& key) const {
         if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Size of vector at " + key + " is not 1.");
+            throw std::invalid_argument("Cannot get " + key + " as string since " + key + " maps to a vector.");
         }
         return map.at(key)[0];
     }

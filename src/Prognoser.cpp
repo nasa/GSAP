@@ -68,12 +68,12 @@ namespace PCOE {
         // Fill in Defaults
         if (configParams.hasKey(INTERVAL_DELAY_KEY)) {
             loopInterval = static_cast<unsigned int>(
-                configParams.getI32(INTERVAL_DELAY_KEY));
+                    configParams.getInt32(INTERVAL_DELAY_KEY));
         }
 
         if (configParams.hasKey(SAVE_INTERVAL_KEY)) {
             saveInterval = static_cast<unsigned int>(
-                configParams.getI32(SAVE_INTERVAL_KEY));
+                    configParams.getInt32(SAVE_INTERVAL_KEY));
         }
 
         if (configParams.hasKey(SAVE_ENABLE_KEY)) {

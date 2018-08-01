@@ -96,8 +96,8 @@ namespace PCOE {
 
         // Set configuration parameters
         unsigned int numSamples =
-            static_cast<unsigned int>(configMap.getU64(NUMSAMPLES_KEY));
-        unsigned int horizon = static_cast<unsigned int>(configMap.getU64(HORIZON_KEY));
+            static_cast<unsigned int>(configMap.getUInt64(NUMSAMPLES_KEY));
+        unsigned int horizon = static_cast<unsigned int>(configMap.getUInt64(HORIZON_KEY));
 
         // @todo: Refactor for event-driven architecture
         //        // Create progdata
