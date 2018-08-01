@@ -14,25 +14,6 @@ using namespace PCOE::Test;
 namespace EventDrivenPredictorTests {
     static const auto PUBLISH_DELAY = std::chrono::milliseconds(5);
 
-    class PredictorListener final : public IMessageProcessor {
-    public:
-        PredictorListener(MessageBus& bus, std::string src) : source(std::move(src)) {
-            bus.subscribe(this, source, MessageId::BatteryEod);
-        }
-
-        void processMessage(const std::shared_ptr<Message>& message) override {
-            ++count;
-        }
-
-        inline std::size_t getCount() const {
-            return count;
-        }
-
-    private:
-        std::string source;
-        std::size_t count = 0;
-    };
-
     void constructor() {
         MessageBus bus;
         TestPrognosticsModel tpm;
@@ -52,7 +33,7 @@ namespace EventDrivenPredictorTests {
         TestLoadEstimator tle;
         const std::string src = "test";
 
-        PredictorListener listener(bus, src);
+        MessageCounter listener(bus, src, MessageId::BatteryEod);
         EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(&tpm)), src);
         EventDrivenPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
