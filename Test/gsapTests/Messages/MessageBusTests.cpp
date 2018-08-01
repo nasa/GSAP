@@ -1,6 +1,7 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
+#include <thread>
 #include <utility>
 
 #include "Messages/IMessageProcessor.h"
@@ -32,6 +33,8 @@ public:
 };
 
 namespace MessageBusTests {
+    static const auto PUBLISH_DELAY = std::chrono::milliseconds(5);
+
     void constructor() {
         MessageBus bus; // Default construct without exception
     }
@@ -51,6 +54,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
+        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
         Assert::AreEqual(2, consumer.msgCount, "Consumer got the wrong number of messages");
     }
 
@@ -63,6 +67,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
+        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
         Assert::AreEqual(1, consumer.msgCount, "Consumer got the wrong number of messages");
     }
 
@@ -76,6 +81,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
+        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
         Assert::AreEqual(2, consumer.msgCount, "Consumer got the wrong number of messages");
     }
 
@@ -88,6 +94,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
+        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
         Assert::AreEqual(2, consumer.msgCount, "Consumer got the wrong number of messages");
 
         bus.unsubscribe(&consumer);
@@ -95,6 +102,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
+        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
         Assert::AreEqual(2, consumer.msgCount, "Consumer got the wrong number of messages");
     }
 
@@ -108,6 +116,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
+        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
         Assert::AreEqual(3, consumer.msgCount, "Consumer got the wrong number of messages");
 
         bus.unsubscribe(&consumer, "test");
@@ -115,6 +124,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
+        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
         Assert::AreEqual(4, consumer.msgCount, "Consumer got the wrong number of messages");
     }
 }

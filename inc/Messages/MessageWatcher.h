@@ -6,12 +6,16 @@
 #include <map>
 
 #include "Contracts.h"
+#include "Messages/DoubleMessage.h"
 #include "Messages/MessageBus.h"
+#include "Messages/TemplateMessage.h"
 
 namespace PCOE {
     /**
      * Subscribes to a list of messages and tracks whether at least one of each
-     * message has been received since the last reset.
+     * message has been received. Each time a full set of messages is received,
+     * The values are published to the message bus with a user-specified
+     * message id.
      *
      * @remarks The watcher currently assumes that all watched messages are
      *          @{code DoubleMessage}s.
@@ -29,20 +33,26 @@ namespace PCOE {
          * @param  messageBus The message bus on which to subscribe.
          * @param  sourceName The source for which to subscribe.
          * @param  messages   The ids of the messages for which to subscribe
+         * @param  pubId      The MessageID used when publishing the watched
+         *                    data to the bus.
          * @param  container  The container used to hold values. This container
          *                    must accept indexing up to the length of @{param
          *                    messages}.
          **/
         MessageWatcher(MessageBus& messageBus,
-                       const std::string& sourceName,
+                       std::string sourceName,
                        const std::vector<MessageId> messages,
+                       MessageId pubId,
                        TContainer container)
-            : messageBus(messageBus), values(std::move(container)) {
+            : messageBus(messageBus),
+              source(std::move(sourceName)),
+              pubId(pubId),
+              values(std::move(container)) {
             Expect(messages.size() == values.size(), "Mismatched container sizes");
             for (std::size_t i = 0; i < messages.size(); ++i) {
                 present.push_back(false);
                 msgIndices.insert(std::make_pair(messages[i], i));
-                messageBus.subscribe(this, sourceName, messages[i]);
+                messageBus.subscribe(this, source, messages[i]);
             }
             Ensure(present.size() == values.size(), "Mismatched present and value sizes");
         }
@@ -51,6 +61,7 @@ namespace PCOE {
          * Unsubscribes the @{code MessageWatcher} from all messages.
          **/
         ~MessageWatcher() {
+            lock_guard guard(m);
             messageBus.unsubscribe(this);
         }
 
@@ -59,6 +70,7 @@ namespace PCOE {
          * it present.
          **/
         void processMessage(const std::shared_ptr<Message>& message) override {
+            lock_guard guard(m);
             const DoubleMessage* dmsg = dynamic_cast<DoubleMessage*>(message.get());
             Expect(dmsg != nullptr, "Unexpected message type");
 
@@ -68,8 +80,15 @@ namespace PCOE {
                 present[i] = true;
                 allPresentCached = false;
             }
+
+            if (allPresent()) {
+                auto msg = new TemplateMessage<TContainer>(pubId, source, values);
+                messageBus.publish(std::shared_ptr<Message>(msg));
+                reset();
+            }
         }
 
+    private:
         /**
          * Marks all watched messages as not present.
          **/
@@ -77,13 +96,6 @@ namespace PCOE {
             present.clear();
             present.resize(values.size());
             allPresentCached = false;
-        }
-
-        /**
-         * Gets the value container held by the watcher.
-         **/
-        inline const TContainer& getValues() const {
-            return values;
         }
 
         /**
@@ -108,12 +120,18 @@ namespace PCOE {
         }
 
     private:
+        using mutex = std::mutex;
+        using lock_guard = std::lock_guard<mutex>;
+
         MessageBus& messageBus;
+        std::string source;
+        MessageId pubId;
         std::map<MessageId, std::size_t> msgIndices;
         TContainer values;
         std::vector<bool> present;
         mutable bool allPresentCached = false;
         mutable bool allPresentValue = false;
+        mutable mutex m;
     };
 }
 #endif

@@ -2,6 +2,8 @@
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #include <algorithm>
+#include <future>
+#include <vector>
 
 #include "Messages/MessageBus.h"
 
@@ -34,7 +36,12 @@ namespace PCOE {
                   vec.end());
     }
 
+    bool future_ready(std::future<void>& f) {
+        return f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+    }
+
     void MessageBus::publish(std::shared_ptr<Message> message) const {
+        static std::vector<std::future<void>> futures;
         lock_guard guard(m);
         auto srcSubs = subscribers.find(message->getSource());
         if (srcSubs == subscribers.cend()) {
@@ -43,9 +50,14 @@ namespace PCOE {
 
         for (auto it : (*srcSubs).second) {
             if (it.first == MessageId::All || it.first == message->getMessageId()) {
-                // TODO (JW): Process messages asynchronously
-                it.second->processMessage(message);
+                auto f = std::async(std::launch::async,
+                                    &IMessageProcessor::processMessage,
+                                    it.second,
+                                    message);
+                futures.push_back(std::move(f));
             }
         }
+
+        futures.erase(std::remove_if(futures.begin(), futures.end(), future_ready), futures.end());
     }
 }

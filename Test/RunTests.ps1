@@ -1,14 +1,13 @@
 # Expect this script to be in the test subdirectory, moving up to cpp will make life easier
 Push-Location "$PSScriptRoot/..";
 
-# Delete bin to make sure we get a clean build, and make sure the build Directory exists
-if (Test-Path bin) {
-    Remove-Item -Recurse -Force bin;
-}
 if (!(Test-Path build)) {
     New-Item build -ItemType Directory;
 }
-New-Item bin/testresults -ItemType Directory -Force;
+if (!(Test-Path bin)) {
+    New-Item bin -ItemType Directory;
+    New-Item bin/testresults -ItemType Directory -Force;
+}
 
 Push-Location build;
 Write-Host "Running CMake." -ForegroundColor Yellow;

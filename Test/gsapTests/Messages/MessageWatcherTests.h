@@ -5,9 +5,7 @@
 namespace MessageWatcherTests {
     void constructor();
 
-    void allPresent();
+    void publish();
 
-    void reset();
-
-    void getValues();
+    void messageCount();
 }

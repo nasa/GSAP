@@ -6,11 +6,9 @@
 #include <memory>
 #include <unordered_map>
 
-#include "Messages/DoubleMessage.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
 #include "Messages/MessageWatcher.h"
-#include "Messages/UDataVecMessage.h"
 #include "Observers/Observer.h"
 
 namespace PCOE {
@@ -63,6 +61,8 @@ namespace PCOE {
         MessageWatcher<Model::input_type> inputWatcher;
         MessageWatcher<Model::output_type> outputWatcher;
         double latestTimestamp;
+        std::shared_ptr<Message> inputMsg;
+        std::shared_ptr<Message> outputMsg;
     };
 }
 

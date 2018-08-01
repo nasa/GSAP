@@ -2,10 +2,43 @@
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #include "LoadEstimator.h"
+#include "Messages/IMessageProcessor.h"
+#include "Messages/MessageBus.h"
 #include "Model.h"
 #include "Observers/Observer.h"
 #include "Predictors/Predictor.h"
 #include "PrognosticsModel.h"
+
+class MessageCounter final : public IMessageProcessor {
+public:
+    MessageCounter(MessageBus& bus, std::string src, MessageId msgId = MessageId::All)
+        : bus(bus), source(std::move(src)) {
+        bus.subscribe(this, source, msgId);
+    }
+
+    ~MessageCounter() {
+        bus.unsubscribe(this);
+    }
+
+    void processMessage(const std::shared_ptr<Message>& message) override {
+        lastMessage = message;
+        ++count;
+    }
+
+    inline std::size_t getCount() const {
+        return count;
+    }
+
+    inline const std::shared_ptr<Message>& getLastMessage() {
+        return lastMessage;
+    }
+
+private:
+    MessageBus& bus;
+    std::string source;
+    std::size_t count = 0;
+    std::shared_ptr<Message> lastMessage;
+};
 
 class TestModel final : public Model {
 public:
@@ -60,30 +93,30 @@ public:
         return state_type(u.vec());
     }
 
-    bool thresholdEqn(const double t, const state_type& x, const input_type& u) const override {
+    bool thresholdEqn(const double, const state_type& x, const input_type&) const override {
         return x[0] != 0.0;
     }
 
-    event_state_type eventStateEqn(const state_type& x) const override {
+    event_state_type eventStateEqn(const state_type&) const override {
         return 0;
     }
 
-    input_type inputEqn(const double t,
-                        const std::vector<double>& params,
-                        const std::vector<double>& loadEstimate) const override {
+    input_type inputEqn(const double,
+                        const std::vector<double>&,
+                        const std::vector<double>&) const override {
         return getInputVector();
     }
 
-    predicted_output_type predictedOutputEqn(const double t,
-                                             const state_type& x,
-                                             const input_type& u,
-                                             const output_type& z) const override {
+    predicted_output_type predictedOutputEqn(const double,
+                                             const state_type&,
+                                             const input_type&,
+                                             const output_type&) const override {
         return getPredictedOutputVector();
     }
 };
 
 class TestLoadEstimator final : public LoadEstimator {
-    LoadEstimate estimateLoad(const double t, const unsigned int sample) override {
+    LoadEstimate estimateLoad(const double, const unsigned int) override {
         return LoadEstimate(0);
     }
 };
@@ -100,7 +133,7 @@ public:
         initialized = true;
     }
 
-    void step(double t, const Model::input_type& u, const Model::output_type& z) override {
+    void step(double t, const Model::input_type& u, const Model::output_type&) override {
         std::vector<double> zeroNoiseX(model->getStateSize());
         xPrev = model->stateEqn(t, xPrev, u, zeroNoiseX);
     }
@@ -133,7 +166,7 @@ public:
     TestPredictor(const PrognosticsModel* m, LoadEstimator* le, const GSAPConfigMap& config)
         : Predictor(m, le, config) {}
 
-    Prediction predict(double t, const std::vector<UData>& state) override {
+    Prediction predict(double, const std::vector<UData>& state) override {
         Prediction result;
 
         ProgEvent event;
