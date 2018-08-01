@@ -248,7 +248,7 @@ namespace PCOE {
         map.insert(pair);
     }
 
-    void requireKeys(ConfigMap map, std::initializer_list<std::string> list) {
+    void requireKeys(const ConfigMap& map, std::initializer_list<std::string> list) {
         std::string missingKeys;
 
         for (std::string key : list) {
