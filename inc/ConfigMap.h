@@ -44,13 +44,13 @@ namespace PCOE {
 
         void setDouble(const std::string& key, const double& value);
 
-        std::uint64_t getU64(const std::string& key) const;
+        std::uint64_t getUInt64(const std::string &key) const;
 
-        void setU64(const std::string& key, const uint64_t& value);
+        void setUInt64(const std::string &key, const uint64_t &value);
 
-        int getI32(const std::string& key) const;
+        int getInt32(const std::string &key) const;
 
-        void setI32(const std::string& key, const int& value);
+        void setInt32(const std::string &key, const int &value);
 
         /** @function   loadFile
          *  @brief      Load the contents of a file into the configuration map

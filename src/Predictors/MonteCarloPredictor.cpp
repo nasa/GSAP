@@ -38,8 +38,8 @@ namespace PCOE {
         requireKeys(config, {NUMSAMPLES_KEY, HORIZON_KEY, PROCESSNOISE_KEY});
 
         // Set configuration parameters
-        sampleCount = static_cast<unsigned int>(config.getU64(NUMSAMPLES_KEY));
-        horizon = config.getU64(HORIZON_KEY);
+        sampleCount = static_cast<unsigned int>(config.getUInt64(NUMSAMPLES_KEY));
+        horizon = config.getUInt64(HORIZON_KEY);
 
         // Set up process noise
         std::vector<std::string> processNoiseStrings = config.getVector(PROCESSNOISE_KEY);
