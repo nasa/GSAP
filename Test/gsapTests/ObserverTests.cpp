@@ -415,7 +415,7 @@ void testUKFBatteryFromConfig() {
     ConfigMap paramMap;
 
     // Observer parameters
-    paramMap.set("observer", "UKF");
+    paramMap.setString("observer", "UKF");
     // Build Q vector
     std::vector<std::string> qStrings;
     for (int i = 0; i < 8; i++) {
@@ -428,7 +428,7 @@ void testUKFBatteryFromConfig() {
             }
         }
     }
-    paramMap.getVector("Observer.Q") = qStrings;
+    paramMap.setVector("Observer.Q", qStrings);
     // Build R string
     std::vector<std::string> rStrings;
     for (int i = 0; i < 2; i++) {
@@ -441,7 +441,7 @@ void testUKFBatteryFromConfig() {
             }
         }
     }
-    paramMap.getVector("Observer.R") = rStrings;
+    paramMap.setVector("Observer.R", rStrings);
 
     BatteryModel battery;
 
@@ -453,7 +453,7 @@ void testUKFBatteryFromConfig() {
 
     // Create a UKF with bad R and ensure throws error
     rStrings.pop_back();
-    paramMap.getVector("Observer.R") = rStrings;
+    paramMap.setVector("Observer.R", rStrings);
     try {
         UnscentedKalmanFilter ukf2(&battery, paramMap);
         Assert::Fail();
@@ -464,7 +464,7 @@ void testUKFBatteryFromConfig() {
     // Create a UKF with bad Q and ensure throws error
     // Note that it checks Q first, so it is okay that R is also bad
     qStrings.pop_back();
-    paramMap.getVector("Observer.Q") = qStrings;
+    paramMap.setVector("Observer.Q", qStrings);
     try {
         UnscentedKalmanFilter ukf3(&battery, paramMap);
         Assert::Fail();
@@ -477,24 +477,24 @@ void testPFBatteryFromConfig() {
     ConfigMap configMap;
 
     // Observer parameters
-    configMap.set("observer", "ParticleFilter");
+    configMap.setString("observer", "ParticleFilter");
 
     // Build process noise variance vector
     std::vector<std::string> pnStrings;
     for (int i = 0; i < 8; i++) {
         pnStrings.push_back("1e-10");
     }
-    configMap.getVector("Observer.processNoise") = pnStrings;
+    configMap.setVector("Observer.processNoise", pnStrings);
 
     // Build sensor noise variance vector
     std::vector<std::string> snStrings;
     for (int i = 0; i < 2; i++) {
         snStrings.push_back("1e-3");
     }
-    configMap.getVector("Observer.sensorNoise") = snStrings;
+    configMap.setVector("Observer.sensorNoise", snStrings);
 
     // Set number of particles
-    configMap.set("Observer.N", "100");
+    configMap.setString("Observer.N", "100");
 
     BatteryModel battery;
 
@@ -503,7 +503,7 @@ void testPFBatteryFromConfig() {
 
     // Create a UKF with bad sn and ensure throws error
     snStrings.pop_back();
-    configMap.getVector("Observer.sensorNoise") = snStrings;
+    configMap.setVector("Observer.sensorNoise", snStrings);
     try {
         ParticleFilter pf2(&battery, configMap);
         Assert::Fail();
@@ -514,7 +514,7 @@ void testPFBatteryFromConfig() {
     // Create a UKF with bad sn and ensure throws error
     // Note that it checks pn first, so it is okay that sn is also bad
     pnStrings.pop_back();
-    configMap.getVector("Observer.processNoise") = pnStrings;
+    configMap.setVector("Observer.processNoise", pnStrings);
     try {
         ParticleFilter pf3(&battery, configMap);
         Assert::Fail();

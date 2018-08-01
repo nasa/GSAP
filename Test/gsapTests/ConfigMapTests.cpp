@@ -28,11 +28,11 @@ void configMapLoadArgs() {
 
 void configMapUse() {
     ConfigMap theMap;
-    theMap.getVector("test") = std::vector<std::string>({"test"});
+    theMap.setVector("test", std::vector<std::string>({"test"}));
     Assert::AreEqual(1, theMap.getVector("test").size());
     Assert::AreEqual(0, theMap.getVector("test")[0].compare("test"));
 
-    theMap.set("test2", "blah");
+    theMap.setString("test2", "blah");
     Assert::AreEqual(0, theMap.getVector("test2")[0].compare("blah"));
 
     Assert::IsTrue(theMap.hasKeys({"test"}));
@@ -97,7 +97,7 @@ void configMapRequireKeys() {
     }
 
     // checkRequiredParams- Mix exist
-    theMap.set("test1", "blah");
+    theMap.setString("test1", "blah");
     try {
         requireKeys(theMap, {"test1", "test2"});
         Assert::Fail("Found params that shouldn't exist [1]");
@@ -106,6 +106,6 @@ void configMapRequireKeys() {
     }
 
     // checkRequiredParams- Do exist
-    theMap.set("test2", "blah");
+    theMap.setString("test2", "blah");
     requireKeys(theMap, {"test1", "test2"});
 }
