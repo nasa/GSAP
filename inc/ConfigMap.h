@@ -36,15 +36,21 @@ namespace PCOE {
          * @param       key     The key from which the vector is retrieved
          * @return      The string vector corresponding to the given key
          */
-        const std::vector<std::string>& getVector(const std::string key) const;
+        const std::vector<std::string>& getVector(const std::string& key) const;
 
-        std::vector<std::string>& getVector(const std::string key);
+        void setVector(const std::string& key, const std::vector<std::string>& vector);
 
-        double getDouble(const std::string key) const;
+        double getDouble(const std::string& key) const;
 
-        std::uint64_t getU64(const std::string key) const;
+        void setDouble(const std::string& key, const double& value);
 
-        int getI32(const std::string key) const;
+        std::uint64_t getU64(const std::string& key) const;
+
+        void setU64(const std::string& key, const uint64_t& value);
+
+        int getI32(const std::string& key) const;
+
+        void setI32(const std::string& key, const int& value);
 
         /** @function   loadFile
          *  @brief      Load the contents of a file into the configuration map
@@ -62,6 +68,8 @@ namespace PCOE {
          **/
         void loadArguments(const int argc, char* argv[]);
 
+        std::string getString(const std::string& key) const;
+
         /** @function   set
          *  @brief      Set a parameter to a string
          *  @param      key     Identifier for the parameter
@@ -69,7 +77,7 @@ namespace PCOE {
          *
          *  @example    config.set("example","Text");
          **/
-        void set(const std::string& key, const std::string& value);
+        void setString(const std::string& key, const std::string& value);
 
         /** @function hasKey
          *  @brief Check if the specified key is contained in the map.
