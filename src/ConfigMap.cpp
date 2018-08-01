@@ -219,4 +219,19 @@ namespace PCOE {
     void ConfigMap::insert(std::pair<std::string, std::vector<std::string>> pair) {
         map.insert(pair);
     }
+
+    void requireKeys(ConfigMap map, std::initializer_list<std::string> list) {
+        std::string missingKeys;
+
+        for (std::string key : list) {
+            if (!map.hasKey(key)) {
+                missingKeys += key + ", ";
+            }
+        }
+        missingKeys = missingKeys.substr(0, missingKeys.size() - 2);
+
+        if (!missingKeys.empty()) {
+            throw std::range_error("Missing required configuration parameters: " + missingKeys);
+        }
+    }
 }
