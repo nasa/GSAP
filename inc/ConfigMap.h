@@ -101,6 +101,8 @@ namespace PCOE {
         unsigned long size();
 
         void insert(std::pair<std::string, std::vector<std::string>> pair);
+        
+        
 
     private:
         /** @function   parseLine
@@ -113,6 +115,13 @@ namespace PCOE {
 
         std::unordered_map<std::string, std::vector<std::string>> map;
     };
+
+    /**
+     * @brief       Check if all required keys (parameters) are present in the ConfigMap
+     * @param map   ConfigMap from which to check against list
+     * @param list  List of keys to check
+     */
+    void requireKeys(ConfigMap map, std::initializer_list<std::string> list);
 }
 
 #endif // PCOE_CONFIGMAP_H
