@@ -8,8 +8,8 @@
 namespace PCOE {
     /**
      * The set of pre-defined message identifiers. Any integer in the range of
-     * uint64_t may be a valid identifier, any entity dealing with messages should
-     * not treat this list as exhaustive.
+     * uint64_t may be a valid identifier. Any entity dealing with messages
+     * should not treat this list as exhaustive.
      *
      * @author Jason Watkins
      * @since 1.2
@@ -25,6 +25,9 @@ namespace PCOE {
         Centigrade = 0x6272000000000301L,
         Fahrenheit = 0x6272000000000302L,
         ModelStateEstimate = 0x6272000000000400L,
+        ModelStateVector = 0x6272000000000500L,
+        ModelInputVector = 0x6272000000000501L,
+        ModelOutputVector = 0x6272000000000502L,
         TestInput0 = 0x627200000000FE00L,
         TestInput1 = 0x627200000000FE01L,
         TestInput2 = 0x627200000000FE02L,

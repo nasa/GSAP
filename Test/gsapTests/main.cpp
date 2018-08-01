@@ -255,10 +255,9 @@ int main() {
     context.AddTest("unsubscribe", MessageBusTests::unsubscribe, "MessageBus");
     context.AddTest("unsubscribePartial", MessageBusTests::unsubscribePartial, "MessageBus");
 
-    context.AddTest("construct", MessageWatcherTests::constructor, "MessageWatcher");
-    context.AddTest("allPresent", MessageWatcherTests::allPresent, "MessageWatcher");
-    context.AddTest("reset", MessageWatcherTests::reset, "MessageWatcher");
-    context.AddTest("getValues", MessageWatcherTests::getValues, "MessageWatcher");
+    context.AddTest("Construct", MessageWatcherTests::constructor, "MessageWatcher");
+    context.AddTest("Publish", MessageWatcherTests::publish, "MessageWatcher");
+    context.AddTest("Message Count", MessageWatcherTests::messageCount, "MessageWatcher");
 
     context.AddTest("construct", EventDrivenObserverTests::constructor, "EventDrivenObserver");
     context.AddTest("processMessage",
