@@ -3,8 +3,7 @@
 // All Rights Reserved.
 #include "Observers/EventDrivenObserver.h"
 #include "Contracts.h"
-#include "Messages/TemplateMessage.h"
-#include "Messages/UDataVecMessage.h"
+#include "Messages/UDataMessage.h"
 
 namespace PCOE {
     EventDrivenObserver::EventDrivenObserver(MessageBus& messageBus,
@@ -13,16 +12,11 @@ namespace PCOE {
         : bus(messageBus),
           observer(std::move(obs)),
           source(std::move(src)),
-          inputWatcher(bus,
-                       source,
-                       observer->getModel()->getInputs(),
-                       MessageId::ModelInputVector,
-                       observer->getModel()->getInputVector()),
+          inputWatcher(bus, source, observer->getModel()->getInputs(), MessageId::ModelInputVector),
           outputWatcher(bus,
                         source,
                         observer->getModel()->getOutputs(),
-                        MessageId::ModelOutputVector,
-                        observer->getModel()->getOutputVector()) {
+                        MessageId::ModelOutputVector) {
         Expect(observer, "Observer pointer is empty");
         bus.subscribe(this, source, MessageId::ModelInputVector);
         bus.subscribe(this, source, MessageId::ModelOutputVector);
@@ -47,10 +41,10 @@ namespace PCOE {
 
         if (inputMsg && outputMsg) {
             latestTimestamp = seconds(message->getTimestamp());
-            auto typedInMsg = dynamic_cast<TemplateMessage<Model::input_type>*>(inputMsg.get());
-            auto typedOutMsg = dynamic_cast<TemplateMessage<Model::output_type>*>(outputMsg.get());
-            const auto& u = typedInMsg->getValue();
-            const auto& z = typedOutMsg->getValue();
+            auto typedInMsg = dynamic_cast<VectorMessage<double>*>(inputMsg.get());
+            auto typedOutMsg = dynamic_cast<VectorMessage<double>*>(outputMsg.get());
+            const auto& u = Model::input_type(typedInMsg->getValue());
+            const auto& z = Model::output_type(typedOutMsg->getValue());
             if (!observer->isInitialized()) {
                 auto x = observer->getModel()->initialize(u, z);
                 observer->initialize(latestTimestamp, x, u);

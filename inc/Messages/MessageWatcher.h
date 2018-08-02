@@ -6,9 +6,7 @@
 #include <map>
 
 #include "Contracts.h"
-#include "Messages/DoubleMessage.h"
 #include "Messages/MessageBus.h"
-#include "Messages/TemplateMessage.h"
 
 namespace PCOE {
     /**
@@ -23,13 +21,13 @@ namespace PCOE {
      * @author Jason Watkins
      * @since 1.2
      **/
-    template <class TContainer>
+    template <class T>
     class MessageWatcher final : public IMessageProcessor {
     public:
         /**
          * Constructs a new @{code MessageWatcher}.
          *
-         * @paramt TContainer The type of the container used to store values.
+         * @paramt T          The scalar type being watched.
          * @param  messageBus The message bus on which to subscribe.
          * @param  sourceName The source for which to subscribe.
          * @param  messages   The ids of the messages for which to subscribe
@@ -42,18 +40,17 @@ namespace PCOE {
         MessageWatcher(MessageBus& messageBus,
                        std::string sourceName,
                        const std::vector<MessageId> messages,
-                       MessageId pubId,
-                       TContainer container)
+                       MessageId pubId)
             : messageBus(messageBus),
               source(std::move(sourceName)),
               pubId(pubId),
-              values(std::move(container)) {
-            Expect(messages.size() == values.size(), "Mismatched container sizes");
+              values(messages.size()) {
             for (std::size_t i = 0; i < messages.size(); ++i) {
                 present.push_back(false);
                 msgIndices.insert(std::make_pair(messages[i], i));
                 messageBus.subscribe(this, source, messages[i]);
             }
+            Ensure(messages.size() == values.size(), "Mismatched container sizes");
             Ensure(present.size() == values.size(), "Mismatched present and value sizes");
         }
 
@@ -71,19 +68,19 @@ namespace PCOE {
          **/
         void processMessage(const std::shared_ptr<Message>& message) override {
             lock_guard guard(m);
-            const DoubleMessage* dmsg = dynamic_cast<DoubleMessage*>(message.get());
-            Expect(dmsg != nullptr, "Unexpected message type");
+            auto smsg = dynamic_cast<ScalarMessage<T>*>(message.get());
+            Expect(smsg != nullptr, "Unexpected message type");
 
             std::size_t i = msgIndices.at(message->getMessageId());
-            values[i] = dmsg->getValue();
+            values[i] = smsg->getValue();
             if (!present[i]) {
                 present[i] = true;
                 allPresentCached = false;
             }
 
             if (allPresent()) {
-                auto msg = new TemplateMessage<TContainer>(pubId, source, values);
-                messageBus.publish(std::shared_ptr<Message>(msg));
+                auto vmsg = new VectorMessage<T>(pubId, source, values);
+                messageBus.publish(std::shared_ptr<Message>(vmsg));
                 reset();
             }
         }
@@ -127,7 +124,7 @@ namespace PCOE {
         std::string source;
         MessageId pubId;
         std::map<MessageId, std::size_t> msgIndices;
-        TContainer values;
+        std::vector<T> values;
         std::vector<bool> present;
         mutable bool allPresentCached = false;
         mutable bool allPresentValue = false;

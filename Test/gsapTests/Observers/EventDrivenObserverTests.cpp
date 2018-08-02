@@ -4,7 +4,6 @@
 #include <thread>
 #include <utility>
 
-#include "Messages/DoubleMessage.h"
 #include "MockClasses.h"
 #include "Observers/EventDrivenObserver.h"
 #include "Test.h"

@@ -5,6 +5,7 @@
 #include "Predictors/EventDrivenPredictor.h"
 #include "Contracts.h"
 #include "Messages/ProgEventMessage.h"
+#include "Messages/UDataMessage.h"
 
 namespace PCOE {
     EventDrivenPredictor::EventDrivenPredictor(MessageBus& messageBus,

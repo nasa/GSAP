@@ -67,7 +67,6 @@ set (HEADERS
     inc/LoadEstimator.h
     inc/LoadEstimatorFactory.h
     inc/Matrix.h
-    inc/Messages/DoubleMessage.h
     inc/Messages/IMessageProcessor.h
     inc/Messages/IMessagePublisher.h
     inc/Messages/Message.h
@@ -77,7 +76,6 @@ set (HEADERS
     inc/Messages/MessageWatcher.h
     inc/Messages/ProgEventMessage.h
     inc/Messages/UDataMessage.h
-    inc/Messages/UDataVecMessage.h
     inc/Model.h
     inc/MovingAverageLoadEstimator.h
     inc/Observers/EventDrivenObserver.h
