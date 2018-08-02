@@ -58,8 +58,8 @@ namespace PCOE {
         MessageBus& bus;
         std::unique_ptr<Observer> observer;
         std::string source;
-        MessageWatcher<Model::input_type> inputWatcher;
-        MessageWatcher<Model::output_type> outputWatcher;
+        MessageWatcher<double> inputWatcher;
+        MessageWatcher<double> outputWatcher;
         double latestTimestamp;
         std::shared_ptr<Message> inputMsg;
         std::shared_ptr<Message> outputMsg;

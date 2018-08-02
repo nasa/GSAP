@@ -5,10 +5,8 @@
 #define PCOE_EVENTDRIVENPREDICTOR_H
 #include <memory>
 
-#include "Messages/DoubleMessage.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
-#include "Messages/UDataVecMessage.h"
 #include "Predictors/Predictor.h"
 
 namespace PCOE {
