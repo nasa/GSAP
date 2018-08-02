@@ -105,6 +105,7 @@ namespace PCOE {
      * @since 1.2
      **/
     class EmptyMessage final : public Message {
+    public:
         /**
          * Constructs a new instance of @{code EmptyMessage}.
          *
