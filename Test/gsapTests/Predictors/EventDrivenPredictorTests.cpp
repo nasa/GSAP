@@ -33,7 +33,7 @@ namespace EventDrivenPredictorTests {
         TestLoadEstimator tle;
         const std::string src = "test";
 
-        MessageCounter listener(bus, src, MessageId::BatteryEod);
+        MessageCounter listener(bus, src, MessageId::TestEvent0);
         EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(&tpm)), src);
         EventDrivenPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(

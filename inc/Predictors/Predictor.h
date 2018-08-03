@@ -6,16 +6,29 @@
 
 #include <string>
 #include <vector>
-#include <ConfigMap.h>
 
 #include "Contracts.h"
 #include "DataPoint.h"
 #include "LoadEstimator.h"
 #include "ProgEvent.h"
 #include "PrognosticsModel.h"
+#include <ConfigMap.h>
 
 namespace PCOE {
-    struct Prediction {
+    class Prediction {
+    public:
+        Prediction(std::vector<ProgEvent>&& events, std::vector<DataPoint>&& trajectories)
+            : events(events), sysTrajectories(trajectories) {}
+
+        inline const std::vector<ProgEvent>& getEvents() const {
+            return events;
+        }
+
+        inline const std::vector<DataPoint>& getSystemTrajectories() const {
+            return sysTrajectories;
+        }
+
+    private:
         std::vector<ProgEvent> events;
         std::vector<DataPoint> sysTrajectories;
     };

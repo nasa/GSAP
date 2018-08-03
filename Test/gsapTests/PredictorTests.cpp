@@ -23,9 +23,9 @@
 #include <vector>
 
 #include "BatteryModel.h"
+#include "ConfigMap.h"
 #include "ConstLoadEstimator.h"
 #include "Factory.h"
-#include "ConfigMap.h"
 #include "PredictorTests.h"
 #include "Predictors/MonteCarloPredictor.h"
 #include "PrognosticsModelFactory.h"
@@ -94,9 +94,10 @@ void testMonteCarloBatteryPredict() {
 
     // Compute mean of timeOfEvent and SOC at different time points
     double meanEOD = 0;
-    auto& eod = prediction.events[0];
-    for (unsigned int i = 0; i < eod.getTOE().npoints(); i++) {
-        meanEOD += eod.getTOE()[i] / eod.getTOE().npoints();
+    auto& eod = prediction.getEvents()[0];
+    auto& toe = eod.getTOE();
+    for (unsigned int i = 0; i < toe.npoints(); i++) {
+        meanEOD += toe[i] / toe.npoints();
     }
 }
 
@@ -105,7 +106,7 @@ void testMonteCarloBatteryConfig() {
     // Set up configMap
     ConfigMap configMap;
     configMap.set("Predictor.SampleCount", "100");
-    configMap.set( "Predictor.Horizon", "5000");
+    configMap.set("Predictor.Horizon", "5000");
     std::vector<std::string> processNoise;
     for (unsigned int i = 0; i < 8; i++) {
         processNoise.push_back("1e-5");

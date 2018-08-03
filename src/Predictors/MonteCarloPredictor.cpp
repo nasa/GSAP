@@ -72,25 +72,16 @@ namespace PCOE {
         //            constructor. Shouldn't be possible here.
         Expect(model != nullptr, "Model is null");
 
-        Prediction prediction;
-        prediction.events.push_back(ProgEvent());
-        for (auto& output : model->getPredictedOutputs()) {
-            DataPoint sysTrajToAdd = DataPoint();
-            prediction.sysTrajectories.push_back(sysTrajToAdd);
-        }
-
-        ProgEvent& predictionEvent = prediction.events[0];
-        predictionEvent.setUncertainty(UType::Samples);
-        predictionEvent.getTOE().npoints(sampleCount);
-        predictionEvent.setNPoints(sampleCount);
-        predictionEvent.getEventState().npoints(sampleCount);
-
-        for (auto& trajectory : prediction.sysTrajectories) {
+        UData eventToe(UType::Samples);
+        eventToe.npoints(sampleCount);
+        UData eventState(UType::Samples);
+        eventState.npoints(sampleCount);
+        std::vector<DataPoint> sysTrajectories(model->getPredictedOutputs().size());
+        for (auto& trajectory : sysTrajectories) {
             trajectory.setUncertainty(UType::Samples);
             trajectory.setNumTimes(ceil(horizon / model->getDefaultTimeStep()));
             trajectory.setNPoints(sampleCount);
         }
-
         auto stateTimestamp = getLowestTimestamp(state);
 
 // Create a random number generator if operating sequentially
@@ -150,8 +141,7 @@ namespace PCOE {
             // 3. Simulate until time limit reached
             std::vector<double> inputParams(model->getInputParameterCount());
             unsigned int timeIndex = 0;
-            std::string event = model->getEvents()[0];
-            predictionEvent.getTOE()[sample] = INFINITY;
+            eventToe[sample] = INFINITY;
 
             for (double t_s = time_s; t_s <= time_s + horizon; t_s += model->getDefaultTimeStep()) {
                 // Get inputs for time t
@@ -162,8 +152,8 @@ namespace PCOE {
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
                 if (model->thresholdEqn(t_s, x, u)) {
-                    predictionEvent.getTOE()[sample] = t_s;
-                    predictionEvent.getTOE().updated(stateTimestamp);
+                    eventToe[sample] = t_s;
+                    eventToe.updated(stateTimestamp);
                     break;
                 }
 
@@ -172,11 +162,11 @@ namespace PCOE {
                 auto z = model->getOutputVector();
                 auto predictedOutput = model->predictedOutputEqn(t_s, x, u, z);
                 for (unsigned int p = 0; p < predictedOutput.size(); p++) {
-                    prediction.sysTrajectories[p][timeIndex][sample] = z[p];
+                    sysTrajectories[p][timeIndex][sample] = z[p];
                 }
 
                 // Write to eventState property
-                predictionEvent.getEventState()[sample] = model->eventStateEqn(x);
+                eventState[sample] = model->eventStateEqn(x);
 
                 // Sample process noise - for now, assuming independent
                 std::vector<double> noise(model->getStateSize());
@@ -193,6 +183,9 @@ namespace PCOE {
             }
         }
 
-        return prediction;
+        return Prediction({ProgEvent(model->getEvents()[0],
+                                     std::move(eventState),
+                                     std::move(eventToe))},
+                          std::move(sysTrajectories));
     }
 }

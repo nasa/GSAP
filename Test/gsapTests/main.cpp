@@ -17,7 +17,6 @@
 #include "ModelTests.h"
 #include "ObserverTests.h"
 #include "Observers/EventDrivenObserverTests.h"
-#include "PEventTests.h"
 #include "ParticleFilterTests.h"
 #include "PredictorTests.h"
 #include "Predictors/EventDrivenPredictorTests.h"
@@ -163,10 +162,6 @@ int main() {
                     "Observer");
     context.AddTest("UKF Initialization for Battery", testUKFBatteryInitialize, "Observer");
     context.AddTest("UKF Step for Battery", testUKFBatteryStep, "Observer");
-
-    // PEvent Tests
-    context.AddTest("Initialization", testPEventInit, "PEvent");
-    context.AddTest("Update", testPEventUpdate, "PEvent");
 
     // Thread Tests
     context.AddTest("treadctrl", tctrltests, "Thread");
