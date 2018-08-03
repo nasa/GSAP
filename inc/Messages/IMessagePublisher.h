@@ -67,7 +67,7 @@ namespace PCOE {
          *                be valid for its lifetime. No attempt is made to manage
          *                the lifetime of the message.
          **/
-        virtual void publish(std::shared_ptr<Message> message) const = 0;
+        virtual void publish(std::shared_ptr<Message> message) = 0;
     };
 }
 #endif
