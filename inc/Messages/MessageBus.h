@@ -54,8 +54,9 @@ namespace PCOE {
          * Constructs a new {@code MessageBus} instance.
          *
          * @param launchPolicy The launch policy used when publishing messages.
-         * A new {@code std::async} is created for each subscriber to each
-         * published message using this launch policy.
+         *                     A new {@code std::async} is created for each
+         *                     subscriber to each published message using this
+         *                     launch policy.
          **/
         explicit MessageBus(std::launch launchPolicy = std::launch::async)
             : launchPolicy(launchPolicy) {}
