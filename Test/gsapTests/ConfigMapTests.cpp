@@ -28,16 +28,33 @@ void configMapLoadArgs() {
 
 void configMapUse() {
     ConfigMap theMap;
-    theMap.setVector("test", std::vector<std::string>({"test"}));
+    theMap.set("test", std::vector<std::string>({"test"}));
     Assert::AreEqual(1, theMap.getVector("test").size());
     Assert::AreEqual(0, theMap.getString("test").compare("test"));
 
-    theMap.setString("test2", "blah");
+    theMap.set("test2", "blah");
     Assert::AreEqual(0, theMap.getVector("test2")[0].compare("blah"));
 
     Assert::IsTrue(theMap.hasKey("test"));
     Assert::IsTrue(theMap.hasKey("test2"));
     Assert::IsFalse(theMap.hasKey("test3"));
+
+    theMap.set("testSetDouble", 2.3);
+    Assert::AreEqual(2.3, theMap.getDouble("testSetDouble"), 0, "Setting double value failed.");
+
+    theMap.set("testSetInt32", INT32_MAX);
+    Assert::AreEqual(INT32_MAX, theMap.getInt32("testSetInt32"), "Setting int32 value failed.");
+
+    theMap.set("testSetInt64", INT64_MAX);
+    Assert::AreEqual(INT64_MAX, theMap.getInt64("testSetInt64"), "Setting int64 value failed.");
+
+    theMap.set("testSetUInt64", UINT64_MAX);
+    Assert::AreEqual(UINT64_MAX, theMap.getUInt64("testSetUInt64"), "Setting uint64 value failed.");
+
+    theMap.set("testSetUInt32", UINT32_MAX);
+    Assert::AreEqual(UINT32_MAX, theMap.getUInt32("testSetUInt32"), "Setting uint32 value failed.");
+
+
 
     // std::string exampleLine("test3:a,b,dslfjs,d");
     // theMap.add(exampleLine);
@@ -97,7 +114,7 @@ void configMapRequireKeys() {
     }
 
     // checkRequiredParams- Mix exist
-    theMap.setString("test1", "blah");
+    theMap.set("test1", "blah");
     try {
         requireKeys(theMap, {"test1", "test2"});
         Assert::Fail("Found params that shouldn't exist [1]");
@@ -106,6 +123,6 @@ void configMapRequireKeys() {
     }
 
     // checkRequiredParams- Do exist
-    theMap.setString("test2", "blah");
+    theMap.set("test2", "blah");
     requireKeys(theMap, {"test1", "test2"});
 }

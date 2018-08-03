@@ -69,51 +69,108 @@ namespace PCOE {
         return map.at(key);
     }
 
-    void ConfigMap::setVector(const std::string &key, const std::vector<std::string> &vector) {
-        map[key] = vector;
-    }
-
     double ConfigMap::getDouble(const std::string& key) const {
-        if (map.at(key).size() > 1) {
-            throw std::domain_error("Cannot get " + key + " as double since " + key + " maps to a vector.");
-        }
-        return std::stod(map.at(key)[0]);
-    }
-
-    void ConfigMap::setDouble(const std::string &key, const double &value) {
-        if (map.at(key).size() > 1) {
-            throw std::domain_error("Cannot set " + key + " to double since " + key + " maps to a vector.");
-        }
-        map.at(key)[0] = value;
+        return std::stod(getString(key));
     }
 
     std::uint64_t ConfigMap::getUInt64(const std::string &key) const {
-        static_assert(sizeof(unsigned long long) == 64 / CHAR_BIT, "Unsigned long long not 64 bits");
-        if (map.at(key).size() > 1) {
-            throw std::domain_error("Cannot get " + key + " as scalar since " + key + " maps to a vector.");
-        }
-        return std::stoull(map.at(key)[0]);
+        return std::stoull(getString(key));
     }
 
-    void ConfigMap::setUInt64(const std::string &key, const uint64_t &value) {
-        if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Cannot set " + key + " to scalar since " + key + " maps to a vector.");
-        }
-        map.at(key)[0] = value;
+    std::int64_t ConfigMap::getInt64(const std::string &key) const {
+        return std::stoll(getString(key));
     }
 
-    int ConfigMap::getInt32(const std::string &key) const {
-        if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Cannot get " + key + " as scalar since " + key + " maps to a vector.");
-        }
-        return std::stoi(map.at(key)[0]);
+    std::uint32_t ConfigMap::getUInt32(const std::string &key) const {
+        return std::stoul(getString(key));
     }
 
-    void ConfigMap::setInt32(const std::string &key, const int &value) {
+    std::int32_t ConfigMap::getInt32(const std::string &key) const {
+        return std::stoi(getString(key));
+    }
+
+    const std::string& ConfigMap::getString(const std::string& key) const {
         if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Cannot set " + key + " to scalar since " + key + " maps to a vector.");
+            throw std::invalid_argument("Cannot get " + key + " as string since " + key + " maps to a vector.");
         }
-        map[key][0] = value;
+        return map.at(key)[0];
+    }
+
+    void ConfigMap::set(const std::string &key, const std::vector<std::string> &vector) {
+        map[key] = vector;
+    }
+
+    void ConfigMap::set(const std::string &key, const std::initializer_list<std::string> &list) {
+        map[key] = list;
+    }
+
+    void ConfigMap::set(const std::string &key, const double &value) {
+        if (map[key].size() > 1) {
+            throw std::domain_error("Cannot set " + key + " to double since " + key + " maps to a vector.");
+        }
+        else if (map[key].size() == 0) {
+            map[key].emplace_back(std::to_string(value));
+        }
+        else {
+            map[key][0] = value;
+
+        }
+    }
+
+    void ConfigMap::set(const std::string &key, const std::uint64_t &value) {
+        if (map[key].size() > 1) {
+            throw std::domain_error("Cannot set " + key + " to double since " + key + " maps to a vector.");
+        }
+        else if (map[key].size() == 0) {
+            map[key].emplace_back(std::to_string(value));
+        }
+        else {
+            map[key][0] = value;
+
+        }
+    }
+
+    void ConfigMap::set(const std::string &key, const std::int64_t &value) {
+        if (map[key].size() > 1) {
+            throw std::domain_error("Cannot set " + key + " to double since " + key + " maps to a vector.");
+        }
+        else if (map[key].size() == 0) {
+            map[key].emplace_back(std::to_string(value));
+        }
+        else {
+            map[key][0] = value;
+
+        }
+    }
+
+    void ConfigMap::set(const std::string &key, const std::uint32_t &value) {
+        if (map[key].size() > 1) {
+            throw std::domain_error("Cannot set " + key + " to double since " + key + " maps to a vector.");
+        }
+        else if (map[key].size() == 0) {
+            map[key].emplace_back(std::to_string(value));
+        }
+        else {
+            map[key][0] = value;
+
+        }
+    }
+
+    void ConfigMap::set(const std::string &key, const std::int32_t &value) {
+        if (map[key].size() > 1) {
+            throw std::domain_error("Cannot set " + key + " to double since " + key + " maps to a vector.");
+        }
+        else if (map[key].size() == 0) {
+            map[key].emplace_back(std::to_string(value));
+        }
+        else {
+            map[key][0] = value;
+
+        }
+    }
+
+    void ConfigMap::set(const std::string& key, const std::string& value) {
+        map[key] = {value};
     }
 
     void ConfigMap::loadFile(const std::string& filename) {
@@ -165,17 +222,6 @@ namespace PCOE {
             std::string value = argv[i];
             map[key].push_back(value);
         }
-    }
-
-    std::string ConfigMap::getString(const std::string& key) const {
-        if (map.at(key).size() > 1) {
-            throw std::invalid_argument("Cannot get " + key + " as string since " + key + " maps to a vector.");
-        }
-        return map.at(key)[0];
-    }
-
-    void ConfigMap::setString(const std::string& key, const std::string& value) {
-        map[key] = {value};
     }
 
     bool ConfigMap::hasKeys(std::initializer_list<std::string> list) const {

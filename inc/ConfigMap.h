@@ -38,19 +38,40 @@ namespace PCOE {
          */
         const std::vector<std::string>& getVector(const std::string& key) const;
 
-        void setVector(const std::string& key, const std::vector<std::string>& vector);
-
         double getDouble(const std::string& key) const;
 
-        void setDouble(const std::string& key, const double& value);
+        std::uint64_t getUInt64(const std::string& key) const;
 
-        std::uint64_t getUInt64(const std::string &key) const;
+        std::int64_t getInt64(const std::string& key) const;
 
-        void setUInt64(const std::string &key, const uint64_t &value);
+        std::uint32_t getUInt32(const std::string& key) const;
 
-        int getInt32(const std::string &key) const;
+        std::int32_t getInt32(const std::string& key) const;
 
-        void setInt32(const std::string &key, const int &value);
+        const std::string& getString(const std::string& key) const;
+
+        void set(const std::string& key, const std::vector<std::string>& vector);
+
+        void set(const std::string& key, const std::initializer_list<std::string>& list);
+
+        void set(const std::string& key, const double& value);
+
+        void set(const std::string& key, const std::uint64_t& value);
+
+        void set(const std::string& key, const std::int64_t& value);
+
+        void set(const std::string& key, const std::uint32_t& value);
+
+        void set(const std::string& key, const std::int32_t& value);
+
+        /** @function   set
+         *  @brief      Set a parameter to a string
+         *  @param      key     Identifier for the parameter
+         *  @param      value   Value that the parameter should be set to
+         *
+         *  @example    config.set("example","Text");
+         **/
+        void set(const std::string& key, const std::string& value);
 
         /** @function   loadFile
          *  @brief      Load the contents of a file into the configuration map
@@ -67,17 +88,6 @@ namespace PCOE {
          *  @param      argv    Command Line Arguments
          **/
         void loadArguments(const int argc, char* argv[]);
-
-        std::string getString(const std::string& key) const;
-
-        /** @function   set
-         *  @brief      Set a parameter to a string
-         *  @param      key     Identifier for the parameter
-         *  @param      value   Value that the parameter should be set to
-         *
-         *  @example    config.set("example","Text");
-         **/
-        void setString(const std::string& key, const std::string& value);
 
         /** @function hasKey
          *  @brief Check if the specified key is contained in the map.
@@ -109,8 +119,6 @@ namespace PCOE {
         unsigned long size();
 
         void insert(std::pair<std::string, std::vector<std::string>> pair);
-        
-        
 
     private:
         /** @function   parseLine

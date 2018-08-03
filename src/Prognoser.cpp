@@ -82,10 +82,10 @@ namespace PCOE {
         }
 
         if (!configParams.hasKey(HIST_PATH_KEY)) {
-            configParams.setString(HIST_PATH_KEY, ".");
+            configParams.set(HIST_PATH_KEY, ".");
         }
         if (!configParams.hasKey(RESET_HIST_KEY)) {
-            configParams.setString(RESET_HIST_KEY, "false");
+            configParams.set(RESET_HIST_KEY, "false");
         }
 
         // Process tags
