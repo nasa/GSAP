@@ -8,6 +8,35 @@
 #include "Messages/MessageBus.h"
 
 namespace PCOE {
+    void MessageBus::processOne() {
+        unique_lock lock(m);
+        if (!futures.empty()) {
+            std::future<void> f = std::move(futures.back());
+            futures.pop_back();
+
+            // Note (JW): Unlock before calling get because the mutex is not
+            //            recursive and processing one message often leads to
+            //            the publishing of further messages.
+            lock.unlock();
+            f.get();
+        }
+    }
+
+    void MessageBus::processAll() {
+        unique_lock lock(m);
+        while (!futures.empty()) {
+            std::future<void> f = std::move(futures.back());
+            futures.pop_back();
+
+            // Note (JW): Unlock before calling get because the mutex is not
+            //            recursive and processing one message often leads to
+            //            the publishing of further messages.
+            lock.unlock();
+            f.get();
+            lock.lock();
+        }
+    }
+
     void MessageBus::subscribe(IMessageProcessor* consumer, std::string source, MessageId id) {
         lock_guard guard(m);
         subscribers[source].push_back(callback_pair(id, consumer));
@@ -40,8 +69,7 @@ namespace PCOE {
         return f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
     }
 
-    void MessageBus::publish(std::shared_ptr<Message> message) const {
-        static std::vector<std::future<void>> futures;
+    void MessageBus::publish(std::shared_ptr<Message> message) {
         lock_guard guard(m);
         auto srcSubs = subscribers.find(message->getSource());
         if (srcSubs == subscribers.cend()) {
@@ -50,7 +78,7 @@ namespace PCOE {
 
         for (auto it : (*srcSubs).second) {
             if (it.first == MessageId::All || it.first == message->getMessageId()) {
-                auto f = std::async(std::launch::async,
+                auto f = std::async(launchPolicy,
                                     &IMessageProcessor::processMessage,
                                     it.second,
                                     message);

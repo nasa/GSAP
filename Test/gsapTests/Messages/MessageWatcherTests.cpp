@@ -14,8 +14,6 @@ using namespace PCOE;
 using namespace PCOE::Test;
 
 namespace MessageWatcherTests {
-    static const auto PUBLISH_DELAY = std::chrono::milliseconds(5);
-
     void constructor() {
         MessageBus bus;
         const std::string src = "test";
@@ -36,10 +34,10 @@ namespace MessageWatcherTests {
 
         Assert::AreEqual(0, counter.getCount(), "No data");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 0.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(0, counter.getCount(), "1 input");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput1, src, 0.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(1, counter.getCount(), "Both inputs");
 
         auto msg = dynamic_cast<VectorMessage<double>*>(counter.getLastMessage().get());
@@ -60,13 +58,13 @@ namespace MessageWatcherTests {
 
         Assert::AreEqual(0, counter.getCount(), "No data");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 1.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(0, counter.getCount(), "Input0 first value");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 2.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(0, counter.getCount(), "Input0 second value");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput1, src, 3.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(1, counter.getCount(), "1 message per complete set");
 
         auto msg = dynamic_cast<VectorMessage<double>*>(counter.getLastMessage().get());
