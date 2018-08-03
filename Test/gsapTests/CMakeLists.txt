@@ -11,7 +11,6 @@ set(HEADERS
     ModelTests.h
     Observers/EventDrivenObserverTests.h
     ObserverTests.h
-    PEventTests.h
     Predictors/EventDrivenPredictorTests.h
     PredictorTests.h
     ThreadTests.h
@@ -38,7 +37,6 @@ set(SRCS
     ModelTests.cpp
     Observers/EventDrivenObserverTests.cpp
     ObserverTests.cpp
-    PEventTests.cpp
     Predictors/EventDrivenPredictorTests.cpp
     PredictorTests.cpp
     ThreadTests.cpp

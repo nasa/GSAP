@@ -72,7 +72,7 @@ public:
                            {MessageId::TestInput0, MessageId::TestInput1},
                            {MessageId::TestOutput0},
                            {},
-                           {"TestPrediction0"}) {}
+                           {MessageId::TestEvent0}) {}
 
     state_type stateEqn(const double,
                         const state_type& x,
@@ -167,13 +167,8 @@ public:
         : Predictor(m, le, config) {}
 
     Prediction predict(double, const std::vector<UData>& state) override {
-        Prediction result;
+        ProgEvent event(MessageId::TestEvent0, {UData()}, {UData()});
 
-        ProgEvent event;
-        event.setNPoints(1);
-        event.setEventState(state[0]);
-        result.events.push_back(event);
-
-        return result;
+        return Prediction({event}, std::vector<DataPoint>());
     }
 };

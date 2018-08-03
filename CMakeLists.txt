@@ -134,7 +134,6 @@ set(SRCS
     src/PContainer.cpp
     src/Predictors/EventDrivenPredictor.cpp
     src/Predictors/MonteCarloPredictor.cpp
-    src/ProgEvent.cpp
     src/StatisticalTools.cpp
     src/TCPSocket.cpp
     src/Thread.cpp

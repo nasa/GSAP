@@ -13,21 +13,26 @@ namespace PCOE {
                                                std::string source)
         : bus(messageBus), pred(std::move(predictor)), source(std::move(source)) {
         Expect(pred, "Predictor pointer is empty");
+        lock_guard guard(m);
         bus.subscribe(this, this->source, MessageId::ModelStateEstimate);
     }
 
     EventDrivenPredictor::~EventDrivenPredictor() {
+        lock_guard guard(m);
         bus.unsubscribe(this);
     }
 
     void EventDrivenPredictor::processMessage(const std::shared_ptr<Message>& message) {
+        lock_guard guard(m);
         Expect(message->getMessageId() == MessageId::ModelStateEstimate, "Unexpected message id");
         UDataVecMessage* m = dynamic_cast<UDataVecMessage*>(message.get());
         Expect(m != nullptr, "Unexpected message type");
 
         Prediction prediction = pred->predict(seconds(m->getTimestamp()), m->getValue());
-        auto peMsg = std::shared_ptr<ProgEventMessage>(
-            new ProgEventMessage(MessageId::BatteryEod, source, prediction.events[0]));
-        bus.publish(peMsg);
+        for (const auto& event : prediction.getEvents()) {
+            auto peMsg = std::shared_ptr<ProgEventMessage>(
+                new ProgEventMessage(event.getId(), source, event));
+            bus.publish(peMsg);
+        }
     }
 }

@@ -66,7 +66,7 @@ BatteryModel::BatteryModel()
                        {MessageId::Watts},
                        {MessageId::Volts, MessageId::Centigrade},
                        {},
-                       {"EOD"},
+                       {MessageId::BatteryEod},
                        1) {
     // Set some default parameters
     setParameters();
