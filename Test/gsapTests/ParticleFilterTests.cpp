@@ -73,13 +73,11 @@ void ctorWithNonemptyVectors() {
     }
 }
 
-void GSAPConfigMapCtor() {
+void ConfigMapCtor() {
     ConfigMap theMap;
     theMap.set("Observer.ParticleCount", "200");
-    theMap.insert(
-        std::make_pair("Observer.ProcessNoise",
-                       std::vector<std::string>({"1", "1", "1", "1", "1", "1", "1", "1"})));
-    theMap.insert(std::make_pair("Observer.SensorNoise", std::vector<std::string>({"1", "1"})));
+    theMap.set("Observer.ProcessNoise", {"1", "1", "1", "1", "1", "1", "1", "1"});
+    theMap.set("Observer.SensorNoise", {"1", "1"});
     theMap.set("Observer.MinEffective", "100");
 
     BatteryModel battery;

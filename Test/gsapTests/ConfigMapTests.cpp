@@ -15,11 +15,6 @@
 using namespace PCOE;
 using namespace PCOE::Test;
 
-void configMapInit() {
-    ConfigMap theMap;
-    Assert::AreEqual(0, theMap.size());
-}
-
 void configMapLoadArgs() {
     const int argc   = 4;
     char* argv[argc] = {"-test", "-test2", "-test3", "badTest"};

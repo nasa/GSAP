@@ -147,9 +147,7 @@ namespace PCOE {
         for (auto&& testElement : test) {
             testStr.push_back(std::to_string(testElement));
         }
-        configMap.insert(
-            std::pair<std::string, std::vector<std::string>>(ConstLoadEstimator::LOADING_KEY,
-                                                             testStr));
+        configMap.set(ConstLoadEstimator::LOADING_KEY, testStr);
 
         LoadEstimatorFactory& f = LoadEstimatorFactory::instance();
         std::unique_ptr<LoadEstimator> c =
