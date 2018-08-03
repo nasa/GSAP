@@ -33,7 +33,7 @@ namespace PCOE {
         for (auto&& testElement : test) {
             testStr.push_back(std::to_string(testElement));
         }
-        configMap.setVector(ConstLoadEstimator::LOADING_KEY, testStr);
+        configMap.set(ConstLoadEstimator::LOADING_KEY, testStr);
 
         ConstLoadEstimator c = ConstLoadEstimator(configMap);
 
@@ -51,7 +51,7 @@ namespace PCOE {
 
         Assert::AreEqual(test, test2, "Sampling not correct");
 
-        configMap.setVector(ConstLoadEstimator::LOADING_KEY, {});
+        configMap.set(ConstLoadEstimator::LOADING_KEY, {});
 
         ConstLoadEstimator c2 = ConstLoadEstimator(configMap);
 
@@ -71,8 +71,8 @@ namespace PCOE {
         for (auto&& stdElement : std) {
             stdStr.push_back(std::to_string(stdElement));
         }
-        configMap.setVector(ConstLoadEstimator::LOADING_KEY, testStr);
-        configMap.setVector(ConstLoadEstimator::STDDEV_KEY, stdStr);
+        configMap.set(ConstLoadEstimator::LOADING_KEY, testStr);
+        configMap.set(ConstLoadEstimator::STDDEV_KEY, stdStr);
         ConstLoadEstimator c = ConstLoadEstimator(configMap);
         Assert::AreEqual(c.getUncertaintyMode(), ConstLoadEstimator::GAUSSIAN);
 
@@ -86,12 +86,12 @@ namespace PCOE {
         Assert::IsTrue(c2.usesHistoricalLoading());
         Assert::IsFalse(c2.isSampleBased());
 
-        configMap.setVector(MovingAverageLoadEstimator::WINDOW_SIZE_KEY,
-                            std::vector<std::string>({"2"})); // Set window size key;
+        configMap.set(MovingAverageLoadEstimator::WINDOW_SIZE_KEY,
+                      std::vector<std::string>({"2"})); // Set window size key;
         MovingAverageLoadEstimator c = MovingAverageLoadEstimator(configMap);
 
-        configMap.setVector(MovingAverageLoadEstimator::WINDOW_SIZE_KEY,
-                            std::vector<std::string>({"-1"})); // Set window size key;
+        configMap.set(MovingAverageLoadEstimator::WINDOW_SIZE_KEY,
+                      std::vector<std::string>({"-1"})); // Set window size key;
         MovingAverageLoadEstimator c3 = MovingAverageLoadEstimator(configMap);
 
         LoadEstimate test2 = c.estimateLoad(NAN, 0);
