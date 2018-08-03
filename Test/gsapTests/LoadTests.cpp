@@ -27,6 +27,7 @@ namespace PCOE {
         }
         catch (std::range_error) {
         }
+        
 
         LoadEstimate test = {1, 2, 3};
         std::vector<std::string> testStr;
@@ -36,6 +37,7 @@ namespace PCOE {
         configMap.set(ConstLoadEstimator::LOADING_KEY, testStr);
 
         ConstLoadEstimator c = ConstLoadEstimator(configMap);
+        Assert::AreEqual(c.getSavePts().size(), 0);
 
         Assert::IsFalse(c.usesHistoricalLoading());
         Assert::IsTrue(c.isSampleBased());
@@ -85,6 +87,7 @@ namespace PCOE {
         MovingAverageLoadEstimator c2 = MovingAverageLoadEstimator(configMap);
         Assert::IsTrue(c2.usesHistoricalLoading());
         Assert::IsFalse(c2.isSampleBased());
+        Assert::AreEqual(c2.getSavePts().size(), 0);
 
         configMap.set(MovingAverageLoadEstimator::WINDOW_SIZE_KEY,
                       std::vector<std::string>({"2"})); // Set window size key;

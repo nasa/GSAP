@@ -34,17 +34,17 @@ namespace PCOE {
         friend class ProgEvents;
 
     public:
-        ProgEvent(MessageId id, UData&& state, UData&& toe)
+        ProgEvent(MessageId id, std::vector<UData>&& state, UData&& toe)
             : eventId(id), eventState(state), timeOfEvent(toe) {}
 
-        ProgEvent(MessageId id, const UData& state, const UData& toe)
+        ProgEvent(MessageId id, const std::vector<UData>& state, const UData& toe)
             : eventId(id), eventState(state), timeOfEvent(toe) {}
 
         inline MessageId getId() const {
             return eventId;
         }
 
-        inline const UData& getState() const {
+        inline const std::vector<UData>& getState() const {
             return eventState;
         }
 
@@ -55,7 +55,7 @@ namespace PCOE {
     private:
         MessageId eventId;
 
-        UData eventState;
+        std::vector<UData> eventState;
 
         UData timeOfEvent;
     };

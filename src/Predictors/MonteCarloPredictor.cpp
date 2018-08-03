@@ -72,14 +72,19 @@ namespace PCOE {
         //            constructor. Shouldn't be possible here.
         Expect(model != nullptr, "Model is null");
 
+        auto savePts = loadEstimator->getSavePts();
+        
         UData eventToe(UType::Samples);
         eventToe.npoints(sampleCount);
-        UData eventState(UType::Samples);
-        eventState.npoints(sampleCount);
+        std::vector<UData> eventState(savePts.size());
+        for (auto && elem : eventState) {
+            elem.uncertainty(UType::Samples);
+            elem.npoints(sampleCount);
+        }
         std::vector<DataPoint> sysTrajectories(model->getPredictedOutputs().size());
         for (auto& trajectory : sysTrajectories) {
             trajectory.setUncertainty(UType::Samples);
-            trajectory.setNumTimes(ceil(horizon / model->getDefaultTimeStep()));
+            trajectory.setNumTimes(savePts.size());
             trajectory.setNPoints(sampleCount);
         }
         auto stateTimestamp = getLowestTimestamp(state);
@@ -104,6 +109,7 @@ namespace PCOE {
             Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
         }
         auto PxxChol = Pxx.chol();
+        
 
 /* OpenMP info
  * If the application is built with OpenMP, the predictor below operates in parallel.
@@ -116,7 +122,7 @@ namespace PCOE {
  * inside the loop, otherwise it can be left outside.
  */
 // For each sample
-#pragma omp parallel for shared(data)
+#pragma omp parallel for shared(data, loadEstimatorSavePts)
         for (unsigned int sample = 0; sample < sampleCount; sample++) {
 // 0. Create random number generator if operating in parallel
 #ifdef USING_OPENMP
@@ -157,16 +163,21 @@ namespace PCOE {
                     break;
                 }
 
-                // Write to system trajectory (model variables for which we are interested in
-                // predicted values)
-                auto z = model->getOutputVector();
-                auto predictedOutput = model->predictedOutputEqn(t_s, x, u, z);
-                for (unsigned int p = 0; p < predictedOutput.size(); p++) {
-                    sysTrajectories[p][timeIndex][sample] = z[p];
+                if (timeIndex < savePts.size() && t_s > savePts[timeIndex]) {
+                    // Write to system trajectory (model variables for which we are interested in
+                    // predicted values)
+                    auto z = model->getOutputVector();
+                    auto predictedOutput = model->predictedOutputEqn(t_s, x, u, z);
+                    for (unsigned int p = 0; p < predictedOutput.size(); p++) {
+                        sysTrajectories[p][timeIndex][sample] = z[p];
+                    }
+                    
+                    // Write to eventState property
+                    eventState[timeIndex][sample] = model->eventStateEqn(x);
+                    
+                    // Update time index
+                    timeIndex++;
                 }
-
-                // Write to eventState property
-                eventState[sample] = model->eventStateEqn(x);
 
                 // Sample process noise - for now, assuming independent
                 std::vector<double> noise(model->getStateSize());
@@ -177,9 +188,6 @@ namespace PCOE {
 
                 // Update state for t to t+dt
                 model->stateEqn(t_s, x, u, noise, model->getDefaultTimeStep());
-
-                // Update time index
-                timeIndex++;
             }
         }
 
