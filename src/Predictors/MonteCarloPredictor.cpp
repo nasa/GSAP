@@ -73,11 +73,11 @@ namespace PCOE {
         Expect(model != nullptr, "Model is null");
 
         auto savePts = loadEstimator->getSavePts();
-        
+
         UData eventToe(UType::Samples);
         eventToe.npoints(sampleCount);
         std::vector<UData> eventState(savePts.size());
-        for (auto && elem : eventState) {
+        for (auto&& elem : eventState) {
             elem.uncertainty(UType::Samples);
             elem.npoints(sampleCount);
         }
@@ -109,7 +109,6 @@ namespace PCOE {
             Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
         }
         auto PxxChol = Pxx.chol();
-        
 
 /* OpenMP info
  * If the application is built with OpenMP, the predictor below operates in parallel.
@@ -171,10 +170,10 @@ namespace PCOE {
                     for (unsigned int p = 0; p < predictedOutput.size(); p++) {
                         sysTrajectories[p][timeIndex][sample] = z[p];
                     }
-                    
+
                     // Write to eventState property
                     eventState[timeIndex][sample] = model->eventStateEqn(x);
-                    
+
                     // Update time index
                     timeIndex++;
                 }
