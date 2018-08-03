@@ -12,7 +12,6 @@ using namespace PCOE;
 using namespace PCOE::Test;
 
 namespace EventDrivenObserverTests {
-    static const auto PUBLISH_DELAY = std::chrono::milliseconds(5);
 
     void constructor() {
         MessageBus bus;
@@ -33,25 +32,25 @@ namespace EventDrivenObserverTests {
 
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate on construction");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 0.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate before init (1)");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput1, src, 0.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate before init (2)");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestOutput0, src, 0.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(0,
                          listener.getCount(),
                          "obs produced state estimate after first set of data");
 
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 0.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate on 1 input");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput1, src, 0.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate on 2 inputs");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestOutput0, src, 0.0)));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.processAll();
         Assert::AreEqual(1,
                          listener.getCount(),
                          "obs didn't produce state estimate after two sets of data");

@@ -32,8 +32,8 @@ namespace PCOE {
             //            recursive and processing one message often leads to
             //            the publishing of further messages.
             lock.unlock();
-
             f.get();
+            lock.lock();
         }
     }
 
