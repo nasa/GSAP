@@ -10,8 +10,7 @@
 
 void ctor();
 void ctorWithNonemptyVectors();
-void GSAPConfigMapCtor();
-void setModel();
+void ConfigMapCtor();
 void PFinitialize();
 void step();
 void getStateEstimate();

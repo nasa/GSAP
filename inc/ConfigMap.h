@@ -38,31 +38,110 @@ namespace PCOE {
          */
         const std::vector<std::string>& getVector(const std::string& key) const;
 
+        /**
+         * @brief       Gets double at given key
+         * @param       key     The key from which the vector is retrieved
+         * @return      The double corresponding to the given key
+         */
         double getDouble(const std::string& key) const;
 
+        /**
+         * @brief       Gets 64-bit unsigned integer at given key
+         * @param       key     The key from which the vector is retrieved
+         * @return      The 64-bit unsigned integer corresponding to the given key
+         */
         std::uint64_t getUInt64(const std::string& key) const;
 
+        /**
+         * @brief       Gets 64-bit integer at given key
+         * @param       key     The key from which the vector is retrieved
+         * @return      The 64-bit integer corresponding to the given key
+         */
         std::int64_t getInt64(const std::string& key) const;
 
+        /**
+         * @brief       Gets 32-bit unsigned integer at given key
+         * @param       key     The key from which the vector is retrieved
+         * @return      The 32-bit unsigned integer corresponding to the given key
+         */
         std::uint32_t getUInt32(const std::string& key) const;
 
+        /**
+         * @brief       Gets 32-bit integer at given key
+         * @param       key     The key from which the vector is retrieved
+         * @return      The 32-bit integer corresponding to the given key
+         */
         std::int32_t getInt32(const std::string& key) const;
 
+        /**
+         * @brief       Gets string at given key
+         * @param       key     The key from which the vector is retrieved
+         * @return      The string corresponding to the given key
+         */
         const std::string& getString(const std::string& key) const;
 
+        /** @function   set
+         *  @brief      Set a parameter to a vector of strings
+         *  @param      key     Identifier for the parameter
+         *  @param      value   Value that the parameter should be set to
+         *
+         *  @example    config.set("example", std::vector({value1, value2});
+         **/
         void set(const std::string& key, const std::vector<std::string>& vector);
 
-        void set(const std::string& key, const std::initializer_list<std::string>& list);
+        /** @function   set
+         *  @brief      Set a parameter to an initializer list
+         *  @param      key     Identifier for the parameter
+         *  @param      value   Value that the parameter should be set to
+         *
+         *  @example    config.set("example", {value1, value2});
+         **/
+        void set(const std::string& key, const std::initializer_list<std::string> list);
 
-        void set(const std::string& key, const double& value);
+        /** @function   set
+         *  @brief      Set a parameter to a double
+         *  @param      key     Identifier for the parameter
+         *  @param      value   Value that the parameter should be set to
+         *
+         *  @example    config.set("example", 2.3);
+         **/
+        void set(const std::string& key, const double value);
 
-        void set(const std::string& key, const std::uint64_t& value);
+        /** @function   set
+         *  @brief      Set a parameter to a 64-bit unsigned int
+         *  @param      key     Identifier for the parameter
+         *  @param      value   Value that the parameter should be set to
+         *
+         *  @example    config.set("example", UINT64_MAX);
+         **/
+        void set(const std::string& key, const std::uint64_t value);
 
-        void set(const std::string& key, const std::int64_t& value);
+        /** @function   set
+         *  @brief      Set a parameter to a 64-bit int
+         *  @param      key     Identifier for the parameter
+         *  @param      value   Value that the parameter should be set to
+         *
+         *  @example    config.set("example", INT64_MAX);
+         **/
+        void set(const std::string& key, const std::int64_t value);
 
-        void set(const std::string& key, const std::uint32_t& value);
+        /** @function   set
+         *  @brief      Set a parameter to a 32-bit unsigned int
+         *  @param      key     Identifier for the parameter
+         *  @param      value   Value that the parameter should be set to
+         *
+         *  @example    config.set("example", UINT_MAX);
+         **/
+        void set(const std::string& key, const std::uint32_t value);
 
-        void set(const std::string& key, const std::int32_t& value);
+        /** @function   set
+         *  @brief      Set a parameter to a 32-bit int
+         *  @param      key     Identifier for the parameter
+         *  @param      value   Value that the parameter should be set to
+         *
+         *  @example    config.set("example", INT32_MAX);
+         **/
+        void set(const std::string& key, const std::int32_t value);
 
         /** @function   set
          *  @brief      Set a parameter to a string
@@ -115,10 +194,6 @@ namespace PCOE {
          *  @exception std::runtime_error If path is not a valid directory.
          */
         static void addSearchPath(const std::string& path);
-
-        unsigned long size();
-
-        void insert(std::pair<std::string, std::vector<std::string>> pair);
 
     private:
         /** @function   parseLine
