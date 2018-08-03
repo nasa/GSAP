@@ -35,6 +35,15 @@
 using namespace PCOE;
 using namespace PCOE::Test;
 
+class MCTestConstLoadEst : public ConstLoadEstimator {
+    // Used to test savepts in MCP
+public:
+    MCTestConstLoadEst(const ConfigMap & c) : ConstLoadEstimator(c) {}
+    std::vector<double> getSavePts() override {
+        return std::vector<double>({0, 10, 50, 100});
+    }
+};
+
 void predictorTestInit() {
     // Set up the log
     Log& log = Log::Instance("PredictorTests.log");
@@ -53,7 +62,6 @@ void testMonteCarloBatteryPredict() {
     configMap.set("Model.ProcessNoise", processNoise);
     configMap.set("Predictor.LoadEstimator", std::vector<std::string>({"const"}));
     configMap.set("LoadEstimator.loading", std::vector<std::string>({"8"}));
-    configMap.set("Predictor.Events", std::vector<std::string>({"EOD"}));
 
     PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
     std::unique_ptr<PrognosticsModel> model =
@@ -62,7 +70,7 @@ void testMonteCarloBatteryPredict() {
     auto z0 = Model::output_type({20, 4.2});
     auto x = model->initialize(u0, z0);
 
-    ConstLoadEstimator le(configMap);
+    MCTestConstLoadEst le(configMap);
 
     // Create MonteCarloPredictor for battery
     MonteCarloPredictor MCP(model.get(), &le, configMap);

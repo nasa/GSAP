@@ -83,6 +83,13 @@ namespace PCOE {
         virtual bool usesHistoricalLoading() {
             return false;
         }
+        
+        /**
+         *  Get the load-estimator specified save points
+         **/
+        virtual std::vector<double> getSavePts() {
+            return std::vector<double>();
+        };
 
         /**
          * @brief   Set the load for that timestep, if the load estimator uses historical loading.
