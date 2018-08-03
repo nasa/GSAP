@@ -11,7 +11,7 @@
 #include "Observers/Observer.h"
 
 namespace PCOE {
-    class GSAPConfigMap;
+    class ConfigMap;
 
     struct SigmaPoints {
         Matrix M; // data matrix
@@ -61,7 +61,7 @@ namespace PCOE {
          *               the model.
          * @param config A configuration from which to read covariance matrices.
          **/
-        UnscentedKalmanFilter(const Model* m, const GSAPConfigMap& config);
+        UnscentedKalmanFilter(const Model* m, const ConfigMap& config);
 
         /**
          * Sets the initial model state and computes initial sigma points.

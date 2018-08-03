@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "LoadEstimatorFactory.h"
 #include "ModelBasedPrognoser.h"
 #include "Observers/ObserverFactory.h"
@@ -47,28 +47,28 @@ namespace PCOE {
     const std::string DEFAULT_LOAD_EST = "movingAverage";
     const double DEFAULT_STEPSIZE_S = 1; // seconds
 
-    ModelBasedPrognoser::ModelBasedPrognoser(GSAPConfigMap& configMap)
+    ModelBasedPrognoser::ModelBasedPrognoser(ConfigMap& configMap)
         : Prognoser(configMap), initialized(false) {
         // Check for required config parameters
-        configMap.checkRequiredParams(
+        requireKeys(configMap,
             {MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY, NUMSAMPLES_KEY, HORIZON_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Model");
         PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
-        model = pProgModelFactory.Create(configMap[MODEL_KEY][0], configMap);
+        model = pProgModelFactory.Create(configMap.getVector(MODEL_KEY)[0], configMap);
 
         // Create Observer
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Observer");
         ObserverFactory& pObserverFactory = ObserverFactory::instance();
-        observer = pObserverFactory.Create(configMap[OBSERVER_KEY][0], model.get(), configMap);
+        observer = pObserverFactory.Create(configMap.getVector(OBSERVER_KEY)[0], model.get(), configMap);
 
         // Create Load Estimator
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Load Estimator");
         LoadEstimatorFactory& loadEstFact = LoadEstimatorFactory::instance();
-        if (configMap.includes(LOAD_EST_KEY)) {
-            loadEstimator = loadEstFact.Create(configMap[LOAD_EST_KEY][0], configMap);
+        if (configMap.hasKey(LOAD_EST_KEY)) {
+            loadEstimator = loadEstFact.Create(configMap.getVector(LOAD_EST_KEY)[0], configMap);
         }
         else {
             // If not specified, use default
@@ -78,14 +78,14 @@ namespace PCOE {
         // Create Predictor
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
         PredictorFactory& pPredictorFactory = PredictorFactory::instance();
-        predictor = pPredictorFactory.Create(configMap[PREDICTOR_KEY][0],
+        predictor = pPredictorFactory.Create(configMap.getVector(PREDICTOR_KEY)[0],
                                              model.get(),
                                              loadEstimator.get(),
                                              configMap);
 
         // Set model stepsize
-        if (configMap.includes(STEPSIZE_KEY)) {
-            model->setDefaultTimeStep(std::stod(configMap[STEPSIZE_KEY][0]));
+        if (configMap.hasKey(STEPSIZE_KEY)) {
+            model->setDefaultTimeStep(std::stod(configMap.getVector(STEPSIZE_KEY)[0]));
         }
         else {
             model->setDefaultTimeStep(DEFAULT_STEPSIZE_S);
@@ -96,8 +96,8 @@ namespace PCOE {
 
         // Set configuration parameters
         unsigned int numSamples =
-            static_cast<unsigned int>(std::stoul(configMap[NUMSAMPLES_KEY][0]));
-        unsigned int horizon = static_cast<unsigned int>(std::stoul(configMap[HORIZON_KEY][0]));
+            static_cast<unsigned int>(configMap.getUInt64(NUMSAMPLES_KEY));
+        unsigned int horizon = static_cast<unsigned int>(configMap.getUInt64(HORIZON_KEY));
 
         // @todo: Refactor for event-driven architecture
         //        // Create progdata

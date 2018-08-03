@@ -8,7 +8,7 @@
 
 #include "LoadTests.hpp"
 #include "ConstLoadEstimator.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "LoadEstimatorFactory.h"
 #include "MovingAverageLoadEstimator.h"
 #include "Test.h"
@@ -19,7 +19,7 @@ namespace PCOE {
     void LoadTestInit() {}
 
     void testConstLoad() {
-        GSAPConfigMap configMap;
+        ConfigMap configMap;
 
         try {
             ConstLoadEstimator c = ConstLoadEstimator(configMap);
@@ -33,7 +33,7 @@ namespace PCOE {
         for (auto&& testElement : test) {
             testStr.push_back(std::to_string(testElement));
         }
-        configMap[ConstLoadEstimator::LOADING_KEY] = testStr;
+        configMap.set(ConstLoadEstimator::LOADING_KEY, testStr);
 
         ConstLoadEstimator c = ConstLoadEstimator(configMap);
 
@@ -51,7 +51,7 @@ namespace PCOE {
 
         Assert::AreEqual(test, test2, "Sampling not correct");
 
-        configMap[ConstLoadEstimator::LOADING_KEY] = {};
+        configMap.set(ConstLoadEstimator::LOADING_KEY, {});
 
         ConstLoadEstimator c2 = ConstLoadEstimator(configMap);
 
@@ -60,10 +60,10 @@ namespace PCOE {
     }
 
     void testConstLoadWithUncert() {
-        GSAPConfigMap configMap;
+        ConfigMap configMap;
 
         LoadEstimate test = {1, 2, 3};
-        LoadEstimate std  = {0.1, 0.1, 0.1};
+        LoadEstimate std = {0.1, 0.1, 0.1};
         std::vector<std::string> testStr, stdStr;
         for (auto&& testElement : test) {
             testStr.push_back(std::to_string(testElement));
@@ -71,27 +71,27 @@ namespace PCOE {
         for (auto&& stdElement : std) {
             stdStr.push_back(std::to_string(stdElement));
         }
-        configMap[ConstLoadEstimator::LOADING_KEY] = testStr;
-        configMap[ConstLoadEstimator::STDDEV_KEY]  = stdStr;
-        ConstLoadEstimator c                       = ConstLoadEstimator(configMap);
+        configMap.set(ConstLoadEstimator::LOADING_KEY, testStr);
+        configMap.set(ConstLoadEstimator::STDDEV_KEY, stdStr);
+        ConstLoadEstimator c = ConstLoadEstimator(configMap);
         Assert::AreEqual(c.getUncertaintyMode(), ConstLoadEstimator::GAUSSIAN);
 
         //      TODO(CT): test uncertainty sampling in some meaningful way
     }
 
     void testMovingAverage() {
-        GSAPConfigMap configMap;
+        ConfigMap configMap;
 
         MovingAverageLoadEstimator c2 = MovingAverageLoadEstimator(configMap);
         Assert::IsTrue(c2.usesHistoricalLoading());
         Assert::IsFalse(c2.isSampleBased());
 
-        configMap[MovingAverageLoadEstimator::WINDOW_SIZE_KEY] =
-            std::vector<std::string>({"2"}); // Set window size key;
+        configMap.set(MovingAverageLoadEstimator::WINDOW_SIZE_KEY,
+                      std::vector<std::string>({"2"})); // Set window size key;
         MovingAverageLoadEstimator c = MovingAverageLoadEstimator(configMap);
 
-        configMap[MovingAverageLoadEstimator::WINDOW_SIZE_KEY] =
-            std::vector<std::string>({"-1"}); // Set window size key;
+        configMap.set(MovingAverageLoadEstimator::WINDOW_SIZE_KEY,
+                      std::vector<std::string>({"-1"})); // Set window size key;
         MovingAverageLoadEstimator c3 = MovingAverageLoadEstimator(configMap);
 
         LoadEstimate test2 = c.estimateLoad(NAN, 0);
@@ -141,15 +141,13 @@ namespace PCOE {
     }
 
     void testFactory() {
-        GSAPConfigMap configMap;
+        ConfigMap configMap;
         LoadEstimate test = {1, 2, 3};
         std::vector<std::string> testStr;
         for (auto&& testElement : test) {
             testStr.push_back(std::to_string(testElement));
         }
-        configMap.insert(
-            std::pair<std::string, std::vector<std::string>>(ConstLoadEstimator::LOADING_KEY,
-                                                             testStr));
+        configMap.set(ConstLoadEstimator::LOADING_KEY, testStr);
 
         LoadEstimatorFactory& f = LoadEstimatorFactory::instance();
         std::unique_ptr<LoadEstimator> c =

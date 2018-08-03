@@ -36,10 +36,10 @@ namespace PCOE {
 
     static Log& log = Log::Instance();
     const std::string MovingAverageLoadEstimator::WINDOW_SIZE_KEY = "LoadEstimator.window_size";
-    MovingAverageLoadEstimator::MovingAverageLoadEstimator(const GSAPConfigMap& configMap) {
+    MovingAverageLoadEstimator::MovingAverageLoadEstimator(const ConfigMap& configMap) {
         log.WriteLine(LOG_INFO, DEBUG_TAG, "Configuring");
-        if (configMap.includes(WINDOW_SIZE_KEY)) {
-            windowSize = std::stoul(configMap.at(WINDOW_SIZE_KEY)[0]);
+        if (configMap.hasKey(WINDOW_SIZE_KEY)) {
+            windowSize = configMap.getUInt64(WINDOW_SIZE_KEY);
             windowSize = windowSize >= 0 ? windowSize : 0; // Handle size < 0
         }
 

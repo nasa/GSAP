@@ -2,14 +2,13 @@
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #include "Messages/Message.h"
+#include "Contracts.h"
 
 namespace PCOE {
     void Message::serialize(std::ostream& os) const {
+        Expect(source.length() < std::numeric_limits<std::uint16_t>::max(), "Source length");
         os.write(reinterpret_cast<const char*>(&id), 8);
 
-        if (source.length() > std::numeric_limits<std::uint16_t>::max()) {
-            // TODO: Handle error and die?
-        }
         std::uint16_t sourceLen = static_cast<std::uint16_t>(source.length());
         os.write(reinterpret_cast<const char*>(&sourceLen), 2);
         os.write(source.c_str(), sourceLen);

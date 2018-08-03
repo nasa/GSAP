@@ -17,7 +17,7 @@ namespace PCOE {
      * @author Jason Watkins
      * @since 1.0
      **/
-    class PrognosticsModelFactory : public Factory<PrognosticsModel, const GSAPConfigMap&>,
+    class PrognosticsModelFactory : public Factory<PrognosticsModel, const ConfigMap&>,
                                     public Singleton<PrognosticsModelFactory> {
         friend class Singleton<PrognosticsModelFactory>;
 

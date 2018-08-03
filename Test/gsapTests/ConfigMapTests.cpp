@@ -8,18 +8,12 @@
 //
 
 #include "ConfigMap.h"
-#include "GSAPConfigMap.h"
 #include "Test.h"
 
 #include "ConfigMapTests.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
-
-void configMapInit() {
-    ConfigMap theMap;
-    Assert::AreEqual(0, theMap.size());
-}
 
 void configMapLoadArgs() {
     const int argc   = 4;
@@ -29,16 +23,33 @@ void configMapLoadArgs() {
 
 void configMapUse() {
     ConfigMap theMap;
-    theMap["test"] = std::vector<std::string>({"test"});
-    Assert::AreEqual(1, theMap["test"].size());
-    Assert::AreEqual(0, theMap["test"][0].compare("test"));
+    theMap.set("test", std::vector<std::string>({"test"}));
+    Assert::AreEqual(1, theMap.getVector("test").size());
+    Assert::AreEqual(0, theMap.getString("test").compare("test"));
 
     theMap.set("test2", "blah");
-    Assert::AreEqual(0, theMap["test2"][0].compare("blah"));
+    Assert::AreEqual(0, theMap.getVector("test2")[0].compare("blah"));
 
-    Assert::IsTrue(theMap.includes({"test"}));
-    Assert::IsTrue(theMap.includes({"test2"}));
-    Assert::IsFalse(theMap.includes({"test3"}));
+    Assert::IsTrue(theMap.hasKey("test"));
+    Assert::IsTrue(theMap.hasKey("test2"));
+    Assert::IsFalse(theMap.hasKey("test3"));
+
+    theMap.set("testSetDouble", 2.3);
+    Assert::AreEqual(2.3, theMap.getDouble("testSetDouble"), 0, "Setting double value failed.");
+
+    theMap.set("testSetInt32", INT32_MAX);
+    Assert::AreEqual(INT32_MAX, theMap.getInt32("testSetInt32"), "Setting int32 value failed.");
+
+    theMap.set("testSetInt64", INT64_MAX);
+    Assert::AreEqual(INT64_MAX, theMap.getInt64("testSetInt64"), "Setting int64 value failed.");
+
+    theMap.set("testSetUInt64", UINT64_MAX);
+    Assert::AreEqual(UINT64_MAX, theMap.getUInt64("testSetUInt64"), "Setting uint64 value failed.");
+
+    theMap.set("testSetUInt32", UINT32_MAX);
+    Assert::AreEqual(UINT32_MAX, theMap.getUInt32("testSetUInt32"), "Setting uint32 value failed.");
+
+
 
     // std::string exampleLine("test3:a,b,dslfjs,d");
     // theMap.add(exampleLine);
@@ -56,7 +67,7 @@ void configMapLoad() {
     ConfigMap theMap;
     theMap.addSearchPath("../Test/gsapTests");
     theMap = ConfigMap("Test.cfg");
-    Assert::AreNotEqual(0, theMap["test"][0].compare("modelBasedPrognoser"));
+    Assert::AreNotEqual(0, theMap.getVector("test")[0].compare("modelBasedPrognoser"));
 }
 
 void configMapLoadNonexistent() {
@@ -86,31 +97,27 @@ void configMapTrim() {
     theMap = ConfigMap("Test.cfg");
 }
 
-void gsapConfigMapInit() {
-    GSAPConfigMap theMap;
-}
-
-void gsapConfigMapUse() {
-    GSAPConfigMap theMap;
+void configMapRequireKeys() {
+    ConfigMap theMap;
 
     // checkRequiredParams- Dont exist
     try {
-        theMap.checkRequiredParams({"test1", "test2"});
+        requireKeys(theMap, {"test1", "test2"});
         Assert::Fail("Found params that shouldn't exist [0]");
     }
-    catch (std::runtime_error) {
+    catch (std::range_error) {
     }
 
     // checkRequiredParams- Mix exist
     theMap.set("test1", "blah");
     try {
-        theMap.checkRequiredParams({"test1", "test2"});
+        requireKeys(theMap, {"test1", "test2"});
         Assert::Fail("Found params that shouldn't exist [1]");
     }
-    catch (std::runtime_error) {
+    catch (std::range_error) {
     }
 
     // checkRequiredParams- Do exist
     theMap.set("test2", "blah");
-    theMap.checkRequiredParams({"test1", "test2"});
+    requireKeys(theMap, {"test1", "test2"});
 }

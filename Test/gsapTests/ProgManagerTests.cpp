@@ -30,7 +30,7 @@ namespace TestProgManager {
 
     void construct_config() {
         std::string path = "../example/cfg/prog.cfg";
-        GSAPConfigMap config(path);
+        ConfigMap config(path);
         ProgManager pm(config);
     }
 
@@ -42,7 +42,7 @@ namespace TestProgManager {
 
     void setConfig_config() {
         std::string path = "../example/cfg/prog.cfg";
-        GSAPConfigMap config(path);
+        ConfigMap config(path);
         ProgManager pm;
         pm.setConfig(config);
     }

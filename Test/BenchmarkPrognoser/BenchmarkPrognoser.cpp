@@ -21,12 +21,12 @@
 
 #include "BenchmarkPrognoser.h"
 #include "BenchmarkTimer.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 
 namespace PCOE {
     // Configuration Keys
 
-    BenchmarkPrognoser::BenchmarkPrognoser(GSAPConfigMap& configMap)
+    BenchmarkPrognoser::BenchmarkPrognoser(ConfigMap& configMap)
         : ModelBasedPrognoser(configMap) {}
 
     void BenchmarkPrognoser::step() {

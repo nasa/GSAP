@@ -34,15 +34,13 @@ using namespace PCOE::Test;
 int main() {
     TestContext context;
     // Config Map Tests
-    context.AddTest("Init", configMapInit, "Config Map");
     context.AddTest("Load Arguments", configMapLoadArgs, "Config Map");
     context.AddTest("Use", configMapUse, "Config Map");
     context.AddTest("Load", configMapLoad, "Config Map");
     context.AddTest("Load Nonexistent", configMapLoadNonexistent, "ConfigMap");
     context.AddTest("Add Bad Search Path", configMapAddBadSearchPath, "Config Map");
     context.AddTest("Trim", configMapTrim, "Config Map");
-    context.AddTest("GSAP Init", gsapConfigMapInit, "Config Map");
-    context.AddTest("GSAP Use", gsapConfigMapUse, "Config Map");
+    context.AddTest("Require Keys", configMapRequireKeys, "Config Map");
 
     // UData Tests
     context.AddTest("construct_default", TestUData::construct_default, "UData");
@@ -205,7 +203,7 @@ int main() {
     context.AddTest("Constructor with Nonempty Vectors",
                     ctorWithNonemptyVectors,
                     "Particle Filter");
-    context.AddTest("GSAPConfigMap Constructor", GSAPConfigMapCtor, "Particle Filter");
+    context.AddTest("ConfigMap Constructor", ConfigMapCtor, "Particle Filter");
     context.AddTest("Initialize", PFinitialize, "Particle Filter");
     context.AddTest("Step", step, "Particle Filter");
     context.AddTest("Get State Estimate", getStateEstimate, "Particle Filter");

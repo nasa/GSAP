@@ -79,7 +79,7 @@ void RandomCommTest() {
         Assert::IsTrue(x || y, "I have no idea what this is testing");
     }
 
-    GSAPConfigMap theMap3;
+    ConfigMap theMap3;
     CommunicatorFactory& theFactory = CommunicatorFactory::instance();
     theFactory.Register<RandomCommunicator>("random");
     CommunicatorFactory::unique_ptr theComm4 = theFactory.Create("random", theMap3);

@@ -19,11 +19,11 @@
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "EmptyPrognoser.h"
 
 namespace PCOE {
-    EmptyPrognoser::EmptyPrognoser(GSAPConfigMap & configMap) :
+    EmptyPrognoser::EmptyPrognoser(ConfigMap & configMap) :
         Prognoser(configMap) {
         // DEFINE EVENTS FOR THIS SPECIFIC PROGNOSER
         // Ex:

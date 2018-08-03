@@ -16,7 +16,6 @@ void configMapLoad();
 void configMapLoadNonexistent();
 void configMapAddBadSearchPath();
 void configMapTrim();
-void gsapConfigMapInit();
-void gsapConfigMapUse();
+void configMapRequireKeys();
 
 #endif // CONFIGMAPTESTS_H

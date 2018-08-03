@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "ProgManager.h"
 #include "PrognoserFactory.h"
 #include "StringUtils.h"
@@ -49,16 +49,16 @@ namespace PCOE {
     ProgManager::ProgManager()
         : configValues(), configSet(false) {}
 
-    ProgManager::ProgManager(const std::string& path) : ProgManager(GSAPConfigMap(path)) {}
+    ProgManager::ProgManager(const std::string& path) : ProgManager(ConfigMap(path)) {}
 
-    ProgManager::ProgManager(const GSAPConfigMap& config)
+    ProgManager::ProgManager(const ConfigMap& config)
         : configValues(config), configSet(true) {}
 
     void ProgManager::setConfig(const std::string& path) {
-        setConfig(GSAPConfigMap(path));
+        setConfig(ConfigMap(path));
     }
 
-    void ProgManager::setConfig(const GSAPConfigMap& config) {
+    void ProgManager::setConfig(const ConfigMap& config) {
         configValues = config;
         configSet = true;
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting config map");
@@ -98,8 +98,8 @@ namespace PCOE {
 
     void ProgManager::addPrognoser(const std::string& path) {
         PrognoserFactory& factory = PrognoserFactory::instance();
-        GSAPConfigMap config(path);
-        auto& name = config.at("type")[0];
+        ConfigMap config(path);
+        auto& name = config.getVector("type")[0];
         prognosers.push_back(factory.Create(name, config));
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Adding new prognoser");
     }
@@ -118,8 +118,8 @@ namespace PCOE {
 
         /// SETUP PROGNOSERS
         logger.WriteLine(LOG_DEBUG, MODULE_NAME, "Setting Up Prognosers");
-        if (configValues.includes("Prognosers")) {
-            for (auto& itStrs : configValues.at("Prognosers")) {
+        if (configValues.hasKey("Prognosers")) {
+            for (auto& itStrs : configValues.getVector("Prognosers")) {
                 addPrognoser(itStrs);
                 // @todo(CT): Add check that component was made correctly
             }

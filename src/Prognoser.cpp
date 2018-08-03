@@ -35,7 +35,7 @@
 #include <thread> // For thread sleep
 #include <vector>
 
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "Prognoser.h"
 #include "StringUtils.h"
 
@@ -58,33 +58,33 @@ namespace PCOE {
 
     std::string MODULE_NAME;
 
-    Prognoser::Prognoser(GSAPConfigMap& configParams)
+    Prognoser::Prognoser(ConfigMap& configParams)
         : Thread(),
           loopInterval(DEFAULT_INTERVAL_DELAY),
           saveInterval(DEFAULT_SAVE_INTERVAL),
           saveEnabled(DEFAULT_SAVE_ENABLE) {
-        configParams.checkRequiredParams({NAME_KEY, ID_KEY, TYPE_KEY});
+        requireKeys(configParams, {NAME_KEY, ID_KEY, TYPE_KEY});
 
         // Fill in Defaults
-        if (configParams.includes(INTERVAL_DELAY_KEY)) {
+        if (configParams.hasKey(INTERVAL_DELAY_KEY)) {
             loopInterval = static_cast<unsigned int>(
-                std::stoi((configParams.at(INTERVAL_DELAY_KEY)[0]).c_str()));
+                    configParams.getInt32(INTERVAL_DELAY_KEY));
         }
 
-        if (configParams.includes(SAVE_INTERVAL_KEY)) {
+        if (configParams.hasKey(SAVE_INTERVAL_KEY)) {
             saveInterval = static_cast<unsigned int>(
-                std::stoi((configParams.at(SAVE_INTERVAL_KEY)[0]).c_str()));
+                    configParams.getInt32(SAVE_INTERVAL_KEY));
         }
 
-        if (configParams.includes(SAVE_ENABLE_KEY)) {
-            saveEnabled = (configParams.at(SAVE_ENABLE_KEY)[0].compare("true") == 0) ||
-                          (configParams.at(SAVE_ENABLE_KEY)[0].compare("0") == 0);
+        if (configParams.hasKey(SAVE_ENABLE_KEY)) {
+            saveEnabled = (configParams.getVector(SAVE_ENABLE_KEY)[0].compare("true") == 0) ||
+                          (configParams.getVector(SAVE_ENABLE_KEY)[0].compare("0") == 0);
         }
 
-        if (!configParams.includes(HIST_PATH_KEY)) {
+        if (!configParams.hasKey(HIST_PATH_KEY)) {
             configParams.set(HIST_PATH_KEY, ".");
         }
-        if (!configParams.includes(RESET_HIST_KEY)) {
+        if (!configParams.hasKey(RESET_HIST_KEY)) {
             configParams.set(RESET_HIST_KEY, "false");
         }
 
@@ -93,8 +93,8 @@ namespace PCOE {
         // For each tag in (local:global) format, add a function to the lookup table to get the
         // value by the global name when requesting it by the local name. This handles the local
         // to global conversion.
-        if (configParams.includes(TAG_KEY)) {
-            for (auto& it : configParams.at(TAG_KEY)) {
+        if (configParams.hasKey(TAG_KEY)) {
+            for (auto& it : configParams.getVector(TAG_KEY)) {
                 size_t pos = it.find_first_of(':');
                 std::string commonName = it.substr(0, pos);
                 std::string tagName = it.substr(pos + 1, it.length() - pos + 1);
@@ -106,12 +106,12 @@ namespace PCOE {
             }
         }
 
-        histFileName = configParams.at(HIST_PATH_KEY)[0] + PATH_SEPARATOR + MODULE_NAME =
+        histFileName = configParams.getVector(HIST_PATH_KEY)[0] + PATH_SEPARATOR + MODULE_NAME =
                            moduleName + "-Common";
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Read configuration file");
 
         // Handle History file
-        if (configParams.at(RESET_HIST_KEY)[0].compare("true") == 0) {
+        if (configParams.getVector(RESET_HIST_KEY)[0].compare("true") == 0) {
             // Reset History flag has been set
             resetHistory();
         }

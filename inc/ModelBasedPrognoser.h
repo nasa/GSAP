@@ -45,7 +45,7 @@ namespace PCOE {
         /** @brief      Model-based Prognoser Constructor
          *  @param      config Map of config parameters from the prognoser config file
          */
-        ModelBasedPrognoser(GSAPConfigMap& config);
+        ModelBasedPrognoser(ConfigMap& config);
 
         /** @brief     Prognostic Monitor Step
          *

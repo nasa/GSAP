@@ -13,7 +13,6 @@ matrix:
             - g++-7
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-        - GENERATOR=""
     - os: linux
       compiler: clang
       addons:
@@ -24,19 +23,14 @@ matrix:
             - clang-5.0
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
-        - GENERATOR=""
     - os: osx
       compiler: clang
-      osx_image: xcode8
-      env: GENERATOR=""
+      env: MATRIX_EVAL=""
     - os: osx
-      compiler: clang
-      osx_image: xcode8
-      env: GENERATOR="GENERATOR='-G Xcode'"
+      env: MATRIX_EVAL="GENERATOR='-G Xcode'"
 
 before_install:
     - eval "${MATRIX_EVAL}"
-    - eval "${GENERATOR}"
 
 script:
   - set OPEN_MP_NUM_THREADS 4

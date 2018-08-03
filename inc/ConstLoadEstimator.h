@@ -25,6 +25,7 @@
 #define PCOE_CONST_LOAD_EST_H
 
 #include "LoadEstimator.h"
+#include "ConfigMap.h"
 
 namespace PCOE {
     class ConstLoadEstimator : public LoadEstimator {
@@ -42,7 +43,7 @@ namespace PCOE {
          *
          * @param configMap Configuration used to set up the load esitmator.
          **/
-        ConstLoadEstimator(const GSAPConfigMap& configMap);
+        ConstLoadEstimator(const ConfigMap& configMap);
 
         /**
          * @brief   Find if the load estimator is sample based (i.e., if you must use setNSamples)

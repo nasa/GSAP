@@ -25,7 +25,7 @@
 #include "BatteryModel.h"
 #include "ConstLoadEstimator.h"
 #include "Factory.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "PredictorTests.h"
 #include "Predictors/MonteCarloPredictor.h"
 #include "PrognosticsModelFactory.h"
@@ -43,17 +43,17 @@ void predictorTestInit() {
 
 void testMonteCarloBatteryPredict() {
     // Set up configMap
-    GSAPConfigMap configMap;
+    ConfigMap configMap;
     configMap.set("Predictor.SampleCount", "10");
     configMap.set("Predictor.Horizon", "5000");
     std::vector<std::string> processNoise;
     for (unsigned int i = 0; i < 8; i++) {
         processNoise.push_back("1e-5");
     }
-    configMap["Model.ProcessNoise"] = processNoise;
-    configMap["Predictor.LoadEstimator"] = std::vector<std::string>({"const"});
-    configMap["LoadEstimator.loading"] = std::vector<std::string>({"8"});
-    configMap["Predictor.Events"] = std::vector<std::string>({"EOD"});
+    configMap.set("Model.ProcessNoise", processNoise);
+    configMap.set("Predictor.LoadEstimator", std::vector<std::string>({"const"}));
+    configMap.set("LoadEstimator.loading", std::vector<std::string>({"8"}));
+    configMap.set("Predictor.Events", std::vector<std::string>({"EOD"}));
 
     PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
     std::unique_ptr<PrognosticsModel> model =
@@ -103,17 +103,17 @@ void testMonteCarloBatteryPredict() {
 // Test error cases with config parameters
 void testMonteCarloBatteryConfig() {
     // Set up configMap
-    GSAPConfigMap configMap;
+    ConfigMap configMap;
     configMap.set("Predictor.SampleCount", "100");
-    configMap.set("Predictor.Horizon", "5000");
+    configMap.set( "Predictor.Horizon", "5000");
     std::vector<std::string> processNoise;
     for (unsigned int i = 0; i < 8; i++) {
         processNoise.push_back("1e-5");
     }
-    configMap["Model.ProcessNoise"] = processNoise;
-    configMap["Predictor.LoadEstimator"] = std::vector<std::string>({"const"});
-    configMap["LoadEstimator.loading"] = std::vector<std::string>({"8"});
-    configMap["Predictor.Events"] = std::vector<std::string>({"EOD"});
+    configMap.set("Model.ProcessNoise", processNoise);
+    configMap.set("Predictor.LoadEstimator", std::vector<std::string>({"const"}));
+    configMap.set("LoadEstimator.loading", std::vector<std::string>({"8"}));
+    configMap.set("Predictor.Events", std::vector<std::string>({"EOD"}));
 
     BatteryModel battery;
 

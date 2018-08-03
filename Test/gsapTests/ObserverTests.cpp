@@ -412,7 +412,7 @@ void testUKFBatteryStep() {
 }
 
 void testUKFBatteryFromConfig() {
-    GSAPConfigMap paramMap;
+    ConfigMap paramMap;
 
     // Observer parameters
     paramMap.set("observer", "UKF");
@@ -428,7 +428,7 @@ void testUKFBatteryFromConfig() {
             }
         }
     }
-    paramMap["Observer.Q"] = qStrings;
+    paramMap.set("Observer.Q", qStrings);
     // Build R string
     std::vector<std::string> rStrings;
     for (int i = 0; i < 2; i++) {
@@ -441,7 +441,7 @@ void testUKFBatteryFromConfig() {
             }
         }
     }
-    paramMap["Observer.R"] = rStrings;
+    paramMap.set("Observer.R", rStrings);
 
     BatteryModel battery;
 
@@ -453,7 +453,7 @@ void testUKFBatteryFromConfig() {
 
     // Create a UKF with bad R and ensure throws error
     rStrings.pop_back();
-    paramMap["Observer.R"] = rStrings;
+    paramMap.set("Observer.R", rStrings);
     try {
         UnscentedKalmanFilter ukf2(&battery, paramMap);
         Assert::Fail();
@@ -464,7 +464,7 @@ void testUKFBatteryFromConfig() {
     // Create a UKF with bad Q and ensure throws error
     // Note that it checks Q first, so it is okay that R is also bad
     qStrings.pop_back();
-    paramMap["Observer.Q"] = qStrings;
+    paramMap.set("Observer.Q", qStrings);
     try {
         UnscentedKalmanFilter ukf3(&battery, paramMap);
         Assert::Fail();
@@ -474,7 +474,7 @@ void testUKFBatteryFromConfig() {
 }
 
 void testPFBatteryFromConfig() {
-    GSAPConfigMap configMap;
+    ConfigMap configMap;
 
     // Observer parameters
     configMap.set("observer", "ParticleFilter");
@@ -484,14 +484,14 @@ void testPFBatteryFromConfig() {
     for (int i = 0; i < 8; i++) {
         pnStrings.push_back("1e-10");
     }
-    configMap["Observer.processNoise"] = pnStrings;
+    configMap.set("Observer.processNoise", pnStrings);
 
     // Build sensor noise variance vector
     std::vector<std::string> snStrings;
     for (int i = 0; i < 2; i++) {
         snStrings.push_back("1e-3");
     }
-    configMap["Observer.sensorNoise"] = snStrings;
+    configMap.set("Observer.sensorNoise", snStrings);
 
     // Set number of particles
     configMap.set("Observer.N", "100");
@@ -503,7 +503,7 @@ void testPFBatteryFromConfig() {
 
     // Create a UKF with bad sn and ensure throws error
     snStrings.pop_back();
-    configMap["Observer.sensorNoise"] = snStrings;
+    configMap.set("Observer.sensorNoise", snStrings);
     try {
         ParticleFilter pf2(&battery, configMap);
         Assert::Fail();
@@ -514,7 +514,7 @@ void testPFBatteryFromConfig() {
     // Create a UKF with bad sn and ensure throws error
     // Note that it checks pn first, so it is okay that sn is also bad
     pnStrings.pop_back();
-    configMap["Observer.processNoise"] = pnStrings;
+    configMap.set("Observer.processNoise", pnStrings);
     try {
         ParticleFilter pf3(&battery, configMap);
         Assert::Fail();

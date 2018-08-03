@@ -22,7 +22,7 @@ namespace EventDrivenPredictorTests {
 
         EventDrivenPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
-                                        new TestPredictor(&tpm, &tle, GSAPConfigMap())),
+                                        new TestPredictor(&tpm, &tle, ConfigMap())),
                                     src);
         // Constructed without exception
     }
@@ -37,7 +37,7 @@ namespace EventDrivenPredictorTests {
         EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(&tpm)), src);
         EventDrivenPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
-                                        new TestPredictor(&tpm, &tle, GSAPConfigMap())),
+                                        new TestPredictor(&tpm, &tle, ConfigMap())),
                                     src);
         Assert::AreEqual(0,
                          listener.getCount(),

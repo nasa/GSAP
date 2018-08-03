@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "Exceptions.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
 #include "Observers/UnscentedKalmanFilter.h"
 #include "ThreadSafeLog.h"
 #include "UData.h"
@@ -51,14 +51,14 @@ namespace PCOE {
         R = std::move(r);
     }
 
-    // GSAPConfigMap-based Constructor
-    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model* model, const GSAPConfigMap& config)
+    // ConfigMap-based Constructor
+    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model* model, const ConfigMap& config)
         : UnscentedKalmanFilter(model) {
-        config.checkRequiredParams({Q_KEY, R_KEY});
+        requireKeys(config, {Q_KEY, R_KEY});
 
         // Set Q
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Setting Q");
-        auto& QValues = config.at(Q_KEY);
+        auto& QValues = config.getVector(Q_KEY);
         Require(std::abs(std::sqrt(QValues.size()) - std::floor(std::sqrt(QValues.size()))) < 1e-12,
                 "Q values can not describe a square matrix");
         auto qDim = static_cast<std::size_t>(sqrt(QValues.size()));
@@ -73,7 +73,7 @@ namespace PCOE {
 
         // Set R
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Setting R");
-        auto& RValues = config.at(R_KEY);
+        auto& RValues = config.getVector(R_KEY);
         Require(std::abs(std::sqrt(RValues.size()) - std::floor(std::sqrt(RValues.size()))) < 1e-12,
                 "R values can not describe a square matrix");
         auto rDim = static_cast<std::size_t>(sqrt(RValues.size()));
@@ -87,16 +87,16 @@ namespace PCOE {
         }
 
         // Set kappa (optional)
-        if (config.includes(K_KEY)) {
-            setKappa(std::stod(config.at(K_KEY)[0]));
+        if (config.hasKey(K_KEY)) {
+            setKappa(config.getDouble(K_KEY));
         }
         // Set alpha (optional)
-        if (config.includes(K_KEY)) {
-            setAlpha(std::stod(config.at(A_KEY)[0]));
+        if (config.hasKey(K_KEY)) {
+            setAlpha(config.getDouble(A_KEY));
         }
         // Set beta (optional)
-        if (config.includes(K_KEY)) {
-            setBeta(std::stod(config.at(B_KEY)[0]));
+        if (config.hasKey(K_KEY)) {
+            setBeta(config.getDouble(B_KEY));
         }
 
         log.WriteLine(LOG_INFO, MODULE_NAME, "Created UKF");

@@ -71,10 +71,10 @@ namespace PCOE {
         // linked list of zero or more valid addresses for the host.
         // Note: freeaddrinfo must be called on result before exiting
         std::string portStr = std::to_string(port);
-        addrinfo hints      = {};
-        hints.ai_family     = af;
-        hints.ai_protocol   = IPPROTO_UDP;
-        hints.ai_socktype   = SOCK_DGRAM;
+        addrinfo hints = {};
+        hints.ai_family = af;
+        hints.ai_protocol = IPPROTO_UDP;
+        hints.ai_socktype = SOCK_DGRAM;
 
         return AddressInfo(hostname.c_str(), portStr.c_str(), &hints);
     }
@@ -107,8 +107,8 @@ namespace PCOE {
         switch (af) {
         case AF_INET: {
             sockaddr_in si = {};
-            si.sin_family  = AF_INET;
-            si.sin_port    = htons(port);
+            si.sin_family = AF_INET;
+            si.sin_port = htons(port);
             if (bind(sock, reinterpret_cast<sockaddr*>(&si), sizeof(si))) {
                 std::error_code ec(sockerr, std::generic_category());
                 throw std::system_error(ec, "Socket bind failed");
@@ -117,8 +117,8 @@ namespace PCOE {
         }
         case AF_INET6: {
             sockaddr_in6 si = {};
-            si.sin6_family  = AF_INET6;
-            si.sin6_port    = htons(port);
+            si.sin6_family = AF_INET6;
+            si.sin6_port = htons(port);
             if (bind(sock, reinterpret_cast<sockaddr*>(&si), sizeof(si))) {
                 std::error_code ec(sockerr, std::generic_category());
                 throw std::system_error(ec, "Socket bind failed");
@@ -150,8 +150,8 @@ namespace PCOE {
 
     UDPSocket& UDPSocket::operator=(UDPSocket&& other) {
         Close();
-        sock       = other.sock;
-        family     = other.family;
+        sock = other.sock;
+        family = other.family;
         other.sock = InvalidSocket;
         return *this;
     }
