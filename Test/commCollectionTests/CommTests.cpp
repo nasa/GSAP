@@ -43,7 +43,7 @@ void RandomCommTest() {
     Assert::IsTrue(a["Test1"] >= 0.0, "Test1 not set");
 
     // Setting max
-    theMap.setString("max", "100");
+    theMap.set("max", "100");
     RandomCommunicator theComm2(theMap);
     theComm2.subscribe([&](DataStore ds) {
         std::lock_guard<std::mutex> guard(m);
@@ -60,7 +60,7 @@ void RandomCommTest() {
     }
 
     // Setting step
-    theMap.setString("step", "0.2");
+    theMap.set("step", "0.2");
     RandomCommunicator theComm3(theMap);
     theComm3.subscribe([&](DataStore ds) {
         std::lock_guard<std::mutex> guard(m);
@@ -92,7 +92,7 @@ void RecorderCommunicatorTest() {
     DataStore a;
     a["Test1"] = -1.0;
 
-    theMap.setString("saveFile", "TestRecorderFile.txt");
+    theMap.set("saveFile", "TestRecorderFile.txt");
     RecorderCommunicator theComm2(theMap);
 }
 
