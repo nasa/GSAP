@@ -30,7 +30,7 @@ namespace PCOE {
         /** @brief      Example Prognoser Constructor
          *  @param      config Map of config parameters from the prognoser config file
          */
-        EmptyPrognoser(GSAPConfigMap& config);
+        EmptyPrognoser(ConfigMap& config);
 
         /** @brief     Prognostic Monitor Step
          *

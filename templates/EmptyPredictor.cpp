@@ -22,7 +22,7 @@ namespace PCOE {
     const std::string MODULE_NAME = "PRED-MC";
 
     // ConfigMap-based Constructor
-    EmptyPredictor::EmptyPredictor(const PrognosticsModel* m, LoadEstimator* le, GSAPConfigMap& config) : Predictor(m, le, config) {
+    EmptyPredictor::EmptyPredictor(const PrognosticsModel* m, LoadEstimator* le, ConfigMap& config) : Predictor(m, le, config) {
         // Setup based on configuration parameters
         // ...
 
