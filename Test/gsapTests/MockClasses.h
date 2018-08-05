@@ -1,6 +1,8 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
+#include <new>
+
 #include "LoadEstimator.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
@@ -171,4 +173,56 @@ public:
 
         return Prediction({event}, std::vector<DataPoint>());
     }
+};
+
+template <class T>
+class TestAllocator {
+public:
+    using value_type = T;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+    using pointer = value_type*;
+    using const_pointer = const value_type*;
+    using void_pointer = void*;
+    using const_void_pointer = const void*;
+
+    TestAllocator() : totalAllocated(std::shared_ptr<size_type>(new std::size_t(0))) {}
+
+    TestAllocator(const TestAllocator& other) : totalAllocated(other.totalAllocated) {}
+
+    TestAllocator(TestAllocator&& other) : totalAllocated(std::move(other.totalAllocated)) {}
+
+    template <class U>
+    TestAllocator(const TestAllocator<U>& other) : totalAllocated(other.totalAllocated) {}
+
+    pointer allocate(size_type n) {
+        if (n > std::numeric_limits<std::size_t>::max() / sizeof(value_type)) {
+            throw std::bad_alloc();
+        }
+
+        size_type bytes = sizeof(value_type) * n;
+        auto p = static_cast<pointer>(std::malloc(bytes));
+        if (!p) {
+            throw std::bad_alloc();
+        }
+        *totalAllocated += bytes;
+        return p;
+    }
+
+    void deallocate(pointer ptr, size_type n) {
+        size_type bytes = sizeof(value_type) * n;
+        std::free(static_cast<void_pointer>(ptr));
+    }
+
+    friend bool operator==(const TestAllocator& lhs, const TestAllocator& rhs) {
+        return true;
+    }
+
+    friend bool operator!=(const TestAllocator& lhs, const TestAllocator& rhs) {
+        return !(lhs == rhs);
+    }
+
+    std::shared_ptr<size_type> totalAllocated;
 };

@@ -59,6 +59,7 @@ set (HEADERS
     inc/DataPoints.h
     inc/DataStore.h
     inc/Datum.h
+    inc/DynamicArray.h
     inc/EventDrivenPrognoser.h
     inc/Exceptions.h
     inc/Factory.h
