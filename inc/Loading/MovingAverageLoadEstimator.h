@@ -1,82 +1,104 @@
-/**  Moving Average Load Estimator - Header
- *   @class     MovingAverageLoadEstimator
- *   @ingroup   GPIC++
- *   @ingroup   Support
- *
- *   @brief     Moving Average Load Estimator Class- uses a moving average to
- *              generate a future loading estimate similar to recent past
- *
- *   The purpose of this class is to handle the logic of estimating future loading in the case
- *   where future loading is assumed to be similar to past (e.g., when future loading is unknown
- *
- *   @note      This relies on the user to always give the same size vector for loads
- *
- *   @author    Chris Teubert
- *   @version   1.1.0
- *
- *   @pre       Prognostic Configuration File and Prognoser Configuration Files
- *
- *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
- *      Created: April, 2018
- *
- *   @copyright Copyright (c) 2013-2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
-#ifndef MovingAverageLoadEstimator_h
-#define MovingAverageLoadEstimator_h
+// Copyright (c) 2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+#ifndef PCOE_MOVINAVERAGELOADESTIMATOR_H
+#define PCOE_MOVINAVERAGELOADESTIMATOR_H
 
 #include "ConfigMap.h"
+#include "Contracts.h"
 #include "Loading/LoadEstimator.h"
 
 namespace PCOE {
-    class MovingAverageLoadEstimator : public LoadEstimator {
+    /**
+     * Produces a constant load estimate that is the average of several previous
+     * loads.
+     *
+     * @author Chris Teubert
+     * @author Jason Watkins
+     * @since 1.1
+     **/
+    class MovingAverageLoadEstimator final : public LoadEstimator {
     public:
         static const std::string
             WINDOW_SIZE_KEY; // Key for window size (number of steps in average window)
         static const size_t DEFAULT_WINDOW_SIZE;
 
-        MovingAverageLoadEstimator() = default;
-
-        /** MovingAverageLoadEstimator constructor.
-         *  @param      configMap   Configuration map of configuration parameters in the prognoser
-         *configuration file
+        /**
+         * Constructs a new {@code MovingAverageLoadEstimator} instance.
          *
-         *  The constructor configures the MovingAverageLoadEstimator
+         * Required Keys:
+         * - LoadEstimator.Loading: A vector of doubles defining the base load.
+         *   This sets the initial loading and determines the size of the load
+         *   estimate vector.
+         *
+         * Optional Keys:
+         * - LoadEstmator.Window: The number of previous samples to base the
+         *   current load estimate on.
+         *
+         * @param config The configuration used to initialize the load
+         *               estimator.
          **/
-        MovingAverageLoadEstimator(const ConfigMap& configMap);
+        MovingAverageLoadEstimator(const ConfigMap& config) {
+            const std::string LOADING_KEY = "LoadEstimator.Loading";
+            const std::string WINDOW_KEY = "LoadEstimator.Window";
+            requireKeys(config, {LOADING_KEY});
+
+            std::size_t window = 10;
+            if (config.hasKey(WINDOW_KEY)) {
+                window = config.getSize(WINDOW_KEY);
+            }
+
+            currentEstimate = config.getDoubleVector(LOADING_KEY);
+
+            std::vector<double> partialEstimate(currentEstimate.size());
+            for (std::size_t i = 0; i < currentEstimate.size(); ++i) {
+                partialEstimate[i] = currentEstimate[i] / window;
+            }
+
+            pastEstimates.resize(window, partialEstimate);
+        }
 
         /**
-         * @brief   Find if the load estimator uses historical loading.
-         *          If doesn't use historical loading, its function requires the user call addLoad
-         *          If not, addLoad will return a runtime_error
-         *
-         * @return  If the load estimator uses historical loading
-         *
-         * @see     addLoad
+         * Returns a value indicating that the load estimator supports
+         * historical loading. In fact, the {@code MovingAverageLoadEstimator}
+         * requires historical loading.
          **/
-        virtual bool usesHistoricalLoading() {
+        bool canAddLoad() override {
             return true;
         }
 
-        /** @brief Set the load for that timestep
-         *  @param  loadEstimate    Load estimate for the current timestep
+        /**
+         * Updates the moving average load.
+         *
+         * @param load The new load to add.
          **/
-        void addLoad(const LoadEstimate& newLoads);
+        void addLoad(const LoadEstimate& load) override {
+            Expect(load.size() == currentEstimate.size(), "Size mismatch");
+            for (std::size_t i = 0; i < load.size(); ++i) {
+                double newEst = load[i] / pastEstimates.size();
+                currentEstimate[i] -= pastEstimates[pos][i];
+                currentEstimate[i] += newEst;
+                pastEstimates[pos][i] = newEst;
+            }
+            pos = (pos + 1) % pastEstimates.size();
+        }
 
-        /** Estimate Load
-         *  @param      t           Time for estimate (s from start)
-         *  @param      sample      Sample id (unsigned int)
-         *  @return     Load estimate for time and sample
+        /**
+         * Gets the current load estimate.
+         *
+         * @param t      Not used.
+         * @return       The current estimated load.
          **/
-        LoadEstimate estimateLoad(const double, const unsigned int);
+        LoadEstimate estimateLoad(const double t) override {
+            static_cast<void>(t);
+
+            return currentEstimate;
+        }
 
     protected:
-        // Estimate buffer for single sample
-        std::vector<LoadEstimate> estimateBuffer;
-        size_t currentElement = 0;
-        size_t windowSize = DEFAULT_WINDOW_SIZE;
-        LoadEstimate lastEstimate;
+        std::size_t pos = 0;
+        std::vector<std::vector<double>> pastEstimates;
+        std::vector<double> currentEstimate;
     };
 }
-#endif /* MovingAverageLoadEstimator_h */
+#endif

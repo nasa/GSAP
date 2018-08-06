@@ -4,13 +4,13 @@
 
 #include <algorithm>
 #include <cctype>
+#include <climits>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <locale>
 #include <sys/stat.h>
 #include <vector>
-#include <climits>
 
 #include "ConfigMap.h"
 
@@ -69,23 +69,36 @@ namespace PCOE {
         return map.at(key);
     }
 
+    std::vector<double> ConfigMap::getDoubleVector(const std::string& key) const {
+        auto& strings = map.at(key);
+        std::vector<double> doubles(strings.size());
+        for (std::size_t i = 0; i < strings.size(); ++i) {
+            doubles[i] = std::stod(strings[i]);
+        }
+        return doubles;
+    }
+
     double ConfigMap::getDouble(const std::string& key) const {
         return std::stod(getString(key));
     }
 
-    std::uint64_t ConfigMap::getUInt64(const std::string &key) const {
+    std::size_t ConfigMap::getSize(const std::string& key) const {
+        return static_cast<std::size_t>(std::stoull(getString(key)));
+    }
+
+    std::uint64_t ConfigMap::getUInt64(const std::string& key) const {
         return std::stoull(getString(key));
     }
 
-    std::int64_t ConfigMap::getInt64(const std::string &key) const {
+    std::int64_t ConfigMap::getInt64(const std::string& key) const {
         return std::stoll(getString(key));
     }
 
-    std::uint32_t ConfigMap::getUInt32(const std::string &key) const {
+    std::uint32_t ConfigMap::getUInt32(const std::string& key) const {
         return std::stoul(getString(key));
     }
 
-    std::int32_t ConfigMap::getInt32(const std::string &key) const {
+    std::int32_t ConfigMap::getInt32(const std::string& key) const {
         return std::stoi(getString(key));
     }
 
@@ -99,31 +112,31 @@ namespace PCOE {
         return map.at(key)[0];
     }
 
-    void ConfigMap::set(const std::string &key, const std::vector<std::string> &vector) {
+    void ConfigMap::set(const std::string& key, const std::vector<std::string>& vector) {
         map[key] = vector;
     }
 
-    void ConfigMap::set(const std::string &key, const std::initializer_list<std::string> list) {
+    void ConfigMap::set(const std::string& key, const std::initializer_list<std::string> list) {
         map[key] = list;
     }
 
-    void ConfigMap::set(const std::string &key, const double value) {
+    void ConfigMap::set(const std::string& key, const double value) {
         set(key, {std::to_string(value)});
     }
 
-    void ConfigMap::set(const std::string &key, const std::uint64_t value) {
+    void ConfigMap::set(const std::string& key, const std::uint64_t value) {
         set(key, {std::to_string(value)});
     }
 
-    void ConfigMap::set(const std::string &key, const std::int64_t value) {
+    void ConfigMap::set(const std::string& key, const std::int64_t value) {
         set(key, {std::to_string(value)});
     }
 
-    void ConfigMap::set(const std::string &key, const std::uint32_t value) {
+    void ConfigMap::set(const std::string& key, const std::uint32_t value) {
         set(key, {std::to_string(value)});
     }
 
-    void ConfigMap::set(const std::string &key, const std::int32_t value) {
+    void ConfigMap::set(const std::string& key, const std::int32_t value) {
         set(key, {std::to_string(value)});
     }
 

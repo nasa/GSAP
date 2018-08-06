@@ -6,6 +6,7 @@
 
 #include "Factory.h"
 #include "Loading/ConstLoadEstimator.h"
+#include "Loading/GaussianLoadEstimator.h"
 #include "Loading/LoadEstimator.h"
 #include "Loading/MovingAverageLoadEstimator.h"
 #include "Singleton.h"
@@ -29,8 +30,9 @@ namespace PCOE {
          * called once, from the parent @{code Singleton} class.
          **/
         LoadEstimatorFactory() {
-            Register<ConstLoadEstimator>("const");
-            Register<MovingAverageLoadEstimator>("movingAverage");
+            Register<ConstLoadEstimator>("Const");
+            Register<GaussianLoadEstimator>("Gaussian");
+            Register<MovingAverageLoadEstimator>("MovingAverage");
         };
     };
 }

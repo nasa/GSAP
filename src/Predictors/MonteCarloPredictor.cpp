@@ -150,7 +150,8 @@ namespace PCOE {
 
             for (double t_s = time_s; t_s <= time_s + horizon; t_s += model->getDefaultTimeStep()) {
                 // Get inputs for time t
-                std::vector<double> loadEstimate = loadEstimator->estimateLoad(t_s, sample);
+                // TODO (JW): Consider per-sample load estimator
+                std::vector<double> loadEstimate = loadEstimator->estimateLoad(t_s);
                 auto u = model->inputEqn(t_s, inputParams, loadEstimate);
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time

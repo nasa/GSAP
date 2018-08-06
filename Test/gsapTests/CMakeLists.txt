@@ -1,10 +1,9 @@
 set(HEADERS
     ConfigMapTests.h
-    DynamicArrayTests.h
-    LoadTests.hpp
     DataStoreTests.h
     DPointsTests.h
     DPointTests.h
+    Loading/LoadEstimatorTests.h
     MatrixTests.h
     Messages/MessageBusTests.h
     Messages/MessageWatcherTests.h
@@ -27,11 +26,13 @@ set(HEADERS
 
 set(SRCS
     ConfigMapTests.cpp
-    DynamicArrayTests.cpp
-    LoadTests.cpp
     DataStoreTests.cpp
     DPointsTests.cpp
     DPointTests.cpp
+    Loading/ConstLoadEstimatorTests.cpp
+    Loading/GaussianLoadEstimatorTests.cpp
+    Loading/LoadEstimatorTests.cpp
+    Loading/MovingAverageLoadEstimatorTests.cpp
     main.cpp
     MatrixTests.cpp
     Messages/MessageBusTests.cpp
