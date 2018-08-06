@@ -25,7 +25,7 @@
  *     All Rights Reserved.
  */
 
-#include "MovingAverageLoadEstimator.h"
+#include "Loading/MovingAverageLoadEstimator.h"
 #include "ThreadSafeLog.h"
 
 namespace PCOE {

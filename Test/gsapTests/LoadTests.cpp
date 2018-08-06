@@ -7,10 +7,10 @@
 //
 
 #include "LoadTests.hpp"
-#include "ConstLoadEstimator.h"
 #include "ConfigMap.h"
-#include "LoadEstimatorFactory.h"
-#include "MovingAverageLoadEstimator.h"
+#include "Loading/ConstLoadEstimator.h"
+#include "Loading/LoadEstimatorFactory.h"
+#include "Loading/MovingAverageLoadEstimator.h"
 #include "Test.h"
 
 using namespace PCOE::Test;
@@ -27,7 +27,6 @@ namespace PCOE {
         }
         catch (std::range_error) {
         }
-        
 
         LoadEstimate test = {1, 2, 3};
         std::vector<std::string> testStr;

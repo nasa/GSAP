@@ -26,8 +26,8 @@
 #ifndef MovingAverageLoadEstimator_h
 #define MovingAverageLoadEstimator_h
 
-#include "LoadEstimator.h"
 #include "ConfigMap.h"
+#include "Loading/LoadEstimator.h"
 
 namespace PCOE {
     class MovingAverageLoadEstimator : public LoadEstimator {
