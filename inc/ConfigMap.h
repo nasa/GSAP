@@ -39,11 +39,30 @@ namespace PCOE {
         const std::vector<std::string>& getVector(const std::string& key) const;
 
         /**
+         * Gets a vector of doubles for the given key. The key must exist and
+         * all values associated with the key must be parseable as doubles.
+         *
+         * @param key The key from which the vector is retrieved.
+         * @return The double vector corresponding to the given key
+         */
+        std::vector<double> getDoubleVector(const std::string& key) const;
+
+        /**
          * @brief       Gets double at given key
          * @param       key     The key from which the vector is retrieved
          * @return      The double corresponding to the given key
          */
         double getDouble(const std::string& key) const;
+
+        /**
+         * Gets a scalar configuration value as an unsigned integer that has the
+         * same type as the {@code sizeof} operator. The key must exist and must
+         * have a single value which is parseable as a non-zero integer.
+         *
+         * @param key The key from which the vector is retrieved.
+         * @return The value coresponding to the given key.
+         */
+        std::size_t getSize(const std::string& key) const;
 
         /**
          * @brief       Gets 64-bit unsigned integer at given key

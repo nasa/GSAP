@@ -92,9 +92,6 @@ namespace PCOE {
             model->setDefaultTimeStep(DEFAULT_STEPSIZE_S);
         }
 
-        // Set model for observer and predictor
-        loadEstimator->setModel(model.get());
-
         // Set configuration parameters
         unsigned int numSamples = static_cast<unsigned int>(configMap.getUInt64(NUMSAMPLES_KEY));
         unsigned int horizon = static_cast<unsigned int>(configMap.getUInt64(HORIZON_KEY));
@@ -140,7 +137,7 @@ namespace PCOE {
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
             u[i] = getValue(model->getInputs()[i]);
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Adding load");
-            if (loadEstimator->usesHistoricalLoading()) {
+            if (loadEstimator->canAddLoad()) {
                 loadEstimator->addLoad(u.vec());
             }
         }

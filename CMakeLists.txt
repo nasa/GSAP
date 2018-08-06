@@ -58,7 +58,6 @@ set (HEADERS
     inc/DataPoints.h
     inc/DataStore.h
     inc/Datum.h
-    inc/DynamicArray.h
     inc/EventDrivenPrognoser.h
     inc/Exceptions.h
     inc/Factory.h
@@ -122,9 +121,6 @@ set(SRCS
     src/DataPoint.cpp
     src/DataPoints.cpp
     src/GaussianVariable.cpp
-    src/Loading/ConstLoadEstimator.cpp
-    src/Loading/LoadEstimator.cpp
-    src/Loading/MovingAverageLoadEstimator.cpp
     src/Matrix.cpp
     src/Messages/Message.cpp
     src/Messages/MessageBus.cpp
