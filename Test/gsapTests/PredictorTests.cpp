@@ -24,8 +24,8 @@
 
 #include "BatteryModel.h"
 #include "ConfigMap.h"
-#include "ConstLoadEstimator.h"
 #include "Factory.h"
+#include "Loading/ConstLoadEstimator.h"
 #include "PredictorTests.h"
 #include "Predictors/MonteCarloPredictor.h"
 #include "PrognosticsModelFactory.h"
@@ -38,7 +38,7 @@ using namespace PCOE::Test;
 class MCTestConstLoadEst : public ConstLoadEstimator {
     // Used to test savepts in MCP
 public:
-    MCTestConstLoadEst(const ConfigMap & c) : ConstLoadEstimator(c) {}
+    MCTestConstLoadEst(const ConfigMap& c) : ConstLoadEstimator(c) {}
     std::vector<double> getSavePts() override {
         return std::vector<double>({0, 10, 50, 100});
     }

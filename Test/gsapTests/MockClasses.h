@@ -1,9 +1,7 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-#include <new>
-
-#include "LoadEstimator.h"
+#include "Loading/LoadEstimator.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
 #include "Model.h"

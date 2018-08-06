@@ -9,7 +9,7 @@
 
 #include "Contracts.h"
 #include "DataPoint.h"
-#include "LoadEstimator.h"
+#include "Loading/LoadEstimator.h"
 #include "ProgEvent.h"
 #include "PrognosticsModel.h"
 #include <ConfigMap.h>
