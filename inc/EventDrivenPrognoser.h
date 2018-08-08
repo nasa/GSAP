@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "ConfigMap.h"
-#include "LoadEstimatorFactory.h"
+#include "Loading/LoadEstimatorFactory.h"
 #include "Messages/MessageBus.h"
 #include "Observers/EventDrivenObserver.h"
 #include "Observers/ObserverFactory.h"
@@ -32,9 +32,11 @@ namespace PCOE {
         // TODO (JW): Figure out how to make this sane
         EventDrivenPrognoser(MessageBus& bus, const ConfigMap& config)
             : bus(bus),
-              model(PrognosticsModelFactory::instance().Create(config.getVector(MODEL_KEY)[0], config)),
+              model(PrognosticsModelFactory::instance().Create(config.getVector(MODEL_KEY)[0],
+                                                               config)),
               loadEstimator(
-                  LoadEstimatorFactory::instance().Create(config.getVector(LOAD_EST_KEY)[0], config)),
+                  LoadEstimatorFactory::instance().Create(config.getVector(LOAD_EST_KEY)[0],
+                                                          config)),
               observer(bus,
                        ObserverFactory::instance().Create(config.getVector(OBSERVER_KEY)[0],
                                                           model.get(),

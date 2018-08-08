@@ -7,12 +7,12 @@
 #include <string>
 #include <vector>
 
+#include "ConfigMap.h"
 #include "Contracts.h"
 #include "DataPoint.h"
 #include "Loading/LoadEstimator.h"
 #include "ProgEvent.h"
 #include "PrognosticsModel.h"
-#include <ConfigMap.h>
 
 namespace PCOE {
     class Prediction {
