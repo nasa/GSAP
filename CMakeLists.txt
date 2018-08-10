@@ -58,6 +58,7 @@ set (HEADERS
     inc/DataPoints.h
     inc/DataStore.h
     inc/Datum.h
+    inc/ExtendedKalmanFilter.h
     inc/EventDrivenPrognoser.h
     inc/Exceptions.h
     inc/Factory.h
@@ -125,6 +126,7 @@ set(SRCS
     src/Messages/Message.cpp
     src/Messages/MessageBus.cpp
     src/Messages/MessageId.cpp
+    src/Observers/ExtendedKalmanFilter.cpp
     src/Observers/EventDrivenObserver.cpp
     src/Observers/ParticleFilter.cpp
     src/Observers/UnscentedKalmanFilter.cpp
