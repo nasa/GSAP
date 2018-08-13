@@ -64,7 +64,7 @@ void testMonteCarloBatteryPredict() {
     TestLoadEstimator le(configMap);
 
     // Create MonteCarloPredictor for battery
-    MonteCarloPredictor MCP(model.get(), &le, configMap);
+    MonteCarloPredictor MCP(*model, le, configMap);
 
     // Set up inputs for predict function
     double t = 0;
@@ -120,5 +120,5 @@ void testMonteCarloBatteryConfig() {
     ConstLoadEstimator le(configMap);
 
     // Create MonteCarloPredictor for battery
-    MonteCarloPredictor MCP(&battery, &le, configMap);
+    MonteCarloPredictor MCP(battery, le, configMap);
 }

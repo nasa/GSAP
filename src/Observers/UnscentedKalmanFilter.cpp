@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "Exceptions.h"
 #include "ConfigMap.h"
+#include "Exceptions.h"
 #include "Observers/UnscentedKalmanFilter.h"
 #include "ThreadSafeLog.h"
 #include "UData.h"
@@ -25,34 +25,33 @@ namespace PCOE {
     // Other string constants
     const std::string MODULE_NAME = "OBS-UKF";
 
-    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model* m) : Observer(m) {
-        Expect(m != nullptr, "Invalid model");
-        xEstimated = model->getStateVector();
-        uPrev = model->getInputVector();
-        zEstimated = model->getOutputVector();
+    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model& m) : Observer(m) {
+        xEstimated = model.getStateVector();
+        uPrev = model.getInputVector();
+        zEstimated = model.getOutputVector();
 
         // Set up sigma point matrices and weights for x
-        sigmaX.M.resize(model->getStateSize(), 2 * model->getStateSize() + 1);
-        sigmaX.w.resize(2 * model->getStateSize() + 1);
+        sigmaX.M.resize(model.getStateSize(), 2 * model.getStateSize() + 1);
+        sigmaX.w.resize(2 * model.getStateSize() + 1);
 
-        sigmaX.kappa = 3.0 - model->getStateSize();
+        sigmaX.kappa = 3.0 - model.getStateSize();
         sigmaX.alpha = 1;
         sigmaX.beta = 0;
     }
 
-    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model* m, Matrix q, Matrix r)
+    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model& m, Matrix q, Matrix r)
         : UnscentedKalmanFilter(m) {
         Expect(q.rows() == q.cols(), "q is not square");
-        Expect(q.rows() == model->getStateSize(), "Size of q does not match model state size");
+        Expect(q.rows() == model.getStateSize(), "Size of q does not match model state size");
         Expect(r.rows() == r.cols(), "q is not square");
-        Expect(r.rows() == model->getOutputSize(), "Size of r does not match model output size");
+        Expect(r.rows() == model.getOutputSize(), "Size of r does not match model output size");
 
         Q = std::move(q);
         R = std::move(r);
     }
 
     // ConfigMap-based Constructor
-    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model* model, const ConfigMap& config)
+    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model& model, const ConfigMap& config)
         : UnscentedKalmanFilter(model) {
         requireKeys(config, {Q_KEY, R_KEY});
 
@@ -119,8 +118,8 @@ namespace PCOE {
         computeSigmaPoints(xEstimated, P, sigmaX);
 
         // Compute corresponding output estimate
-        std::vector<double> zeroNoiseZ(model->getOutputSize());
-        zEstimated = model->outputEqn(lastTime, xEstimated, uPrev, zeroNoiseZ);
+        std::vector<double> zeroNoiseZ(model.getOutputSize());
+        zEstimated = model.outputEqn(lastTime, xEstimated, uPrev, zeroNoiseZ);
 
         // Set initialized flag
         initialized = true;
@@ -147,11 +146,11 @@ namespace PCOE {
         computeSigmaPoints(xEstimated, Q, sigmaX);
 
         // Propagate sigma points through state equation
-        Matrix Xkk1(model->getStateSize(), sigmaPointCount);
-        std::vector<double> zeroNoise(model->getStateSize());
+        Matrix Xkk1(model.getStateSize(), sigmaPointCount);
+        std::vector<double> zeroNoise(model.getStateSize());
         for (unsigned int i = 0; i < sigmaPointCount; i++) {
             auto x = Model::state_type(static_cast<std::vector<double>>(sigmaX.M.col(i)));
-            x = model->stateEqn(timestamp, x, uPrev, zeroNoise, dt);
+            x = model.stateEqn(timestamp, x, uPrev, zeroNoise, dt);
             Xkk1.col(i, x.vec());
         }
 
@@ -161,13 +160,13 @@ namespace PCOE {
         Matrix Pkk1 = Xkk1.weightedCovariance(Matrix(sigmaX.w), sigmaX.alpha, sigmaX.beta) + Q;
 
         // Propagate sigma points through output equation
-        Matrix Zkk1(model->getOutputSize(), sigmaPointCount);
+        Matrix Zkk1(model.getOutputSize(), sigmaPointCount);
         for (unsigned int i = 0; i < sigmaPointCount; i++) {
             auto zkk1 =
-                model->outputEqn(timestamp,
-                                 Model::state_type(static_cast<std::vector<double>>(Xkk1.col(i))),
-                                 u,
-                                 zeroNoise);
+                model.outputEqn(timestamp,
+                                Model::state_type(static_cast<std::vector<double>>(Xkk1.col(i))),
+                                u,
+                                zeroNoise);
             Zkk1.col(i, zkk1.vec());
         }
 
@@ -180,15 +179,15 @@ namespace PCOE {
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Starting step - update");
 
         // Compute state-output cross-covariance matrix
-        Matrix Pxz(model->getStateSize(), model->getOutputSize());
+        Matrix Pxz(model.getStateSize(), model.getOutputSize());
         for (unsigned int i = 0; i < sigmaPointCount; i++) {
-            Matrix columnx(model->getStateSize(), 1);
-            Matrix columnz(model->getOutputSize(), 1);
+            Matrix columnx(model.getStateSize(), 1);
+            Matrix columnz(model.getOutputSize(), 1);
             columnx.col(0, Xkk1.col(i));
             columnz.col(0, Zkk1.col(i));
 
-            Matrix xkk1m(model->getStateSize(), 1);
-            Matrix zkk1m(model->getOutputSize(), 1);
+            Matrix xkk1m(model.getStateSize(), 1);
+            Matrix zkk1m(model.getOutputSize(), 1);
             xkk1m.col(0, xkk1);
             zkk1m.col(0, zkk1);
 
@@ -202,9 +201,9 @@ namespace PCOE {
         Matrix Kk = Pxz * Pzz.inverse();
 
         // Compute state estimate
-        Matrix xkk1m(model->getStateSize(), 1);
-        Matrix zkk1m(model->getOutputSize(), 1);
-        Matrix zm(model->getOutputSize(), 1);
+        Matrix xkk1m(model.getStateSize(), 1);
+        Matrix zkk1m(model.getOutputSize(), 1);
+        Matrix zm(model.getOutputSize(), 1);
         xkk1m.col(0, xkk1);
         zkk1m.col(0, zkk1);
         zm.col(0, z.vec());
@@ -212,8 +211,8 @@ namespace PCOE {
         xEstimated = Model::state_type(static_cast<std::vector<double>>(xk1m.col(0)));
 
         // Compute output estimate
-        std::vector<double> zeroNoiseZ(model->getOutputSize());
-        zEstimated = model->outputEqn(timestamp, xEstimated, u, zeroNoiseZ);
+        std::vector<double> zeroNoiseZ(model.getOutputSize());
+        zEstimated = model.outputEqn(timestamp, xEstimated, u, zeroNoiseZ);
 
         // Compute covariance
         P = Pkk1 - Kk * Pzz * Kk.transpose();
@@ -285,10 +284,10 @@ namespace PCOE {
     }
 
     std::vector<UData> UnscentedKalmanFilter::getStateEstimate() const {
-        std::vector<UData> state(model->getStateSize());
-        for (unsigned int i = 0; i < model->getStateSize(); i++) {
+        std::vector<UData> state(model.getStateSize());
+        for (unsigned int i = 0; i < model.getStateSize(); i++) {
             state[i].uncertainty(UType::MeanCovar);
-            state[i].npoints(model->getStateSize());
+            state[i].npoints(model.getStateSize());
             state[i][MEAN] = xEstimated[i];
             state[i][COVAR()] = static_cast<std::vector<double>>(P.row(i));
         }

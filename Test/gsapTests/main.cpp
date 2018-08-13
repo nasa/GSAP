@@ -8,6 +8,7 @@
 #include "DPointTests.h"
 #include "DPointsTests.h"
 #include "DataStoreTests.h"
+#include "DynamicArrayTests.h"
 #include "FrameworkTests.h"
 #include "GaussianVariableTests.h"
 #include "Loading/LoadEstimatorTests.h"
@@ -257,6 +258,8 @@ int main() {
     context.AddTest("processMessage",
                     EventDrivenPredictorTests::processMessage,
                     "EventDrivenPredictor");
+
+    DynamicArrayTests::registerTests(context);
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");

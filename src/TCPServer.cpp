@@ -78,10 +78,10 @@ namespace PCOE {
         // linked list of zero or more valid addresses for the host.
         // Note: freeaddrinfo must be called on result before exiting
         std::string portStr = std::to_string(port);
-        addrinfo hints      = {};
-        hints.ai_family     = af;
-        hints.ai_protocol   = IPPROTO_TCP;
-        hints.ai_socktype   = SOCK_STREAM;
+        addrinfo hints = {};
+        hints.ai_family = af;
+        hints.ai_protocol = IPPROTO_TCP;
+        hints.ai_socktype = SOCK_STREAM;
 
         return AddressInfo(hostname.c_str(), portStr.c_str(), &hints);
     }
@@ -101,7 +101,7 @@ namespace PCOE {
     }
 
     TCPServer::TCPServer(TCPServer&& other) : sock(other.sock), family(other.family) {
-        other.sock   = InvalidSocket;
+        other.sock = InvalidSocket;
         other.family = AF_UNSPEC;
     }
 
@@ -111,9 +111,9 @@ namespace PCOE {
 
     TCPServer& TCPServer::operator=(TCPServer&& other) {
         Close();
-        sock         = other.sock;
-        family       = other.family;
-        other.sock   = InvalidSocket;
+        sock = other.sock;
+        family = other.family;
+        other.sock = InvalidSocket;
         other.family = AF_UNSPEC;
         return *this;
     }
@@ -134,7 +134,8 @@ namespace PCOE {
     TCPSocket TCPServer::Accept() {
         socklen_t size = sizeof(struct sockaddr_in);
         struct sockaddr_in their_addr;
-        sock_type socketToAccept = accept(sock, (struct sockaddr*)&their_addr, &size);
+        sock_type socketToAccept =
+            accept(sock, reinterpret_cast<struct sockaddr*>(&their_addr), &size);
         if (socketToAccept == -1) {
             int err = sockerr;
             std::error_code ec(err, std::generic_category());
@@ -171,7 +172,7 @@ namespace PCOE {
         }
 
         AddressInfo result = GetAddressInfo(hostname, port, family);
-        addrinfo* ai       = &result;
+        addrinfo* ai = &result;
         if (bind(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
             int err = sockerr;
             std::error_code ec(err, std::generic_category());

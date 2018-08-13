@@ -50,10 +50,8 @@ namespace PCOE {
          * @param config A config map containing configuration parameters for
          *               the predictor.
          **/
-        Predictor(const PrognosticsModel* m, LoadEstimator* le, const ConfigMap& config)
+        Predictor(const PrognosticsModel& m, LoadEstimator& le, const ConfigMap& config)
             : loadEstimator(le), model(m) {
-            Expect(m != nullptr, "Model is null");
-            Expect(le != nullptr, "Load Estimator is null");
             // Note (JW):
             // Want to keep config param in case we ever add optional config values
             // This cast suppresses warnings about the unused variable.
@@ -93,8 +91,8 @@ namespace PCOE {
             predictedOutputs = std::move(value);
         }
 
-        LoadEstimator* loadEstimator;
-        const PrognosticsModel* model;
+        LoadEstimator& loadEstimator;
+        const PrognosticsModel& model;
 
     private:
         std::vector<std::string> predictedOutputs;

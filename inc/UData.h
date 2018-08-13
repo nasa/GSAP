@@ -203,7 +203,7 @@ namespace PCOE {
          *        so this is only necessary when the use of externally generated
          *        timestamps is desired.
          */
-        inline void updated(size_type value) {
+        inline void updated(time_ticks value) {
             m_updated = value;
         }
 

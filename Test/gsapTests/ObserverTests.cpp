@@ -82,7 +82,7 @@ void testUKFTankInitialize() {
     }
 
     // Create a UKF
-    UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&TankModel, Q, R);
+    UnscentedKalmanFilter UKF = UnscentedKalmanFilter(TankModel, Q, R);
     double t = 0;
 
     // Make sure that can't step without initializing first
@@ -167,7 +167,7 @@ void testUKFTankStep() {
     }
 
     // Create a UKF
-    UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&TankModel, Q, R);
+    UnscentedKalmanFilter UKF = UnscentedKalmanFilter(TankModel, Q, R);
 
     // Initialize UKF
     double t = 0;
@@ -269,7 +269,7 @@ void testUKFTankGetInputs() {
     }
 
     // Create a UKF
-    UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&TankModel, Q, R);
+    UnscentedKalmanFilter UKF = UnscentedKalmanFilter(TankModel, Q, R);
 
     // Initialize UKF
     double t = 0;
@@ -315,7 +315,7 @@ void testUKFBatteryInitialize() {
     }
 
     // Create a UKF
-    UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&battery, Q, R);
+    UnscentedKalmanFilter UKF = UnscentedKalmanFilter(battery, Q, R);
 
     // Initialize UKF
     // double dt = 0.1;
@@ -363,7 +363,7 @@ void testUKFBatteryStep() {
     }
 
     // Create a UKF
-    UnscentedKalmanFilter UKF = UnscentedKalmanFilter(&battery, Q, R);
+    UnscentedKalmanFilter UKF = UnscentedKalmanFilter(battery, Q, R);
 
     // Set up zNoise
     std::vector<double> zNoise(battery.getOutputSize());
@@ -446,7 +446,7 @@ void testUKFBatteryFromConfig() {
     BatteryModel battery;
 
     // Construct a UKF from the config map
-    UnscentedKalmanFilter ukf(&battery, paramMap);
+    UnscentedKalmanFilter ukf(battery, paramMap);
 
     // NOTE: These may not be relevant anymore, because it only does these checks now within
     // initialize...
@@ -455,7 +455,7 @@ void testUKFBatteryFromConfig() {
     rStrings.pop_back();
     paramMap.set("Observer.R", rStrings);
     try {
-        UnscentedKalmanFilter ukf2(&battery, paramMap);
+        UnscentedKalmanFilter ukf2(battery, paramMap);
         Assert::Fail();
     }
     catch (...) {
@@ -466,7 +466,7 @@ void testUKFBatteryFromConfig() {
     qStrings.pop_back();
     paramMap.set("Observer.Q", qStrings);
     try {
-        UnscentedKalmanFilter ukf3(&battery, paramMap);
+        UnscentedKalmanFilter ukf3(battery, paramMap);
         Assert::Fail();
     }
     catch (...) {
@@ -499,13 +499,13 @@ void testPFBatteryFromConfig() {
     BatteryModel battery;
 
     // Construct a PF from the config map
-    ParticleFilter pf(&battery, configMap);
+    ParticleFilter pf(battery, configMap);
 
     // Create a UKF with bad sn and ensure throws error
     snStrings.pop_back();
     configMap.set("Observer.sensorNoise", snStrings);
     try {
-        ParticleFilter pf2(&battery, configMap);
+        ParticleFilter pf2(battery, configMap);
         Assert::Fail();
     }
     catch (...) {
@@ -516,7 +516,7 @@ void testPFBatteryFromConfig() {
     pnStrings.pop_back();
     configMap.set("Observer.processNoise", pnStrings);
     try {
-        ParticleFilter pf3(&battery, configMap);
+        ParticleFilter pf3(battery, configMap);
         Assert::Fail();
     }
     catch (...) {
@@ -549,7 +549,7 @@ void testPFBatteryInitialize() {
 
     // Create a PF
     size_t N = 100;
-    ParticleFilter PF = ParticleFilter(&battery, N, pn, sn);
+    ParticleFilter PF = ParticleFilter(battery, N, pn, sn);
 
     // Initialize PF
     double t = 0;
@@ -591,7 +591,7 @@ void testPFBatteryStep() {
 
     // Create a PF
     size_t N = 100;
-    ParticleFilter PF = ParticleFilter(&battery, N, pn, sn);
+    ParticleFilter PF = ParticleFilter(battery, N, pn, sn);
 
     // Initialize PF
     double t = 0;
