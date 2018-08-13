@@ -15,7 +15,7 @@ namespace PCOE {
     /**
      * Represents an object that observes a model's state.
      *
-     * @author Mattew Daigle
+     * @author Matthew Daigle
      * @author Jason Watkins
      * @since 1.0
      **/
