@@ -430,7 +430,7 @@ Model::input_type BatteryModel::inputEqn(double,
 
 // Battery Predicted Outputs Equation
 PrognosticsModel::predicted_output_type BatteryModel::predictedOutputEqn(double,
-                                                                         const state_type& x,
+                                                                         const state_type&,
                                                                          const input_type&,
                                                                          const output_type&) const {
     // Return empty vector because there are no predicted outputs.

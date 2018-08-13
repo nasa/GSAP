@@ -21,16 +21,15 @@
 #ifndef PCOE_EmptyPredictor_H
 #define PCOE_EmptyPredictor_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
+#include "ConfigMap.h"
 #include "Model.h"
 #include "Predictors/Predictor.h"
-#include "ConfigMap.h"
 
 namespace PCOE {
     class EmptyPredictor final : public Predictor {
-
     public:
         /**
          * Initializes a new @{code EmptyPredictor}.
@@ -39,7 +38,7 @@ namespace PCOE {
          * @param le     The load estimator used by the predictor.
          * @param config Configuration map specifying predictor parameters.
          **/
-        explicit EmptyPredictor(const PrognosticsModel* m, LoadEstimator* le, ConfigMap& config);
+        explicit EmptyPredictor(const PrognosticsModel& m, LoadEstimator& le, ConfigMap& config);
 
         /**
          * Predict future events and values of system variables
@@ -51,4 +50,4 @@ namespace PCOE {
     };
 }
 
-#endif  // PCOE_EmptyPredictor_H
+#endif // PCOE_EmptyPredictor_H

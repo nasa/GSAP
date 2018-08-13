@@ -20,7 +20,7 @@ namespace EventDrivenPredictorTests {
 
         EventDrivenPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
-                                        new TestPredictor(&tpm, &tle, ConfigMap())),
+                                        new TestPredictor(tpm, tle, ConfigMap())),
                                     src);
         // Constructed without exception
     }
@@ -32,10 +32,10 @@ namespace EventDrivenPredictorTests {
         const std::string src = "test";
 
         MessageCounter listener(bus, src, MessageId::TestEvent0);
-        EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(&tpm)), src);
+        EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tpm)), src);
         EventDrivenPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
-                                        new TestPredictor(&tpm, &tle, ConfigMap())),
+                                        new TestPredictor(tpm, tle, ConfigMap())),
                                     src);
         Assert::AreEqual(0,
                          listener.getCount(),
