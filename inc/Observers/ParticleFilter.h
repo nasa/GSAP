@@ -34,7 +34,7 @@ namespace PCOE {
          * model. This constructor is only intended to be used by other
          * constructors in particle filter to set up model-related parameters.
          **/
-        explicit ParticleFilter(const Model* m);
+        explicit ParticleFilter(const Model& m);
 
     public:
         /**
@@ -48,7 +48,7 @@ namespace PCOE {
          * @param processNoise  The process noise.
          * @param sensorNoise   The sensor noise.
          **/
-        ParticleFilter(const Model* m,
+        ParticleFilter(const Model& m,
                        size_t particleCount,
                        std::vector<double>& processNoise,
                        std::vector<double>& sensorNoise);
@@ -62,7 +62,7 @@ namespace PCOE {
          * @param config A config from which particle count, process noise, and
          *               sensor noise will be read.
          **/
-        ParticleFilter(const Model* m, const ConfigMap& config);
+        ParticleFilter(const Model& m, const ConfigMap& config);
 
         /**
          * Initializes the particles and sets the initial state estimate.

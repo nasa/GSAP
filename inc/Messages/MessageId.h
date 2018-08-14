@@ -35,7 +35,7 @@ namespace PCOE {
      * |  0x24 | A single signed 64 bit integer                                |
      * |  0x31 | A single precision floating point number                      |
      * |  0x32 | A double precision floating point number                      |
-     * |  0x28 | A single message-defined struct                               |
+     * |  0x38 | A single message-defined struct                               |
      * |  0x41 | A vector of unsigned 8 bit integers                           |
      * |  0x42 | A vector of unsigned 16 bit integers                          |
      * |  0x43 | A vector of unsigned 32 bit integers                          |
@@ -73,8 +73,9 @@ namespace PCOE {
         TestOutput1 = 0x627232000000FF01L,
         TestOutput2 = 0x627232000000FF02L,
         TestOutput3 = 0x627232000000FF03L,
-        BatteryEod = 0x6272320100000000L,
-        BatteryEol = 0x6272320100000100L,
+        BatteryEod = 0x6272380100000000L,
+        BatteryEol = 0x6272380100000100L,
+        TestEvent0 = 0x627238FF00000000L,
         Intialize = 0x627200FE00000000L,
         Start = 0x627200FF00000000L,
         Stop = 0x627200FF00000001L,

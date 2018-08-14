@@ -67,13 +67,11 @@ namespace PCOE {
 
         // Fill in Defaults
         if (configParams.hasKey(INTERVAL_DELAY_KEY)) {
-            loopInterval = static_cast<unsigned int>(
-                    configParams.getInt32(INTERVAL_DELAY_KEY));
+            loopInterval = static_cast<unsigned int>(configParams.getInt32(INTERVAL_DELAY_KEY));
         }
 
         if (configParams.hasKey(SAVE_INTERVAL_KEY)) {
-            saveInterval = static_cast<unsigned int>(
-                    configParams.getInt32(SAVE_INTERVAL_KEY));
+            saveInterval = static_cast<unsigned int>(configParams.getInt32(SAVE_INTERVAL_KEY));
         }
 
         if (configParams.hasKey(SAVE_ENABLE_KEY)) {
@@ -148,7 +146,7 @@ namespace PCOE {
                     }
                     checkResultValidity();
                 }
-                catch (std::system_error ex) {
+                catch (std::system_error& ex) {
                     log.WriteLine(LOG_ERROR, MODULE_NAME, "Error in Prognoser Loop- Skipping Step");
                     log.WriteLine(LOG_ERROR, MODULE_NAME, std::string("    ") + ex.what());
                     log.WriteLine(LOG_ERROR,

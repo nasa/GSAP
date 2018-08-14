@@ -27,7 +27,7 @@
 #include <iostream>
 
 #include "ConfigMap.h"
-#include "LoadEstimatorFactory.h"
+#include "Loading/LoadEstimatorFactory.h"
 #include "ModelBasedPrognoser.h"
 #include "Observers/ObserverFactory.h"
 #include "Predictors/PredictorFactory.h"
@@ -51,7 +51,7 @@ namespace PCOE {
         : Prognoser(configMap), initialized(false) {
         // Check for required config parameters
         requireKeys(configMap,
-            {MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY, NUMSAMPLES_KEY, HORIZON_KEY});
+                    {MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY, NUMSAMPLES_KEY, HORIZON_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
@@ -62,7 +62,7 @@ namespace PCOE {
         // Create Observer
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Observer");
         ObserverFactory& pObserverFactory = ObserverFactory::instance();
-        observer = pObserverFactory.Create(configMap.getVector(OBSERVER_KEY)[0], model.get(), configMap);
+        observer = pObserverFactory.Create(configMap.getVector(OBSERVER_KEY)[0], *model, configMap);
 
         // Create Load Estimator
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Load Estimator");
@@ -79,8 +79,8 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
         PredictorFactory& pPredictorFactory = PredictorFactory::instance();
         predictor = pPredictorFactory.Create(configMap.getVector(PREDICTOR_KEY)[0],
-                                             model.get(),
-                                             loadEstimator.get(),
+                                             *model,
+                                             *loadEstimator,
                                              configMap);
 
         // Set model stepsize
@@ -91,13 +91,9 @@ namespace PCOE {
             model->setDefaultTimeStep(DEFAULT_STEPSIZE_S);
         }
 
-        // Set model for observer and predictor
-        loadEstimator->setModel(model.get());
-
         // Set configuration parameters
-        unsigned int numSamples =
-            static_cast<unsigned int>(configMap.getUInt64(NUMSAMPLES_KEY));
-        unsigned int horizon = static_cast<unsigned int>(configMap.getUInt64(HORIZON_KEY));
+        // unsigned int numSamples = static_cast<unsigned int>(configMap.getUInt64(NUMSAMPLES_KEY));
+        // unsigned int horizon = static_cast<unsigned int>(configMap.getUInt64(HORIZON_KEY));
 
         // @todo: Refactor for event-driven architecture
         //        // Create progdata
@@ -140,7 +136,7 @@ namespace PCOE {
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
             u[i] = getValue(model->getInputs()[i]);
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Adding load");
-            if (loadEstimator->usesHistoricalLoading()) {
+            if (loadEstimator->canAddLoad()) {
                 loadEstimator->addLoad(u.vec());
             }
         }

@@ -8,16 +8,16 @@
 #include "DPointTests.h"
 #include "DPointsTests.h"
 #include "DataStoreTests.h"
+#include "DynamicArrayTests.h"
 #include "FrameworkTests.h"
 #include "GaussianVariableTests.h"
-#include "LoadTests.hpp"
+#include "Loading/LoadEstimatorTests.h"
 #include "MatrixTests.h"
 #include "Messages/MessageBusTests.h"
 #include "Messages/MessageWatcherTests.h"
 #include "ModelTests.h"
 #include "ObserverTests.h"
 #include "Observers/EventDrivenObserverTests.h"
-#include "PEventTests.h"
 #include "ParticleFilterTests.h"
 #include "PredictorTests.h"
 #include "Predictors/EventDrivenPredictorTests.h"
@@ -164,10 +164,6 @@ int main() {
     context.AddTest("UKF Initialization for Battery", testUKFBatteryInitialize, "Observer");
     context.AddTest("UKF Step for Battery", testUKFBatteryStep, "Observer");
 
-    // PEvent Tests
-    context.AddTest("Initialization", testPEventInit, "PEvent");
-    context.AddTest("Update", testPEventUpdate, "PEvent");
-
     // Thread Tests
     context.AddTest("treadctrl", tctrltests, "Thread");
     context.AddTest("Exception", exceptiontest, "Thread");
@@ -208,11 +204,7 @@ int main() {
     context.AddTest("Step", step, "Particle Filter");
     context.AddTest("Get State Estimate", getStateEstimate, "Particle Filter");
 
-    context.AddCategoryInitializer("LoadEstimator", PCOE::LoadTestInit);
-    context.AddTest("ConstLoadEst", PCOE::testConstLoad, "LoadEstimator");
-    context.AddTest("ConstLoadFact", PCOE::testFactory, "LoadEstimator");
-    context.AddTest("MovingAverageLoadEst", PCOE::testMovingAverage, "LoadEstimator");
-    context.AddTest("ConstLoadUcert", PCOE::testConstLoadWithUncert, "LoadEstimator");
+    LoadEstimatorTests::registerTests(context);
 
     // TCPSocket Tests
     context.AddTest("TCPSocket Constructor", testTCPctor, "TCPSocket");
@@ -266,6 +258,8 @@ int main() {
     context.AddTest("processMessage",
                     EventDrivenPredictorTests::processMessage,
                     "EventDrivenPredictor");
+
+    DynamicArrayTests::registerTests(context);
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");

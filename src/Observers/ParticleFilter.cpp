@@ -27,22 +27,20 @@ namespace PCOE {
     // Other string constants
     const std::string MODULE_NAME = "OBS-PF";
 
-    ParticleFilter::ParticleFilter(const Model* m) : Observer(m) {
-        Expect(m != nullptr, "Model is null");
-        xEstimated = model->getStateVector();
-        uPrev = model->getInputVector();
-        zEstimated = model->getOutputVector();
+    ParticleFilter::ParticleFilter(const Model& m) : Observer(m) {
+        xEstimated = model.getStateVector();
+        uPrev = model.getInputVector();
+        zEstimated = model.getOutputVector();
     }
 
-    ParticleFilter::ParticleFilter(const Model* m,
+    ParticleFilter::ParticleFilter(const Model& m,
                                    std::size_t count,
                                    std::vector<double>& processNoise,
                                    std::vector<double>& sensorNoise)
         : ParticleFilter(m) {
-        Expect(m != nullptr, "Model is null");
-        Expect(processNoise.size() == model->getStateSize(),
+        Expect(processNoise.size() == model.getStateSize(),
                "Process noise variance vector size does not match model state vector size");
-        Expect(sensorNoise.size() == model->getOutputSize(),
+        Expect(sensorNoise.size() == model.getOutputSize(),
                "Sensor noise variance vector size does not match model output vector size");
 
         particleCount = count;
@@ -53,22 +51,20 @@ namespace PCOE {
         setSensorCovariance();
 
         // Set up sigma point matrices and weights for x
-        particles.X.resize(model->getStateSize(), particleCount);
-        particles.Z.resize(model->getOutputSize(), particleCount);
+        particles.X.resize(model.getStateSize(), particleCount);
+        particles.Z.resize(model.getOutputSize(), particleCount);
         particles.w.resize(particleCount);
     }
 
-    ParticleFilter::ParticleFilter(const Model* m, const ConfigMap& config)
-        : ParticleFilter(m) {
-        Expect(m != nullptr, "Model is null");
+    ParticleFilter::ParticleFilter(const Model& m, const ConfigMap& config) : ParticleFilter(m) {
         requireKeys(config, {N_KEY, PN_KEY, SN_KEY});
 
         // Set N
         particleCount = static_cast<std::size_t>(config.getUInt64(N_KEY));
         setMinEffective(particleCount / 3);
 
-        particles.X.resize(model->getStateSize(), particleCount);
-        particles.Z.resize(model->getOutputSize(), particleCount);
+        particles.X.resize(model.getStateSize(), particleCount);
+        particles.Z.resize(model.getOutputSize(), particleCount);
         particles.w.resize(particleCount);
 
         // Set process noise variance
@@ -95,9 +91,9 @@ namespace PCOE {
             setMinEffective(static_cast<std::size_t>(config.getDouble(NEFF_KEY)));
         }
 
-        Ensure(processNoiseVariance.size() == model->getStateSize(),
+        Ensure(processNoiseVariance.size() == model.getStateSize(),
                "Process noise variance vector size does not match model state vector size");
-        Ensure(sensorNoiseVariance.size() == model->getOutputSize(),
+        Ensure(sensorNoiseVariance.size() == model.getOutputSize(),
                "Sensor noise variance vector size does not match model output vector size");
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Created particle filter");
     }
@@ -108,8 +104,7 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
         // TODO (JW): This contract is now stated in the constructor, so it
         //            should be guaranteed here. Consider removing.
-        Expect(model != nullptr, "Model not set");
-        Expect(particles.X.rows() == model->getStateSize(),
+        Expect(particles.X.rows() == model.getStateSize(),
                "particles.X row count does not match model state size");
         Expect(particles.X.cols() == particleCount,
                "particles.X col count does not match particle count");
@@ -124,15 +119,15 @@ namespace PCOE {
         uPrev = u0;
 
         // Compute corresponding output estimate
-        std::vector<double> zeroNoiseZ(model->getOutputSize(), 0);
-        zEstimated = model->outputEqn(lastTime, xEstimated, uPrev, zeroNoiseZ);
+        std::vector<double> zeroNoiseZ(model.getOutputSize(), 0);
+        zEstimated = model.outputEqn(lastTime, xEstimated, uPrev, zeroNoiseZ);
 
         // Initialize particles
         for (size_t p = 0; p < particleCount; p++) {
             particles.X.col(p, x0.vec());
-            Model::output_type z0 = model->getOutputVector();
-            std::vector<double> zeroNoise(model->getOutputSize(), 0);
-            z0 = model->outputEqn(t0, x0, u0, zeroNoise);
+            Model::output_type z0 = model.getOutputVector();
+            std::vector<double> zeroNoise(model.getOutputSize(), 0);
+            z0 = model.outputEqn(t0, x0, u0, zeroNoise);
             particles.Z.col(p, z0.vec());
             // Set w all equal, since we aren't adding any noise
             particles.w[p] = 1.0 / particleCount;
@@ -152,16 +147,16 @@ namespace PCOE {
         double dt = newT - lastTime;
         lastTime = newT;
 
-        std::vector<double> noise(model->getStateSize());
-        std::vector<double> zeroNoise(model->getOutputSize());
+        std::vector<double> noise(model.getStateSize());
+        std::vector<double> zeroNoise(model.getOutputSize());
         for (std::size_t p = 0; p < particleCount; p++) {
             generateProcessNoise(noise);
 
             // Generate new particle
             auto xNew = Model::state_type(static_cast<std::vector<double>>(particles.X.col(p)));
-            xNew = model->stateEqn(newT, xNew, uPrev, noise, dt);
+            xNew = model.stateEqn(newT, xNew, uPrev, noise, dt);
             particles.X.col(p, xNew.vec());
-            auto zNew = model->outputEqn(newT, xNew, u, zeroNoise);
+            auto zNew = model.outputEqn(newT, xNew, u, zeroNoise);
             particles.Z.col(p, zNew.vec());
 
             // Set weight
@@ -176,8 +171,8 @@ namespace PCOE {
     }
 
     std::vector<UData> ParticleFilter::getStateEstimate() const {
-        std::vector<UData> state(model->getStateSize());
-        for (unsigned int i = 0; i < model->getStateSize(); i++) {
+        std::vector<UData> state(model.getStateSize());
+        for (unsigned int i = 0; i < model.getStateSize(); i++) {
             state[i].uncertainty(UType::WeightedSamples);
             state[i].npoints(particleCount);
             for (std::size_t p = 0; p < particleCount; p++) {
@@ -254,7 +249,7 @@ namespace PCOE {
         //            second is the one actually required by the for loop. They
         //            should be the same anyway. Consider removing check on
         //            model state size.
-        Expect(noise.size() == model->getStateSize(), "Noise size does not match model state size");
+        Expect(noise.size() == model.getStateSize(), "Noise size does not match model state size");
         Expect(noise.size() == processNoiseVariance.size(),
                "Noise size does not match process noise variance size");
         for (size_t n = 0; n < processNoiseVariance.size(); n++) {
@@ -288,7 +283,7 @@ namespace PCOE {
 
     Model::state_type ParticleFilter::weightedMean(const Matrix& M,
                                                    const std::vector<double>& weights) {
-        Expect(M.rows() == model->getStateSize(), "M rows does not match model state size");
+        Expect(M.rows() == model.getStateSize(), "M rows does not match model state size");
         Expect(M.cols() == weights.size(), "M cols does not match weights size");
 
         Matrix W = Matrix(weights.size(), 1);
@@ -296,7 +291,7 @@ namespace PCOE {
 
         Matrix wMean = M * W;
 
-        auto result = model->getStateVector();
+        auto result = model.getStateVector();
         for (std::size_t i = 0; i < result.size(); i++) {
             result[i] = wMean[0][i];
         }

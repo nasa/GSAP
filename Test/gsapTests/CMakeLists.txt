@@ -1,9 +1,10 @@
 set(HEADERS
     ConfigMapTests.h
-    LoadTests.hpp
     DataStoreTests.h
     DPointsTests.h
     DPointTests.h
+    DynamicArrayTests.h
+    Loading/LoadEstimatorTests.h
     MatrixTests.h
     Messages/MessageBusTests.h
     Messages/MessageWatcherTests.h
@@ -11,7 +12,6 @@ set(HEADERS
     ModelTests.h
     Observers/EventDrivenObserverTests.h
     ObserverTests.h
-    PEventTests.h
     Predictors/EventDrivenPredictorTests.h
     PredictorTests.h
     ThreadTests.h
@@ -27,10 +27,14 @@ set(HEADERS
 
 set(SRCS
     ConfigMapTests.cpp
-    LoadTests.cpp
     DataStoreTests.cpp
     DPointsTests.cpp
     DPointTests.cpp
+    DynamicArrayTests.cpp
+    Loading/ConstLoadEstimatorTests.cpp
+    Loading/GaussianLoadEstimatorTests.cpp
+    Loading/LoadEstimatorTests.cpp
+    Loading/MovingAverageLoadEstimatorTests.cpp
     main.cpp
     MatrixTests.cpp
     Messages/MessageBusTests.cpp
@@ -38,7 +42,6 @@ set(SRCS
     ModelTests.cpp
     Observers/EventDrivenObserverTests.cpp
     ObserverTests.cpp
-    PEventTests.cpp
     Predictors/EventDrivenPredictorTests.cpp
     PredictorTests.cpp
     ThreadTests.cpp

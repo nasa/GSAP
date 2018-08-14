@@ -12,22 +12,25 @@ namespace PCOE {
         : bus(messageBus),
           observer(std::move(obs)),
           source(std::move(src)),
-          inputWatcher(bus, source, observer->getModel()->getInputs(), MessageId::ModelInputVector),
+          inputWatcher(bus, source, observer->getModel().getInputs(), MessageId::ModelInputVector),
           outputWatcher(bus,
                         source,
-                        observer->getModel()->getOutputs(),
+                        observer->getModel().getOutputs(),
                         MessageId::ModelOutputVector) {
         Expect(observer, "Observer pointer is empty");
+        lock_guard guard(m);
         bus.subscribe(this, source, MessageId::ModelInputVector);
         bus.subscribe(this, source, MessageId::ModelOutputVector);
     }
 
     EventDrivenObserver::~EventDrivenObserver() {
+        lock_guard guard(m);
         bus.unsubscribe(this);
     }
 
     void EventDrivenObserver::processMessage(const std::shared_ptr<Message>& message) {
         // TODO (JW): Figure out exactly what needs to be protected by a mutex
+        lock_guard guard(m);
         switch (message->getMessageId()) {
         case MessageId::ModelInputVector:
             inputMsg = message;
@@ -46,7 +49,7 @@ namespace PCOE {
             const auto& u = Model::input_type(typedInMsg->getValue());
             const auto& z = Model::output_type(typedOutMsg->getValue());
             if (!observer->isInitialized()) {
-                auto x = observer->getModel()->initialize(u, z);
+                auto x = observer->getModel().initialize(u, z);
                 observer->initialize(latestTimestamp, x, u);
             }
             else {

@@ -53,7 +53,6 @@ endif()
 
 set (HEADERS
     inc/ConfigMap.h
-    inc/ConstLoadEstimator.h
     inc/Contracts.h
     inc/DataPoint.h
     inc/DataPoints.h
@@ -63,8 +62,10 @@ set (HEADERS
     inc/Exceptions.h
     inc/Factory.h
     inc/GaussianVariable.h
-    inc/LoadEstimator.h
-    inc/LoadEstimatorFactory.h
+    inc/Loading/ConstLoadEstimator.h
+    inc/Loading/LoadEstimator.h
+    inc/Loading/LoadEstimatorFactory.h
+    inc/Loading/MovingAverageLoadEstimator.h
     inc/Matrix.h
     inc/Messages/IMessageProcessor.h
     inc/Messages/IMessagePublisher.h
@@ -76,7 +77,6 @@ set (HEADERS
     inc/Messages/ProgEventMessage.h
     inc/Messages/UDataMessage.h
     inc/Model.h
-    inc/MovingAverageLoadEstimator.h
     inc/Observers/EventDrivenObserver.h
     inc/Observers/Observer.h
     inc/Observers/ObserverFactory.h
@@ -118,23 +118,19 @@ set (HEADERS
 
 set(SRCS
     src/ConfigMap.cpp
-    src/ConstLoadEstimator.cpp
     src/DataPoint.cpp
     src/DataPoints.cpp
     src/GaussianVariable.cpp
-    src/LoadEstimator.cpp
     src/Matrix.cpp
     src/Messages/Message.cpp
     src/Messages/MessageBus.cpp
     src/Messages/MessageId.cpp
-    src/MovingAverageLoadEstimator.cpp
     src/Observers/EventDrivenObserver.cpp
     src/Observers/ParticleFilter.cpp
     src/Observers/UnscentedKalmanFilter.cpp
     src/PContainer.cpp
     src/Predictors/EventDrivenPredictor.cpp
     src/Predictors/MonteCarloPredictor.cpp
-    src/ProgEvent.cpp
     src/StatisticalTools.cpp
     src/TCPSocket.cpp
     src/Thread.cpp

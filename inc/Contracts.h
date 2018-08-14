@@ -54,7 +54,7 @@ namespace PCOE {
 #define CONTRACT_REQUIRE(type, cond, msg) \
     (LIKELY(cond) \
          ? static_cast<void>(0) \
-         : LogAndThrow(type " violated at " __FILE__ ": " MAKE_STRING(__LINE__) ". " msg))
+         : PCOE::LogAndThrow(type " violated at " __FILE__ ": " MAKE_STRING(__LINE__) ". " msg))
 
 #endif
 

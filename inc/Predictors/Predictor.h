@@ -6,16 +6,29 @@
 
 #include <string>
 #include <vector>
-#include <ConfigMap.h>
 
+#include "ConfigMap.h"
 #include "Contracts.h"
 #include "DataPoint.h"
-#include "LoadEstimator.h"
+#include "Loading/LoadEstimator.h"
 #include "ProgEvent.h"
 #include "PrognosticsModel.h"
 
 namespace PCOE {
-    struct Prediction {
+    class Prediction {
+    public:
+        Prediction(std::vector<ProgEvent>&& events, std::vector<DataPoint>&& trajectories)
+            : events(events), sysTrajectories(trajectories) {}
+
+        inline const std::vector<ProgEvent>& getEvents() const {
+            return events;
+        }
+
+        inline const std::vector<DataPoint>& getSystemTrajectories() const {
+            return sysTrajectories;
+        }
+
+    private:
         std::vector<ProgEvent> events;
         std::vector<DataPoint> sysTrajectories;
     };
@@ -37,10 +50,8 @@ namespace PCOE {
          * @param config A config map containing configuration parameters for
          *               the predictor.
          **/
-        Predictor(const PrognosticsModel* m, LoadEstimator* le, const ConfigMap& config)
+        Predictor(const PrognosticsModel& m, LoadEstimator& le, const ConfigMap& config)
             : loadEstimator(le), model(m) {
-            Expect(m != nullptr, "Model is null");
-            Expect(le != nullptr, "Load Estimator is null");
             // Note (JW):
             // Want to keep config param in case we ever add optional config values
             // This cast suppresses warnings about the unused variable.
@@ -80,8 +91,8 @@ namespace PCOE {
             predictedOutputs = std::move(value);
         }
 
-        LoadEstimator* loadEstimator;
-        const PrognosticsModel* model;
+        LoadEstimator& loadEstimator;
+        const PrognosticsModel& model;
 
     private:
         std::vector<std::string> predictedOutputs;
