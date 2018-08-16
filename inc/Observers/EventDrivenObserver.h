@@ -55,7 +55,7 @@ namespace PCOE {
         void processMessage(const std::shared_ptr<Message>& message) override;
 
     private:
-        using mutex = std::mutex;
+        using mutex = std::timed_mutex;
         using lock_guard = std::lock_guard<mutex>;
         using unique_lock = std::unique_lock<mutex>;
 
