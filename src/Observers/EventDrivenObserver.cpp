@@ -29,8 +29,16 @@ namespace PCOE {
     }
 
     void EventDrivenObserver::processMessage(const std::shared_ptr<Message>& message) {
-        // TODO (JW): Figure out exactly what needs to be protected by a mutex
-        lock_guard guard(m);
+        // Note (JW): If we are unable to aquire the lock immediately, the
+        //            observer is alreadyu processing a message. If we can't
+        //            aquire the lock within a few milliseconds, the observer is
+        //            probably producing a state estimate, and the message queue
+        //            is backed up.
+        unique_lock lock(m, std::chrono::milliseconds(10));
+        if (!lock.owns_lock()) {
+            return;
+        }
+
         switch (message->getMessageId()) {
         case MessageId::ModelInputVector:
             inputMsg = message;

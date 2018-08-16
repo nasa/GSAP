@@ -23,7 +23,15 @@ namespace PCOE {
     }
 
     void EventDrivenPredictor::processMessage(const std::shared_ptr<Message>& message) {
-        lock_guard guard(m);
+        // Note (JW): If we are unable to aquire the lock within a few
+        //            milliseconds, the predictor is already in the middle of a
+        //            prediction, so we need to drop the current message to kep
+        //            the queue from backing up.
+        unique_lock lock(m, std::chrono::milliseconds(10));
+        if (!lock.owns_lock()) {
+            return;
+        }
+
         Expect(message->getMessageId() == MessageId::ModelStateEstimate, "Unexpected message id");
         UDataVecMessage* m = dynamic_cast<UDataVecMessage*>(message.get());
         Expect(m != nullptr, "Unexpected message type");

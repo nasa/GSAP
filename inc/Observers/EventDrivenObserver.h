@@ -57,6 +57,7 @@ namespace PCOE {
     private:
         using mutex = std::mutex;
         using lock_guard = std::lock_guard<mutex>;
+        using unique_lock = std::unique_lock<mutex>;
 
         mutable mutex m;
         MessageBus& bus;
