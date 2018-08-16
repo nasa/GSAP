@@ -22,9 +22,9 @@ namespace PCOE {
     };
 
     /**
-     * Ipmplments UKF state estimation algorithm for non-linear models.
+     * Implements UKF state estimation algorithm for non-linear models.
      *
-     * @author Mattew Daigle
+     * @author Mathew Daigle
      * @author Jason Watkins
      **/
     class UnscentedKalmanFilter final : public Observer {
