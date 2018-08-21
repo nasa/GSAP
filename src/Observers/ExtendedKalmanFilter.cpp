@@ -90,7 +90,7 @@ namespace PCOE {
     }
     
     
-    // Fix this for EKF
+    // Tentatively OK for EKF
     void ExtendedKalmanFilter::initialize(const double t0,
                                            const Model::state_type& x0,
                                            const Model::input_type& u0) {
@@ -103,10 +103,6 @@ namespace PCOE {
         
         // Initialize P
         P = Q;
-        
-        // Compute initial Jacobians for current state estimate
-            //using definition of the derivative
-            //how do I figure out step size? Iterate? User input? Just pick something?
         
         // Compute corresponding output estimate
         std::vector<double> zeroNoiseZ(model->getOutputSize());
@@ -133,38 +129,13 @@ namespace PCOE {
         // 1. Predict
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Starting step - predict");
         
-        // Compute sigma points for current state estimate
-        computeSigmaPoints(xEstimated, Q, sigmaX);
+        // xkk1 = f(k1k1,uPrev) //calc next state from model assuming no noise
+        // ykk1 = h(xkk1) //calc next expected sensor readings from expected state
+        // F = jacobian(xkk1,ykk1) //get jacobian eval'd at new expected state, sensor output
+        // Update Pkk1 using F,Pk1k1,Q
+        // H = jacobian(xkk1,
         
-        // Propagate sigma points through state equation
-        Matrix Xkk1(model->getStateSize(), sigmaPointCount);
-        std::vector<double> zeroNoise(model->getStateSize());
-        for (unsigned int i = 0; i < sigmaPointCount; i++) {
-            auto x = Model::state_type(static_cast<std::vector<double>>(sigmaX.M.col(i)));
-            x = model->stateEqn(timestamp, x, uPrev, zeroNoise, dt);
-            Xkk1.col(i, x.vec());
-        }
         
-        // Recombine weighted sigma points to produce predicted state and covariance
-        std::vector<double> xkk1 =
-        static_cast<std::vector<double>>(Xkk1.weightedMean(Matrix(sigmaX.w)));
-        Matrix Pkk1 = Xkk1.weightedCovariance(Matrix(sigmaX.w), sigmaX.alpha, sigmaX.beta) + Q;
-        
-        // Propagate sigma points through output equation
-        Matrix Zkk1(model->getOutputSize(), sigmaPointCount);
-        for (unsigned int i = 0; i < sigmaPointCount; i++) {
-            auto zkk1 =
-            model->outputEqn(timestamp,
-                             Model::state_type(static_cast<std::vector<double>>(Xkk1.col(i))),
-                             u,
-                             zeroNoise);
-            Zkk1.col(i, zkk1.vec());
-        }
-        
-        // Recombine weighted sigma points to produce predicted measurement and covariance
-        std::vector<double> zkk1 =
-        static_cast<std::vector<double>>(Zkk1.weightedMean(Matrix(sigmaX.w)));
-        Matrix Pzz = Zkk1.weightedCovariance(Matrix(sigmaX.w), sigmaX.alpha, sigmaX.beta) + R;
         
         // 2. Update
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Starting step - update");
@@ -211,6 +182,18 @@ namespace PCOE {
         // Update uOld
         uPrev = u;
     }
+    
+    /* EMPTY JACOBIAN PLACEHOLDER */
+    const Matrix ExtendedKalmanFilter::jacobian(const Model::state_type& mx, const Model::input_type& u) {
+        //return an empty matrix until I've figured out inputs/outputs
+        Matrix j
+        return j
+    }
+    
+    
+    
+    
+    
     
     /*void ExtendedKalmanFilter::computeSigmaPoints(const Model::state_type& mx,
                                                    const Matrix& Pxx,
