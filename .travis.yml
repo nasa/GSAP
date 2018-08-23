@@ -48,7 +48,7 @@ script:
   - mkdir -p bin/testresults
   - pushd build
   - cmake -DCoverage=ON .. $GENERATOR
-  - cmake --build .
+  - cmake --build . --target install
   - popd
   - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$COMPENV" == "gcc" ]; then
     pushd coverage;
