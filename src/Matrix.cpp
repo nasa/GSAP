@@ -1,17 +1,6 @@
-/**  @file      Matrix.cpp
- *
- *   @brief     An arbitrary MxN matrix
- *
- *   @author    Jason Watkins <jason-watkins@outlook.com>
- *   @author    Matthew Daigle <matthew.j.daigle@nasa.gov>
- *   @version   0.2.0
- *   @date      2016-07-25
- *
- *   @copyright Copyright (c) 2018 United States Government as represented by
- *              the Administrator of the National Aeronautics and Space
- *              Administration. All Rights Reserved.
- */
-
+// Copyright (c) 2016-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #include "Matrix.h"
 
 #include <algorithm>
@@ -23,18 +12,16 @@ namespace PCOE {
     /***********************************************************************/
     /* Constructors, Destructor and Assignment Operator                    */
     /***********************************************************************/
-    Matrix::Matrix() : M(0), N(0), data(nullptr) { }
+    Matrix::Matrix() : M(0), N(0), data(nullptr) {}
 
-    Matrix::Matrix(std::size_t m, std::size_t n)
-        : M(m), N(n), data(new double[m * n]()) { }
+    Matrix::Matrix(std::size_t m, std::size_t n) : M(m), N(n), data(new double[m * n]()) {}
 
     Matrix::Matrix(std::size_t m, std::size_t n, double value)
         : M(m), N(n), data(new double[m * n]) {
         std::fill_n(data, M * N, value);
     }
 
-    Matrix::Matrix(std::size_t m, std::size_t n, std::initializer_list<double> l)
-        : Matrix(m, n) {
+    Matrix::Matrix(std::size_t m, std::size_t n, std::initializer_list<double> l) : Matrix(m, n) {
         if (l.size() != M * N) {
             throw std::domain_error("Invalid initializer list size.");
         }
@@ -201,7 +188,7 @@ namespace PCOE {
         if (M != 1 && N != 1) {
             throw std::domain_error("Matrix is not a vector.");
         }
-        return std::vector<double>(data, data + M*N);
+        return std::vector<double>(data, data + M * N);
     }
 
     void Matrix::resize(std::size_t m, std::size_t n) {
@@ -222,6 +209,14 @@ namespace PCOE {
     /***********************************************************************/
     /* Arithmetic operators                                                */
     /***********************************************************************/
+    Matrix Matrix::operator-() {
+        Matrix result = *this;
+        for (size_t i = 0; i < M * N; i++) {
+            result.data[i] = -result.data[i];
+        }
+        return result;
+    }
+
     Matrix& Matrix::operator+=(const Matrix& rhs) {
         if (M != rhs.M || N != rhs.N) {
             throw std::domain_error("Matrices are different sizes.");
@@ -329,7 +324,7 @@ namespace PCOE {
         // fall back to laplace expansion to calculate the determinant.
         double r = 1;
         Matrix A(M, N);
-        //if (cholInternal(A)) {
+        // if (cholInternal(A)) {
         //	for (std::size_t i = 0; i < N; i++) {
         //		r *= A(i, i) * A[i][i];
         //	}
@@ -347,8 +342,7 @@ namespace PCOE {
     Matrix Matrix::diagonal() const {
         std::size_t len = std::min(M, N);
         Matrix r(len, 1);
-        for (size_t i = 0; i < len; i++)
-        {
+        for (size_t i = 0; i < len; i++) {
             r[i][0] = (*this)[i][i];
         }
         return r;
@@ -422,7 +416,9 @@ namespace PCOE {
     // there will be no scaling.
     // Note that weighted covariance function differs for sigma
     // points vs other samples, and this one is assuming sigma points.
-    Matrix Matrix::weightedCovariance(const Matrix& w, const double alpha, const double beta) const {
+    Matrix Matrix::weightedCovariance(const Matrix& w,
+                                      const double alpha,
+                                      const double beta) const {
         if (N != w.M || w.N != 1) {
             throw std::domain_error("w is not a column vector with M rows.");
         }
@@ -493,8 +489,7 @@ namespace PCOE {
         }
 
         double r = 0;
-        for (size_t i = 0; i < rows(); i++)
-        {
+        for (size_t i = 0; i < rows(); i++) {
             double f = std::pow(-1.0, i) * (*this)[i][0];
             Matrix sub = submatrix(i, 0);
             double d = sub.determinant();
@@ -558,8 +553,7 @@ namespace PCOE {
             }
             if (i == N) { // Failed to find a row with non-zero in first column
                 std::size_t j;
-                for (j = 0; j < M; ++j)
-                {
+                for (j = 0; j < M; ++j) {
                     if (std::abs(r[0][j]) > 1e-15) {
                         Matrix tmp = r.col(0);
                         r.col(0, r.col(j));
