@@ -1,16 +1,6 @@
-/**  @file      Matrix.h
- *
- *   @brief     An arbitrary MxN matrix
- *
- *   @author    Jason Watkins <jason-watkins@outlook.com>
- *   @author    Matthew Daigle <matthew.j.daigle@nasa.gov>
- *   @version   0.2.0
- *   @date      2016-07-25
- *
- *   @copyright Copyright (c) 2018 United States Government as represented by
- *              the Administrator of the National Aeronautics and Space
- *              Administration. All Rights Reserved.
- */
+// Copyright (c) 2016-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 
 #ifndef GSAP_MATRIX_H
 #define GSAP_MATRIX_H
@@ -22,6 +12,14 @@
 
 namespace PCOE {
 #undef minor
+
+    /**
+     * An MxN matrix of doubles.
+     *
+     * @author Jason Watkins
+     * @author Matthew Daigle
+     * @since 1.0
+     **/
     class Matrix {
     public:
         struct ConstRowVector;
@@ -76,17 +74,17 @@ namespace PCOE {
         Matrix(const Matrix& other);
 
         /** @brief Constructs a new Matrix by taking the elements of @p other.
-        *
-        *   @param other A matrix of the same type and size from which to take
-        *                elements.
-        */
+         *
+         *   @param other A matrix of the same type and size from which to take
+         *                elements.
+         */
         Matrix(Matrix&& other);
 
         /** @brief Assigns the elements of other to the current Matrix.
-        *
-        *   @param other A matrix from which to copy elements.
-        *   @returns     A reference to the current Matrix.
-        */
+         *
+         *   @param other A matrix from which to copy elements.
+         *   @returns     A reference to the current Matrix.
+         */
         Matrix& operator=(Matrix other);
 
         /** @brief Exchanges the underlying data of two Matrices.
@@ -170,21 +168,21 @@ namespace PCOE {
         }
 
         /** @brief Gets a reference the element at the specified location.
-        *
-        *  @param m The zero-based row of the element to get.
-        *  @param n The zero-nased column of the element to get.
-        *  @exception std::out_of_range If @p m or @p n are larger than the number
-        *             of rows or columns, respectively, in the matrix.
-        */
+         *
+         *  @param m The zero-based row of the element to get.
+         *  @param n The zero-nased column of the element to get.
+         *  @exception std::out_of_range If @p m or @p n are larger than the number
+         *             of rows or columns, respectively, in the matrix.
+         */
         double& at(std::size_t m, std::size_t n);
 
         /** @brief Gets the value of the element at the specified location.
-        *
-        *  @param m The zero-based row of the element to get.
-        *  @param n The zero-nased column of the element to get.
-        *  @exception std::out_of_range If @p m or @p n are larger than the number
-        *             of rows or columns, respectively, in the matrix.
-        */
+         *
+         *  @param m The zero-based row of the element to get.
+         *  @param n The zero-nased column of the element to get.
+         *  @exception std::out_of_range If @p m or @p n are larger than the number
+         *             of rows or columns, respectively, in the matrix.
+         */
         double at(std::size_t m, std::size_t n) const;
 
         /** @brief Retrieves the n-th column of the matrix as a column vector.
@@ -254,6 +252,13 @@ namespace PCOE {
         /***********************************************************************/
         /* Arithmetic operators                                                */
         /***********************************************************************/
+        /**
+         * Negates each element of the matrix.
+         *
+         * @return    A new matrix in which each element has been negated.
+         **/
+        Matrix operator-();
+
         /** @brief Adds the specified matrix to the current matrix.
          *
          *  @param rhs The matrix to add.
@@ -292,7 +297,7 @@ namespace PCOE {
         }
 
         /** @brief Adds a scalar to a matrix.
-          *
+         *
          *  @param lhs The scalar to add.
          *  @param rhs The matrix to add to
          *  @returns   A new matrix containing the result.
@@ -348,45 +353,45 @@ namespace PCOE {
         Matrix operator*(const Matrix& rhs) const;
 
         /** @brief Multiplies the current matrix by a scalar.
-        *
-        *  @param rhs The scalar to multiply by.
-        *  @returns   A reference to the current matrix.
-        */
+         *
+         *  @param rhs The scalar to multiply by.
+         *  @returns   A reference to the current matrix.
+         */
         Matrix& operator*=(double rhs);
 
         /** @brief Mulitiplies a matrix by a scalar.
-        *
-        *  @param lhs The matrix to multiply.
-        *  @param rhs The scalar to multiply by.
-        *  @returns   A new matrix containing the result.
-        */
+         *
+         *  @param lhs The matrix to multiply.
+         *  @param rhs The scalar to multiply by.
+         *  @returns   A new matrix containing the result.
+         */
         inline friend Matrix operator*(Matrix lhs, double rhs) {
             return lhs *= rhs;
         }
 
         /** @brief Mulitiplies a matrix by a scalar.
-        *
-        *  @param lhs The scalar to multiply by.
-        *  @param rhs The matrix to multiply.
-        *  @returns   A new matrix containing the result.
-        */
+         *
+         *  @param lhs The scalar to multiply by.
+         *  @param rhs The matrix to multiply.
+         *  @returns   A new matrix containing the result.
+         */
         inline friend Matrix operator*(double lhs, Matrix rhs) {
             return rhs *= lhs;
         }
 
         /** @brief Divides the current matrix by a scalar.
-        *
-        *  @param rhs The scalar to divide by.
-        *  @returns   A reference to the current matrix.
-        */
+         *
+         *  @param rhs The scalar to divide by.
+         *  @returns   A reference to the current matrix.
+         */
         Matrix& operator/=(double rhs);
 
         /** @brief Divides a matrix by a scalar.
-        *
-        *  @param lhs The matrix to divide.
-        *  @param rhs The scalar to divide by.
-        *  @returns   A new matrix containing the result.
-        */
+         *
+         *  @param lhs The matrix to divide.
+         *  @param rhs The scalar to divide by.
+         *  @returns   A new matrix containing the result.
+         */
         inline friend Matrix operator/(Matrix lhs, double rhs) {
             return lhs /= rhs;
         }
@@ -489,7 +494,9 @@ namespace PCOE {
          */
         Matrix transpose() const;
 
-        Matrix weightedCovariance(const Matrix& w, const double alpha=1, const double beta=0) const;
+        Matrix weightedCovariance(const Matrix& w,
+                                  const double alpha = 1,
+                                  const double beta = 0) const;
 
         Matrix weightedMean(const Matrix& w) const;
 
@@ -512,7 +519,7 @@ namespace PCOE {
         /***********************************************************************/
         struct ConstRowVector {
         public:
-            ConstRowVector(const double* d) : data(d) { }
+            ConstRowVector(const double* d) : data(d) {}
 
             inline double operator[](std::size_t n) const {
                 return data[n];
@@ -524,7 +531,7 @@ namespace PCOE {
 
         struct RowVector : public ConstRowVector {
         public:
-            RowVector(double* d) : ConstRowVector(d), mutData(d) { }
+            RowVector(double* d) : ConstRowVector(d), mutData(d) {}
 
             inline double& operator[](std::size_t n) {
                 return mutData[n];
