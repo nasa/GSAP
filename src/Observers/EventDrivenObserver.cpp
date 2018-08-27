@@ -63,9 +63,11 @@ namespace PCOE {
             const auto& u = Model::input_type(typedInMsg->getValue());
             const auto& z = Model::output_type(typedOutMsg->getValue());
             if (!observer->isInitialized()) {
-                log.WriteLine(LOG_TRACE, MODULE_NAME, "Initialized observer");
+                log.WriteLine(LOG_TRACE, MODULE_NAME, "Getting initial state from model");
                 auto x = observer->getModel().initialize(u, z);
+                log.WriteLine(LOG_TRACE, MODULE_NAME, "Initializing observer");
                 observer->initialize(latestTimestamp, x, u);
+                log.WriteLine(LOG_TRACE, MODULE_NAME, "Initialized observer");
             }
             else {
                 log.WriteLine(LOG_TRACE, MODULE_NAME, "Stepping observer");
