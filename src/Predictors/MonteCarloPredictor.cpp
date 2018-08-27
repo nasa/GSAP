@@ -12,7 +12,7 @@
 #include "ThreadSafeLog.h"
 
 namespace PCOE {
-    const Log& log = Log::Instance();
+    static const Log& log = Log::Instance();
 
     // Configuration Keys
     const std::string PROCESSNOISE_KEY = "Model.ProcessNoise";
