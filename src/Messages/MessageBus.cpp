@@ -65,8 +65,20 @@ namespace PCOE {
                   vec.end());
     }
 
-    bool future_ready(std::future<void>& f) {
-        return f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+    static bool future_ready(std::future<void>& f) {
+        // Note (JW): Only calls to future.get trigger exception propagation, so
+        //            first we do a 0 wait, then if the future is ready we call
+        //            get, even though the return type is void, to trigger any
+        //            exceptions that may have occured. We do this here because
+        //            ready futures will be discarded immediately following this
+        //            call in the `publish` function below and discarding the
+        //            future without calling get will discard any stored
+        //            exceptions along with it.
+        bool ready = f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+        if (ready) {
+            f.get();
+        }
+        return ready;
     }
 
     void MessageBus::publish(std::shared_ptr<Message> message) {
