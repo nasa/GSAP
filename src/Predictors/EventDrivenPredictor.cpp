@@ -8,8 +8,8 @@
 #include "Messages/UDataMessage.h"
 
 namespace PCOE {
-    const Log& log = Log::Instance();
-    const std::string MODULE_NAME = "PRED-ED";
+    static const Log& log = Log::Instance();
+    static const std::string MODULE_NAME = "PRED-ED";
 
     EventDrivenPredictor::EventDrivenPredictor(MessageBus& messageBus,
                                                std::unique_ptr<Predictor>&& predictor,
