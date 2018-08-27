@@ -63,6 +63,7 @@ namespace PCOE {
     }
 
     Prediction MonteCarloPredictor::predict(const double time_s, const std::vector<UData>& state) {
+        log.WriteLine(LOG_TRACE, MODULE_NAME, "Starting prediction");
         // TODO (MD): This is setup for only a single event to predict, need to extend to multiple
         //            events
 
@@ -120,6 +121,7 @@ namespace PCOE {
 // For each sample
 #pragma omp parallel for shared(data, loadEstimatorSavePts)
         for (unsigned int sample = 0; sample < sampleCount; sample++) {
+            log.FormatLine(LOG_TRACE, MODULE_NAME, "Prediction sample %ull", sample);
 // 0. Create random number generator if operating in parallel
 #ifdef USING_OPENMP
             std::random_device rDevice;
@@ -188,6 +190,7 @@ namespace PCOE {
             }
         }
 
+        log.WriteLine(LOG_TRACE, MODULE_NAME, "Prediction complete");
         return Prediction({ProgEvent(model.getEvents()[0],
                                      std::move(eventState),
                                      std::move(eventToe))},
