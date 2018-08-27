@@ -6,10 +6,18 @@
 #include <vector>
 
 #include "Messages/MessageBus.h"
+#include "ThreadSafeLog.h"
 
 namespace PCOE {
+    static const Log& log = Log::Instance();
+    static const std::string MODULE_NAME = "M-BUS";
+
     void MessageBus::processOne() {
         unique_lock lock(m);
+        log.FormatLine(LOG_TRACE,
+                       MODULE_NAME,
+                       "Processing one message. %ull in queue.",
+                       futures.size());
         if (!futures.empty()) {
             std::future<void> f = std::move(futures.back());
             futures.pop_back();
@@ -19,11 +27,16 @@ namespace PCOE {
             //            the publishing of further messages.
             lock.unlock();
             f.get();
+            log.WriteLine(LOG_TRACE, MODULE_NAME, "Message processed");
         }
     }
 
     void MessageBus::processAll() {
         unique_lock lock(m);
+        log.FormatLine(LOG_TRACE,
+                       MODULE_NAME,
+                       "Processing all messages. Starting with %ull in queue.",
+                       futures.size());
         while (!futures.empty()) {
             std::future<void> f = std::move(futures.back());
             futures.pop_back();
@@ -33,17 +46,28 @@ namespace PCOE {
             //            the publishing of further messages.
             lock.unlock();
             f.get();
+            log.FormatLine(LOG_TRACE,
+                           MODULE_NAME,
+                           "Processed message. %ull left in queue.",
+                           futures.size());
             lock.lock();
         }
     }
 
     void MessageBus::subscribe(IMessageProcessor* consumer, std::string source, MessageId id) {
         lock_guard guard(m);
+        log.FormatLine(LOG_TRACE,
+                       MODULE_NAME,
+                       "Adding subscriber %xll for source '%s' and id %xll",
+                       consumer,
+                       source.c_str(),
+                       static_cast<std::uint64_t>(id));
         subscribers[source].push_back(callback_pair(id, consumer));
     }
 
     void MessageBus::unsubscribe(IMessageProcessor* consumer) {
         lock_guard guard(m);
+        log.FormatLine(LOG_TRACE, MODULE_NAME, "Removing subscriber %xll", consumer);
         for (auto i : subscribers) {
             unsubscribe(consumer, i.first);
         }
@@ -51,6 +75,11 @@ namespace PCOE {
 
     void MessageBus::unsubscribe(IMessageProcessor* consumer, const std::string& source) {
         lock_guard guard(m);
+        log.FormatLine(LOG_TRACE,
+                       MODULE_NAME,
+                       "Adding subscriber %xll for source '%s'",
+                       consumer,
+                       source.c_str());
         auto srcSubs = subscribers.find(source);
         if (srcSubs == subscribers.cend()) {
             return;
@@ -83,13 +112,23 @@ namespace PCOE {
 
     void MessageBus::publish(std::shared_ptr<Message> message) {
         lock_guard guard(m);
+        log.FormatLine(LOG_TRACE,
+                       MODULE_NAME,
+                       "Publishing message from source %s with id %xll",
+                       message->getSource().c_str(),
+                       static_cast<std::uint64_t>(message->getMessageId()));
         auto srcSubs = subscribers.find(message->getSource());
         if (srcSubs == subscribers.cend()) {
+            log.WriteLine(LOG_TRACE, MODULE_NAME, "No subscribers");
             return;
         }
 
         for (auto it : (*srcSubs).second) {
             if (it.first == MessageId::All || it.first == message->getMessageId()) {
+                log.FormatLine(LOG_TRACE,
+                               MODULE_NAME,
+                               "Creating future for subscriber %xll",
+                               it.second);
                 auto f = std::async(launchPolicy,
                                     &IMessageProcessor::processMessage,
                                     it.second,
