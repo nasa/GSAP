@@ -16,7 +16,7 @@ namespace PCOE {
         unique_lock lock(m);
         log.FormatLine(LOG_TRACE,
                        MODULE_NAME,
-                       "Processing one message. %ull in queue.",
+                       "Processing one message. %u in queue.",
                        futures.size());
         if (!futures.empty()) {
             std::future<void> f = std::move(futures.back());
@@ -35,7 +35,7 @@ namespace PCOE {
         unique_lock lock(m);
         log.FormatLine(LOG_TRACE,
                        MODULE_NAME,
-                       "Processing all messages. Starting with %ull in queue.",
+                       "Processing all messages. Starting with %u in queue.",
                        futures.size());
         while (!futures.empty()) {
             std::future<void> f = std::move(futures.back());
@@ -48,7 +48,7 @@ namespace PCOE {
             f.get();
             log.FormatLine(LOG_TRACE,
                            MODULE_NAME,
-                           "Processed message. %ull left in queue.",
+                           "Processed message. %u left in queue.",
                            futures.size());
             lock.lock();
         }
@@ -58,7 +58,7 @@ namespace PCOE {
         lock_guard guard(m);
         log.FormatLine(LOG_TRACE,
                        MODULE_NAME,
-                       "Adding subscriber %xll for source '%s' and id %xll",
+                       "Adding subscriber %x for source '%s' and id %x",
                        consumer,
                        source.c_str(),
                        static_cast<std::uint64_t>(id));
@@ -67,7 +67,7 @@ namespace PCOE {
 
     void MessageBus::unsubscribe(IMessageProcessor* consumer) {
         lock_guard guard(m);
-        log.FormatLine(LOG_TRACE, MODULE_NAME, "Removing subscriber %xll", consumer);
+        log.FormatLine(LOG_TRACE, MODULE_NAME, "Removing subscriber %x", consumer);
         for (auto i : subscribers) {
             unsubscribe(consumer, i.first);
         }
@@ -77,7 +77,7 @@ namespace PCOE {
         lock_guard guard(m);
         log.FormatLine(LOG_TRACE,
                        MODULE_NAME,
-                       "Adding subscriber %xll for source '%s'",
+                       "Adding subscriber %x for source '%s'",
                        consumer,
                        source.c_str());
         auto srcSubs = subscribers.find(source);
@@ -114,7 +114,7 @@ namespace PCOE {
         lock_guard guard(m);
         log.FormatLine(LOG_TRACE,
                        MODULE_NAME,
-                       "Publishing message from source %s with id %xll",
+                       "Publishing message from source %s with id %x",
                        message->getSource().c_str(),
                        static_cast<std::uint64_t>(message->getMessageId()));
         auto srcSubs = subscribers.find(message->getSource());
@@ -127,7 +127,7 @@ namespace PCOE {
             if (it.first == MessageId::All || it.first == message->getMessageId()) {
                 log.FormatLine(LOG_TRACE,
                                MODULE_NAME,
-                               "Creating future for subscriber %xll",
+                               "Creating future for subscriber %x",
                                it.second);
                 auto f = std::async(launchPolicy,
                                     &IMessageProcessor::processMessage,

@@ -4,12 +4,16 @@
 #include "BatteryModel.h"
 
 #include <cmath>
+#include <iostream>
+#include <sstream>
 #include <vector>
 
 #include "ConfigMap.h"
 #include "Contracts.h"
 
 using namespace PCOE;
+
+static const Log& logFile = Log::Instance();
 
 // CONST: Outputs
 enum OUT { TEMP = 0, VOLTS = 1 };
@@ -548,6 +552,18 @@ void BatteryModel::setParameters(const double qMobile, const double Vol) {
 
 // Initialize state, given an initial voltage, current, and temperature
 Model::state_type BatteryModel::initialize(const input_type& u, const output_type& z) const {
+    std::stringstream ss;
+    ss << "Inputs: ";
+    for (std::size_t i = 0; i < u.size(); ++i) {
+        ss << u[i] << ", ";
+    }
+    logFile.WriteLine(LOG_TRACE, "MODEL-BATT", ss.str());
+    ss.clear();
+    ss << "Outputs: ";
+    for (std::size_t i = 0; i < z.size(); ++i) {
+        ss << z[i] << ", ";
+    }
+    logFile.WriteLine(LOG_TRACE, "MODEL-BATT", ss.str());
     // This is solved via a search procedure
     // Start by setting up an xp and xn vectors
     std::vector<double> xp, xn;
