@@ -67,7 +67,7 @@ const std::string XPMIN_KEY = "Battery.xpMin";
 
 BatteryModel::BatteryModel()
     : PrognosticsModel(8,
-                       {MessageId::Watts},
+                       {MessageId::Amperes},
                        {MessageId::Volts, MessageId::Centigrade},
                        {},
                        {MessageId::BatteryEod},
@@ -241,7 +241,7 @@ Model::state_type BatteryModel::stateEqn(double,
     double qpS = x[7];
 
     // Extract inputs
-    double P = u[0];
+    double i = u[0];
 
     // Constraints
     double Tbdot = 0;
@@ -303,7 +303,6 @@ Model::state_type BatteryModel::stateEqn(double,
                  Vep6 + Vep7 + Vep8 + Vep9 +
                  parameters.R * Tb * log((-xpS + 1) / xpS) / parameters.F;
     double V = Vep - Vo - Vsn - Vsp - Ven;
-    double i = P / V;
     double qnSdot = qdotDiffusionBSn - i;
     double Jn = i / parameters.Sn;
     double VoNominal = parameters.Ro * i;
@@ -583,7 +582,7 @@ Model::state_type BatteryModel::initialize(const input_type& u, const output_typ
 
     // Account for voltage drop due to input current (assuming no concentration gradient)
     double voltage = z[indices.outputs.Vm];
-    double current = u[indices.inputs.P] / voltage;
+    double current = u[indices.inputs.I];
     double Vo = current * parameters.Ro;
 
     // Now, construct the equilibrium potential voltage for each value of xp and xn
