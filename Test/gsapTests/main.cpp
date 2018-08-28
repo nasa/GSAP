@@ -205,6 +205,7 @@ int main() {
     context.AddTest("processMessage",
                     EventDrivenPredictorTests::processMessage,
                     "EventDrivenPredictor");
+    context.AddTest("Full Config", EventDrivenPredictorTests::fullConfig, "EventDrivenPredictor");
 
     DynamicArrayTests::registerTests(context);
 

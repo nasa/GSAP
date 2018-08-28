@@ -5,4 +5,6 @@ namespace EventDrivenPredictorTests {
     void constructor();
 
     void processMessage();
+
+    void fullConfig();
 }
