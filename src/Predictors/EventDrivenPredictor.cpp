@@ -49,7 +49,7 @@ namespace PCOE {
             bus.publish(peMsg);
             log.FormatLine(LOG_TRACE,
                            MODULE_NAME,
-                           "Publishing event with id %xll",
+                           "Publishing event with id %x",
                            static_cast<std::uint64_t>(event.getId()));
         }
     }

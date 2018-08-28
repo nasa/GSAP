@@ -4,12 +4,16 @@
 #include "BatteryModel.h"
 
 #include <cmath>
+#include <iostream>
+#include <sstream>
 #include <vector>
 
 #include "ConfigMap.h"
 #include "Contracts.h"
 
 using namespace PCOE;
+
+static const Log& logFile = Log::Instance();
 
 // CONST: Outputs
 enum OUT { TEMP = 0, VOLTS = 1 };
@@ -63,7 +67,7 @@ const std::string XPMIN_KEY = "Battery.xpMin";
 
 BatteryModel::BatteryModel()
     : PrognosticsModel(8,
-                       {MessageId::Watts},
+                       {MessageId::Amperes},
                        {MessageId::Volts, MessageId::Centigrade},
                        {},
                        {MessageId::BatteryEod},
@@ -237,7 +241,7 @@ Model::state_type BatteryModel::stateEqn(double,
     double qpS = x[7];
 
     // Extract inputs
-    double P = u[0];
+    double i = u[0];
 
     // Constraints
     double Tbdot = 0;
@@ -299,7 +303,6 @@ Model::state_type BatteryModel::stateEqn(double,
                  Vep6 + Vep7 + Vep8 + Vep9 +
                  parameters.R * Tb * log((-xpS + 1) / xpS) / parameters.F;
     double V = Vep - Vo - Vsn - Vsp - Ven;
-    double i = P / V;
     double qnSdot = qdotDiffusionBSn - i;
     double Jn = i / parameters.Sn;
     double VoNominal = parameters.Ro * i;
@@ -548,6 +551,18 @@ void BatteryModel::setParameters(const double qMobile, const double Vol) {
 
 // Initialize state, given an initial voltage, current, and temperature
 Model::state_type BatteryModel::initialize(const input_type& u, const output_type& z) const {
+    std::stringstream ss;
+    ss << "Inputs: ";
+    for (std::size_t i = 0; i < u.size(); ++i) {
+        ss << u[i] << ", ";
+    }
+    logFile.WriteLine(LOG_TRACE, "MODEL-BATT", ss.str());
+    ss.clear();
+    ss << "Outputs: ";
+    for (std::size_t i = 0; i < z.size(); ++i) {
+        ss << z[i] << ", ";
+    }
+    logFile.WriteLine(LOG_TRACE, "MODEL-BATT", ss.str());
     // This is solved via a search procedure
     // Start by setting up an xp and xn vectors
     std::vector<double> xp, xn;
@@ -567,7 +582,7 @@ Model::state_type BatteryModel::initialize(const input_type& u, const output_typ
 
     // Account for voltage drop due to input current (assuming no concentration gradient)
     double voltage = z[indices.outputs.Vm];
-    double current = u[indices.inputs.P] / voltage;
+    double current = u[indices.inputs.I];
     double Vo = current * parameters.Ro;
 
     // Now, construct the equilibrium potential voltage for each value of xp and xn

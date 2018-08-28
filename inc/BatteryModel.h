@@ -40,7 +40,7 @@ public:
     };
 
     struct inputIndices {
-        static const unsigned int P = 0;
+        static const unsigned int I = 0;
     };
 
     struct outputIndices {
