@@ -284,14 +284,14 @@ namespace PCOE {
         /**
          * Returns an constant iterator to the first element of the array.
          **/
-        const_iterator cbegin() {
+        const_iterator cbegin() const {
             return storage.cbegin();
         }
 
         /**
          * Returns an constant iterator one past the last element of the array.
          **/
-        const_iterator cend() {
+        const_iterator cend() const {
             return storage.cend();
         }
 
@@ -312,14 +312,14 @@ namespace PCOE {
         /**
          * Returns an constant iterator to the first element of the array.
          **/
-        const_iterator crbegin() {
+        const_iterator crbegin() const {
             return storage.cbegin();
         }
 
         /**
          * Returns an constant iterator one past the last element of the array.
          **/
-        const_iterator crend() {
+        const_iterator crend() const {
             return storage.cend();
         }
 

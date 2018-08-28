@@ -64,6 +64,15 @@ namespace PCOE {
             const auto& z = Model::output_type(typedOutMsg->getValue());
             if (!observer->isInitialized()) {
                 log.WriteLine(LOG_TRACE, MODULE_NAME, "Getting initial state from model");
+                Require(observer, "observer is empty");
+                log.FormatLine(LOG_TRACE,
+                               MODULE_NAME,
+                               "Calling initialize with input of size %u",
+                               u.size());
+                log.FormatLine(LOG_TRACE,
+                               MODULE_NAME,
+                               "Calling initialize with output of size %u",
+                               z.size());
                 auto x = observer->getModel().initialize(u, z);
                 log.WriteLine(LOG_TRACE, MODULE_NAME, "Initializing observer");
                 observer->initialize(latestTimestamp, x, u);
