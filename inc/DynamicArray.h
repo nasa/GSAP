@@ -54,7 +54,7 @@ namespace PCOE {
             swap(*this, other);
             return *this;
         }
-
+        
         friend void swap(DynamicArray& first, DynamicArray& second) {
             using std::swap;
 
@@ -97,6 +97,38 @@ namespace PCOE {
             }
             return result;
         }
+        
+        /**
+         * Elementwise addition
+         */
+        inline DynamicArray& operator+=(DynamicArray& toAdd) {
+            for (size_type i = 0; i < len; ++i) {
+                this->data[i] += toAdd[i];
+            }
+            return *this;
+        }
+        
+        inline friend DynamicArray operator+(DynamicArray lhs, const DynamicArray& rhs){
+            return lhs += rhs;
+        }
+        
+        
+        
+        /**
+         * Elementwise subtraction
+         */
+        inline DynamicArray& operator-=(DynamicArray& toSubtract) {
+            for (size_type i = 0; i < len; ++i) {
+                this->data[i] -= toSubtract[i];
+            }
+            return *this;
+        }
+        
+        inline friend DynamicArray operator-(DynamicArray lhs, const DynamicArray& rhs){
+            return lhs -= rhs;
+        }
+        
+
 
     private:
         T* data;

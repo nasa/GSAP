@@ -37,6 +37,10 @@ namespace PCOE {
         using DynamicArray::operator=;
 
         using DynamicArray::operator[];
+        
+        using DynamicArray::operator+=;
+        
+        using DynamicArray::operator-=;
 
     };
 
@@ -153,54 +157,42 @@ namespace PCOE {
          * @param x  The model state vector at the current time step.
          * @param u  The model input vector at the current time step.
          * @param n  The process noise vector.
-         * @param z  The model output vector at the current time step.
-         * @return   A stateSize x stateSize Jacobian Matrix.
+         * @param dt  The model output vector at the current time step.
+         * @return   A stateSize by stateSize Jacobian Matrix.
          **/
-        virtual const Matrix stateJacobianMatrix(const double t,
-                                      const state_type& x,
-                                      const input_type& u,
-                                      const noise_type& n,
-                                      double dt = 1.0,
-                                      double epsilon = 0.1) {
-            Matrix jacobian(stateSize,stateSize); //Checked Matrix.h, should be correct type
-            for (int i=0; i<int(stateSize); i++) {
-                //set up
-                state_type x_minus = x;
-                state_type x_plus = x;
-                x_minus[i] -= epsilon;
-                x_plus[i] += epsilon;
-                
+        virtual Matrix getStateJacobian(const double t,
+                                        const state_type& x,
+                                        const input_type& u,
+                                        const noise_type& n,
+                                        double dt = 1.0,
+                                        double epsilon = 0.01) const {
+            Matrix jacobian(stateSize,stateSize);
+            for (size_type i = 0; i < stateSize; i++) {
+                //perturb state vectors by epsilon/2
+                state_type diff = getStateVector(0.0);
+                diff[i] = epsilon/2.0;
+                state_type x_plus = x + diff;
+                state_type x_minus = x - diff;
+
                 //partial derivatives of all state eq'ns w.r.t. xi
                 x_plus = stateEqn(t, x_plus, u, n, dt);
                 x_minus = stateEqn(t, x_minus, u, n, dt);
-                //state_type dx_i = subtractStates(x_plus,x_minus);
-                //dx_i = divState(2*epsilon);
                 
                 //convert to Matrix form and differentiate
-                Matrix x_plus_matrix = stateToMatrix(x_plus);
-                Matrix x_minus_matrix = stateToMatrix(x_minus);
+                Matrix x_p(x_plus);
+                Matrix x_m(x_minus);
                 
-                Matrix dx_i = x_plus_matrix;
-                dx_i -= x_minus_matrix;
-                dx_i /= (2*epsilon);
+                Matrix dx_i = x_p - x_m;
+                dx_i /= (epsilon);
                 
-                //set result as ith column
+                //set result as ith column of Jacobian
                 jacobian.col(i, dx_i);
             }
-            /* for i = 1:statesize, (forgive my syntax, I've been using python)
-             state_type x_minus = x;
-             state_type x_plus = x;
-             x_minus[i] -= epsilon;
-             x_plus[i] += epsilon;
-             state_type dx_i = (eqn(t,x_minus,u,n,dt) - eqn(t,x_plus,u,n,dt))/(2*epsilon);
-             j.col(i) = dx_i;
-             */
             return jacobian;
             
         }
         
         /**
-         * OVERLOADING (maybe) AIN'T GONNA WORK BECAUSE OUTPUTEQN DOESN'T USE DT
          * Calculate the Jacobian for the output equation. Useful for EKF.
          *
          * @param t  Time
@@ -208,14 +200,37 @@ namespace PCOE {
          * @param u  The model input vector at the current time step.
          * @param n  The process noise vector.
          * @param z  The model output vector at the current time step.
-         * @return   A stateSize x outputSize Jacobian.
+         * @return   An outputSize by stateSize Jacobian.
          **/
-        /*virtual const Matrix outputJacobian(const double t,
-                                      const state_type& x,
-                                      const input_type& u,
-                                      const noise_type& n) {
-            
-        }*/
+        virtual Matrix getOutputJacobian(const double t,
+                                         const state_type& x,
+                                         const input_type& u,
+                                         const noise_type& n,
+                                         double epsilon = 0.01) const {
+            Matrix jacobian(outputSize,stateSize);
+            for (size_type i = 0; i < stateSize; i++) {
+                //perturb state vectors
+                state_type diff = getStateVector(0.0);
+                diff[i] = epsilon/2.0;
+                state_type x_plus = x + diff;
+                state_type x_minus = x - diff;
+                
+                //output equations of perturbed xi's
+                x_plus = outputEqn(t, x_plus, u, n);
+                x_minus = outputEqn(t, x_minus, u, n);
+                
+                //convert to Matrix form and differentiate
+                Matrix x_p(x_plus);
+                Matrix x_m(x_minus);
+                
+                Matrix dx_i = x_p - x_m;
+                dx_i /= (epsilon);
+                
+                //set result as ith column of Jacobian
+                jacobian.col(i, dx_i);
+            }
+            return jacobian;
+        }
         
         
         /**
@@ -232,6 +247,17 @@ namespace PCOE {
          **/
         inline state_type getStateVector() const {
             return state_type(stateSize);
+        }
+        
+        /**
+         * Gets a state vector of the correct size for the current model, initialized to @p value.
+         **/
+        inline state_type getStateVector(double value) const {
+            state_type st(stateSize);
+            for (size_type i = 0; i < stateSize; ++i) {
+                st[i] = value;
+            }
+            return st;
         }
 
         /**
@@ -300,44 +326,12 @@ namespace PCOE {
         }
 
         /**
-         * Element-wise summation of two state vectors
-         **/
-        inline state_type addStates(state_type& x1,state_type& x2) {
-            state_type xSum = getStateVector();
-            for (int i=0; i<int(stateSize); i++) {
-                xSum[i] = x1[i]+x2[i];
-            }
-            return xSum;
-        }
-        
-        /**
-         * Element-wise subtraction of two state vectors (x1-x2)
-         **/
-        inline state_type subtractStates(state_type& x1,state_type& x2) {
-            state_type xDiff = getStateVector();
-            for (int i=0; i<int(stateSize); i++) {
-                xDiff[i] = x1[i]-x2[i];
-            }
-            return xDiff;
-        }
-        
-        /**
-         * Divides every element by a constant
-         **/
-        inline state_type divState(const double div) {
-            state_type xDiv = getStateVector();
-            for (int i=0; i<int(stateSize); i++) {
-                xDiv[i] /= div;
-            }
-            return xDiv;
-        }
-        
-        /** 
          * Converts a state_type to a (stateSize x 1) Matrix
+         * New constructor for Matrix in Matrix.h that takes a DynamicArray
          **/
         inline Matrix stateToMatrix(state_type& x){
             Matrix m(stateSize,1);
-            for (int i=0; i<int(stateSize); i++){
+            for (size_type i=0; i < stateSize; i++){
                 m[i][0] = double(x[i]);
             }
             return m;
@@ -348,6 +342,7 @@ namespace PCOE {
         double defaultTimeStep = 1.0;
         //double defaultEpsilon = 0.01;
         state_type::size_type stateSize;
+        output_type::size_type outputSize;
         std::vector<MessageId> inputs;
         std::vector<MessageId> outputs;
         

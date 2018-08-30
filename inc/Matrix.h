@@ -19,6 +19,7 @@
 #include <initializer_list>
 #include <iostream>
 #include <vector>
+#include "DynamicArray.h"
 
 namespace PCOE {
 #undef minor
@@ -67,7 +68,14 @@ namespace PCOE {
          *  @param v The values that will make up the vector
          */
         explicit Matrix(const std::vector<double>& v);
-
+        
+        /** @brief Constructs a new M by 1 Matrix from a DynamicArray with
+         *         the elements of @p .
+         *
+         *  @param a The values that will make up the vector
+         */
+        explicit Matrix(DynamicArray<double>& a);
+        
         /** @brief Constructs a new Matrix by copying the elements of @p other.
          *
          *  @param other A matrix of the same type and size from which to copy
