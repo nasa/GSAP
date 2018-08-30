@@ -157,7 +157,8 @@ namespace PCOE {
          * @param x  The model state vector at the current time step.
          * @param u  The model input vector at the current time step.
          * @param n  The process noise vector.
-         * @param dt  The model output vector at the current time step.
+         * @param dt  The size of the time step to calculate.
+         * @param epsilon the step size to use in the definition of the derivative.
          * @return   A stateSize by stateSize Jacobian Matrix.
          **/
         virtual Matrix getStateJacobian(const double t,
@@ -174,11 +175,11 @@ namespace PCOE {
                 state_type x_plus = x + diff;
                 state_type x_minus = x - diff;
 
-                //partial derivatives of all state eq'ns w.r.t. xi
+                //state equations of perturbed xi's
                 x_plus = stateEqn(t, x_plus, u, n, dt);
                 x_minus = stateEqn(t, x_minus, u, n, dt);
                 
-                //convert to Matrix form and differentiate
+                //convert to Matrix form and differentiate (w.r.t. xi)
                 Matrix x_p(x_plus);
                 Matrix x_m(x_minus);
                 
@@ -200,6 +201,7 @@ namespace PCOE {
          * @param u  The model input vector at the current time step.
          * @param n  The process noise vector.
          * @param z  The model output vector at the current time step.
+         * @param epsilon the step size to use in the definition of the derivative.
          * @return   An outputSize by stateSize Jacobian.
          **/
         virtual Matrix getOutputJacobian(const double t,
@@ -209,7 +211,7 @@ namespace PCOE {
                                          double epsilon = 0.01) const {
             Matrix jacobian(outputSize,stateSize);
             for (size_type i = 0; i < stateSize; i++) {
-                //perturb state vectors
+                //perturb state vectors by epsilon/2
                 state_type diff = getStateVector(0.0);
                 diff[i] = epsilon/2.0;
                 state_type x_plus = x + diff;
@@ -219,7 +221,7 @@ namespace PCOE {
                 x_plus = outputEqn(t, x_plus, u, n);
                 x_minus = outputEqn(t, x_minus, u, n);
                 
-                //convert to Matrix form and differentiate
+                //convert to Matrix form and differentiate (w.r.t. xi)
                 Matrix x_p(x_plus);
                 Matrix x_m(x_minus);
                 
