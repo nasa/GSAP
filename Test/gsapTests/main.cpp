@@ -8,6 +8,7 @@
 #include "DPointTests.h"
 #include "DPointsTests.h"
 #include "DataStoreTests.h"
+#include "DynamicArrayTests.h"
 #include "FrameworkTests.h"
 #include "GaussianVariableTests.h"
 #include "Loading/LoadEstimatorTests.h"
@@ -81,60 +82,7 @@ int main() {
     context.AddTest("Initialization", testDPointInit, "DPoint");
     context.AddTest("Update", testDPointUpdate, "DPoint");
 
-    // Matrix Tests
-    // Matrix Creation
-    context.AddTest("construct_default", TestMatrix::construct_default, "Matrix");
-    context.AddTest("construct_size", TestMatrix::construct_size, "Matrix");
-    context.AddTest("construct_initialvalue", TestMatrix::construct_initialvalue, "Matrix");
-    context.AddTest("construct_initializerlist", TestMatrix::construct_initializerlist, "Matrix");
-    context.AddTest("construct_vector", TestMatrix::construct_vector, "Matrix");
-    context.AddTest("construct_copy", TestMatrix::construct_copy, "Matrix");
-    context.AddTest("construct_move", TestMatrix::construct_move, "Matrix");
-    context.AddTest("operator_assign", TestMatrix::operator_assign, "Matrix");
-    // Comparison operators
-    context.AddTest("operator_equal", TestMatrix::operator_equal, "Matrix");
-    context.AddTest("operator_notequal", TestMatrix::operator_notequal, "Matrix");
-    context.AddTest("issquare", TestMatrix::issquare, "Matrix");
-    // Basic operations
-    context.AddTest("rows", TestMatrix::rows, "Matrix");
-    context.AddTest("cols", TestMatrix::cols, "Matrix");
-    context.AddTest("indexer", TestMatrix::indexer, "Matrix");
-    context.AddTest("indexer_const", TestMatrix::indexer_const, "Matrix");
-    context.AddTest("at", TestMatrix::at, "Matrix");
-    context.AddTest("const_at", TestMatrix::const_at, "Matrix");
-    context.AddTest("col_get", TestMatrix::col_get, "Matrix");
-    context.AddTest("col_setmatrix", TestMatrix::col_setmatrix, "Matrix");
-    context.AddTest("col_setvector", TestMatrix::col_setvector, "Matrix");
-    context.AddTest("row_get", TestMatrix::row_get, "Matrix");
-    context.AddTest("row_setmatrix", TestMatrix::row_setmatrix, "Matrix");
-    context.AddTest("row_setvector", TestMatrix::row_setvector, "Matrix");
-    context.AddTest("operator_vector", TestMatrix::operator_vector, "Matrix");
-    context.AddTest("resize", TestMatrix::resize, "Matrix");
-    // Arithmetic operations
-    context.AddTest("add_matrix", TestMatrix::add_matrix, "Matrix");
-    context.AddTest("add_scalar", TestMatrix::add_scalar, "Matrix");
-    context.AddTest("subtract_matrix", TestMatrix::subtract_matrix, "Matrix");
-    context.AddTest("subtract_salar", TestMatrix::subtract_salar, "Matrix");
-    context.AddTest("multiply_matrix", TestMatrix::multiply_matrix, "Matrix");
-    context.AddTest("multiply_scalar", TestMatrix::multiply_scalar, "Matrix");
-    context.AddTest("divide_scalar", TestMatrix::divide_scalar, "Matrix");
-    // Complex operations
-    context.AddTest("adjoint", TestMatrix::adjoint, "Matrix");
-    context.AddTest("cofactors", TestMatrix::cofactors, "Matrix");
-    context.AddTest("determinant", TestMatrix::determinant, "Matrix");
-    context.AddTest("laplace determinant", TestMatrix::laplaceDet, "Matrix");
-    context.AddTest("diagonal", TestMatrix::diagonal, "Matrix");
-    context.AddTest("inverse", TestMatrix::inverse, "Matrix");
-    context.AddTest("minors", TestMatrix::minors, "Matrix");
-    context.AddTest("submatrix", TestMatrix::submatrix, "Matrix");
-    context.AddTest("transpose", TestMatrix::transpose, "Matrix");
-    context.AddTest("identity", TestMatrix::identity, "Matrix");
-    // Special operations
-    context.AddTest("cholesky", TestMatrix::cholesky, "Matrix");
-    context.AddTest("weightedmean", TestMatrix::weightedmean, "Matrix");
-    context.AddTest("weightedcovariance", TestMatrix::weightedcovariance, "Matrix");
-    // Stream insertion
-    context.AddTest("stream insertion operator", TestMatrix::streamInsertionOperator, "Matrix");
+    TestMatrix::registerTests(context);
 
     // Model Tests
     context.AddTest("Tank Initialization", testTankInitialize, "Model Tank");
@@ -257,6 +205,9 @@ int main() {
     context.AddTest("processMessage",
                     EventDrivenPredictorTests::processMessage,
                     "EventDrivenPredictor");
+    context.AddTest("Full Config", EventDrivenPredictorTests::fullConfig, "EventDrivenPredictor");
+
+    DynamicArrayTests::registerTests(context);
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");

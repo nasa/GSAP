@@ -18,7 +18,7 @@ namespace EventDrivenObserverTests {
         TestModel tm;
         const std::string src = "test";
 
-        EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(&tm)), src);
+        EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tm)), src);
         // Constructed without exception
     }
 
@@ -28,7 +28,7 @@ namespace EventDrivenObserverTests {
         const std::string src = "test";
 
         MessageCounter listener(bus, src, MessageId::ModelStateEstimate);
-        EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(&tm)), src);
+        EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tm)), src);
 
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate on construction");
         bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 0.0)));

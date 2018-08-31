@@ -28,9 +28,7 @@ namespace PCOE {
          *              observer. The observer does not take ownership of the
          *              model.
          **/
-        explicit Observer(const Model* model) : model(model) {
-            Expect(model != nullptr, "Invalid model");
-        }
+        explicit Observer(const Model& model) : model(model) {}
 
         /**
          * Default destructor. A virtual default destructor is necessary to
@@ -108,7 +106,7 @@ namespace PCOE {
         /**
          * Gets a pointer to the model used by the observer.
          **/
-        inline const Model* getModel() const {
+        inline const Model& getModel() const {
             return model;
         }
 
@@ -117,7 +115,7 @@ namespace PCOE {
 
         double lastTime;
 
-        const Model* model;
+        const Model& model;
 
         Model::input_type uPrev;
     };

@@ -6,16 +6,19 @@
 #include "Messages/UDataMessage.h"
 
 namespace PCOE {
+    static const Log& log = Log::Instance();
+    static const std::string MODULE_NAME = "OBS-ED";
+
     EventDrivenObserver::EventDrivenObserver(MessageBus& messageBus,
                                              std::unique_ptr<Observer>&& obs,
                                              std::string src)
         : bus(messageBus),
           observer(std::move(obs)),
           source(std::move(src)),
-          inputWatcher(bus, source, observer->getModel()->getInputs(), MessageId::ModelInputVector),
+          inputWatcher(bus, source, observer->getModel().getInputs(), MessageId::ModelInputVector),
           outputWatcher(bus,
                         source,
-                        observer->getModel()->getOutputs(),
+                        observer->getModel().getOutputs(),
                         MessageId::ModelOutputVector) {
         Expect(observer, "Observer pointer is empty");
         lock_guard guard(m);
@@ -29,13 +32,24 @@ namespace PCOE {
     }
 
     void EventDrivenObserver::processMessage(const std::shared_ptr<Message>& message) {
-        // TODO (JW): Figure out exactly what needs to be protected by a mutex
-        lock_guard guard(m);
+        // Note (JW): If we are unable to aquire the lock immediately, the
+        //            observer is already processing a message. If we can't
+        //            aquire the lock within a few milliseconds, the observer is
+        //            probably producing a state estimate, and the message queue
+        //            is backed up.
+        unique_lock lock(m, std::chrono::milliseconds(10));
+        if (!lock.owns_lock()) {
+            log.WriteLine(LOG_DEBUG, MODULE_NAME, "Skipping observer step. Failed to aquire lock.");
+            return;
+        }
+
         switch (message->getMessageId()) {
         case MessageId::ModelInputVector:
+            log.WriteLine(LOG_TRACE, MODULE_NAME, "Set input message");
             inputMsg = message;
             break;
         case MessageId::ModelOutputVector:
+            log.WriteLine(LOG_TRACE, MODULE_NAME, "Set ouput message");
             outputMsg = message;
             break;
         default:
@@ -49,11 +63,25 @@ namespace PCOE {
             const auto& u = Model::input_type(typedInMsg->getValue());
             const auto& z = Model::output_type(typedOutMsg->getValue());
             if (!observer->isInitialized()) {
-                auto x = observer->getModel()->initialize(u, z);
+                log.WriteLine(LOG_TRACE, MODULE_NAME, "Getting initial state from model");
+                Require(observer, "observer is empty");
+                log.FormatLine(LOG_TRACE,
+                               MODULE_NAME,
+                               "Calling initialize with input of size %u",
+                               u.size());
+                log.FormatLine(LOG_TRACE,
+                               MODULE_NAME,
+                               "Calling initialize with output of size %u",
+                               z.size());
+                auto x = observer->getModel().initialize(u, z);
+                log.WriteLine(LOG_TRACE, MODULE_NAME, "Initializing observer");
                 observer->initialize(latestTimestamp, x, u);
+                log.WriteLine(LOG_TRACE, MODULE_NAME, "Initialized observer");
             }
             else {
+                log.WriteLine(LOG_TRACE, MODULE_NAME, "Stepping observer");
                 observer->step(latestTimestamp, u, z);
+                log.WriteLine(LOG_TRACE, MODULE_NAME, "Publishing observer result");
                 UDataVecMessage* stateEst = new UDataVecMessage(MessageId::ModelStateEstimate,
                                                                 source,
                                                                 observer->getStateEstimate());

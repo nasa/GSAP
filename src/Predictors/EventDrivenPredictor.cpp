@@ -8,6 +8,9 @@
 #include "Messages/UDataMessage.h"
 
 namespace PCOE {
+    static const Log& log = Log::Instance();
+    static const std::string MODULE_NAME = "PRED-ED";
+
     EventDrivenPredictor::EventDrivenPredictor(MessageBus& messageBus,
                                                std::unique_ptr<Predictor>&& predictor,
                                                std::string source)
@@ -23,16 +26,31 @@ namespace PCOE {
     }
 
     void EventDrivenPredictor::processMessage(const std::shared_ptr<Message>& message) {
-        lock_guard guard(m);
+        // Note (JW): If we are unable to aquire the lock within a few
+        //            milliseconds, the predictor is already in the middle of a
+        //            prediction, so we need to drop the current message to kep
+        //            the queue from backing up.
+        unique_lock lock(m, std::chrono::milliseconds(10));
+        if (!lock.owns_lock()) {
+            log.WriteLine(LOG_DEBUG, MODULE_NAME, "Skipping prediction. Failed to aquire lock.");
+            return;
+        }
+
         Expect(message->getMessageId() == MessageId::ModelStateEstimate, "Unexpected message id");
         UDataVecMessage* m = dynamic_cast<UDataVecMessage*>(message.get());
         Expect(m != nullptr, "Unexpected message type");
 
+        log.WriteLine(LOG_TRACE, MODULE_NAME, "Starting prediction");
         Prediction prediction = pred->predict(seconds(m->getTimestamp()), m->getValue());
+        log.FormatLine(LOG_TRACE, MODULE_NAME, "Publishing events for source %s", source.c_str());
         for (const auto& event : prediction.getEvents()) {
             auto peMsg = std::shared_ptr<ProgEventMessage>(
                 new ProgEventMessage(event.getId(), source, event));
             bus.publish(peMsg);
+            log.FormatLine(LOG_TRACE,
+                           MODULE_NAME,
+                           "Publishing event with id %x",
+                           static_cast<std::uint64_t>(event.getId()));
         }
     }
 }

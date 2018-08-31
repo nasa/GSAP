@@ -22,9 +22,9 @@ namespace PCOE {
     };
 
     /**
-     * Ipmplments UKF state estimation algorithm for non-linear models.
+     * Implements UKF state estimation algorithm for non-linear models.
      *
-     * @author Mattew Daigle
+     * @author Mathew Daigle
      * @author Jason Watkins
      **/
     class UnscentedKalmanFilter final : public Observer {
@@ -37,7 +37,7 @@ namespace PCOE {
          * @param m A valid pointer to a model on which state estimation will be
          *          performed. The UKF does not take ownership of the model.
          **/
-        explicit UnscentedKalmanFilter(const Model* m);
+        explicit UnscentedKalmanFilter(const Model& m);
 
     public:
         /**
@@ -49,7 +49,7 @@ namespace PCOE {
          * @param Q Process noise covariance matrix
          * @param R Sensor noise covariance matrix
          **/
-        UnscentedKalmanFilter(const Model* m, const Matrix Q, const Matrix R);
+        UnscentedKalmanFilter(const Model& m, const Matrix Q, const Matrix R);
 
         /**
          * Constructs a new @{code UnscentedKalmanFilter} instance with the
@@ -61,7 +61,7 @@ namespace PCOE {
          *               the model.
          * @param config A configuration from which to read covariance matrices.
          **/
-        UnscentedKalmanFilter(const Model* m, const ConfigMap& config);
+        UnscentedKalmanFilter(const Model& m, const ConfigMap& config);
 
         /**
          * Sets the initial model state and computes initial sigma points.

@@ -35,6 +35,65 @@ namespace TestMatrix {
 
     const std::size_t ITERATIONS = 20;
 
+    void registerTests(PCOE::Test::TestContext& context) {
+        // Matrix Creation
+        context.AddTest("construct_default", TestMatrix::construct_default, "Matrix");
+        context.AddTest("construct_size", TestMatrix::construct_size, "Matrix");
+        context.AddTest("construct_initialvalue", TestMatrix::construct_initialvalue, "Matrix");
+        context.AddTest("construct_initializerlist",
+                        TestMatrix::construct_initializerlist,
+                        "Matrix");
+        context.AddTest("construct_vector", TestMatrix::construct_vector, "Matrix");
+        context.AddTest("construct_copy", TestMatrix::construct_copy, "Matrix");
+        context.AddTest("construct_move", TestMatrix::construct_move, "Matrix");
+        context.AddTest("operator_assign", TestMatrix::operator_assign, "Matrix");
+        // Comparison operators
+        context.AddTest("operator_equal", TestMatrix::operator_equal, "Matrix");
+        context.AddTest("operator_notequal", TestMatrix::operator_notequal, "Matrix");
+        context.AddTest("issquare", TestMatrix::issquare, "Matrix");
+        // Basic operations
+        context.AddTest("rows", TestMatrix::rows, "Matrix");
+        context.AddTest("cols", TestMatrix::cols, "Matrix");
+        context.AddTest("indexer", TestMatrix::indexer, "Matrix");
+        context.AddTest("indexer_const", TestMatrix::indexer_const, "Matrix");
+        context.AddTest("at", TestMatrix::at, "Matrix");
+        context.AddTest("const_at", TestMatrix::const_at, "Matrix");
+        context.AddTest("col_get", TestMatrix::col_get, "Matrix");
+        context.AddTest("col_setmatrix", TestMatrix::col_setmatrix, "Matrix");
+        context.AddTest("col_setvector", TestMatrix::col_setvector, "Matrix");
+        context.AddTest("row_get", TestMatrix::row_get, "Matrix");
+        context.AddTest("row_setmatrix", TestMatrix::row_setmatrix, "Matrix");
+        context.AddTest("row_setvector", TestMatrix::row_setvector, "Matrix");
+        context.AddTest("operator_vector", TestMatrix::operator_vector, "Matrix");
+        context.AddTest("resize", TestMatrix::resize, "Matrix");
+        // Arithmetic operations
+        context.AddTest("Negate Matrix", negate_matrix, "Matrix");
+        context.AddTest("add_matrix", TestMatrix::add_matrix, "Matrix");
+        context.AddTest("add_scalar", TestMatrix::add_scalar, "Matrix");
+        context.AddTest("subtract_matrix", TestMatrix::subtract_matrix, "Matrix");
+        context.AddTest("subtract_salar", TestMatrix::subtract_salar, "Matrix");
+        context.AddTest("multiply_matrix", TestMatrix::multiply_matrix, "Matrix");
+        context.AddTest("multiply_scalar", TestMatrix::multiply_scalar, "Matrix");
+        context.AddTest("divide_scalar", TestMatrix::divide_scalar, "Matrix");
+        // Complex operations
+        context.AddTest("adjoint", TestMatrix::adjoint, "Matrix");
+        context.AddTest("cofactors", TestMatrix::cofactors, "Matrix");
+        context.AddTest("determinant", TestMatrix::determinant, "Matrix");
+        context.AddTest("laplace determinant", TestMatrix::laplaceDet, "Matrix");
+        context.AddTest("diagonal", TestMatrix::diagonal, "Matrix");
+        context.AddTest("inverse", TestMatrix::inverse, "Matrix");
+        context.AddTest("minors", TestMatrix::minors, "Matrix");
+        context.AddTest("submatrix", TestMatrix::submatrix, "Matrix");
+        context.AddTest("transpose", TestMatrix::transpose, "Matrix");
+        context.AddTest("identity", TestMatrix::identity, "Matrix");
+        // Special operations
+        context.AddTest("cholesky", TestMatrix::cholesky, "Matrix");
+        context.AddTest("weightedmean", TestMatrix::weightedmean, "Matrix");
+        context.AddTest("weightedcovariance", TestMatrix::weightedcovariance, "Matrix");
+        // Stream insertion
+        context.AddTest("stream insertion operator", TestMatrix::streamInsertionOperator, "Matrix");
+    }
+
     void construct_default() {
         try {
             Matrix m;
@@ -658,6 +717,22 @@ namespace TestMatrix {
                                  "Unexpected value after expansion");
             }
         }
+    }
+
+    void negate_matrix() {
+        Matrix m(2,
+                 2,
+                 {0,
+                  1,
+                  std::numeric_limits<double>::infinity(),
+                  std::numeric_limits<double>::quiet_NaN()});
+        Matrix m2 = -m;
+        Assert::AreEqual(0, m2.at(0, 0), "Unexpected value for -0");
+        Assert::AreEqual(-1, m2.at(0, 1), "Unexpected value for -1");
+        Assert::AreEqual(-std::numeric_limits<double>::infinity(),
+                         m2.at(1, 0),
+                         "Unexpected value for -Inf");
+        Assert::IsTrue(std::isnan(m2.at(1, 1)), "Unexpected value for -NaN");
     }
 
     void add_matrix() {
