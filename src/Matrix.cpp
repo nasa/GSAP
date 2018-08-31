@@ -289,7 +289,7 @@ namespace PCOE {
         return *this;
     }
 
-    Matrix Matrix::elementwiseMultiply(const Matrix& mat) {
+    Matrix Matrix::elementwiseMultiply(const Matrix& mat) const {
         Matrix result(*this);
         for (size_t i = 0; i < M * N; i++) {
             result.data[i] *= mat.data[i];
@@ -297,7 +297,7 @@ namespace PCOE {
         return result;
     }
     
-    Matrix Matrix::elementwiseDivide(const Matrix& mat) {
+    Matrix Matrix::elementwiseDivide(const Matrix& mat) const{
         Matrix result(*this);
         for (size_t i = 0; i < M * N; i++) {
             result.data[i] /= mat.data[i];

@@ -429,12 +429,12 @@ namespace PCOE {
         /**
          *  Multiply elementwise
          */
-        Matrix elementwiseMultiply(const Matrix& mat);
+        Matrix elementwiseMultiply(const Matrix& mat) const;
         
         /**
          *  Divide Elementwise
          */
-        Matrix elementwiseDivide(const Matrix& mat);
+        Matrix elementwiseDivide(const Matrix& mat) const;
 
         /***********************************************************************/
         /* Operations                                                          */
