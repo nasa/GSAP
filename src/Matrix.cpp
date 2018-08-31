@@ -281,7 +281,30 @@ namespace PCOE {
         }
         return *this;
     }
+    
+    Matrix& Matrix::operator%=(double rhs) {
+        for (size_t i = 0; i < M * N; i++) {
+            data[i] = fmod(data[i], rhs);
+        }
+        return *this;
+    }
 
+    Matrix Matrix::elementwiseMultiply(const Matrix& mat) {
+        Matrix result(*this);
+        for (size_t i = 0; i < M * N; i++) {
+            result.data[i] *= mat.data[i];
+        }
+        return result;
+    }
+    
+    Matrix Matrix::elementwiseDivide(const Matrix& mat) {
+        Matrix result(*this);
+        for (size_t i = 0; i < M * N; i++) {
+            result.data[i] /= mat.data[i];
+        }
+        return result;
+    }
+    
     /***********************************************************************/
     /* Operations                                                          */
     /***********************************************************************/

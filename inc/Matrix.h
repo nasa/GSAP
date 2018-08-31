@@ -5,6 +5,7 @@
 #ifndef GSAP_MATRIX_H
 #define GSAP_MATRIX_H
 
+#include <cmath>
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
@@ -395,10 +396,65 @@ namespace PCOE {
         inline friend Matrix operator/(Matrix lhs, double rhs) {
             return lhs /= rhs;
         }
+        
+        /**
+         *  Applies modulo to each element inplace
+         *
+         *  @param  rhs The number to modulo by
+         *  @returns    A reference to the current matrix.
+         **/
+        Matrix& operator%=(double rhs);
+        
+        /**
+         *  Applies modulo to each element
+         *
+         *  @param  rhs The number to modulo by
+         *  @returns    A new matrix containing the result.
+         **/
+        inline friend Matrix operator%(Matrix lhs, double rhs) {
+            return lhs %= rhs;
+        }
+        
+        /**
+         *  Applies modulo by each element
+         *
+         *  @param  rhs The number to modulo by each element
+         *  @returns    A new matrix containing the result.
+         **/
+        inline friend Matrix operator%(double lhs, Matrix rhs) {
+            rhs.apply([lhs](double x) { return fmod(lhs, x); } );
+            return rhs;
+        }
+        
+        /**
+         *  Multiply elementwise
+         */
+        Matrix elementwiseMultiply(const Matrix& mat);
+        
+        /**
+         *  Divide Elementwise
+         */
+        Matrix elementwiseDivide(const Matrix& mat);
 
         /***********************************************************************/
         /* Operations                                                          */
         /***********************************************************************/
+        
+        /**
+         *  Applies function to each element in the matrix
+         *
+         *  @param  function    Function to be applied to each element
+         *  @return affected Matrix
+         */
+        template<typename lambda>
+        Matrix& apply(lambda&& function) {
+            for (size_t i = 0; i < M * N; i++) {
+                data[i] = function(data[i]);
+            }
+            return *this;
+        }
+        
+        
         /** @brief Calculates the adjoint of the matrix
          *
          *  @returns A matrix containing the adjoint of the current matrix.
