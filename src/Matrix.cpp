@@ -68,7 +68,7 @@ namespace PCOE {
         if (M != rhs.M || N != rhs.N) {
             return false;
         }
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             if (std::abs(data[i] - rhs.data[i]) > std::numeric_limits<double>::epsilon() * 10) {
                 return false;
             }
@@ -211,7 +211,7 @@ namespace PCOE {
     /***********************************************************************/
     Matrix Matrix::operator-() {
         Matrix result = *this;
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             result.data[i] = -result.data[i];
         }
         return result;
@@ -221,14 +221,14 @@ namespace PCOE {
         if (M != rhs.M || N != rhs.N) {
             throw std::domain_error("Matrices are different sizes.");
         }
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             data[i] += rhs.data[i];
         }
         return *this;
     }
 
     Matrix& Matrix::operator+=(double rhs) {
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             data[i] += rhs;
         }
         return *this;
@@ -238,14 +238,14 @@ namespace PCOE {
         if (M != rhs.M || N != rhs.N) {
             throw std::domain_error("Matrices are different sizes.");
         }
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             data[i] -= rhs.data[i];
         }
         return *this;
     }
 
     Matrix& Matrix::operator-=(double other) {
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             data[i] -= other;
         }
         return *this;
@@ -256,10 +256,10 @@ namespace PCOE {
             throw std::domain_error("Matrices are compatible.");
         }
         Matrix r(M, rhs.N);
-        for (size_t i = 0; i < M; i++) {
-            for (size_t j = 0; j < rhs.N; j++) {
+        for (std::size_t i = 0; i < M; i++) {
+            for (std::size_t j = 0; j < rhs.N; j++) {
                 double e = 0;
-                for (size_t k = 0; k < N; k++) {
+                for (std::size_t k = 0; k < N; k++) {
                     e += ((*this)[i][k] * rhs[k][j]);
                 }
                 r[i][j] = e;
@@ -269,37 +269,37 @@ namespace PCOE {
     }
 
     Matrix& Matrix::operator*=(double rhs) {
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             data[i] *= rhs;
         }
         return *this;
     }
 
     Matrix& Matrix::operator/=(double rhs) {
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             data[i] /= rhs;
         }
         return *this;
     }
     
     Matrix& Matrix::operator%=(double rhs) {
-        for (size_t i = 0; i < M * N; i++) {
-            data[i] = fmod(data[i], rhs);
+        for (std::size_t i = 0; i < M * N; i++) {
+            data[i] = std::fmod(data[i], rhs);
         }
         return *this;
     }
 
     Matrix Matrix::elementwiseMultiply(const Matrix& mat) const {
         Matrix result(*this);
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             result.data[i] *= mat.data[i];
         }
         return result;
     }
     
-    Matrix Matrix::elementwiseDivide(const Matrix& mat) const{
+    Matrix Matrix::elementwiseDivide(const Matrix& mat) const {
         Matrix result(*this);
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             result.data[i] /= mat.data[i];
         }
         return result;
@@ -365,7 +365,7 @@ namespace PCOE {
     Matrix Matrix::diagonal() const {
         std::size_t len = std::min(M, N);
         Matrix r(len, 1);
-        for (size_t i = 0; i < len; i++) {
+        for (std::size_t i = 0; i < len; i++) {
             r[i][0] = (*this)[i][i];
         }
         return r;
@@ -426,8 +426,8 @@ namespace PCOE {
 
     Matrix Matrix::transpose() const {
         Matrix r(N, M);
-        for (size_t i = 0; i < M; i++) {
-            for (size_t j = 0; j < N; j++) {
+        for (std::size_t i = 0; i < M; i++) {
+            for (std::size_t j = 0; j < N; j++) {
                 r[j][i] = (*this)[i][j];
             }
         }
@@ -481,7 +481,7 @@ namespace PCOE {
     /***********************************************************************/
     Matrix Matrix::identity(std::size_t m) {
         Matrix r(m, m);
-        for (size_t i = 0; i < m; i++) {
+        for (std::size_t i = 0; i < m; i++) {
             r[i][i] = 1;
         }
         return r;
@@ -491,8 +491,8 @@ namespace PCOE {
     /* Steam Insertion                                                     */
     /***********************************************************************/
     std::ostream& operator<<(std::ostream& os, const Matrix& obj) {
-        for (size_t i = 0; i < obj.M; ++i) {
-            for (size_t j = 0; j < obj.N; ++j) {
+        for (std::size_t i = 0; i < obj.M; ++i) {
+            for (std::size_t j = 0; j < obj.N; ++j) {
                 os << obj[i][j] << " ";
             }
             os << std::endl;
@@ -512,7 +512,7 @@ namespace PCOE {
         }
 
         double r = 0;
-        for (size_t i = 0; i < rows(); i++) {
+        for (std::size_t i = 0; i < rows(); i++) {
             double f = std::pow(-1.0, i) * (*this)[i][0];
             Matrix sub = submatrix(i, 0);
             double d = sub.determinant();
@@ -545,7 +545,7 @@ namespace PCOE {
             }
         }
 
-        for (size_t i = 0; i < M * N; i++) {
+        for (std::size_t i = 0; i < M * N; i++) {
             if (std::isnan(r.data[i]) || std::isinf(r.data[i])) {
                 return false;
             }

@@ -408,6 +408,7 @@ namespace PCOE {
         /**
          *  Applies modulo to each element
          *
+         *  @param  lhs Matrix on which modulo will be preformed
          *  @param  rhs The number to modulo by
          *  @returns    A new matrix containing the result.
          **/
@@ -416,13 +417,14 @@ namespace PCOE {
         }
         
         /**
-         *  Applies modulo by each element
+         *  Applies modulo by each element.
          *
-         *  @param  rhs The number to modulo by each element
+         *  @param  lhs Number on which modulo is performed
+         *  @param  rhs Matrix to which modulo will be preformed
          *  @returns    A new matrix containing the result.
          **/
         inline friend Matrix operator%(double lhs, Matrix rhs) {
-            rhs.apply([lhs](double x) { return fmod(lhs, x); } );
+            rhs.apply([lhs](double x) { return std::fmod(lhs, x); } );
             return rhs;
         }
         
@@ -446,8 +448,8 @@ namespace PCOE {
          *  @param  function    Function to be applied to each element
          *  @return affected Matrix
          */
-        template<typename lambda>
-        Matrix& apply(lambda&& function) {
+        template<typename Fn>
+        Matrix& apply(Fn&& function) {
             for (size_t i = 0; i < M * N; i++) {
                 data[i] = function(data[i]);
             }
