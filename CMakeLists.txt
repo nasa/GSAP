@@ -52,6 +52,7 @@ if (UseOpenMP)
 endif()
 
 set (HEADERS
+    inc/CompositeSavePointProvider.h
     inc/ConfigMap.h
     inc/Contracts.h
     inc/DataPoint.h
@@ -62,6 +63,7 @@ set (HEADERS
     inc/Exceptions.h
     inc/Factory.h
     inc/GaussianVariable.h
+    inc/ISavePointProvider.h
     inc/Loading/ConstLoadEstimator.h
     inc/Loading/LoadEstimator.h
     inc/Loading/LoadEstimatorFactory.h
@@ -114,7 +116,8 @@ set (HEADERS
     inc/PlaybackCommunicator.h
     inc/RecorderCommunicator.h
     inc/STDINCommunicator.h
-    inc/StringUtils.h)
+    inc/StringUtils.h
+    inc/TrajectoryService.h)
 
 set(SRCS
     src/ConfigMap.cpp

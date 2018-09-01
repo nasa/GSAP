@@ -62,7 +62,7 @@ namespace PCOE {
         return result;
     }
 
-    Prediction MonteCarloPredictor::predict(const double time_s, const std::vector<UData>& state) {
+    Prediction MonteCarloPredictor::predict(double time_s, const std::vector<UData>& state) {
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Starting prediction");
         // TODO (MD): This is setup for only a single event to predict, need to extend to multiple
         //            events

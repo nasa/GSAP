@@ -13,6 +13,7 @@
 #include "Loading/LoadEstimator.h"
 #include "ProgEvent.h"
 #include "PrognosticsModel.h"
+#include "CompositeSavePointProvider.h"
 
 namespace PCOE {
     class Prediction {
@@ -93,6 +94,7 @@ namespace PCOE {
 
         LoadEstimator& loadEstimator;
         const PrognosticsModel& model;
+        CompositeSavePointProvider savePointProvider;
 
     private:
         std::vector<std::string> predictedOutputs;
