@@ -22,9 +22,9 @@ namespace PCOE {
         mb.publish(std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteStart, TEST_SRC)));
         
         auto time = MessageClock::now();
-        mb.publish(std::shared_ptr<Message>(new WaypointMessage(MessageId::RouteSetWP, TEST_SRC, time, 38.00984, -122.11923, 30)));
+        mb.publish(std::shared_ptr<Message>(new WaypointMessage(MessageId::RouteSetWP, TEST_SRC, time, 38.0098, -122.119, 30)));
         auto time2 = MessageClock::now();
-        mb.publish(std::shared_ptr<Message>(new WaypointMessage(MessageId::RouteSetWP, TEST_SRC, time2, 38.00984, -122.11923, 30)));
+        mb.publish(std::shared_ptr<Message>(new WaypointMessage(MessageId::RouteSetWP, TEST_SRC, time2, 38.0099, -122.118, 30)));
         mb.publish(std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteEnd, TEST_SRC)));
         
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -33,6 +33,24 @@ namespace PCOE {
         auto tmp = sp.begin();
         Test::Assert::AreEqual(*tmp, time);
         Test::Assert::AreEqual(*++tmp, time2);
+        auto middle_point = tc.getPoint(time + (time2-time)/2);
+        Test::Assert::AreEqual(middle_point.getAltitude(), 30, 1e-6);
+        Test::Assert::AreEqual(middle_point.getLatitude(), 38.00985, 1e-6);
+        Test::Assert::AreEqual(middle_point.getLongitude(), -122.1185, 1e-6);
+        
+        try {
+            tc.getPoint(time + (time2-time)*2);
+            Test::Assert::Fail("Did not catch high out of range request");
+        } catch (std::out_of_range) {
+            
+        }
+        
+        try {
+            tc.getPoint(time - (time2-time)/2);
+            Test::Assert::Fail("Did not catch low out of range request");
+        } catch (std::out_of_range) {
+            
+        }
         
         mb.publish(std::shared_ptr<Message>(new U64Message(MessageId::RouteDeleteWP, TEST_SRC, time2.time_since_epoch().count())));
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -40,5 +58,10 @@ namespace PCOE {
         Test::Assert::AreEqual(sp.size(), 1, "Checking result of delete waypoint");
         tmp = sp.begin();
         Test::Assert::AreEqual(*tmp, time);
+        
+        mb.publish(std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteClear, TEST_SRC)));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        sp = tc.getSavePts();
+        Test::Assert::AreEqual(sp.size(), 0, "Checking result of clear waypoint");
     }
 }

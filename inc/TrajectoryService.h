@@ -9,6 +9,7 @@
 #include <map>
 
 #include "ISavePointProvider.h"
+#include "ITrajectoryCorrelator.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
 #include "Messages/WaypointMessage.h"
@@ -26,7 +27,7 @@ namespace PCOE {
      * @author Christopher Teubert
      * @since 1.2
      **/
-    class TrajectoryService : public ISavePointProvider, public IMessageProcessor {
+    class TrajectoryService : public ISavePointProvider, public IMessageProcessor, public ITrajectoryCorrelator {
     public:
         /**
          * Constructs a new {@code TrajectoryService}.
@@ -49,6 +50,8 @@ namespace PCOE {
         std::set<Message::time_point> getSavePts() override;
         
         void processMessage(const std::shared_ptr<Message>& message) override;
+        
+        Point3D getPoint(Message::time_point) override;
         
     private:
         using mutex = std::timed_mutex;

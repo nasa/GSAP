@@ -64,6 +64,7 @@ set (HEADERS
     inc/Factory.h
     inc/GaussianVariable.h
     inc/ISavePointProvider.h
+    inc/ITrajectoryCorrelator.h
     inc/Loading/ConstLoadEstimator.h
     inc/Loading/LoadEstimator.h
     inc/Loading/LoadEstimatorFactory.h

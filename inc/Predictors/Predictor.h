@@ -7,13 +7,13 @@
 #include <string>
 #include <vector>
 
+#include "CompositeSavePointProvider.h"
 #include "ConfigMap.h"
 #include "Contracts.h"
 #include "DataPoint.h"
 #include "Loading/LoadEstimator.h"
 #include "ProgEvent.h"
 #include "PrognosticsModel.h"
-#include "CompositeSavePointProvider.h"
 
 namespace PCOE {
     class Prediction {
