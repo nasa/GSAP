@@ -46,7 +46,7 @@ namespace PCOE {
          **/
         ~TrajectoryService();
         
-        std::vector<double> getSavePts() override;
+        std::set<Message::time_point> getSavePts() override;
         
         void processMessage(const std::shared_ptr<Message>& message) override;
         
@@ -55,7 +55,7 @@ namespace PCOE {
         using lock_guard = std::lock_guard<mutex>;
         using unique_lock = std::unique_lock<mutex>;
         
-        std::vector<double> savepts;
+        std::set<Message::time_point> savepts;
         MessageBus& bus;
         std::string source;
         mutable mutex m;

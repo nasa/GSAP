@@ -1,8 +1,8 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-#ifndef PAAS_WAYPOINTMESSAGE_H
-#define PAAS_WAYPOINTMESSAGE_H
+#ifndef PCOE_WAYPOINTMESSAGE_H
+#define PCOE_WAYPOINTMESSAGE_H
 #include "Messages/Message.h"
 #include "Messages/MessageId.h"
 
@@ -98,5 +98,4 @@ namespace PCOE {
         double alt;
     };
 }
-
 #endif

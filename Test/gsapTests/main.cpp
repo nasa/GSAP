@@ -26,6 +26,7 @@
 #include "TCPSocketTests.h"
 #include "Test.h"
 #include "ThreadTests.h"
+#include "TrajectoryServiceTests.h"
 #include "UDPSocketTests.h"
 #include "UDataTests.h"
 
@@ -33,6 +34,9 @@ using namespace PCOE::Test;
 
 int main() {
     TestContext context;
+    // Trajectory Service
+    context.AddTest("Trajectory Service", PCOE::testTrajectoryService, "Trajectory Service");
+    
     // Config Map Tests
     context.AddTest("Load Arguments", configMapLoadArgs, "Config Map");
     context.AddTest("Use", configMapUse, "Config Map");

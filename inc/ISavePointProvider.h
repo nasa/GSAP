@@ -4,7 +4,9 @@
 #ifndef PCOE_ISAVEPOINTPROVIDER_h
 #define PCOE_ISAVEPOINTPROVIDER_h
 
-#include <vector>
+#include <set>
+
+#include "Messages/Message.h"
 
 namespace PCOE {
     /**
@@ -15,7 +17,7 @@ namespace PCOE {
      **/
     class ISavePointProvider {
     public:
-        virtual std::vector<double> getSavePts();
+        virtual std::set<Message::time_point> getSavePts() = 0;
     };
 }
 

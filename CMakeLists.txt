@@ -78,6 +78,7 @@ set (HEADERS
     inc/Messages/MessageWatcher.h
     inc/Messages/ProgEventMessage.h
     inc/Messages/UDataMessage.h
+    inc/Messages/WaypointMessage.h
     inc/Model.h
     inc/Observers/EventDrivenObserver.h
     inc/Observers/Observer.h
@@ -128,6 +129,7 @@ set(SRCS
     src/Messages/Message.cpp
     src/Messages/MessageBus.cpp
     src/Messages/MessageId.cpp
+    src/Messages/WaypointMessage.cpp
     src/Observers/EventDrivenObserver.cpp
     src/Observers/ParticleFilter.cpp
     src/Observers/UnscentedKalmanFilter.cpp
@@ -151,6 +153,7 @@ set(SRCS
     src/PlaybackCommunicator.cpp
     src/RecorderCommunicator.cpp
     src/STDINCommunicator.cpp
+    src/TrajectoryService.cpp
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)

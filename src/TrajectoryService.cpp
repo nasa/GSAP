@@ -4,6 +4,7 @@
 
 #include <thread>
 
+#include "Messages/Message.h"
 #include "Messages/WaypointMessage.h"
 #include "ThreadSafeLog.h"
 #include "TrajectoryService.h"
@@ -28,7 +29,7 @@ namespace PCOE {
         bus.unsubscribe(this);
     }
     
-    std::vector<double> TrajectoryService::getSavePts() {
+    std::set<Message::time_point> TrajectoryService::getSavePts() {
         return savepts;
     }
     
@@ -44,6 +45,7 @@ namespace PCOE {
                 break;
             case MessageId::RouteClear:
                 waypoints.clear();
+                savepts.clear();
                 break;
             case MessageId::RouteDeleteWP: {
                 auto msg = dynamic_cast<U64Message*>(message.get());
@@ -51,6 +53,7 @@ namespace PCOE {
                 
                 auto eta = MessageClock::time_point(MessageClock::duration(msg->getValue()));
                 waypoints.erase(eta);
+                savepts.erase(eta);
                 break;
             }
             case MessageId::RouteSetWP: {
@@ -61,7 +64,7 @@ namespace PCOE {
                 auto existing = waypoints.find(eta);
                 if (existing == waypoints.end()) {
                     waypoints.insert(std::make_pair(eta, *msg));
-                    savepts.push_back(eta.time_since_epoch().count());
+                    savepts.insert(eta);
                 }
                 else {
                     auto& wp = (*existing).second;

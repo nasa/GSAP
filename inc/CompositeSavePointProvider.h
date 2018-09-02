@@ -18,11 +18,13 @@ namespace PCOE {
     public:
         std::vector<ISavePointProvider *> providers;
         
-        std::vector<double> getSavePts() override {
-            std::vector<double> savePts;
+        std::set<Message::time_point> getSavePts() override {
+            std::set<Message::time_point> savePts;
             for (auto && provider : providers) {
-                std::vector<double> tmp = provider->getSavePts();
-                savePts.insert(savePts.end(), tmp.begin(), tmp.end());
+                std::set<Message::time_point> tmp = provider->getSavePts();
+                for (auto && elem : tmp) {
+                    savePts.insert(elem);
+                }
             }
             return savePts;
         }
