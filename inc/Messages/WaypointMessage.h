@@ -76,14 +76,14 @@ namespace PCOE {
          * Gets the waypoint longitude.
          **/
         inline double getLongitude() const {
-            return lat;
+            return lon;
         }
 
         /**
          * Gets the waypoint altitude.
          **/
         inline double getAltitude() const {
-            return lat;
+            return alt;
         }
 
     protected:
