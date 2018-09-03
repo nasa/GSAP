@@ -36,9 +36,10 @@ namespace PCOE {
          *
          * @param m      The model used by the predictor.
          * @param le     The load estimator used by the predictor.
+         * @param ts     The trajectory service to be used by the predictor
          * @param config Configuration map specifying predictor parameters.
          **/
-        explicit EmptyPredictor(const PrognosticsModel& m, LoadEstimator& le, ConfigMap& config);
+        explicit EmptyPredictor(const PrognosticsModel& m, LoadEstimator& le, TrajectoryService& ts, ConfigMap& config);
 
         /**
          * Predict future events and values of system variables
