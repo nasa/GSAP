@@ -8,7 +8,7 @@
 #include "Messages/MessageBus.h"
 #include "Messages/WaypointMessage.h"
 #include "Test.h"
-#include "TrajectoryService.h"
+#include "EventDrivenTrajectoryService.h"
 #include "TrajectoryServiceTests.h"
 
 namespace PCOE {
@@ -16,7 +16,7 @@ namespace PCOE {
     
     void testTrajectoryService() {
         MessageBus mb;
-        TrajectoryService tc(mb, TEST_SRC);
+        EventDrivenTrajectoryService tc(mb, TEST_SRC);
         Test::Assert::IsTrue(tc.getSavePts().empty());
         
         mb.publish(std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteStart, TEST_SRC)));
