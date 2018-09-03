@@ -74,6 +74,9 @@ namespace PCOE {
             // If not specified, use default
             loadEstimator = loadEstFact.Create(DEFAULT_LOAD_EST, configMap);
         }
+            
+        // Create Trajectory Service
+        TrajectoryService trajectoryService;
 
         // Create Predictor
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
@@ -81,6 +84,7 @@ namespace PCOE {
         predictor = pPredictorFactory.Create(configMap.getVector(PREDICTOR_KEY)[0],
                                              *model,
                                              *loadEstimator,
+                                             trajectoryService,
                                              configMap);
 
         // Set model stepsize

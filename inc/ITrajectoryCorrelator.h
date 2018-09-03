@@ -6,43 +6,23 @@
 #define PCOE_ITRAJECTORYCORRELATOR_H
 
 #include "Messages/Message.h"
+#include "Point3D.h"
 
 namespace PCOE {
-    class Point3D {
-    public:
-        Point3D(double lat, double lon, double alt)
-        : lat(lat), lon(lon), alt(alt) { }
-        
-        /**
-         * Gets the waypoint latitude.
-         **/
-        inline double getLatitude() const {
-            return lat;
-        }
-        
-        /**
-         * Gets the waypoint longitude.
-         **/
-        inline double getLongitude() const {
-            return lon;
-        }
-        
-        /**
-         * Gets the waypoint altitude.
-         **/
-        inline double getAltitude() const {
-            return alt;
-        }
-    private:
-        double lat;
-        double lon;
-        double alt;
-    };
     
+    /**
+     * An interface for objects that correlate time to physical position in 3d space
+     *
+     * @author Chris Teubert
+     * @since 1.2
+     **/
     class ITrajectoryCorrelator {
     public:
-        virtual Point3D getPoint(Message::time_point) = 0;
+        /**
+         *  Get a point along a trajectory corresponding to a specific timepoint
+         *  @param  tp  The timepoint for which to find the correlated position
+         */
+        virtual Point3D getPoint(Message::time_point tp) = 0;
     };
 }
-
 #endif

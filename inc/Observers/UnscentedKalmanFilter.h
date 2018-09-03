@@ -131,7 +131,7 @@ namespace PCOE {
          * @return The last calculated state estimate calcualted by the
          *         observer.
          **/
-        std::vector<UData> getStateEstimate() const;
+        std::vector<UData> getStateEstimate() const override;
 
         /**
          * Returns the current mean output estimate of the observer.

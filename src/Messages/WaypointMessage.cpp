@@ -10,7 +10,7 @@ namespace PCOE {
                                      double lat,
                                      double lon,
                                      double alt)
-        : Message(id, source), eta(eta), lat(lat), lon(lon), alt(alt) {}
+        : Message(id, source), eta(eta), point(lat, lon, alt) {}
 
     WaypointMessage::WaypointMessage(PCOE::MessageId id,
                                      std::string source,
@@ -19,7 +19,7 @@ namespace PCOE {
                                      double lat,
                                      double lon,
                                      double alt)
-        : Message(id, source, timestamp), eta(eta), lat(lat), lon(lon), alt(alt) {}
+        : Message(id, source, timestamp), eta(eta), point(lat, lon, alt) {}
 
     std::uint16_t WaypointMessage::getPayloadSize() const {
         return 32;
@@ -27,6 +27,9 @@ namespace PCOE {
 
     void WaypointMessage::serializePayload(std::ostream& os) const {
         os.write(reinterpret_cast<const char*>(&eta), sizeof(eta));
+        auto lat = point.getLatitude();
+        auto lon = point.getLongitude();
+        auto alt = point.getAltitude();
         os.write(reinterpret_cast<const char*>(&lat), sizeof(lat));
         os.write(reinterpret_cast<const char*>(&lon), sizeof(lon));
         os.write(reinterpret_cast<const char*>(&alt), sizeof(alt));

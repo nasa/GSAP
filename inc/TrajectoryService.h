@@ -11,7 +11,7 @@
 
 #include "ISavePointProvider.h"
 #include "ITrajectoryCorrelator.h"
-#include "Messages/WaypointMessage.h"
+#include "Point3D.h"
 
 namespace PCOE {
     /**
@@ -24,21 +24,43 @@ namespace PCOE {
      **/
     class TrajectoryService : public ISavePointProvider, public ITrajectoryCorrelator {
     public:
-        std::set<Message::time_point> getSavePts() override;
+        /**
+         * The type used by 3Dpoints to describe when they correlate to
+         **/
+        using time_point = MessageClock::time_point;
         
-        Point3D getPoint(Message::time_point) override;
+        /**
+         *  @return A set of savepoints
+         */
+        std::set<time_point> getSavePts() override;
         
-        void setWaypoint(const WaypointMessage &);
+        /**
+         *  Get a point along a trajectory corresponding to a specific timepoint
+         *  @param  tp  The timepoint for which to find the correlated position
+         */
+        Point3D getPoint(time_point) override;
         
-        void deleteWaypoint(Message::time_point);
+        /**
+         *  Set a waypoint, creates if waypoint doesn't exist already
+         *  @param  tp  Timepoint for waypoint
+         *  @param  wp  Waypoint (point in 3D space
+         */
+        void setWaypoint(time_point tp, const Point3D & wp);
         
+        /**
+         *  delect a waypoint
+         *  @param  tp  Timepoint for waypoint
+         */
+        void deleteWaypoint(time_point);
+        
+        /**
+         *  Clear all waypoints
+         */
         void clearWaypoints();
         
     protected:
-        std::set<Message::time_point> savepts;
-        std::map<MessageClock::time_point, WaypointMessage> waypoints;
-        std::map<MessageId, std::size_t> valueIndices;
-        std::vector<double> values;
+        std::set<time_point> savepts;
+        std::map<time_point, Point3D> waypoints;
     };
 }
 #endif

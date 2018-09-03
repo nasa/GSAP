@@ -12,13 +12,15 @@ namespace PCOE {
     /**
      * An interface for objects that provide save points
      *
-     * @author Jason Watkins
+     * @author Chris Teubert
      * @since 1.2
      **/
     class ISavePointProvider {
     public:
+        /**
+         *  @return A set of savepoints
+         */
         virtual std::set<Message::time_point> getSavePts() = 0;
     };
 }
-
 #endif

@@ -19,7 +19,10 @@ namespace PCOE {
         EventDrivenTrajectoryService tc(mb, TEST_SRC);
         Test::Assert::IsTrue(tc.getSavePts().empty());
         
+        Test::Assert::AreEqual(tc.getSavePts().size(), 0, "Savepoints should be empty before start");
+
         mb.publish(std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteStart, TEST_SRC)));
+        Test::Assert::AreEqual(tc.getSavePts().size(), 0, "Savepoints should be empty after start");
         
         auto time = MessageClock::now();
         mb.publish(std::shared_ptr<Message>(new WaypointMessage(MessageId::RouteSetWP, TEST_SRC, time, 38.0098, -122.119, 30)));
@@ -29,14 +32,14 @@ namespace PCOE {
         
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         auto sp = tc.getSavePts();
-        Test::Assert::AreEqual(sp.size(), 2);
+        Test::Assert::AreEqual(sp.size(), 2, "GetSavePts size incorrect");
         auto tmp = sp.begin();
-        Test::Assert::AreEqual(*tmp, time);
-        Test::Assert::AreEqual(*++tmp, time2);
+        Test::Assert::AreEqual(*tmp, time, "GetSavePts incorrect (pt 1)");
+        Test::Assert::AreEqual(*++tmp, time2, "GetSavePts incorrect (pt 2)");
         auto middle_point = tc.getPoint(time + (time2-time)/2);
-        Test::Assert::AreEqual(middle_point.getAltitude(), 30, 1e-6);
-        Test::Assert::AreEqual(middle_point.getLatitude(), 38.00985, 1e-6);
-        Test::Assert::AreEqual(middle_point.getLongitude(), -122.1185, 1e-6);
+        Test::Assert::AreEqual(middle_point.getAltitude(), 30, 1e-6, "GetPt Altitude incorrect");
+        Test::Assert::AreEqual(middle_point.getLatitude(), 38.00985, 1e-6, "GetPt Latitude incorrect");
+        Test::Assert::AreEqual(middle_point.getLongitude(), -122.1185, 1e-6, "GetPt Longitude incorrect");
         
         try {
             tc.getPoint(time + (time2-time)*2);

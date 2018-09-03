@@ -60,6 +60,7 @@ set (HEADERS
     inc/DataStore.h
     inc/Datum.h
     inc/EventDrivenPrognoser.h
+    inc/EventDrivenTrajectoryService.h
     inc/Exceptions.h
     inc/Factory.h
     inc/GaussianVariable.h
@@ -112,6 +113,7 @@ set (HEADERS
     inc/CommunicatorFactory.h
     inc/ModelBasedPrognoser.h
     inc/ModelFactory.h
+    inc/Point3D.h
     inc/ProgManager.h
     inc/PrognoserFactory.h
     inc/RandomCommunicator.h
@@ -125,6 +127,7 @@ set(SRCS
     src/ConfigMap.cpp
     src/DataPoint.cpp
     src/DataPoints.cpp
+    src/EventDrivenTrajectoryService.cpp
     src/GaussianVariable.cpp
     src/Matrix.cpp
     src/Messages/Message.cpp

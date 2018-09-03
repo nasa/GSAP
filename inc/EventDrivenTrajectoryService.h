@@ -18,7 +18,6 @@ namespace PCOE {
      * Maintains knowledge of the route (series of waypoints) and predicted path for a vehicle.
      * Provides estimates of a vehicles position at a given time, and path-driven save points.
      *
-     * @author Jason Watkins
      * @author Christopher Teubert
      * @since 1.2
      **/
@@ -33,15 +32,18 @@ namespace PCOE {
          *                   message bus, and will publish results of the
          *                   observer to the message bus.
          * @param source     The name of the source that is being observed.
-         **/
+         */
         EventDrivenTrajectoryService(MessageBus& messageBus,
                           std::string source);
         
         /**
          * Unsubscribes the {@code TrajectoryService} from the message bus.
-         **/
+         */
         ~EventDrivenTrajectoryService();
         
+        /**
+         *  Process a received trajectory message
+         */
         void processMessage(const std::shared_ptr<Message>& message) override;
         
     private:

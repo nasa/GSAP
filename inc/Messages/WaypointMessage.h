@@ -5,6 +5,7 @@
 #define PCOE_WAYPOINTMESSAGE_H
 #include "Messages/Message.h"
 #include "Messages/MessageId.h"
+#include "Point3D.h"
 
 namespace PCOE {
     /**
@@ -64,26 +65,33 @@ namespace PCOE {
         inline time_point getEta() const {
             return eta;
         }
+        
+        /**
+         * Gets the waypoint position
+         */
+        inline Point3D getPosition() const {
+            return point;
+        }
 
         /**
          * Gets the waypoint latitude.
          **/
         inline double getLatitude() const {
-            return lat;
+            return point.getLatitude();
         }
 
         /**
          * Gets the waypoint longitude.
          **/
         inline double getLongitude() const {
-            return lon;
+            return point.getLongitude();
         }
 
         /**
          * Gets the waypoint altitude.
          **/
         inline double getAltitude() const {
-            return alt;
+            return point.getAltitude();
         }
 
     protected:
@@ -93,9 +101,7 @@ namespace PCOE {
 
     private:
         time_point eta;
-        double lat;
-        double lon;
-        double alt;
+        Point3D point;
     };
 }
 #endif

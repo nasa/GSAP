@@ -24,8 +24,9 @@ namespace PCOE {
 
     MonteCarloPredictor::MonteCarloPredictor(const PrognosticsModel& m,
                                              LoadEstimator& le,
+                                             TrajectoryService& trajService,
                                              const ConfigMap& config)
-        : Predictor(m, le, config) {
+        : Predictor(m, le, trajService, config) {
         // Check for required parameters:
         // model = model to be used for simulation
         // sampleCount = number of samples used for prediction
@@ -70,7 +71,7 @@ namespace PCOE {
         // TODO (JW): Contract has been changed so that this is checked in the
         //            constructor. Shouldn't be possible here.
 
-        auto savePts = loadEstimator.getSavePts();
+        auto savePts = savePointProvider.getSavePts();
 
         UData eventToe(UType::Samples);
         eventToe.npoints(sampleCount);
@@ -107,7 +108,7 @@ namespace PCOE {
             Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
         }
         auto PxxChol = Pxx.chol();
-
+        
 /* OpenMP info
  * If the application is built with OpenMP, the predictor below operates in parallel.
  * The only shared memory between threads is data (ProgData). Writebacks are only done
@@ -146,6 +147,9 @@ namespace PCOE {
             std::vector<double> inputParams(model.getInputParameterCount());
             unsigned int timeIndex = 0;
             eventToe[sample] = INFINITY;
+            
+            auto currentSavePt = savePts.begin();
+            auto currentSavePt_s = (*currentSavePt).time_since_epoch().count();
 
             for (double t_s = time_s; t_s <= time_s + horizon; t_s += model.getDefaultTimeStep()) {
                 // Get inputs for time t
@@ -162,9 +166,10 @@ namespace PCOE {
                     break;
                 }
 
-                if (timeIndex < savePts.size() && t_s > savePts[timeIndex]) {
+                if (timeIndex < savePts.size() && t_s > currentSavePt_s) {
                     // Write to system trajectory (model variables for which we are interested in
                     // predicted values)
+                    currentSavePt_s = (*(++currentSavePt)).time_since_epoch().count();
                     auto z = model.getOutputVector();
                     auto predictedOutput = model.predictedOutputEqn(t_s, x, u, z);
                     for (unsigned int p = 0; p < predictedOutput.size(); p++) {

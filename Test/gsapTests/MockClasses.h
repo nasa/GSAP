@@ -130,10 +130,6 @@ public:
         return loading;
     }
 
-    std::vector<double> getSavePts() override {
-        return std::vector<double>({0, 10, 50, 100});
-    }
-
 private:
     std::vector<double> loading;
 };
@@ -180,8 +176,9 @@ private:
 
 class TestPredictor final : public Predictor {
 public:
-    TestPredictor(const PrognosticsModel& m, LoadEstimator& le, const ConfigMap& config)
-        : Predictor(m, le, config) {}
+    TestPredictor(const PrognosticsModel& m, LoadEstimator& le, TrajectoryService & trajService,
+const ConfigMap& config)
+        : Predictor(m, le, trajService, config) {}
 
     Prediction predict(double, const std::vector<UData>& state) override {
         ProgEvent event(MessageId::TestEvent0, {UData()}, {UData()});

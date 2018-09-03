@@ -11,20 +11,19 @@
 
 namespace PCOE {
     static const Log& log = Log::Instance();
-    static const std::string MODULE_NAME = "PRED-ED";
+    static const std::string MODULE_NAME = "TRAJ_SERVICE";
     
-    std::set<Message::time_point> TrajectoryService::getSavePts() {
+    std::set<TrajectoryService::time_point> TrajectoryService::getSavePts() {
         return savepts;
     }
     
-    void TrajectoryService::setWaypoint(const WaypointMessage & wp) {
-        auto eta = wp.getEta();
+    void TrajectoryService::setWaypoint(TrajectoryService::time_point eta, const Point3D & wp) {
         auto existing = waypoints.find(eta);
         if (existing == waypoints.end()) {
             waypoints.insert(std::make_pair(eta, wp));
             savepts.insert(eta);
         } else {
-            //TODO(CT): Handle
+            (*existing).second = wp;
         }
     }
     
@@ -33,28 +32,30 @@ namespace PCOE {
         savepts.clear();
     }
     
-    void TrajectoryService::deleteWaypoint(Message::time_point eta) {
+    void TrajectoryService::deleteWaypoint(TrajectoryService::time_point eta) {
         waypoints.erase(eta);
         savepts.erase(eta);
     }
     
-    Point3D TrajectoryService::getPoint(Message::time_point time) {
-        WaypointMessage * last_wp = nullptr;
+    Point3D TrajectoryService::getPoint(TrajectoryService::time_point time) {
+        Point3D * lastWP = nullptr;
+        TrajectoryService::time_point lastTime;
         for (auto && waypoint : waypoints) {
             if (time < waypoint.first) {
-                if (last_wp == nullptr) {
+                if (lastWP == nullptr) {
                     throw std::out_of_range("Cannot exterpolate time before first waypoint");
                 }
                 // Interpolate
-                double tmp = (time - last_wp->getEta()).count();
-                double tmp2 =(waypoint.first - last_wp->getEta()).count();
+                double tmp = (time - lastTime).count();
+                double tmp2 =(waypoint.first - lastTime).count();
                 double ratio = tmp/tmp2;
-                auto lat = last_wp->getLatitude()+ (waypoint.second.getLatitude() - last_wp->getLatitude())*ratio;
-                auto lon = last_wp->getLongitude() + (waypoint.second.getLongitude() - last_wp->getLongitude())*ratio;
-                auto alt = last_wp->getAltitude() + (waypoint.second.getAltitude() - last_wp->getAltitude())*ratio;
+                auto lat = lastWP->getLatitude()+ (waypoint.second.getLatitude() - lastWP->getLatitude())*ratio;
+                auto lon = lastWP->getLongitude() + (waypoint.second.getLongitude() - lastWP->getLongitude())*ratio;
+                auto alt = lastWP->getAltitude() + (waypoint.second.getAltitude() - lastWP->getAltitude())*ratio;
                 return Point3D(lat, lon, alt);
             }
-            last_wp = &waypoint.second;
+            lastWP = &waypoint.second;
+            lastTime = waypoint.first;
         }
         throw std::out_of_range("Cannot exterpolate time after last waypoint");
     }

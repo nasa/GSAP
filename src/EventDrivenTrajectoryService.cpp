@@ -12,7 +12,7 @@
 
 namespace PCOE {
     static const Log& log = Log::Instance();
-    static const std::string MODULE_NAME = "PRED-ED";
+    static const std::string MODULE_NAME = "TRAJ_SERVICE_ED";
     
     EventDrivenTrajectoryService::EventDrivenTrajectoryService(MessageBus& messageBus,
                                          std::string source)
@@ -55,20 +55,10 @@ namespace PCOE {
                 auto msg = dynamic_cast<WaypointMessage*>(message.get());
                 Require(msg, "Unexpected message type for RoutSetWP");
                 
-                setWaypoint(*msg);
+                setWaypoint((*msg).getEta(), (*msg).getPosition());
                 break;
             }
             default: {
-                auto it = valueIndices.find(id);
-                if (it != valueIndices.end()) {
-                    auto msg = dynamic_cast<DoubleMessage*>(message.get());
-                    Require(msg, "Unexpected message type for input message");
-                    
-                    const double prevWeight = 0.9;
-                    const double newWeight = 1 - prevWeight;
-                    auto i = (*it).second;
-                    values[i] = values[i] * prevWeight + msg->getValue() * newWeight;
-                }
                 break;
             }
         }
