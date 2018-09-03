@@ -78,21 +78,10 @@ bool EmptyPrognosticsModel::thresholdEqn(const double t,
     // Often uses outputs to calculate threshold, remove line if not relevant
     auto z = outputEqn(t, x, u, std::vector<double>(2));
 
-    bool hasReachedThreshold;
+    bool hasReachedThreshold = false;
     // SET hasReachedThreshold
 
     return hasReachedThreshold;
-}
-
-Model::input_type EmptyPrognosticsModel::inputEqn(double t,
-                                                  const std::vector<double>& params,
-                                                  const std::vector<double>& loadEstimate) const {
-    auto input = getInputVector();
-
-    // Determine what the system input should be given the current time and a set of "input
-    // parameters" Fill input
-
-    return input;
 }
 
 PrognosticsModel::predicted_output_type

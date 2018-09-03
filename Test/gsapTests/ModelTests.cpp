@@ -256,19 +256,6 @@ void testBatteryThresholdEqn() {
     Assert::AreEqual(true, battery.thresholdEqn(0, x, u));
 }
 
-void testBatteryInputEqn() {
-    // Create battery model
-    BatteryModel battery = BatteryModel();
-
-    // Set input parameters
-    std::vector<double> inputParameters({1});
-
-    // Run inputEqn for different time points and check values
-    std::vector<double> loadEstimate = {0}; // TODO (JW): Battery model doesn't actually use this?
-    auto u = battery.inputEqn(1, inputParameters, loadEstimate);
-    Assert::AreEqual(1, u[0], 1e-12);
-}
-
 void testBatteryPredictedOutputEqn() {
     // Create battery model
     BatteryModel battery = BatteryModel();
