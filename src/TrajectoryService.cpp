@@ -17,6 +17,27 @@ namespace PCOE {
         return savepts;
     }
     
+    void TrajectoryService::setWaypoint(const WaypointMessage & wp) {
+        auto eta = wp.getEta();
+        auto existing = waypoints.find(eta);
+        if (existing == waypoints.end()) {
+            waypoints.insert(std::make_pair(eta, wp));
+            savepts.insert(eta);
+        } else {
+            //TODO(CT): Handle
+        }
+    }
+    
+    void TrajectoryService::clearWaypoints() {
+        waypoints.clear();
+        savepts.clear();
+    }
+    
+    void TrajectoryService::deleteWaypoint(Message::time_point eta) {
+        waypoints.erase(eta);
+        savepts.erase(eta);
+    }
+    
     Point3D TrajectoryService::getPoint(Message::time_point time) {
         WaypointMessage * last_wp = nullptr;
         for (auto && waypoint : waypoints) {

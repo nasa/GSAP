@@ -41,31 +41,21 @@ namespace PCOE {
                 // TODO (JW): Generate some message that can be used to trigger prediction?
                 break;
             case MessageId::RouteClear:
-                waypoints.clear();
-                savepts.clear();
+                clearWaypoints();
                 break;
             case MessageId::RouteDeleteWP: {
                 auto msg = dynamic_cast<U64Message*>(message.get());
                 Require(msg, "Unexpected message type for RouteDeleteWP");
                 
                 auto eta = MessageClock::time_point(MessageClock::duration(msg->getValue()));
-                waypoints.erase(eta);
-                savepts.erase(eta);
+                deleteWaypoint(eta);
                 break;
             }
             case MessageId::RouteSetWP: {
                 auto msg = dynamic_cast<WaypointMessage*>(message.get());
                 Require(msg, "Unexpected message type for RoutSetWP");
                 
-                auto eta = msg->getEta();
-                auto existing = waypoints.find(eta);
-                if (existing == waypoints.end()) {
-                    waypoints.insert(std::make_pair(eta, *msg));
-                    savepts.insert(eta);
-                }
-                else {
-                    auto& wp = (*existing).second;
-                }
+                setWaypoint(*msg);
                 break;
             }
             default: {

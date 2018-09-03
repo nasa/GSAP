@@ -28,6 +28,12 @@ namespace PCOE {
         
         Point3D getPoint(Message::time_point) override;
         
+        void setWaypoint(const WaypointMessage &);
+        
+        void deleteWaypoint(Message::time_point);
+        
+        void clearWaypoints();
+        
     protected:
         std::set<Message::time_point> savepts;
         std::map<MessageClock::time_point, WaypointMessage> waypoints;
