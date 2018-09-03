@@ -37,9 +37,9 @@ namespace PCOE {
         Test::Assert::AreEqual(*tmp, time, "GetSavePts incorrect (pt 1)");
         Test::Assert::AreEqual(*++tmp, time2, "GetSavePts incorrect (pt 2)");
         auto middle_point = tc.getPoint(time + (time2-time)/2);
-        Test::Assert::AreEqual(middle_point.getAltitude(), 30, 1e-6, "GetPt Altitude incorrect");
-        Test::Assert::AreEqual(middle_point.getLatitude(), 38.00985, 1e-6, "GetPt Latitude incorrect");
-        Test::Assert::AreEqual(middle_point.getLongitude(), -122.1185, 1e-6, "GetPt Longitude incorrect");
+        Test::Assert::AreEqual(middle_point.getAltitude(), 30, 5e-5, "GetPt Altitude incorrect");
+        Test::Assert::AreEqual(middle_point.getLatitude(), 38.00985, 5e-5, "GetPt Latitude incorrect");
+        Test::Assert::AreEqual(middle_point.getLongitude(), -122.1185, 5e-5, "GetPt Longitude incorrect");
         
         try {
             tc.getPoint(time + (time2-time)*2);
