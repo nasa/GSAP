@@ -40,6 +40,7 @@ namespace PCOE {
             new WaypointMessage(MessageId::RouteSetWP, TEST_SRC, time2, 38.0099, -122.118, 30)));
         mb.publish(std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteEnd, TEST_SRC)));
 
+        mb.processAll();
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         auto sp = tc.getSavePts();
         Test::Assert::AreEqual(sp.size(), 2, "GetSavePts size incorrect");

@@ -19,7 +19,7 @@ namespace PCOE {
         std::unique_ptr<TrajectoryService>&& ts,
         std::string source)
         : trajService(std::move(ts)), bus(messageBus), source(source) {
-        Expect(ts, "Trajectory service pointer is empty");
+        Expect(trajService, "Trajectory service pointer is empty");
         lock_guard guard(m);
         bus.subscribe(this, this->source, MessageId::RouteStart);
         bus.subscribe(this, this->source, MessageId::RouteEnd);
