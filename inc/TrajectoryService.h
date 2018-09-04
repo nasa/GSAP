@@ -32,16 +32,18 @@ namespace PCOE {
         /**
          *  @return A set of savepoints
          */
-        std::set<time_point> getSavePts() override;
-        
+        std::set<time_point> getSavePts() const override;
+
         /**
          *  Get a point along a trajectory corresponding to a specific timepoint
          *  @param  tp  The timepoint for which to find the correlated position
          */
-        Point3D getPoint(time_point) override;
-        
-        bool hasChangedSinceSavePtsCall() const override { return changedSinceSavePtsCall;}
-        
+        Point3D getPoint(time_point) const override;
+
+        bool hasChangedSinceSavePtsCall() const override {
+            return changedSinceSavePtsCall;
+        }
+
         /**
          *  Set a waypoint, creates if waypoint doesn't exist already
          *  @param  tp  Timepoint for waypoint
@@ -61,7 +63,7 @@ namespace PCOE {
         void clearWaypoints();
 
     protected:
-        bool changedSinceSavePtsCall = false;
+        mutable bool changedSinceSavePtsCall = false;
         std::set<time_point> savepts;
         std::map<time_point, Point3D> waypoints;
     };

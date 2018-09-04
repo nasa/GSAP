@@ -20,8 +20,8 @@ namespace PCOE {
         /**
          *  @return A set of savepoints
          */
-        virtual std::set<Message::time_point> getSavePts() = 0;
-        
+        virtual std::set<Message::time_point> getSavePts() const = 0;
+
         /**
          *  @return If the data has changed since the last time getSavePts was called
          */

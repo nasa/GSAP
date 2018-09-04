@@ -21,7 +21,7 @@ namespace PCOE {
          *  Get a point along a trajectory corresponding to a specific timepoint
          *  @param  tp  The timepoint for which to find the correlated position
          */
-        virtual Point3D getPoint(Message::time_point tp) = 0;
+        virtual Point3D getPoint(Message::time_point tp) const = 0;
     };
 }
 #endif

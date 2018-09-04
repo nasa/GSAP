@@ -12,12 +12,12 @@
 namespace PCOE {
     static const Log& log = Log::Instance();
     static const std::string MODULE_NAME = "TSVC";
-    
-    std::set<TrajectoryService::time_point> TrajectoryService::getSavePts() {
+
+    std::set<TrajectoryService::time_point> TrajectoryService::getSavePts() const {
         changedSinceSavePtsCall = false;
         return savepts;
     }
-    
+
     void TrajectoryService::setWaypoint(TrajectoryService::time_point eta, const Point3D& wp) {
         changedSinceSavePtsCall = true;
         auto existing = waypoints.find(eta);
@@ -42,8 +42,8 @@ namespace PCOE {
         savepts.erase(eta);
     }
 
-    Point3D TrajectoryService::getPoint(TrajectoryService::time_point time) {
-        Point3D* lastWP = nullptr;
+    Point3D TrajectoryService::getPoint(TrajectoryService::time_point time) const {
+        const Point3D* lastWP = nullptr;
         TrajectoryService::time_point lastTime;
         for (auto&& waypoint : waypoints) {
             if (time < waypoint.first) {

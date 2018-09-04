@@ -18,14 +18,18 @@ namespace PCOE {
      **/
     class CompositeSavePointProvider : public ISavePointProvider {
     public:
-        std::set<Message::time_point> getSavePts() override {
+        std::set<Message::time_point> getSavePts() const override {
+            if (!hasChangedSinceSavePtsCall()) {
+                return savePts;
+            }
+
             for (auto&& provider : providers) {
                 std::set<Message::time_point> tmp = provider->getSavePts();
                 savePts.insert(tmp.begin(), tmp.end());
             }
             return savePts;
         }
-        
+
         /**
          *  Add a new save point provider to the composite save point provider
          *  @param provider The save point provider to add
@@ -33,16 +37,16 @@ namespace PCOE {
         void add(ISavePointProvider* provider) {
             providers.push_back(provider);
         }
-        
+
         bool hasChangedSinceSavePtsCall() const override {
-            return !std::all_of(providers.begin(),
-                                providers.end(),
-                                [](ISavePointProvider* p){return !p->hasChangedSinceSavePtsCall();});
+            return !std::all_of(providers.begin(), providers.end(), [](ISavePointProvider* p) {
+                return !p->hasChangedSinceSavePtsCall();
+            });
         }
-        
+
     private:
-        std::vector<ISavePointProvider *> providers;
-        std::set<Message::time_point> savePts; // Cached version of savePts (so we can return a ref)
+        std::vector<ISavePointProvider*> providers;
+        mutable std::set<Message::time_point> savePts;
     };
 }
 #endif
