@@ -121,7 +121,8 @@ set (HEADERS
     inc/RecorderCommunicator.h
     inc/STDINCommunicator.h
     inc/StringUtils.h
-    inc/TrajectoryService.h)
+    inc/TrajectoryService.h
+)
 
 set(SRCS
     src/ConfigMap.cpp

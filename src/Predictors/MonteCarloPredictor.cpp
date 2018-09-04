@@ -108,7 +108,7 @@ namespace PCOE {
             Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
         }
         auto PxxChol = Pxx.chol();
-        
+
 /* OpenMP info
  * If the application is built with OpenMP, the predictor below operates in parallel.
  * The only shared memory between threads is data (ProgData). Writebacks are only done
@@ -147,7 +147,7 @@ namespace PCOE {
             std::vector<double> inputParams(model.getInputParameterCount());
             unsigned int timeIndex = 0;
             eventToe[sample] = INFINITY;
-            
+
             auto currentSavePt = savePts.begin();
             auto currentSavePt_s = (*currentSavePt).time_since_epoch().count();
 

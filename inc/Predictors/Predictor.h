@@ -62,8 +62,8 @@ namespace PCOE {
             // Note (JW):
             // Want to keep config param in case we ever add optional config values
             // This cast suppresses warnings about the unused variable.
-            savePointProvider.add(&trajService);
             static_cast<void>(config);
+            savePointProvider.add(&trajService);
         }
 
         /**

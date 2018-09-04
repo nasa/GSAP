@@ -1,8 +1,8 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-#ifndef PCOE_ISAVEPOINTPROVIDER_h
-#define PCOE_ISAVEPOINTPROVIDER_h
+#ifndef PCOE_ISAVEPOINTPROVIDER_H
+#define PCOE_ISAVEPOINTPROVIDER_H
 
 #include <set>
 
@@ -10,7 +10,7 @@
 
 namespace PCOE {
     /**
-     * An interface for objects that provide save points
+     * An interface for objects that provide save points.
      *
      * @author Chris Teubert
      * @since 1.2

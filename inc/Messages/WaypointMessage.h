@@ -9,21 +9,15 @@
 
 namespace PCOE {
     /**
-     * Represents a single configuration key/value pair.
-     *
-     * @remarks
-     * Note that this message is used for all types of configuration, including
-     * scalar numeric values and vectors. Vectors should be represetned as
-     * comma-separated lists. Historically GSAP configs were read from a file on
-     * disk, where this string-based interface made sense.
+     * Represents a message containing a single point on a 4D trajectory.
      *
      * @author Jason Watkins
-     * @since 1.1
+     * @since 1.2
      **/
     class WaypointMessage : public PCOE::Message {
     public:
         /**
-         * Constructs a new instance of @{code ConfigMessage}.
+         * Constructs a new instance of @{code WaypointMessage}.
          *
          * @param id     The id of the message.
          * @param source The source of the message.
@@ -40,7 +34,7 @@ namespace PCOE {
                         double alt);
 
         /**
-         * Constructs a new instance of @{code ConfigMessage}.
+         * Constructs a new instance of @{code WaypointMessage}.
          *
          * @param id        The id of the message.
          * @param source    The source of the message.
@@ -65,7 +59,7 @@ namespace PCOE {
         inline time_point getEta() const {
             return eta;
         }
-        
+
         /**
          * Gets the waypoint position
          */

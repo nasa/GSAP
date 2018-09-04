@@ -25,8 +25,7 @@ using namespace PCOE::Test;
 namespace EventDrivenPredictorTests {
     class PowerConverter final : public IMessageProcessor {
     public:
-        PowerConverter(MessageBus& bus, const ConfigMap&, const std::string& source)
-            : bus(bus) {
+        PowerConverter(MessageBus& bus, const ConfigMap&, const std::string& source) : bus(bus) {
             bus.subscribe(this, source, MessageId::Volts);
             bus.subscribe(this, source, MessageId::Watts);
         }
@@ -68,7 +67,7 @@ namespace EventDrivenPredictorTests {
         TestPrognosticsModel tpm;
         TestLoadEstimator tle;
         const std::string src = "test";
-        
+
         EventDrivenTrajectoryService trajService(bus, src);
 
         EventDrivenPredictor edPred(bus,
@@ -85,9 +84,8 @@ namespace EventDrivenPredictorTests {
         TestLoadEstimator tle;
         TrajectoryService ts;
         const std::string src = "test";
-        
-        EventDrivenTrajectoryService trajService(bus, src);
 
+        EventDrivenTrajectoryService trajService(bus, src);
 
         MessageCounter listener(bus, src, MessageId::TestEvent0);
         EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tpm)), src);

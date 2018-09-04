@@ -1,7 +1,6 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-
 #ifndef PCOE_ITRAJECTORYCORRELATOR_H
 #define PCOE_ITRAJECTORYCORRELATOR_H
 
@@ -9,9 +8,9 @@
 #include "Point3D.h"
 
 namespace PCOE {
-    
+
     /**
-     * An interface for objects that correlate time to physical position in 3d space
+     * An interface for objects that correlate time to physical position in 3d space.
      *
      * @author Chris Teubert
      * @since 1.2

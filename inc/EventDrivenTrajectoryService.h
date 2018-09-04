@@ -1,17 +1,17 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-#ifndef PCOE_EVENTDRIVENTRAJECTORYSERVICE_h
-#define PCOE_EVENTDRIVENTRAJECTORYSERVICE_h
+#ifndef PCOE_EVENTDRIVENTRAJECTORYSERVICE_H
+#define PCOE_EVENTDRIVENTRAJECTORYSERVICE_H
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
-#include "TrajectoryService.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
 #include "Messages/WaypointMessage.h"
+#include "TrajectoryService.h"
 
 namespace PCOE {
     /**
@@ -33,24 +33,23 @@ namespace PCOE {
          *                   observer to the message bus.
          * @param source     The name of the source that is being observed.
          */
-        EventDrivenTrajectoryService(MessageBus& messageBus,
-                          std::string source);
-        
+        EventDrivenTrajectoryService(MessageBus& messageBus, std::string source);
+
         /**
          * Unsubscribes the {@code TrajectoryService} from the message bus.
          */
         ~EventDrivenTrajectoryService();
-        
+
         /**
          *  Process a received trajectory message
          */
         void processMessage(const std::shared_ptr<Message>& message) override;
-        
+
     private:
         using mutex = std::timed_mutex;
         using lock_guard = std::lock_guard<mutex>;
         using unique_lock = std::unique_lock<mutex>;
-        
+
         MessageBus& bus;
         std::string source;
         mutable mutex m;
