@@ -58,30 +58,7 @@ namespace PCOE {
          **/
         void step(double t, const Model::input_type& u, const Model::output_type& z) override;
 
-        // Accessors
-        /**
-         * Returns the current mean state estimate of the observer.
-         *
-         * @return The last calculated state estimate.
-         **/
-        inline const Model::state_type& getStateMean() const override {
-            return xEstimated;
-        }
-
-        /**
-         * Returns the current mean output estimate of the observer.
-         *
-         * @return The last output estimate calcualted by the observer..
-         **/
-        inline const Model::output_type& getOutputMean() const override {
-            return zEstimated;
-        }
-
-        std::vector<UData> getStateEstimate() const;
-
-    private:
-        Model::state_type xEstimated;
-        Model::output_type zEstimated;
+        std::vector<UData> getStateEstimate() const override;
     };
 }
 

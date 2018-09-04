@@ -116,15 +116,6 @@ namespace PCOE {
         }
 
         /**
-         * Returns the current mean state estimate of the observer.
-         *
-         * @return The last calculated state estimate.
-         **/
-        inline const Model::state_type& getStateMean() const override {
-            return xEstimated;
-        }
-
-        /**
          * Returns the current state estimate of the observer, including
          * uncertainty.
          *
@@ -132,15 +123,6 @@ namespace PCOE {
          *         observer.
          **/
         std::vector<UData> getStateEstimate() const;
-
-        /**
-         * Returns the current mean output estimate of the observer.
-         *
-         * @return The last output estimate calcualted by the observer..
-         **/
-        inline const Model::output_type& getOutputMean() const override {
-            return zEstimated;
-        }
 
         /**
          * Gets the state covariance matrix.
