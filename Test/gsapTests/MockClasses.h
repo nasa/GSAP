@@ -101,12 +101,6 @@ public:
         return 0;
     }
 
-    input_type inputEqn(const double,
-                        const std::vector<double>&,
-                        const std::vector<double>&) const override {
-        return getInputVector();
-    }
-
     predicted_output_type predictedOutputEqn(const double,
                                              const state_type&,
                                              const input_type&,
