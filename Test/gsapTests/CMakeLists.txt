@@ -22,6 +22,7 @@ set(HEADERS
     TCPSocketTests.h
     UDPSocketTests.h
     ProgManagerTests.h
+    TrajectoryServiceTests.h
 )
 
 
@@ -55,6 +56,7 @@ set(SRCS
     FrameworkTests.cpp
     main.cpp
     ProgManagerTests.cpp
+    TrajectoryServiceTests.cpp
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/inc/)

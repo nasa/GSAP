@@ -5,6 +5,7 @@
 #define PCOE_EVENTDRIVENPREDICTOR_H
 #include <memory>
 
+#include "EventDrivenTrajectoryService.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
 #include "Predictors/Predictor.h"
@@ -58,7 +59,6 @@ namespace PCOE {
         MessageBus& bus;
         std::unique_ptr<Predictor> pred;
         std::string source;
-        double latestTimestamp;
     };
 }
 #endif

@@ -7,12 +7,14 @@
 #include <string>
 #include <vector>
 
+#include "CompositeSavePointProvider.h"
 #include "ConfigMap.h"
 #include "Contracts.h"
 #include "DataPoint.h"
 #include "Loading/LoadEstimator.h"
 #include "ProgEvent.h"
 #include "PrognosticsModel.h"
+#include "TrajectoryService.h"
 
 namespace PCOE {
     class Prediction {
@@ -38,6 +40,7 @@ namespace PCOE {
      *
      * @author Matthew Daigle
      * @author Jason Watkins
+     * @author Chris Teubert
      **/
     class Predictor {
     public:
@@ -47,15 +50,20 @@ namespace PCOE {
          *
          * @param m      The model used by the predictor.
          * @param le     The load estimator used by the predictor.
+         * @param ts     The trajectory service used by the predictor
          * @param config A config map containing configuration parameters for
          *               the predictor.
          **/
-        Predictor(const PrognosticsModel& m, LoadEstimator& le, const ConfigMap& config)
-            : loadEstimator(le), model(m) {
+        Predictor(const PrognosticsModel& m,
+                  LoadEstimator& le,
+                  TrajectoryService& ts,
+                  const ConfigMap& config)
+            : loadEstimator(le), model(m), trajService(ts) {
             // Note (JW):
             // Want to keep config param in case we ever add optional config values
             // This cast suppresses warnings about the unused variable.
             static_cast<void>(config);
+            savePointProvider.add(&trajService);
         }
 
         /**
@@ -93,6 +101,8 @@ namespace PCOE {
 
         LoadEstimator& loadEstimator;
         const PrognosticsModel& model;
+        CompositeSavePointProvider savePointProvider;
+        TrajectoryService& trajService;
 
     private:
         std::vector<std::string> predictedOutputs;

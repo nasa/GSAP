@@ -52,6 +52,7 @@ if (UseOpenMP)
 endif()
 
 set (HEADERS
+    inc/CompositeSavePointProvider.h
     inc/ConfigMap.h
     inc/Contracts.h
     inc/DataPoint.h
@@ -59,9 +60,12 @@ set (HEADERS
     inc/DataStore.h
     inc/Datum.h
     inc/EventDrivenPrognoser.h
+    inc/EventDrivenTrajectoryService.h
     inc/Exceptions.h
     inc/Factory.h
     inc/GaussianVariable.h
+    inc/ISavePointProvider.h
+    inc/ITrajectoryCorrelator.h
     inc/Loading/ConstLoadEstimator.h
     inc/Loading/LoadEstimator.h
     inc/Loading/LoadEstimatorFactory.h
@@ -76,6 +80,7 @@ set (HEADERS
     inc/Messages/MessageWatcher.h
     inc/Messages/ProgEventMessage.h
     inc/Messages/UDataMessage.h
+    inc/Messages/WaypointMessage.h
     inc/Model.h
     inc/Observers/EventDrivenObserver.h
     inc/Observers/Observer.h
@@ -108,23 +113,28 @@ set (HEADERS
     inc/CommunicatorFactory.h
     inc/ModelBasedPrognoser.h
     inc/ModelFactory.h
+    inc/Point3D.h
     inc/ProgManager.h
     inc/PrognoserFactory.h
     inc/RandomCommunicator.h
     inc/PlaybackCommunicator.h
     inc/RecorderCommunicator.h
     inc/STDINCommunicator.h
-    inc/StringUtils.h)
+    inc/StringUtils.h
+    inc/TrajectoryService.h
+)
 
 set(SRCS
     src/ConfigMap.cpp
     src/DataPoint.cpp
     src/DataPoints.cpp
+    src/EventDrivenTrajectoryService.cpp
     src/GaussianVariable.cpp
     src/Matrix.cpp
     src/Messages/Message.cpp
     src/Messages/MessageBus.cpp
     src/Messages/MessageId.cpp
+    src/Messages/WaypointMessage.cpp
     src/Observers/EventDrivenObserver.cpp
     src/Observers/ParticleFilter.cpp
     src/Observers/UnscentedKalmanFilter.cpp
@@ -148,6 +158,7 @@ set(SRCS
     src/PlaybackCommunicator.cpp
     src/RecorderCommunicator.cpp
     src/STDINCommunicator.cpp
+    src/TrajectoryService.cpp
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)

@@ -122,7 +122,7 @@ namespace PCOE {
          * @return The last calculated state estimate calcualted by the
          *         observer.
          **/
-        std::vector<UData> getStateEstimate() const;
+        std::vector<UData> getStateEstimate() const override;
 
         /**
          * Gets the state covariance matrix.

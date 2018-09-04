@@ -19,11 +19,11 @@
 namespace PCOE {
     const Log& log = Log::Instance();
 
-    const std::string MODULE_NAME = "PRED-MC";
+    const std::string MODULE_NAME = "PRED-Empty";
 
     // ConfigMap-based Constructor
-    EmptyPredictor::EmptyPredictor(const PrognosticsModel& m, LoadEstimator& le, ConfigMap& config)
-        : Predictor(m, le, config) {
+    EmptyPredictor::EmptyPredictor(const PrognosticsModel& m, LoadEstimator& le, TrajectoryService& ts, ConfigMap& config)
+        : Predictor(m, le, ts, config) {
         // Setup based on configuration parameters
         // ...
 
