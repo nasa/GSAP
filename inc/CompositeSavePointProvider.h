@@ -4,6 +4,8 @@
 #ifndef PCOE_COMPOSITESAVEPOINTPROVIDER_H
 #define PCOE_COMPOSITESAVEPOINTPROVIDER_H
 
+#include <algorithm>
+
 #include "ISavePointProvider.h"
 
 namespace PCOE {
