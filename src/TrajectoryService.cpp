@@ -12,12 +12,14 @@
 namespace PCOE {
     static const Log& log = Log::Instance();
     static const std::string MODULE_NAME = "TSVC";
-
-    std::set<TrajectoryService::time_point> TrajectoryService::getSavePts() {
+    
+    const std::set<TrajectoryService::time_point>& TrajectoryService::getSavePts() {
+        changedSinceSavePtsCall = false;
         return savepts;
     }
-
+    
     void TrajectoryService::setWaypoint(TrajectoryService::time_point eta, const Point3D& wp) {
+        changedSinceSavePtsCall = true;
         auto existing = waypoints.find(eta);
         if (existing == waypoints.end()) {
             waypoints.insert(std::make_pair(eta, wp));
@@ -29,11 +31,13 @@ namespace PCOE {
     }
 
     void TrajectoryService::clearWaypoints() {
+        changedSinceSavePtsCall = true;
         waypoints.clear();
         savepts.clear();
     }
 
     void TrajectoryService::deleteWaypoint(TrajectoryService::time_point eta) {
+        changedSinceSavePtsCall = true;
         waypoints.erase(eta);
         savepts.erase(eta);
     }
@@ -44,7 +48,7 @@ namespace PCOE {
         for (auto&& waypoint : waypoints) {
             if (time < waypoint.first) {
                 if (lastWP == nullptr) {
-                    throw std::out_of_range("Cannot exterpolate time before first waypoint");
+                    throw std::out_of_range("Cannot extrapolate time before first waypoint");
                 }
                 // Interpolate
                 double tmp = (time - lastTime).count();
@@ -61,6 +65,6 @@ namespace PCOE {
             lastWP = &waypoint.second;
             lastTime = waypoint.first;
         }
-        throw std::out_of_range("Cannot exterpolate time after last waypoint");
+        throw std::out_of_range("Cannot extrapolate time after last waypoint");
     }
 }

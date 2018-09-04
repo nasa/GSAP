@@ -30,8 +30,8 @@ namespace PCOE {
     }
 
     void EventDrivenTrajectoryService::processMessage(const std::shared_ptr<Message>& message) {
-        unique_lock lock(m, std::chrono::milliseconds(10));
-
+        lock_guard lock(m);
+        
         MessageId id = message->getMessageId();
         switch (id) {
         case MessageId::RouteStart:
