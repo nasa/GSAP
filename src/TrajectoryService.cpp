@@ -13,7 +13,7 @@ namespace PCOE {
     static const Log& log = Log::Instance();
     static const std::string MODULE_NAME = "TSVC";
     
-    const std::set<TrajectoryService::time_point>& TrajectoryService::getSavePts() {
+    std::set<TrajectoryService::time_point> TrajectoryService::getSavePts() {
         changedSinceSavePtsCall = false;
         return savepts;
     }

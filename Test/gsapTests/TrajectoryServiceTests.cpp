@@ -16,7 +16,10 @@ namespace PCOE {
 
     void testTrajectoryService() {
         MessageBus mb;
-        EventDrivenTrajectoryService tc(mb, TEST_SRC);
+        
+        EventDrivenTrajectoryService etc(mb, std::unique_ptr<TrajectoryService>(new TrajectoryService()), TEST_SRC);
+        TrajectoryService& tc = etc.getTrajectoryService();
+        
         Test::Assert::IsTrue(tc.getSavePts().empty());
 
         Test::Assert::AreEqual(tc.getSavePts().size(),

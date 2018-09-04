@@ -32,7 +32,7 @@ namespace PCOE {
         /**
          *  @return A set of savepoints
          */
-        const std::set<time_point>& getSavePts() override;
+        std::set<time_point> getSavePts() override;
         
         /**
          *  Get a point along a trajectory corresponding to a specific timepoint

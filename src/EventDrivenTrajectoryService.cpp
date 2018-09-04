@@ -14,8 +14,9 @@ namespace PCOE {
     static const std::string MODULE_NAME = "TSVC-ED";
 
     EventDrivenTrajectoryService::EventDrivenTrajectoryService(MessageBus& messageBus,
+                                                               std::unique_ptr<TrajectoryService>&& ts,
                                                                std::string source)
-        : bus(messageBus), source(source) {
+        : trajService(std::move(ts)), bus(messageBus), source(source) {
         lock_guard guard(m);
         bus.subscribe(this, this->source, MessageId::RouteStart);
         bus.subscribe(this, this->source, MessageId::RouteEnd);
@@ -40,21 +41,21 @@ namespace PCOE {
             // TODO (JW): Generate some message that can be used to trigger prediction?
             break;
         case MessageId::RouteClear:
-            clearWaypoints();
+            trajService->clearWaypoints();
             break;
         case MessageId::RouteDeleteWP: {
             auto msg = dynamic_cast<U64Message*>(message.get());
             Require(msg, "Unexpected message type for RouteDeleteWP");
 
             auto eta = MessageClock::time_point(MessageClock::duration(msg->getValue()));
-            deleteWaypoint(eta);
+            trajService->deleteWaypoint(eta);
             break;
         }
         case MessageId::RouteSetWP: {
             auto msg = dynamic_cast<WaypointMessage*>(message.get());
             Require(msg, "Unexpected message type for RoutSetWP");
 
-            setWaypoint((*msg).getEta(), (*msg).getPosition());
+            trajService->setWaypoint((*msg).getEta(), (*msg).getPosition());
             break;
         }
         default: { break; }

@@ -18,12 +18,10 @@ namespace PCOE {
      **/
     class CompositeSavePointProvider : public ISavePointProvider {
     public:
-        const std::set<Message::time_point>& getSavePts() override {
+        std::set<Message::time_point> getSavePts() override {
             for (auto&& provider : providers) {
                 std::set<Message::time_point> tmp = provider->getSavePts();
-                for (auto&& elem : tmp) {
-                    savePts.insert(elem);
-                }
+                savePts.insert(tmp.begin(), tmp.end());
             }
             return savePts;
         }

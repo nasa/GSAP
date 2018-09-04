@@ -68,7 +68,7 @@ namespace EventDrivenPredictorTests {
         TestLoadEstimator tle;
         const std::string src = "test";
 
-        EventDrivenTrajectoryService trajService(bus, src);
+        TrajectoryService trajService;
 
         EventDrivenPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
@@ -85,7 +85,7 @@ namespace EventDrivenPredictorTests {
         TrajectoryService ts;
         const std::string src = "test";
 
-        EventDrivenTrajectoryService trajService(bus, src);
+        TrajectoryService trajService;
 
         MessageCounter listener(bus, src, MessageId::TestEvent0);
         EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tpm)), src);
@@ -203,7 +203,7 @@ namespace EventDrivenPredictorTests {
         std::unique_ptr<Observer> observer;
         std::unique_ptr<Predictor> predictor;
         std::vector<std::unique_ptr<IMessageProcessor>> eventListeners;
-        EventDrivenTrajectoryService trajService(bus, src);
+        TrajectoryService trajService;
 
         auto& mfactory = PrognosticsModelFactory::instance();
         model = mfactory.Create("Battery", config);

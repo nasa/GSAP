@@ -21,7 +21,7 @@ namespace PCOE {
      * @author Christopher Teubert
      * @since 1.2
      **/
-    class EventDrivenTrajectoryService : public TrajectoryService, public IMessageProcessor {
+    class EventDrivenTrajectoryService : public IMessageProcessor {
     public:
         /**
          * Constructs a new {@code TrajectoryService}.
@@ -33,12 +33,18 @@ namespace PCOE {
          *                   observer to the message bus.
          * @param source     The name of the source that is being observed.
          */
-        EventDrivenTrajectoryService(MessageBus& messageBus, std::string source);
+        EventDrivenTrajectoryService(MessageBus& messageBus,
+                                     std::unique_ptr<TrajectoryService>&& ts,
+                                     std::string source);
 
         /**
          * Unsubscribes the {@code TrajectoryService} from the message bus.
          */
         ~EventDrivenTrajectoryService();
+        
+        TrajectoryService & getTrajectoryService() {
+            return *trajService.get();
+        }
 
         /**
          *  Process a received trajectory message
@@ -49,6 +55,8 @@ namespace PCOE {
         using mutex = std::timed_mutex;
         using lock_guard = std::lock_guard<mutex>;
         using unique_lock = std::unique_lock<mutex>;
+        
+        std::unique_ptr<TrajectoryService> trajService;
 
         MessageBus& bus;
         std::string source;
