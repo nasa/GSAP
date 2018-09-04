@@ -105,17 +105,6 @@ namespace PCOE {
          */
         virtual event_state_type eventStateEqn(const state_type& x) const = 0;
 
-        /**
-         * Derives the input vector from the given input parameters.
-         *
-         * @param t      The time at the current time step.
-         * @param params The parameters needed by the model to derive the input
-         *               vector.
-         **/
-        virtual input_type inputEqn(const double t,
-                                    const std::vector<double>& params,
-                                    const std::vector<double>& loadEstimate) const = 0;
-
         /** Calculate predicted outputs of the model. Predicted outputs are those
          * that are not measured, but are interested in being predicted for
          * prognostics.

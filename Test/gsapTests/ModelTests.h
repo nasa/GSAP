@@ -31,7 +31,6 @@ void testBatteryInitialization();
 void testBatteryStateEqn();
 void testBatteryOutputEqn();
 void testBatteryThresholdEqn();
-void testBatteryInputEqn();
 void testBatteryPredictedOutputEqn();
 
 #endif // MODELTESTS_H
