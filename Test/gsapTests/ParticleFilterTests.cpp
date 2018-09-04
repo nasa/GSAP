@@ -61,7 +61,6 @@ void ctorWithNonemptyVectors() {
     Assert::AreEqual(0, pf.getParticleCount());
     Assert::AreEqual(3, pf.getProcessNoiseVariance().size());
     Assert::AreEqual(3, pf.getSensorNoiseVariance().size());
-    Assert::AreEqual(3, pf.getOutputMean().size());
 
     std::vector<double> emptySensorNoise;
 
@@ -110,7 +109,6 @@ void PFinitialize() {
 
     pf.initialize(t0, x, u);
 
-    Assert::AreEqual(3, pf.getStateMean().size(), "Number of states is not 3");
     Assert::AreEqual(200, pf.getParticleCount(), "Number of particles is not 200");
 }
 

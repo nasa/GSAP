@@ -75,6 +75,9 @@ namespace TestMatrix {
         context.AddTest("multiply_matrix", TestMatrix::multiply_matrix, "Matrix");
         context.AddTest("multiply_scalar", TestMatrix::multiply_scalar, "Matrix");
         context.AddTest("divide_scalar", TestMatrix::divide_scalar, "Matrix");
+        context.AddTest("modulo_by_scalar", TestMatrix::modulo_by_scalar, "Matrix");
+        context.AddTest("modulo_scalar", TestMatrix::modulo_scalar, "Matrix");
+        context.AddTest("elementwiseOperators_matrix", TestMatrix::elementwiseOperators_matrix, "Matrix");
         // Complex operations
         context.AddTest("adjoint", TestMatrix::adjoint, "Matrix");
         context.AddTest("cofactors", TestMatrix::cofactors, "Matrix");
@@ -958,6 +961,95 @@ namespace TestMatrix {
                                      result2[j][k],
                                      1e-12,
                                      "Unexpected value after division [/=]");
+                }
+            }
+        }
+    }
+    
+    void modulo_by_scalar() {
+        const std::size_t m = 20;
+        const std::size_t n = 10;
+        for (std::size_t i = 0; i < ITERATIONS; ++i) {
+            Matrix m1(m, n);
+            double s = dist(rng);
+            for (std::size_t j = 0; j < m; ++j) {
+                for (std::size_t k = 0; k < n; ++k) {
+                    m1[j][k] = dist(rng);
+                }
+            }
+            Matrix result1 = m1 % s;
+            Matrix result2 = result1;
+            result2 %= s;
+            for (std::size_t j = 0; j < m; ++j) {
+                for (std::size_t k = 0; k < n; ++k) {
+                    double e1 = fmod(m1[j][k], s);
+                    double e2 = fmod(e1, s);
+                    Assert::AreEqual(e1,
+                                     result1[j][k],
+                                     1e-12,
+                                     "Unexpected value after modulo [(mat) % (double)]");
+                    Assert::AreEqual(e2,
+                                     result2[j][k],
+                                     1e-12,
+                                     "Unexpected value after modulo [%=]");
+                }
+            }
+        }
+    }
+    
+    void modulo_scalar() {
+        const std::size_t m = 20;
+        const std::size_t n = 10;
+        for (std::size_t i = 0; i < ITERATIONS; ++i) {
+            Matrix m1(m, n);
+            double s = dist(rng);
+            for (std::size_t j = 0; j < m; ++j) {
+                for (std::size_t k = 0; k < n; ++k) {
+                    m1[j][k] = dist(rng);
+                }
+            }
+            Matrix result1 = s % m1;
+            for (std::size_t j = 0; j < m; ++j) {
+                for (std::size_t k = 0; k < n; ++k) {
+                    double e1 = fmod(s, m1[j][k]);
+                    Assert::AreEqual(e1,
+                                     result1[j][k],
+                                     1e-12,
+                                     "Unexpected value after modulo [(double) % (mat)]");
+                }
+            }
+        }
+    }
+    
+    void elementwiseOperators_matrix() {
+        const std::size_t m = 20;
+        const std::size_t n = 10;
+        for (std::size_t i = 0; i < ITERATIONS; ++i) {
+            Matrix m1(m, n);
+            Matrix m2(m, n);
+            for (std::size_t j = 0; j < m; ++j) {
+                for (std::size_t k = 0; k < n; ++k) {
+                    m1[j][k] = dist(rng);
+                }
+            }
+            for (std::size_t j = 0; j < m; ++j) {
+                for (std::size_t k = 0; k < n; ++k) {
+                    m2[j][k] = dist(rng);
+                }
+            }
+            Matrix result1 = m1.elementwiseMultiply(m2);
+            Matrix result2 = result1;
+            result2 = result2.elementwiseDivide(m2);
+            for (std::size_t j = 0; j < m; ++j) {
+                for (std::size_t k = 0; k < n; ++k) {
+                    Assert::AreEqual(m1[j][k] * m2[j][k],
+                                     result1[j][k],
+                                     1e-12,
+                                     "Unexpected value after elementwise multiplication");
+                    Assert::AreEqual(m1[j][k],
+                                     result2[j][k],
+                                     2e-12,
+                                     "Unexpected value after elementwise division");
                 }
             }
         }

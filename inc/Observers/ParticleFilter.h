@@ -93,15 +93,6 @@ namespace PCOE {
         }
 
         /**
-         * Returns the current mean state estimate of the observer.
-         *
-         * @return The last calculated state estimate.
-         **/
-        inline const Model::state_type& getStateMean() const override {
-            return xEstimated;
-        }
-
-        /**
          * Returns the current state estimate of the observer, including
          * uncertainty.
          *
@@ -109,15 +100,6 @@ namespace PCOE {
          *         observer.
          **/
         std::vector<UData> getStateEstimate() const override;
-
-        /**
-         * Returns the current mean output estimate of the observer.
-         *
-         * @return The last output estimate calcualted by the observer..
-         **/
-        inline const Model::output_type& getOutputMean() const override {
-            return zEstimated;
-        }
 
         /**
          * Gets the number of particles used by the particle filter.
@@ -148,8 +130,6 @@ namespace PCOE {
         std::vector<double> processNoiseVariance;
         std::vector<double> sensorNoiseVariance;
         Matrix R;
-        Model::state_type xEstimated;
-        Model::output_type zEstimated;
         std::mt19937 rng;
 
         void normalize();

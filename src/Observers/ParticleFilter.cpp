@@ -28,9 +28,7 @@ namespace PCOE {
     const std::string MODULE_NAME = "OBS-PF";
 
     ParticleFilter::ParticleFilter(const Model& m) : Observer(m) {
-        xEstimated = model.getStateVector();
         uPrev = model.getInputVector();
-        zEstimated = model.getOutputVector();
     }
 
     ParticleFilter::ParticleFilter(const Model& m,
@@ -115,12 +113,10 @@ namespace PCOE {
 
         // Initialize time, state, inputs
         lastTime = t0;
-        xEstimated = x0;
         uPrev = u0;
 
         // Compute corresponding output estimate
         std::vector<double> zeroNoiseZ(model.getOutputSize(), 0);
-        zEstimated = model.outputEqn(lastTime, xEstimated, uPrev, zeroNoiseZ);
 
         // Initialize particles
         for (size_t p = 0; p < particleCount; p++) {
@@ -166,7 +162,6 @@ namespace PCOE {
 
         normalize();
         resample();
-        xEstimated = weightedMean(particles.X, particles.w);
         uPrev = u;
     }
 

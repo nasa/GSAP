@@ -101,12 +101,6 @@ public:
         return 0;
     }
 
-    input_type inputEqn(const double,
-                        const std::vector<double>&,
-                        const std::vector<double>&) const override {
-        return getInputVector();
-    }
-
     predicted_output_type predictedOutputEqn(const double,
                                              const state_type&,
                                              const input_type&,
@@ -151,10 +145,6 @@ public:
         xPrev = model.stateEqn(t, xPrev, u, zeroNoiseX);
     }
 
-    const Model::state_type& getStateMean() const override {
-        return xPrev;
-    }
-
     std::vector<UData> getStateEstimate() const override {
         std::vector<UData> result;
         for (std::size_t i = 0; i < xPrev.size(); ++i) {
@@ -163,10 +153,6 @@ public:
             result.push_back(ud);
         }
         return result;
-    }
-
-    const Model::output_type& getOutputMean() const override {
-        return zPrev;
     }
 
 private:

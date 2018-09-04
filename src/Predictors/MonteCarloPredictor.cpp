@@ -154,13 +154,12 @@ namespace PCOE {
             for (double t_s = time_s; t_s <= time_s + horizon; t_s += model.getDefaultTimeStep()) {
                 // Get inputs for time t
                 // TODO (JW): Consider per-sample load estimator
-                std::vector<double> loadEstimate = loadEstimator.estimateLoad(t_s);
-                auto u = model.inputEqn(t_s, inputParams, loadEstimate);
+                PrognosticsModel::input_type loadEstimate = static_cast<PrognosticsModel::input_type>(loadEstimator.estimateLoad(t_s));
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
-                if (model.thresholdEqn(t_s, x, u)) {
+                if (model.thresholdEqn(t_s, x, loadEstimate)) {
                     eventToe[sample] = t_s;
                     eventToe.updated(stateTimestamp);
                     break;
@@ -171,7 +170,7 @@ namespace PCOE {
                     // predicted values)
                     currentSavePt_s = (*(++currentSavePt)).time_since_epoch().count();
                     auto z = model.getOutputVector();
-                    auto predictedOutput = model.predictedOutputEqn(t_s, x, u, z);
+                    auto predictedOutput = model.predictedOutputEqn(t_s, x, loadEstimate, z);
                     for (unsigned int p = 0; p < predictedOutput.size(); p++) {
                         sysTrajectories[p][timeIndex][sample] = z[p];
                     }
@@ -191,7 +190,7 @@ namespace PCOE {
                 }
 
                 // Update state for t to t+dt
-                model.stateEqn(t_s, x, u, noise, model.getDefaultTimeStep());
+                model.stateEqn(t_s, x, loadEstimate, noise, model.getDefaultTimeStep());
             }
         }
 
