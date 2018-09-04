@@ -46,6 +46,9 @@ namespace TestMatrix {
     void multiply_matrix();
     void multiply_scalar();
     void divide_scalar();
+    void modulo_by_scalar();
+    void modulo_scalar();
+    void elementwiseOperators_matrix();
 
     // Complex operations
     void adjoint();
