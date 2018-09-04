@@ -41,8 +41,8 @@ namespace PCOE {
          * Unsubscribes the {@code TrajectoryService} from the message bus.
          */
         ~EventDrivenTrajectoryService();
-        
-        TrajectoryService & getTrajectoryService() {
+
+        const TrajectoryService& getTrajectoryService() const {
             return *trajService.get();
         }
 
@@ -55,7 +55,7 @@ namespace PCOE {
         using mutex = std::timed_mutex;
         using lock_guard = std::lock_guard<mutex>;
         using unique_lock = std::unique_lock<mutex>;
-        
+
         std::unique_ptr<TrajectoryService> trajService;
 
         MessageBus& bus;

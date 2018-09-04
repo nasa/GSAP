@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <thread>
 
+#include "Contracts.h"
 #include "EventDrivenTrajectoryService.h"
 #include "Messages/Message.h"
 #include "Messages/WaypointMessage.h"
@@ -13,10 +14,12 @@ namespace PCOE {
     static const Log& log = Log::Instance();
     static const std::string MODULE_NAME = "TSVC-ED";
 
-    EventDrivenTrajectoryService::EventDrivenTrajectoryService(MessageBus& messageBus,
-                                                               std::unique_ptr<TrajectoryService>&& ts,
-                                                               std::string source)
+    EventDrivenTrajectoryService::EventDrivenTrajectoryService(
+        MessageBus& messageBus,
+        std::unique_ptr<TrajectoryService>&& ts,
+        std::string source)
         : trajService(std::move(ts)), bus(messageBus), source(source) {
+        Expect(ts, "Trajectory service pointer is empty");
         lock_guard guard(m);
         bus.subscribe(this, this->source, MessageId::RouteStart);
         bus.subscribe(this, this->source, MessageId::RouteEnd);
@@ -32,7 +35,7 @@ namespace PCOE {
 
     void EventDrivenTrajectoryService::processMessage(const std::shared_ptr<Message>& message) {
         lock_guard lock(m);
-        
+
         MessageId id = message->getMessageId();
         switch (id) {
         case MessageId::RouteStart:
@@ -58,7 +61,8 @@ namespace PCOE {
             trajService->setWaypoint((*msg).getEta(), (*msg).getPosition());
             break;
         }
-        default: { break; }
+        default:
+            break;
         }
     }
 }
