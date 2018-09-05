@@ -39,13 +39,13 @@ namespace PCOE {
                                                           config)),
               observer(bus,
                        ObserverFactory::instance().Create(config.getVector(OBSERVER_KEY)[0],
-                                                          model.get(),
+                                                          *model,
                                                           config),
                        config.getVector(SOURCE_KEY)[0]),
               predictor(bus,
                         PredictorFactory::instance().Create(config.getVector(PREDICTOR_KEY)[0],
-                                                            model.get(),
-                                                            loadEstimator.get(),
+                                                            *model,
+                                                            *loadEstimator,
                                                             config),
                         config.getVector(SOURCE_KEY)[0]) {}
 

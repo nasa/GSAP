@@ -3,6 +3,7 @@ set(HEADERS
     DataStoreTests.h
     DPointsTests.h
     DPointTests.h
+    DynamicArrayTests.h
     Loading/LoadEstimatorTests.h
     MatrixTests.h
     Messages/MessageBusTests.h
@@ -29,6 +30,7 @@ set(SRCS
     DataStoreTests.cpp
     DPointsTests.cpp
     DPointTests.cpp
+    DynamicArrayTests.cpp
     Loading/ConstLoadEstimatorTests.cpp
     Loading/GaussianLoadEstimatorTests.cpp
     Loading/LoadEstimatorTests.cpp

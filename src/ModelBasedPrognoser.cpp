@@ -62,8 +62,7 @@ namespace PCOE {
         // Create Observer
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Observer");
         ObserverFactory& pObserverFactory = ObserverFactory::instance();
-        observer =
-            pObserverFactory.Create(configMap.getVector(OBSERVER_KEY)[0], model.get(), configMap);
+        observer = pObserverFactory.Create(configMap.getVector(OBSERVER_KEY)[0], *model, configMap);
 
         // Create Load Estimator
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Load Estimator");
@@ -80,8 +79,8 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
         PredictorFactory& pPredictorFactory = PredictorFactory::instance();
         predictor = pPredictorFactory.Create(configMap.getVector(PREDICTOR_KEY)[0],
-                                             model.get(),
-                                             loadEstimator.get(),
+                                             *model,
+                                             *loadEstimator,
                                              configMap);
 
         // Set model stepsize
@@ -93,8 +92,8 @@ namespace PCOE {
         }
 
         // Set configuration parameters
-        unsigned int numSamples = static_cast<unsigned int>(configMap.getUInt64(NUMSAMPLES_KEY));
-        unsigned int horizon = static_cast<unsigned int>(configMap.getUInt64(HORIZON_KEY));
+        // unsigned int numSamples = static_cast<unsigned int>(configMap.getUInt64(NUMSAMPLES_KEY));
+        // unsigned int horizon = static_cast<unsigned int>(configMap.getUInt64(HORIZON_KEY));
 
         // @todo: Refactor for event-driven architecture
         //        // Create progdata

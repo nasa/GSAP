@@ -6,8 +6,8 @@
 
 #include "ParticleFilterTests.h"
 #include "BatteryModel.h"
-#include "Exceptions.h"
 #include "ConfigMap.h"
+#include "Exceptions.h"
 #include "Model.h"
 #include "Observers/ParticleFilter.h"
 #include "Tank3.h"
@@ -29,7 +29,7 @@ void ctor() {
     std::vector<double> processNoise;
     std::vector<double> sensorNoise;
     try {
-        ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
+        ParticleFilter pf = ParticleFilter(test, N, processNoise, sensorNoise);
         Assert::Fail("Constructor did not catch empty processNoise/sensorNoise vectors");
     }
     catch (AssertException&) {
@@ -56,7 +56,7 @@ void ctorWithNonemptyVectors() {
     sensorNoise.push_back(1.0);
     sensorNoise.push_back(2.0);
 
-    ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
+    ParticleFilter pf = ParticleFilter(test, N, processNoise, sensorNoise);
 
     Assert::AreEqual(0, pf.getParticleCount());
     Assert::AreEqual(3, pf.getProcessNoiseVariance().size());
@@ -66,7 +66,7 @@ void ctorWithNonemptyVectors() {
     std::vector<double> emptySensorNoise;
 
     try {
-        ParticleFilter pf2 = ParticleFilter(&test, N, processNoise, emptySensorNoise);
+        ParticleFilter pf2 = ParticleFilter(test, N, processNoise, emptySensorNoise);
         Assert::Fail("Constructor did not catch empty sensorNoise vector");
     }
     catch (AssertException&) {
@@ -82,7 +82,7 @@ void ConfigMapCtor() {
 
     BatteryModel battery;
 
-    ParticleFilter pf = ParticleFilter(&battery, theMap);
+    ParticleFilter pf = ParticleFilter(battery, theMap);
 }
 
 void PFinitialize() {
@@ -105,7 +105,7 @@ void PFinitialize() {
     sensorNoise.push_back(1.0);
     sensorNoise.push_back(2.0);
 
-    ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
+    ParticleFilter pf = ParticleFilter(test, N, processNoise, sensorNoise);
     const double t0 = 0;
 
     pf.initialize(t0, x, u);
@@ -144,7 +144,7 @@ void step() {
     sensorNoise.push_back(1.0);
     sensorNoise.push_back(2.0);
 
-    ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
+    ParticleFilter pf = ParticleFilter(test, N, processNoise, sensorNoise);
     const double t0 = 0;
     const double t1 = 1;
 
@@ -191,7 +191,7 @@ void getStateEstimate() {
     sensorNoise.push_back(1.0);
     sensorNoise.push_back(2.0);
 
-    ParticleFilter pf = ParticleFilter(&test, N, processNoise, sensorNoise);
+    ParticleFilter pf = ParticleFilter(test, N, processNoise, sensorNoise);
     std::vector<UData> stateEstimate = pf.getStateEstimate();
     Assert::AreEqual(3, stateEstimate.size());
 }

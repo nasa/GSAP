@@ -1,24 +1,9 @@
-/**  MatrixTests - Header
- *   @file      Unit tests for Matrix class
- *   @ingroup   GPIC++
- *
- *   @brief     Unit tests for Matrix classes
- *
- *   @author    Matthew Daigle
- *   @version   1.1.0
- *
- *   @pre       N/A
- *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: April 7, 2016
- *
- *   @copyright Copyright (c) 2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
-
+// Copyright (c) 2016-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #ifndef MATRIXTESTS_H
 #define MATRIXTESTS_H
+#include "Test.h"
 
 namespace TestMatrix {
     // Matrix creation
@@ -53,6 +38,7 @@ namespace TestMatrix {
     void resize();
 
     // Arithmetic operations
+    void negate_matrix();
     void add_matrix();
     void add_scalar();
     void subtract_matrix();
@@ -79,6 +65,8 @@ namespace TestMatrix {
     void weightedcovariance();
     // Stream insertion
     void streamInsertionOperator();
+
+    void registerTests(PCOE::Test::TestContext& context);
 }
 
-#endif // MATRIXTESTS_H
+#endif
