@@ -126,9 +126,9 @@ namespace PCOE {
             break;
         }
         default:
-            std::string what = "Address family " + std::to_string(af) + " not supported.";
-            what += " Please use the sockaddr constructor for families other than AF_INET and "
-                    "AF_INET6.";
+            std::string what = "Address family " + std::to_string(af) +
+                               " not supported. Please use the sockaddr constructor for families "
+                               "other than AF_INET and AF_INET6.";
             throw std::invalid_argument(what);
         }
     }

@@ -27,11 +27,11 @@ void testUDPCtor() {
     socket6 = std::move(socket5);
 
     try {
-        UDPSocket socket8(0, static_cast<unsigned short>(55559));
+        UDPSocket socket8(AF_INET6, static_cast<unsigned short>(55559));
     }
-    catch (std::invalid_argument& ec) {
+    catch (std::invalid_argument& ex) {
         std::stringstream ecValueAsString;
-        ecValueAsString << ec.what();
+        ecValueAsString << ex.what();
         int ecValueAsInt;
         ecValueAsString >> ecValueAsInt;
         if (ecValueAsInt == EAFNOSUPPORT) {
@@ -45,7 +45,12 @@ void testUDPCtor() {
         UDPSocket socket9 = UDPSocket(AF_UNIX, 55560);
         Assert::Fail("Socket created with unsupported address family.");
     }
+    catch (std::invalid_argument&) {
+        // Note (JW): This is the correct exception for this call, but for some
+        // reason it doesn't get triggered on Linux.
+    }
     catch (std::system_error&) {
+        // Note (JW): This exception is thrown on Linux (and macOS?) instead.
     }
 
     try {
@@ -77,14 +82,6 @@ void testUDPSendandReceive() {
 
     Assert::AreEqual(expectedByteSize, actual, "Byte sizes are not the same.");
     Assert::IsTrue(strcmp(buffer, buffer2) == 0, "Buffers are not the same.");
-
-    unsigned short port = 55557;
-    sockaddr_in si = {};
-    si.sin_family = AF_INET;
-    si.sin_port = htons(port);
-    UDPSocket socket3 = UDPSocket((struct sockaddr*)&si, sizeof(si));
-    socket1.Connect((struct sockaddr*)&si, sizeof(si));
-    // socket1.Send(buffer, sizeof(buffer)/sizeof(buffer[0]), (struct sockaddr*)&si, sizeof(si));
 }
 
 void testExceptionHandling() {
@@ -108,9 +105,9 @@ void testExceptionHandling() {
             socket3.Close();
         }
     }
-    catch (std::invalid_argument& ec) {
+    catch (std::invalid_argument& ex) {
         std::stringstream ecValueAsString;
-        ecValueAsString << ec.what();
+        ecValueAsString << ex.what();
         int ecValueAsInt;
         ecValueAsString >> ecValueAsInt;
         if (ecValueAsInt == EAFNOSUPPORT) {
@@ -139,15 +136,16 @@ void testExceptionHandling() {
     }
 
     UDPSocket socketToReceive = UDPSocket(AF_INET, 60000);
-    char buffer[31] = "Hello, this is a test message.";
+    char buffer[] = "Hello, this is a test message.";
+    const std::size_t BUF_LEN = sizeof(buffer);
     socket1.Send(buffer, sizeof(buffer) / sizeof(buffer[0]), "127.0.0.1", 60000);
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     char buffer2[128];
     UDPSocket::size_type result = socketToReceive.Available();
 #if !defined(_WIN32) && !defined(__APPLE__)
-    Assert::AreEqual(31, result, "Bytes available to read is not same as bytes sent.");
+    Assert::AreEqual(BUF_LEN, result, "Bytes available to read is not same as bytes sent.");
 #else
-    Assert::AreEqual(47, result, "Bytes available to read is not same as bytes sent.");
+    Assert::AreEqual(BUF_LEN, result, "Bytes available to read is not same as bytes sent.");
 #endif
     socketToReceive.Receive(buffer2, sizeof(buffer) / sizeof(buffer[0]));
     result = socketToReceive.Available();
@@ -176,8 +174,12 @@ void testExceptionHandling() {
     catch (std::system_error&) {
     }
 
+    // Note (JW): Google DNS server. Convenient address because it is the same
+    // in either byte order.
+    struct in_addr inaddr = {0x08080808};
     port = 55556;
     addr.sin_family = AF_INET;
+    addr.sin_addr = inaddr;
     addr.sin_port = htons(port);
     socket1 = UDPSocket(AF_INET);
     socket1.Connect((struct sockaddr*)&addr, sizeof(addr));

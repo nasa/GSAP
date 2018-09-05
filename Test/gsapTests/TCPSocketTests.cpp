@@ -101,7 +101,7 @@ void testTCPSendAndReceive() {
     Assert::AreEqual(0, strcmp(buffer2, socketAccepted2Buffer));
 
     struct sockaddr_in sa = {};
-    sa.sin_port           = htons(8080);
+    sa.sin_port = htons(8080);
     inet_pton(AF_INET, "127.0.0.1", &sa.sin_addr);
     sa.sin_family = AF_INET;
 
@@ -186,7 +186,7 @@ void testTCPReceiveTimeout() {
     Assert::AreEqual(testSocket.ReceiveTimeout().tv_sec, 100);
 
     TCPSocket::timeout_type value = {};
-    value.tv_sec                  = 200;
+    value.tv_sec = 200;
     testSocket.ReceiveTimeout(value);
     Assert::AreEqual(200, testSocket.ReceiveTimeout().tv_sec);
 #endif
@@ -221,7 +221,7 @@ void testTCPSendTimeout() {
     Assert::AreEqual(100, testSocket.SendTimeout().tv_sec);
 
     TCPSocket::timeout_type value = {};
-    value.tv_sec                  = 200;
+    value.tv_sec = 200;
     testSocket.SendTimeout(value);
     Assert::AreEqual(200, testSocket.SendTimeout().tv_sec);
 #endif
@@ -241,7 +241,7 @@ void testTCPExceptions() {
         testServer2.Listen();
         Assert::Fail("Server attempted to listen for connections after closing.");
     }
-    catch (std::system_error ec) {
+    catch (std::system_error& ex) {
     }
 
     // Server's Accept() exception tests
@@ -250,7 +250,7 @@ void testTCPExceptions() {
         testServer2.Accept();
         Assert::Fail("Server tried accepting a connection when it's not listening.");
     }
-    catch (std::system_error ec) {
+    catch (std::system_error& ex) {
     }
 
     // Server's CreateServer() exception tests
@@ -261,7 +261,7 @@ void testTCPExceptions() {
         TCPServer failServer(AF_PACKET, "0.0.0.0", 8080);
         Assert::Fail("Created server with unsupported address family.");
     }
-    catch (std::system_error ec) {
+    catch (std::system_error& ex) {
     }
     catch (std::invalid_argument) {
     }
@@ -271,7 +271,7 @@ void testTCPExceptions() {
         TCPServer failServer(1024, "0:0:0:0", 55556);
         Assert::Fail("Created server with unsupported address family.");
     }
-    catch (std::system_error ec) {
+    catch (std::system_error& ex) {
     }
     catch (std::invalid_argument) {
     }
@@ -280,14 +280,7 @@ void testTCPExceptions() {
         TCPServer failServer(AF_INET, "bad hostname", 55555);
         Assert::Fail("Created server with bad hostname.");
     }
-    catch (std::system_error ec) {
-    }
-
-    try {
-        TCPServer failServer(AF_INET, "127.0.0.1", 80);
-        Assert::Fail("Created server with bad port.");
-    }
-    catch (std::system_error ec) {
+    catch (std::system_error& ex) {
     }
 
     try {
@@ -345,7 +338,7 @@ void testTCPExceptions() {
         testSocket5.Receive(recvBuffer, strlen(messageFromServer));
         Assert::Fail("Socket received message after closing.");
     }
-    catch (std::system_error ec) {
+    catch (std::system_error& ex) {
         testReceiveExceptionServer.Close();
     }
 #endif
@@ -369,7 +362,7 @@ void testTCPExceptions() {
     testSocket4.Close();
     TCPSocket testBadAddress(AF_INET);
     struct sockaddr_in sa = {};
-    sa.sin_port           = htons(8080);
+    sa.sin_port = htons(8080);
     inet_pton(AF_INET, "255.255.255.255", &sa.sin_addr);
     sa.sin_family = AF_INET;
     try {
@@ -431,7 +424,7 @@ void testTCPExceptions() {
         TCPSocket::timeout_type val = 100;
 #else
         TCPSocket::timeout_type val{};
-        val.tv_sec                = 100;
+        val.tv_sec = 100;
 #endif
 
         testSocket4.ReceiveTimeout(val);
@@ -474,7 +467,7 @@ void testTCPExceptions() {
         TCPSocket::timeout_type t = 100;
 #else
         TCPSocket::timeout_type t = {};
-        t.tv_sec                  = 100;
+        t.tv_sec = 100;
 #endif
         testSocket4.SendTimeout(t);
         Assert::Fail("Invalid socket set send timeout value.");
