@@ -62,9 +62,10 @@ void testMonteCarloBatteryPredict() {
     auto x = model->initialize(u0, z0);
 
     TestLoadEstimator le(configMap);
+    TrajectoryService ts;
 
     // Create MonteCarloPredictor for battery
-    MonteCarloPredictor MCP(*model, le, configMap);
+    MonteCarloPredictor MCP(*model, le, ts, configMap);
 
     // Set up inputs for predict function
     double t = 0;
@@ -118,7 +119,8 @@ void testMonteCarloBatteryConfig() {
     BatteryModel battery;
 
     ConstLoadEstimator le(configMap);
+    TrajectoryService ts;
 
     // Create MonteCarloPredictor for battery
-    MonteCarloPredictor MCP(battery, le, configMap);
+    MonteCarloPredictor MCP(battery, le, ts, configMap);
 }

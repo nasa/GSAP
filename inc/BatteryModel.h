@@ -172,17 +172,6 @@ public:
      **/
     bool thresholdEqn(double t, const state_type& x, const input_type& u) const override;
 
-    /**
-     * Derives the input vector from the given input parameters.
-     *
-     * @param t      The time at the current time step.
-     * @param params The parameters needed by the model to derive the input
-     *               vector.
-     **/
-    input_type inputEqn(double t,
-                        const std::vector<double>& params,
-                        const std::vector<double>& loadEstimate) const override;
-
     /** Calculate predicted outputs of the model. Predicted outputs are those
      * that are not measured, but are interested in being predicted for
      * prognostics.

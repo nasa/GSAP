@@ -25,8 +25,7 @@ using namespace PCOE::Test;
 namespace EventDrivenPredictorTests {
     class PowerConverter final : public IMessageProcessor {
     public:
-        PowerConverter(MessageBus& bus, const ConfigMap& config, const std::string& source)
-            : bus(bus) {
+        PowerConverter(MessageBus& bus, const ConfigMap&, const std::string& source) : bus(bus) {
             bus.subscribe(this, source, MessageId::Volts);
             bus.subscribe(this, source, MessageId::Watts);
         }
@@ -69,24 +68,30 @@ namespace EventDrivenPredictorTests {
         TestLoadEstimator tle;
         const std::string src = "test";
 
+        TrajectoryService trajService;
+
         EventDrivenPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
-                                        new TestPredictor(tpm, tle, ConfigMap())),
+                                        new TestPredictor(tpm, tle, trajService, ConfigMap())),
                                     src);
         // Constructed without exception
     }
 
     void processMessage() {
         MessageBus bus;
+
         TestPrognosticsModel tpm;
         TestLoadEstimator tle;
+        TrajectoryService ts;
         const std::string src = "test";
+
+        TrajectoryService trajService;
 
         MessageCounter listener(bus, src, MessageId::TestEvent0);
         EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tpm)), src);
         EventDrivenPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
-                                        new TestPredictor(tpm, tle, ConfigMap())),
+                                        new TestPredictor(tpm, tle, trajService, ConfigMap())),
                                     src);
         Assert::AreEqual(0,
                          listener.getCount(),
@@ -198,6 +203,7 @@ namespace EventDrivenPredictorTests {
         std::unique_ptr<Observer> observer;
         std::unique_ptr<Predictor> predictor;
         std::vector<std::unique_ptr<IMessageProcessor>> eventListeners;
+        TrajectoryService trajService;
 
         auto& mfactory = PrognosticsModelFactory::instance();
         model = mfactory.Create("Battery", config);
@@ -211,7 +217,7 @@ namespace EventDrivenPredictorTests {
         observer = ofactory.Create("UKF", *model, config);
 
         auto& pfactory = PredictorFactory::instance();
-        predictor = pfactory.Create("MC", *model, *loadEstimator, config);
+        predictor = pfactory.Create("MC", *model, *loadEstimator, trajService, config);
 
         auto edObs = observer ? std::unique_ptr<EventDrivenObserver>(
                                     new EventDrivenObserver(bus, std::move(observer), src))

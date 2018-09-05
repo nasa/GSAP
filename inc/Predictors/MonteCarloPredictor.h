@@ -15,6 +15,7 @@ namespace PCOE {
      *
      * @author Matthew Daigle
      * @author Jason Watkins
+     * @author Chris Teubert
      * @since 1.0
      **/
     class MonteCarloPredictor final : public Predictor {
@@ -24,9 +25,13 @@ namespace PCOE {
          *
          * @param m      The model used by the predictor.
          * @param le     The load estimator used by the predictor.
+         * @param ts     The trajectory service used by the predictor.
          * @param config Configuration map specifying predictor parameters.
          **/
-        MonteCarloPredictor(const PrognosticsModel& m, LoadEstimator& le, const ConfigMap& config);
+        MonteCarloPredictor(const PrognosticsModel& m,
+                            LoadEstimator& le,
+                            TrajectoryService& ts,
+                            const ConfigMap& config);
 
         /**
          * Predict future events and values of system variables

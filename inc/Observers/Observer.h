@@ -61,14 +61,6 @@ namespace PCOE {
         virtual void step(double t, const Model::input_type& u, const Model::output_type& z) = 0;
 
         /**
-         * When overriden in a derived class, returns the current mean state
-         * estimate of the observer.
-         *
-         * @return The last calculated state estimate.
-         **/
-        virtual const Model::state_type& getStateMean() const = 0;
-
-        /**
          * When overriden in a derived class, returns the current state estimate
          * of the observer, including uncertainty.
          *
@@ -76,14 +68,6 @@ namespace PCOE {
          *         observer.
          **/
         virtual std::vector<UData> getStateEstimate() const = 0;
-
-        /**
-         * When overriden in a derived class, returns the current mean output
-         * estimate of the observer.
-         *
-         * @return The last output estimate calcualted by the observer..
-         **/
-        virtual const Model::output_type& getOutputMean() const = 0;
 
         /**
          * Gets the last input used by the observer.

@@ -82,15 +82,6 @@ class EmptyPrognosticsModel final : public PCOE::PrognosticsModel {
     **/
     bool thresholdEqn(const double t, const Model::state_type & x, const Model::input_type & u);
     
-    /** @brief      Execute input equation.
-    *               Determines what input (u) should be at the given time for the given input parameters.
-    *   @param      t Time
-    *   @param      inputParameters Vector of input parameters, which are values that specify how to define u for the given time.
-    *   @param      u Input vector. Gets overwritten.
-    **/
-    input_type inputEqn(double t,
-                        const std::vector<double>& params,
-                        const std::vector<double>& loadEstimate) const override;
     
     /** Calculate predicted outputs of the model. Predicted outputs are those
      * that are not measured, but are interested in being predicted for

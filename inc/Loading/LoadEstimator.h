@@ -50,13 +50,6 @@ namespace PCOE {
         };
 
         /**
-         *  Get the load-estimator specified save points
-         **/
-        virtual std::vector<double> getSavePts() {
-            return std::vector<double>();
-        };
-
-        /**
          * When overriden in a derived class, estimates the load at a given time
          * and sample.
          *

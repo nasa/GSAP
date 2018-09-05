@@ -101,12 +101,6 @@ public:
         return 0;
     }
 
-    input_type inputEqn(const double,
-                        const std::vector<double>&,
-                        const std::vector<double>&) const override {
-        return getInputVector();
-    }
-
     predicted_output_type predictedOutputEqn(const double,
                                              const state_type&,
                                              const input_type&,
@@ -130,10 +124,6 @@ public:
         return loading;
     }
 
-    std::vector<double> getSavePts() override {
-        return std::vector<double>({0, 10, 50, 100});
-    }
-
 private:
     std::vector<double> loading;
 };
@@ -155,10 +145,6 @@ public:
         xPrev = model.stateEqn(t, xPrev, u, zeroNoiseX);
     }
 
-    const Model::state_type& getStateMean() const override {
-        return xPrev;
-    }
-
     std::vector<UData> getStateEstimate() const override {
         std::vector<UData> result;
         for (std::size_t i = 0; i < xPrev.size(); ++i) {
@@ -169,10 +155,6 @@ public:
         return result;
     }
 
-    const Model::output_type& getOutputMean() const override {
-        return zPrev;
-    }
-
 private:
     Model::state_type xPrev;
     Model::output_type zPrev;
@@ -180,8 +162,11 @@ private:
 
 class TestPredictor final : public Predictor {
 public:
-    TestPredictor(const PrognosticsModel& m, LoadEstimator& le, const ConfigMap& config)
-        : Predictor(m, le, config) {}
+    TestPredictor(const PrognosticsModel& m,
+                  LoadEstimator& le,
+                  TrajectoryService& trajService,
+                  const ConfigMap& config)
+        : Predictor(m, le, trajService, config) {}
 
     Prediction predict(double, const std::vector<UData>& state) override {
         ProgEvent event(MessageId::TestEvent0, {UData()}, {UData()});

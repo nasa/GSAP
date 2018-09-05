@@ -26,6 +26,7 @@
 #include "TCPSocketTests.h"
 #include "Test.h"
 #include "ThreadTests.h"
+#include "TrajectoryServiceTests.h"
 #include "UDPSocketTests.h"
 #include "UDataTests.h"
 
@@ -33,6 +34,9 @@ using namespace PCOE::Test;
 
 int main() {
     TestContext context;
+    // Trajectory Service
+    context.AddTest("Trajectory Service", PCOE::testTrajectoryService, "Trajectory Service");
+    
     // Config Map Tests
     context.AddTest("Load Arguments", configMapLoadArgs, "Config Map");
     context.AddTest("Use", configMapUse, "Config Map");
@@ -94,7 +98,6 @@ int main() {
     context.AddTest("Battery State Eqn", testBatteryStateEqn, "Model Battery");
     context.AddTest("Battery Output Eqn", testBatteryOutputEqn, "Model Battery");
     context.AddTest("Battery Threshold Eqn", testBatteryThresholdEqn, "Model Battery");
-    context.AddTest("Battery Input Eqn", testBatteryInputEqn, "Model Battery");
     context.AddTest("Battery Predicted Output Eqn", testBatteryPredictedOutputEqn, "Model Battery");
 
     // Observer Tests

@@ -48,7 +48,6 @@ namespace PCOE {
         }
 
         // Perform state estimation
-        // Update xEstimated here
         // ...
     }
 

@@ -423,15 +423,6 @@ bool BatteryModel::thresholdEqn(double t, const state_type& x, const input_type&
     return z[1] <= parameters.VEOD;
 }
 
-// Battery Input Equation
-Model::input_type BatteryModel::inputEqn(double,
-                                         const std::vector<double>& params,
-                                         const std::vector<double>&) const {
-    Expect(params.size() == getInputSize(),
-           "Input parameter size does not match input vector size.");
-    return input_type(params);
-}
-
 // Battery Predicted Outputs Equation
 PrognosticsModel::predicted_output_type BatteryModel::predictedOutputEqn(double,
                                                                          const state_type&,
