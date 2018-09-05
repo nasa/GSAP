@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "ConfigMap.h"
+#include "EventDrivenTrajectoryService.h"
 #include "Loading/LoadEstimatorFactory.h"
 #include "Messages/MessageBus.h"
 #include "Observers/EventDrivenObserver.h"
@@ -32,27 +33,32 @@ namespace PCOE {
         // TODO (JW): Figure out how to make this sane
         EventDrivenPrognoser(MessageBus& bus, const ConfigMap& config)
             : bus(bus),
-              model(PrognosticsModelFactory::instance().Create(config.getVector(MODEL_KEY)[0],
-                                                               config)),
+              model(
+                  PrognosticsModelFactory::instance().Create(config.getString(MODEL_KEY), config)),
               loadEstimator(
-                  LoadEstimatorFactory::instance().Create(config.getVector(LOAD_EST_KEY)[0],
-                                                          config)),
+                  LoadEstimatorFactory::instance().Create(config.getString(LOAD_EST_KEY), config)),
+              trajectoryService(bus,
+                                std::unique_ptr<TrajectoryService>(new TrajectoryService()),
+                                config.getString(SOURCE_KEY)),
               observer(bus,
-                       ObserverFactory::instance().Create(config.getVector(OBSERVER_KEY)[0],
+                       ObserverFactory::instance().Create(config.getString(OBSERVER_KEY),
                                                           *model,
                                                           config),
-                       config.getVector(SOURCE_KEY)[0]),
+                       config.getString(SOURCE_KEY)),
               predictor(bus,
-                        PredictorFactory::instance().Create(config.getVector(PREDICTOR_KEY)[0],
-                                                            *model,
-                                                            *loadEstimator,
-                                                            config),
-                        config.getVector(SOURCE_KEY)[0]) {}
+                        PredictorFactory::instance()
+                            .Create(config.getString(PREDICTOR_KEY),
+                                    *model,
+                                    *loadEstimator,
+                                    trajectoryService.getTrajectoryService(),
+                                    config),
+                        config.getString(SOURCE_KEY)) {}
 
     private:
         MessageBus& bus;
         std::unique_ptr<PrognosticsModel> model;
         std::unique_ptr<LoadEstimator> loadEstimator;
+        EventDrivenTrajectoryService trajectoryService;
         EventDrivenObserver observer;
         EventDrivenPredictor predictor;
     };
