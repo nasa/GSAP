@@ -145,11 +145,14 @@ namespace PCOE {
 
             // 3. Simulate until time limit reached
             std::vector<double> inputParams(model.getInputParameterCount());
-            unsigned int timeIndex = 0;
             eventToe[sample] = INFINITY;
 
+            std::vector<double>::size_type savePtIndex = 0;
+            double timeOfCurrentSavePt = std::numeric_limits<double>::infinity();
             auto currentSavePt = savePts.begin();
-            auto currentSavePt_s = (*currentSavePt).time_since_epoch().count();
+            if (currentSavePt != savePts.end()) {
+                timeOfCurrentSavePt = (*currentSavePt).time_since_epoch().count();
+            }
 
             for (double t_s = time_s; t_s <= time_s + horizon; t_s += model.getDefaultTimeStep()) {
                 // Get inputs for time t
@@ -166,21 +169,24 @@ namespace PCOE {
                     break;
                 }
 
-                if (timeIndex < savePts.size() && t_s > currentSavePt_s) {
+                if (savePtIndex < savePts.size() && t_s > timeOfCurrentSavePt) {
                     // Write to system trajectory (model variables for which we are interested in
                     // predicted values)
-                    currentSavePt_s = (*(++currentSavePt)).time_since_epoch().count();
+                    ++currentSavePt;
+                    if (currentSavePt != savePts.end()) {
+                        timeOfCurrentSavePt = (*currentSavePt).time_since_epoch().count();
+                    }
                     auto z = model.getOutputVector();
                     auto predictedOutput = model.predictedOutputEqn(t_s, x, loadEstimate, z);
                     for (unsigned int p = 0; p < predictedOutput.size(); p++) {
-                        sysTrajectories[p][timeIndex][sample] = z[p];
+                        sysTrajectories[p][savePtIndex][sample] = z[p];
                     }
 
                     // Write to eventState property
-                    eventState[timeIndex][sample] = model.eventStateEqn(x);
+                    eventState[savePtIndex][sample] = model.eventStateEqn(x);
 
                     // Update time index
-                    timeIndex++;
+                    savePtIndex++;
                 }
 
                 // Sample process noise - for now, assuming independent
