@@ -144,8 +144,11 @@ void testExceptionHandling() {
     UDPSocket::size_type result = socketToReceive.Available();
 #if !defined(_WIN32) && !defined(__APPLE__)
     Assert::AreEqual(BUF_LEN, result, "Bytes available to read is not same as bytes sent.");
-#else
+#elif defined(_WIN32)
     Assert::AreEqual(BUF_LEN, result, "Bytes available to read is not same as bytes sent.");
+#else
+    std::cout << "Bytes available: " << result << std::endl;
+    Assert::AreEqual(47, result, "Bytes available to read is not same as bytes sent.");
 #endif
     socketToReceive.Receive(buffer2, sizeof(buffer) / sizeof(buffer[0]));
     result = socketToReceive.Available();
