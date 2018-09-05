@@ -34,7 +34,7 @@ namespace PCOE {
          *  Add a new save point provider to the composite save point provider
          *  @param provider The save point provider to add
          */
-        void add(ISavePointProvider* provider) {
+        void add(const ISavePointProvider* provider) {
             providers.push_back(provider);
         }
 
@@ -45,7 +45,7 @@ namespace PCOE {
         }
 
     private:
-        std::vector<ISavePointProvider*> providers;
+        std::vector<const ISavePointProvider*> providers;
         mutable std::set<Message::time_point> savePts;
     };
 }

@@ -56,7 +56,7 @@ namespace PCOE {
          **/
         Predictor(const PrognosticsModel& m,
                   LoadEstimator& le,
-                  TrajectoryService& ts,
+                  const TrajectoryService& ts,
                   const ConfigMap& config)
             : loadEstimator(le), model(m), trajService(ts) {
             // Note (JW):
@@ -102,7 +102,7 @@ namespace PCOE {
         LoadEstimator& loadEstimator;
         const PrognosticsModel& model;
         CompositeSavePointProvider savePointProvider;
-        TrajectoryService& trajService;
+        const TrajectoryService& trajService;
 
     private:
         std::vector<std::string> predictedOutputs;

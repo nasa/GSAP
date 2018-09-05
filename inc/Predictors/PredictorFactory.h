@@ -17,9 +17,12 @@ namespace PCOE {
      * @author Jason Watkins
      * @since 1.0
      **/
-    class PredictorFactory
-        : public Factory<Predictor, const PrognosticsModel&, LoadEstimator&, TrajectoryService&, const ConfigMap&>,
-          public Singleton<PredictorFactory> {
+    class PredictorFactory : public Factory<Predictor,
+                                            const PrognosticsModel&,
+                                            LoadEstimator&,
+                                            const TrajectoryService&,
+                                            const ConfigMap&>,
+                             public Singleton<PredictorFactory> {
         friend class Singleton<PredictorFactory>;
 
     private:
