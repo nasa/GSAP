@@ -40,7 +40,7 @@ namespace PCOE {
          * @param m A valid pointer to a model on which state estimation will be
          *          performed. The UKF does not take ownership of the model.
          **/
-        explicit ExtendedKalmanFilter(const Model* m);
+        explicit ExtendedKalmanFilter(const Model& m);
         
     public:
         /**
@@ -52,7 +52,7 @@ namespace PCOE {
          * @param Q Process noise covariance matrix
          * @param R Sensor noise covariance matrix
          **/
-        ExtendedKalmanFilter(const Model* m, const Matrix Q, const Matrix R);
+        ExtendedKalmanFilter(const Model& m, const Matrix Q, const Matrix R);
         
         /**
          * Constructs a new @{code UnscentedKalmanFilter} instance with the
@@ -64,7 +64,7 @@ namespace PCOE {
          *               the model.
          * @param config A configuration from which to read covariance matrices.
          **/
-        ExtendedKalmanFilter(const Model* m, const ConfigMap& config);
+        ExtendedKalmanFilter(const Model& m, const ConfigMap& config);
         
         /**
          * Sets the initial model state and computes initial sigma points.
@@ -89,45 +89,13 @@ namespace PCOE {
         
         /**
          *
-         **
-         ***
-         **** What does this do?
-         ***
-         **
-         *
-         * Returns the current mean state estimate of the observer.
-         *
-         * @return The last calculated state estimate.
-         **/
-        inline const Model::state_type& getStateMean() const override {
-            return xEstimated;
-        }
-        
-        /**
-         *
          * Returns the current state estimate of the observer, including
          * uncertainty.
          *
          * @return The last calculated state estimate calcualted by the
          *         observer.
          **/
-        std::vector<UData> getStateEstimate() const;
-        
-        /**
-         *
-         **
-         ***
-         **** what
-         ***
-         **
-         *
-         * Returns the current mean output estimate of the observer.
-         *
-         * @return The last output estimate calcualted by the observer..
-         **/
-        inline const Model::output_type& getOutputMean() const override {
-            return zEstimated;
-        }
+        std::vector<UData> getStateEstimate() const override;
         
         /**
          * Gets the state covariance matrix.
