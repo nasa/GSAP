@@ -25,6 +25,12 @@ namespace PCOE {
     class IMessagePublisher {
     public:
         /**
+         * Virtual destructor to allow for deletion of objects via their
+         * interface pointers.
+         **/
+        virtual ~IMessagePublisher() = default;
+
+        /**
          * Registers the given consumer to receive messages with the given Id.
          *
          * @param consumer A pointer to a message consumer. The pointer is a
