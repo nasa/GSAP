@@ -5,7 +5,6 @@ platform:
 
 configuration:
   - Release
-  - Debug
 
 before_build:
     - cmake -G "Visual Studio 15 2017 Win64" .
