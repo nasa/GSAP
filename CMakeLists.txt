@@ -58,7 +58,6 @@ set (HEADERS
     inc/DataPoints.h
     inc/DataStore.h
     inc/Datum.h
-    inc/ExtendedKalmanFilter.h
     inc/EventDrivenPrognoser.h
     inc/Exceptions.h
     inc/Factory.h
@@ -79,6 +78,7 @@ set (HEADERS
     inc/Messages/UDataMessage.h
     inc/Model.h
     inc/Observers/EventDrivenObserver.h
+    inc/Observers/ExtendedKalmanFilter.h
     inc/Observers/Observer.h
     inc/Observers/ObserverFactory.h
     inc/Observers/ParticleFilter.h

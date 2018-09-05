@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#include "ExtendedKalmanFilter.h"
+//#include "ExtendedKalmanFilter.h"
 
 
 /**
@@ -18,7 +18,7 @@
 
 #include "Exceptions.h"
 #include "ConfigMap.h"
-//#include "Observers/ExtendedKalmanFilter.h"
+#include "Observers/ExtendedKalmanFilter.h"
 #include "ThreadSafeLog.h"
 #include "UData.h"
 
@@ -120,6 +120,9 @@ namespace PCOE {
         Expect(isInitialized(), "Not initialized");
         Expect(timestamp - lastTime > 0, "Time has not advanced");
         
+        std::vector<double> zeroNoiseZ(model->getOutputSize());
+
+        
         // Update time
         double dt = timestamp - lastTime;
         lastTime = timestamp;
@@ -129,11 +132,22 @@ namespace PCOE {
         // 1. Predict
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Starting step - predict");
         
-        // xkk1 = f(k1k1,uPrev) //calc next state from model assuming no noise
-        // ykk1 = h(xkk1) //calc next expected sensor readings from expected state
+        // 1. xkk1 = f(k1k1,uPrev) //calc next state from model assuming no noise
+        Model::state_type xkk1 = model->stateEqn(lastTime, xEstimated, uPrev, zeroNoiseZ);
+        
+        // 2. ykk1 = h(xkk1) //calc next expected sensor readings from expected state
+        Model::output_type zkk1 = model->outputEqn(lastTime, xkk1, uPrev, zeroNoiseZ);
+        
         // F = jacobian(xkk1,ykk1) //get jacobian eval'd at new expected state, sensor output
-        // Update Pkk1 using F,Pk1k1,Q
-        // H = jacobian(xkk1,
+        Matrix stateJacobian = model->getStateJacobian(lastTime, xkk1, uPrev, zeroNoiseZ);
+        
+        // 3. Update Pkk1 using F,Pk1k1,Q
+        // H = jacobian(xkk1,u)
+        // 4. Update Pyy using H, Pkk1, R=sensor noise covariance
+        // 5. Update Pxy
+        // 6. Update Kalman Gain Kk
+        // 7. Update xkk
+        // 8. Update Pkk
         
         
         
@@ -183,79 +197,6 @@ namespace PCOE {
         uPrev = u;
     }
     
-    /* EMPTY JACOBIAN PLACEHOLDER */
-    const Matrix ExtendedKalmanFilter::jacobian(const Model::state_type& mx, const Model::input_type& u) {
-        //return an empty matrix until I've figured out inputs/outputs
-        Matrix j
-        return j
-    }
-    
-    
-    
-    
-    
-    
-    /*void ExtendedKalmanFilter::computeSigmaPoints(const Model::state_type& mx,
-                                                   const Matrix& Pxx,
-                                                   SigmaPoints& sigma) {
-        log.WriteLine(LOG_TRACE, MODULE_NAME, "Computing sigma points");
-        
-        // Assumes that sigma points have been set up correctly within the constructor
-        auto stateSize = mx.size();
-        auto sigmaPointCount = sigma.M.cols();
-        
-        // First sigma point is the mean
-        for (unsigned int i = 0; i < stateSize; i++) {
-            sigma.M[i][0] = mx[i];
-        }
-        
-        // Compute a matrix square root using Cholesky decomposition
-        Matrix nkPxx = Pxx;
-        for (unsigned int i = 0; i < nkPxx.rows(); i++) {
-            for (unsigned int j = 0; j < nkPxx.cols(); j++) {
-                nkPxx[i][j] *= (stateSize + sigma.kappa);
-            }
-        }
-        Matrix matrixSq = nkPxx.chol();
-        
-        // For sigma points 2 to n+1, it is mx + ith column of matrix square root
-        for (unsigned int i = 0; i < stateSize; i++) {
-            // Set column
-            for (unsigned int j = 0; j < stateSize; j++) {
-                sigma.M[i][j + 1] = mx[i] + matrixSq[i][j];
-            }
-        }
-        
-        // For sigma points n+2 to 2n+1, it is mx - ith column of matrix square root
-        for (unsigned int i = 0; i < stateSize; i++) {
-            // Set column
-            for (unsigned int j = 0; j < stateSize; j++) {
-                sigma.M[i][j + stateSize + 1] = mx[i] - matrixSq[i][j];
-            }
-        }
-        
-        // w(1) is kappa/(n+kappa)
-        sigma.w[0] = sigma.kappa / (stateSize + sigma.kappa);
-        
-        // Rest of w are 0.5/(n+kappa)
-        for (unsigned int i = 1; i < sigmaPointCount; i++) {
-            sigma.w[i] = 0.5 / (stateSize + sigma.kappa);
-        }
-        
-        // Scale the sigma points
-        // 1. Xi' = X0 + alpha*(Xi-X0)
-        Matrix X0 = sigma.M.col(0);
-        for (unsigned int i = 1; i < sigmaPointCount; i++) {
-            sigma.M.col(i, X0 + sigma.alpha * (sigma.M.col(i) - X0));
-        }
-        
-        // 2. W0' = W0/alpha^2 + (1/alpha^2-1)
-        //    Wi' = Wi/alpha^2
-        sigma.w[0] = sigma.w[0] / sigma.alpha / sigma.alpha + (1 / sigma.alpha / sigma.alpha - 1);
-        for (unsigned int i = 1; i < sigmaPointCount; i++) {
-            sigma.w[i] = sigma.w[i] / sigma.alpha / sigma.alpha;
-        }
-    }*/
     
     std::vector<UData> UnscentedKalmanFilter::getStateEstimate() const {
         std::vector<UData> state(model->getStateSize());
