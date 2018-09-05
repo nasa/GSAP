@@ -39,9 +39,11 @@ namespace PCOE {
         }
 
         bool hasChangedSinceSavePtsCall() const override {
-            return !std::all_of(providers.begin(), providers.end(), [](ISavePointProvider* p) {
-                return !p->hasChangedSinceSavePtsCall();
-            });
+            return !std::all_of(providers.begin(),
+                                providers.end(),
+                                [](const ISavePointProvider* p) {
+                                    return !p->hasChangedSinceSavePtsCall();
+                                });
         }
 
     private:
