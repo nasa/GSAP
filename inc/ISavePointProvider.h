@@ -18,6 +18,12 @@ namespace PCOE {
     class ISavePointProvider {
     public:
         /**
+         * Virtual destructor to allow for deletion of objects via their
+         * interface pointers.
+         **/
+        virtual ~ISavePointProvider() = default;
+
+        /**
          *  @return A set of savepoints
          */
         virtual std::set<Message::time_point> getSavePts() const = 0;

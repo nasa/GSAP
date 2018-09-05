@@ -18,6 +18,12 @@ namespace PCOE {
     class ITrajectoryCorrelator {
     public:
         /**
+         * Virtual destructor to allow for deletion of objects via their
+         * interface pointers.
+         **/
+        virtual ~ITrajectoryCorrelator() = default;
+
+        /**
          *  Get a point along a trajectory corresponding to a specific timepoint
          *  @param  tp  The timepoint for which to find the correlated position
          */

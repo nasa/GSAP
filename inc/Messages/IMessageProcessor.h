@@ -17,6 +17,12 @@ namespace PCOE {
     class IMessageProcessor {
     public:
         /**
+         * Virtual destructor to allow for deletion of objects via their
+         * interface pointers.
+         **/
+        virtual ~IMessageProcessor() = default;
+
+        /**
          * When implmenented in a derived class, processes the message in some
          * implmentation-specifc way.
          *
