@@ -24,7 +24,7 @@ namespace PCOE {
 
     MonteCarloPredictor::MonteCarloPredictor(const PrognosticsModel& m,
                                              LoadEstimator& le,
-                                             TrajectoryService& trajService,
+                                             const TrajectoryService& trajService,
                                              const ConfigMap& config)
         : Predictor(m, le, trajService, config) {
         // Check for required parameters:
@@ -154,7 +154,8 @@ namespace PCOE {
             for (double t_s = time_s; t_s <= time_s + horizon; t_s += model.getDefaultTimeStep()) {
                 // Get inputs for time t
                 // TODO (JW): Consider per-sample load estimator
-                PrognosticsModel::input_type loadEstimate = static_cast<PrognosticsModel::input_type>(loadEstimator.estimateLoad(t_s));
+                PrognosticsModel::input_type loadEstimate =
+                    static_cast<PrognosticsModel::input_type>(loadEstimator.estimateLoad(t_s));
 
                 // Check threshold at time t and set timeOfEvent if reaching for first time
                 // If timeOfEvent is not set to INFINITY that means we already encountered the

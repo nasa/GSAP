@@ -30,7 +30,7 @@ namespace PCOE {
          **/
         MonteCarloPredictor(const PrognosticsModel& m,
                             LoadEstimator& le,
-                            TrajectoryService& ts,
+                            const TrajectoryService& ts,
                             const ConfigMap& config);
 
         /**
