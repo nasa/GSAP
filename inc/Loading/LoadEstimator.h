@@ -24,6 +24,8 @@ namespace PCOE {
         using LoadEstimate = std::vector<double>;
         using LoadMeasurement = std::vector<double>;
 
+        virtual ~LoadEstimator() = default;
+
         /**
          * When overriden in a derived class, gets a value indicating whether
          * calls to {@code addLoad} are allowed.
