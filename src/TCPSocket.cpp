@@ -69,10 +69,10 @@ namespace PCOE {
         // linked list of zero or more valid addresses for the host.
         // Note: freeaddrinfo must be called on result before exiting
         std::string portStr = std::to_string(port);
-        addrinfo hints      = {};
-        hints.ai_family     = af;
-        hints.ai_protocol   = IPPROTO_TCP;
-        hints.ai_socktype   = SOCK_STREAM;
+        addrinfo hints = {};
+        hints.ai_family = af;
+        hints.ai_protocol = IPPROTO_TCP;
+        hints.ai_socktype = SOCK_STREAM;
 
         return AddressInfo(hostname.c_str(), portStr.c_str(), &hints);
     }
@@ -121,8 +121,8 @@ namespace PCOE {
 
     TCPSocket& TCPSocket::operator=(TCPSocket&& other) {
         Close();
-        sock       = other.sock;
-        family     = other.family;
+        sock = other.sock;
+        family = other.family;
         other.sock = InvalidSocket;
         return *this;
     }
@@ -190,7 +190,7 @@ namespace PCOE {
     }
 
     bool TCPSocket::NoDelay() {
-        int value     = 0;
+        int value = 0;
         socklen_t len = sizeof(value);
         int result =
             getsockopt(sock, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&value), &len);
@@ -202,7 +202,7 @@ namespace PCOE {
     }
 
     void TCPSocket::NoDelay(bool value) {
-        int nval      = value ? 1 : 0;
+        int nval = value ? 1 : 0;
         socklen_t len = sizeof(nval);
         int result =
             setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nval), len);
@@ -214,7 +214,7 @@ namespace PCOE {
 
     TCPSocket::size_type TCPSocket::ReceiveBufferSize() {
         size_type value = 0;
-        socklen_t len   = sizeof(value);
+        socklen_t len = sizeof(value);
         int result = getsockopt(sock, SOL_SOCKET, SO_RCVBUF, reinterpret_cast<char*>(&value), &len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
@@ -259,7 +259,7 @@ namespace PCOE {
         timeout_type to = static_cast<DWORD>(value * 1e3);
 #else
         timeout_type to;
-        to.tv_sec  = static_cast<long int>(value);
+        to.tv_sec = static_cast<long int>(value);
         to.tv_usec = static_cast<long int>((value - to.tv_sec) * 1e6);
 #endif
         ReceiveTimeout(to);
@@ -267,7 +267,7 @@ namespace PCOE {
 
     TCPSocket::size_type TCPSocket::SendBufferSize() {
         size_type value = 0;
-        socklen_t len   = sizeof(value);
+        socklen_t len = sizeof(value);
         int result = getsockopt(sock, SOL_SOCKET, SO_SNDBUF, reinterpret_cast<char*>(&value), &len);
         if (result == -1) {
             std::error_code ec(sockerr, std::generic_category());
@@ -312,7 +312,7 @@ namespace PCOE {
         timeout_type to = ((long int)value) * 1000;
 #else
         timeout_type to;
-        to.tv_sec  = static_cast<long int>(value);
+        to.tv_sec = static_cast<long int>(value);
         to.tv_usec = static_cast<long int>((value - to.tv_sec) * 1e6);
 #endif
         socklen_t len = sizeof(to);

@@ -86,41 +86,53 @@ namespace PCOE {
         return AddressInfo(hostname.c_str(), portStr.c_str(), &hints);
     }
 
-    const TCPServer::sock_type TCPServer::InvalidSocket = -1;
-
-    TCPServer::TCPServer(int af, const unsigned short port) {
-        if (af != AF_UNSPEC) {
-            CreateServer(af, "0.0.0.0", port);
-        }
-    }
+    TCPServer::TCPServer(int af, const unsigned short port) : TCPServer(af, "0.0.0.0", port) {}
 
     TCPServer::TCPServer(int af, const std::string& hostname, const unsigned short port) {
+#ifdef _WIN32
+        // After the first call to WSAStartup by the current application, this just increments a ref
+        // count.
+        WSADATA wsa;
+        if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+            std::error_code ec(sockerr, std::generic_category());
+            throw std::system_error(ec, "WSAStartup failed");
+        }
+        if (wsa.wVersion != MAKEWORD(2, 2)) {
+            std::error_code ec(sockerr, std::generic_category());
+            throw std::system_error(
+                ec, "Not using Winsock 2.2. How did you even get this code to run on Windows 3.1?");
+        }
+#endif
         if (af != AF_UNSPEC) {
             CreateServer(af, hostname, port);
         }
     }
 
     TCPServer::TCPServer(TCPServer&& other) : sock(other.sock), family(other.family) {
-        other.sock = InvalidSocket;
+        other.sock = TCPSocket::InvalidSocket;
         other.family = AF_UNSPEC;
     }
 
     TCPServer::~TCPServer() noexcept {
         Close();
+#ifdef _WIN32
+        // This just decrements a ref count unless this is the last object using WSA.
+        WSACleanup();
+#endif
     }
 
     TCPServer& TCPServer::operator=(TCPServer&& other) {
         Close();
         sock = other.sock;
         family = other.family;
-        other.sock = InvalidSocket;
+        other.sock = TCPSocket::InvalidSocket;
         other.family = AF_UNSPEC;
         return *this;
     }
 
     void TCPServer::Close() {
         _close(sock);
-        sock = InvalidSocket;
+        sock = TCPSocket::InvalidSocket;
     }
 
     void TCPServer::Listen(const int backlog) {
@@ -147,7 +159,7 @@ namespace PCOE {
     }
 
     void TCPServer::CreateServer(int af, const std::string hostname, const unsigned short port) {
-        if ((sock = socket(af, SOCK_STREAM, IPPROTO_TCP)) == InvalidSocket) {
+        if ((sock = socket(af, SOCK_STREAM, IPPROTO_TCP)) == TCPSocket::InvalidSocket) {
             int err = sockerr;
             if (err == _EAFNOSUPPORT) {
                 throw std::invalid_argument("Address family not supported.");
