@@ -55,6 +55,8 @@ namespace PCOE {
         void processMessage(const std::shared_ptr<Message>& message) override;
 
     private:
+        void stepObserver();
+
         using mutex = std::timed_mutex;
         using lock_guard = std::lock_guard<mutex>;
         using unique_lock = std::unique_lock<mutex>;
@@ -65,9 +67,8 @@ namespace PCOE {
         std::string source;
         MessageWatcher<double> inputWatcher;
         MessageWatcher<double> outputWatcher;
-        double latestTimestamp;
-        std::shared_ptr<Message> inputMsg;
-        std::shared_ptr<Message> outputMsg;
+        std::shared_ptr<DoubleVecMessage> inputMsg;
+        std::shared_ptr<DoubleVecMessage> outputMsg;
     };
 }
 

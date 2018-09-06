@@ -1,9 +1,11 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-#include "Observers/EventDrivenObserver.h"
+#include <memory>
+
 #include "Contracts.h"
 #include "Messages/UDataMessage.h"
+#include "Observers/EventDrivenObserver.h"
 
 namespace PCOE {
     static const Log& log = Log::Instance();
@@ -46,49 +48,51 @@ namespace PCOE {
         switch (message->getMessageId()) {
         case MessageId::ModelInputVector:
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Set input message");
-            inputMsg = message;
+            inputMsg = std::dynamic_pointer_cast<DoubleVecMessage, Message>(message);
             break;
         case MessageId::ModelOutputVector:
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Set ouput message");
-            outputMsg = message;
+            outputMsg = std::dynamic_pointer_cast<DoubleVecMessage, Message>(message);
             break;
         default:
             Unreachable("Unexpected message type");
         }
 
         if (inputMsg && outputMsg) {
-            latestTimestamp = seconds(message->getTimestamp());
-            auto typedInMsg = dynamic_cast<VectorMessage<double>*>(inputMsg.get());
-            auto typedOutMsg = dynamic_cast<VectorMessage<double>*>(outputMsg.get());
-            const auto& u = Model::input_type(typedInMsg->getValue());
-            const auto& z = Model::output_type(typedOutMsg->getValue());
-            if (!observer->isInitialized()) {
-                log.WriteLine(LOG_TRACE, MODULE_NAME, "Getting initial state from model");
-                Require(observer, "observer is empty");
-                log.FormatLine(LOG_TRACE,
-                               MODULE_NAME,
-                               "Calling initialize with input of size %u",
-                               u.size());
-                log.FormatLine(LOG_TRACE,
-                               MODULE_NAME,
-                               "Calling initialize with output of size %u",
-                               z.size());
-                auto x = observer->getModel().initialize(u, z);
-                log.WriteLine(LOG_TRACE, MODULE_NAME, "Initializing observer");
-                observer->initialize(latestTimestamp, x, u);
-                log.WriteLine(LOG_TRACE, MODULE_NAME, "Initialized observer");
-            }
-            else {
-                log.WriteLine(LOG_TRACE, MODULE_NAME, "Stepping observer");
-                observer->step(latestTimestamp, u, z);
-                log.WriteLine(LOG_TRACE, MODULE_NAME, "Publishing observer result");
-                UDataVecMessage* stateEst = new UDataVecMessage(MessageId::ModelStateEstimate,
-                                                                source,
-                                                                observer->getStateEstimate());
-                bus.publish(std::shared_ptr<Message>(stateEst));
-            }
+            stepObserver();
             inputMsg = nullptr;
             outputMsg = nullptr;
+        }
+    }
+
+    void EventDrivenObserver::stepObserver() {
+        auto timestamp = std::max(inputMsg->getTimestamp(), outputMsg->getTimestamp());
+        double timestampSeconds = seconds(timestamp);
+        const auto& u = Model::input_type(inputMsg->getValue());
+        const auto& z = Model::output_type(outputMsg->getValue());
+        if (!observer->isInitialized()) {
+            log.FormatLine(LOG_TRACE,
+                           MODULE_NAME,
+                           "Calling initialize with input of size %u",
+                           u.size());
+            log.FormatLine(LOG_TRACE,
+                           MODULE_NAME,
+                           "Calling initialize with output of size %u",
+                           z.size());
+            auto x = observer->getModel().initialize(u, z);
+            log.WriteLine(LOG_TRACE, MODULE_NAME, "Initializing observer");
+            observer->initialize(timestampSeconds, x, u);
+            log.WriteLine(LOG_TRACE, MODULE_NAME, "Initialized observer");
+        }
+        else {
+            log.WriteLine(LOG_TRACE, MODULE_NAME, "Stepping observer");
+            observer->step(timestampSeconds, u, z);
+            log.WriteLine(LOG_TRACE, MODULE_NAME, "Publishing observer result");
+            UDataVecMessage* stateEst = new UDataVecMessage(MessageId::ModelStateEstimate,
+                                                            source,
+                                                            timestamp,
+                                                            observer->getStateEstimate());
+            bus.publish(std::shared_ptr<Message>(stateEst));
         }
     }
 }
