@@ -19,7 +19,7 @@ namespace PCOE {
     class ConfigMap;
     
     /**
-     * Implements EKF state estimation algorithm for non-linear models.    Or at least will by the time I'm done with it.
+     * Implements EKF state estimation algorithm for non-linear models.
      *
      **
      *** Denotes a note to myself that must be dealt with
@@ -35,17 +35,19 @@ namespace PCOE {
         /**
          * Constructs a new @{code ExtendedKalmanFilter} instance and
          * initializes the model. This constructor is only intended to be used
-         * by other constructors in UKF to set up model-related parameters.
+         * by other constructors in EKF to set up model-related parameters.
          *
          * @param m A valid pointer to a model on which state estimation will be
-         *          performed. The UKF does not take ownership of the model.
+         *          performed. The EKF does not take ownership of the model.
          **/
         explicit ExtendedKalmanFilter(const Model& m);
         
     public:
         /**
          * Constructs a new @{code ExtendedKalmanFilter} instance with the
-         * given model and covariance matrices.
+         * given model and covariance matrices. Checks that noise covariance 
+         * matrices are square matrices with the same dimensions as model state 
+         * and output vectors.
          *
          * @param m A valid pointer to a model on which state estimation will be
          *          performed. The EKF does not take ownership of the model.
@@ -55,19 +57,19 @@ namespace PCOE {
         ExtendedKalmanFilter(const Model& m, const Matrix Q, const Matrix R);
         
         /**
-         * Constructs a new @{code UnscentedKalmanFilter} instance with the
+         * Constructs a new @{code ExtendedKalmanFilter} instance with the
          * given model and with covariance matrices read from the provided
          * config.
          *
          * @param m      A valid pointer to a model on which state estimation
-         *               will be performed. The UKF does not take ownership of
+         *               will be performed. The EKF does not take ownership of
          *               the model.
          * @param config A configuration from which to read covariance matrices.
          **/
         ExtendedKalmanFilter(const Model& m, const ConfigMap& config);
         
         /**
-         * Sets the initial model state and computes initial sigma points.
+         * Sets the initial model state.
          *
          * @param t0 Initial time
          * @param x0 Initial model state
@@ -81,11 +83,11 @@ namespace PCOE {
          * Performs a single state estimation with the given model inputs and
          * outputs.
          *
-         * @param t The time at which to make a prediction.
+         * @param t The time at which to make a prediction. Must have advanced from previous time.
          * @param u The model input vector at time @{code t}.
          * @param z The model output vector at time @{code t}.
          **/
-        void step(double t, const Model::input_type& u, const Model::output_type& z) override;
+        void step(double t, const Model::input_type& u, Model::output_type& z) override;
         
         /**
          *

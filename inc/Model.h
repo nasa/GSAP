@@ -141,7 +141,6 @@ namespace PCOE {
          * @param x  The model state vector at the current time step.
          * @param u  The model input vector at the current time step.
          * @param n  The process noise vector.
-         * @param z  The model output vector at the current time step.
          * @return   The model output vector at the next time step.
          **/
         virtual output_type outputEqn(const double t,

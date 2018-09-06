@@ -89,7 +89,7 @@ namespace PCOE {
     }
     
     
-    // Tentatively OK for EKF
+    // Initialize the EKF
     void ExtendedKalmanFilter::initialize(const double t0,
                                            const Model::state_type& x0,
                                            const Model::input_type& u0) {
@@ -100,12 +100,12 @@ namespace PCOE {
         xEstimated = x0;
         uPrev = u0;
         
-        // Initialize P
+        // Initialize P (state covariance matrix) as Q (process noise covariance matrix)
         P = Q;
         
         // Compute corresponding output estimate
-        std::vector<double> zeroNoiseZ(model.getOutputSize());
-        zEstimated = model.outputEqn(lastTime, xEstimated, uPrev, zeroNoiseZ);
+        std::vector<double> zeroOutputNoise(model.getOutputSize());
+        zEstimated = model.outputEqn(lastTime, xEstimated, uPrev, zeroOutputNoise);
         
         // Set initialized flag
         initialized = true;
@@ -114,85 +114,61 @@ namespace PCOE {
     
     void ExtendedKalmanFilter::step(const double timestamp,
                                      const Model::input_type& u,
-                                     const Model::output_type& z) {
+                                     Model::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
         Expect(isInitialized(), "Not initialized");
         Expect(timestamp - lastTime > 0, "Time has not advanced");
         
-        std::vector<double> zeroNoiseZ(model.getOutputSize());
-
+        std::vector<double> zeroProcessNoise(model.getStateSize());
+        std::vector<double> zeroOutputNoise(model.getOutputSize());
         
         // Update time
         double dt = timestamp - lastTime;
         lastTime = timestamp;
         
         
-        // 1. Predict
+        //*/*/* Prediction Step */*/*//
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Starting step - predict");
         
-        // 1. xkk1 = f(k1k1,uPrev) //calc next state from model assuming no noise
-        Model::state_type xkk1 = model.stateEqn(lastTime, xEstimated, uPrev, zeroNoiseZ);
+        // 1. x_k|k-1 = f(k1k1,uPrev) //calc next state from model assuming no noise
+        Model::state_type xkk1 = model.stateEqn(timestamp, xEstimated, uPrev, zeroProcessNoise);
         
-        // 2. ykk1 = h(xkk1) //calc next expected sensor readings from expected state
-        Model::output_type zkk1 = model.outputEqn(lastTime, xkk1, uPrev, zeroNoiseZ);
+        // 2. z_k|k-1 = h(xkk1) //calc next expected sensor readings from expected state
+        Model::output_type zkk1 = model.outputEqn(timestamp, xkk1, uPrev, zeroOutputNoise);
         
-        // F = jacobian(xkk1,ykk1) //get jacobian eval'd at new expected state, sensor output
-        Matrix stateJacobian = model.getStateJacobian(lastTime, xkk1, uPrev, zeroNoiseZ);
-        
-        // 3. Update Pkk1 using F,Pk1k1,Q
-        // H = jacobian(xkk1,u)
-        // 4. Update Pyy using H, Pkk1, R=sensor noise covariance
-        // 5. Update Pxy
-        // 6. Update Kalman Gain Kk
-        // 7. Update xkk
-        // 8. Update Pkk
-        
-        
-        
-        // 2. Update
+        //*/*/* Update Step */*/*//
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Starting step - update");
         
-        // Compute state-output cross-covariance matrix
-        Matrix Pxz(model.getStateSize(), model.getOutputSize());
-        for (unsigned int i = 0; i < sigmaPointCount; i++) {
-            Matrix columnx(model.getStateSize(), 1);
-            Matrix columnz(model.getOutputSize(), 1);
-            columnx.col(0, Xkk1.col(i));
-            columnz.col(0, Zkk1.col(i));
-            
-            Matrix xkk1m(model.getStateSize(), 1);
-            Matrix zkk1m(model.getOutputSize(), 1);
-            xkk1m.col(0, xkk1);
-            zkk1m.col(0, zkk1);
-            
-            Matrix diffx = columnx - xkk1m;
-            Matrix diffzT = (columnz - zkk1m).transpose();
-            Matrix temp = diffx * diffzT;
-            Pxz = Pxz + temp * sigmaX.w[i];
-        }
+        // F = stateJacobian(xkk1,uPrev) //get jacobian eval'd at new expected state, sensor output
+        Matrix stateJacobian = model.getStateJacobian(timestamp, xkk1, u, zeroProcessNoise, dt);
+        // H = outputJacobian(xkk1,u)
+        Matrix outputJacobian = model.getOutputJacobian(timestamp, xkk1, u, zeroOutputNoise);
         
-        // Compute Kalman gain
+        // 3. Update P_k|k-1 using F,P_k-1|k-1,Q
+        Matrix Pkk1 = stateJacobian * P * stateJacobian.transpose() + Q;
+        
+        // 4. Update Pzz using H, Pkk1, R=sensor noise covariance
+        Matrix Pzz = outputJacobian * Pkk1 * outputJacobian.transpose() + R;
+        
+        // 5. Update Pxz
+        Matrix Pxz = Pkk1 * outputJacobian.transpose();
+        
+        // 6. Compute Kalman Gain Kk
         Matrix Kk = Pxz * Pzz.inverse();
         
-        // Compute state estimate
-        Matrix xkk1m(model.getStateSize(), 1);
-        Matrix zkk1m(model.getOutputSize(), 1);
-        Matrix zm(model.getOutputSize(), 1);
-        xkk1m.col(0, xkk1);
-        zkk1m.col(0, zkk1);
-        zm.col(0, z.vec());
-        Matrix xk1m = xkk1m + Kk * (zm - zkk1m);
-        xEstimated = Model::state_type(static_cast<std::vector<double>>(xk1m.col(0)));
+        // 7. Update state estimate
+        Matrix xkk = Matrix(xkk1) + (Kk * (Matrix(z) - Matrix(zkk1)));
+        xEstimated = Model::state_type(static_cast<std::vector<double>>(xkk.col(0)));
+        
+        // 8. Update Pkk = (I-Kk*Hk)Pkk1
+        P = (Matrix::identity(model.getStateSize()) - (Kk * outputJacobian)) * Pkk1;
         
         // Compute output estimate
-        std::vector<double> zeroNoiseZ(model.getOutputSize());
-        zEstimated = model.outputEqn(timestamp, xEstimated, u, zeroNoiseZ);
+        zEstimated = model.outputEqn(timestamp, xEstimated, u, zeroOutputNoise);
         
-        // Compute covariance
-        P = Pkk1 - Kk * Pzz * Kk.transpose();
-        
-        // Update uOld
+        //Update uPrev
         uPrev = u;
+
     }
     
     
