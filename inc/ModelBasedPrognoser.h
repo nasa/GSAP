@@ -26,10 +26,10 @@
 
 #include <memory>
 
+#include "Models/PrognosticsModel.h"
 #include "Observers/Observer.h"
 #include "Predictors/Predictor.h"
 #include "Prognoser.h"
-#include "PrognosticsModel.h"
 
 namespace PCOE {
     class ModelBasedPrognoser : public Prognoser {

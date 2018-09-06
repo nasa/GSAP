@@ -5,10 +5,10 @@
 #include <thread>
 
 #include "Contracts.h"
-#include "EventDrivenTrajectoryService.h"
 #include "Messages/Message.h"
 #include "Messages/WaypointMessage.h"
 #include "ThreadSafeLog.h"
+#include "Trajectory/EventDrivenTrajectoryService.h"
 
 namespace PCOE {
     static const Log& log = Log::Instance();

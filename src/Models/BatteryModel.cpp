@@ -1,7 +1,7 @@
 // Copyright (c) 2016-2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-#include "BatteryModel.h"
+#include "Models/BatteryModel.h"
 
 #include <cmath>
 #include <iostream>

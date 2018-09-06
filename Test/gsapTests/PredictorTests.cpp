@@ -22,14 +22,14 @@
 #include <memory>
 #include <vector>
 
-#include "BatteryModel.h"
 #include "ConfigMap.h"
 #include "Factory.h"
 #include "Loading/ConstLoadEstimator.h"
 #include "MockClasses.h"
+#include "Models/BatteryModel.h"
+#include "Models/PrognosticsModelFactory.h"
 #include "PredictorTests.h"
 #include "Predictors/MonteCarloPredictor.h"
-#include "PrognosticsModelFactory.h"
 #include "Test.h"
 #include "UData.h"
 

@@ -10,8 +10,8 @@
 #include <vector>
 
 #include "ISavePointProvider.h"
-#include "ITrajectoryCorrelator.h"
 #include "Point3D.h"
+#include "Trajectory/ITrajectoryCorrelator.h"
 
 namespace PCOE {
     /**

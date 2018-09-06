@@ -5,8 +5,8 @@
 //
 
 #include "UDPSocketTests.h"
+#include "Net/UDPSocket.h"
 #include "Test.h"
-#include "UDPSocket.h"
 #include <cstring>
 #include <sstream>
 #include <thread>

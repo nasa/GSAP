@@ -12,9 +12,9 @@
 #include "Contracts.h"
 #include "DataPoint.h"
 #include "Loading/LoadEstimator.h"
+#include "Models/PrognosticsModel.h"
 #include "ProgEvent.h"
-#include "PrognosticsModel.h"
-#include "TrajectoryService.h"
+#include "Trajectory/TrajectoryService.h"
 
 namespace PCOE {
     class Prediction {

@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "PrognosticsModel.h"
+#include "Models/PrognosticsModel.h"
 
 namespace PCOE {
     const std::string LOAD_EST_SAMPLES_KEY = "LoadEstimator.SampleCount";

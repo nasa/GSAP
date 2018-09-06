@@ -11,7 +11,7 @@
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
 #include "Messages/WaypointMessage.h"
-#include "TrajectoryService.h"
+#include "Trajectory/TrajectoryService.h"
 
 namespace PCOE {
     /**
