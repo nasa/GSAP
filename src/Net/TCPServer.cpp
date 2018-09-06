@@ -16,7 +16,6 @@
 #else
 #define _EAFNOSUPPORT EAFNOSUPPORT
 
-#include <TCPSocket.h>
 #include <netinet/tcp.h>
 #include <sys/ioctl.h>
 

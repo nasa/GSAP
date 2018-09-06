@@ -18,7 +18,7 @@
 #ifndef GSAP_TCPSOCKETSERVER_H
 #define GSAP_TCPSOCKETSERVER_H
 
-#include "TCPSocket.h"
+#include "Net/TCPSocket.h"
 #include <map>
 #include <stdexcept>
 #include <string>
@@ -45,8 +45,8 @@ namespace PCOE {
         using ssize_type = ssize_t;
 
     public:
-        using size_type    = size_t;
-        using sock_type    = int;
+        using size_type = size_t;
+        using sock_type = int;
         using timeout_type = struct timeval;
 
         /// @brief Initializes a new instance of the @see{TCPServer} class.
@@ -125,7 +125,7 @@ namespace PCOE {
 
         /// @brief Sets the underlying socket.
         inline void Socket(sock_type s) {
-            sock   = s;
+            sock = s;
             family = AF_UNSPEC;
         }
 
