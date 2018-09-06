@@ -45,7 +45,7 @@ namespace PCOE {
         log.FormatLine(LOG_TRACE, MODULE_NAME, "Publishing events for source %s", source.c_str());
         for (const auto& event : prediction.getEvents()) {
             auto peMsg = std::shared_ptr<ProgEventMessage>(
-                new ProgEventMessage(event.getId(), source, event));
+                new ProgEventMessage(event.getId(), source, m->getTimestamp(), event));
             bus.publish(peMsg);
             log.FormatLine(LOG_TRACE,
                            MODULE_NAME,

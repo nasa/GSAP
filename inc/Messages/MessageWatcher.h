@@ -79,7 +79,7 @@ namespace PCOE {
             }
 
             if (allPresent()) {
-                auto vmsg = new VectorMessage<T>(pubId, source, values);
+                auto vmsg = new VectorMessage<T>(pubId, source, message->getTimestamp(), values);
                 messageBus.publish(std::shared_ptr<Message>(vmsg));
                 reset();
             }
