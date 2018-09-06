@@ -5,10 +5,10 @@
 #define PCOE_EVENTDRIVENPREDICTOR_H
 #include <memory>
 
-#include "EventDrivenTrajectoryService.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
 #include "Predictors/Predictor.h"
+#include "Trajectory/EventDrivenTrajectoryService.h"
 
 namespace PCOE {
     /**

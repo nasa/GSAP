@@ -21,9 +21,9 @@
 
 #include "BenchmarkTimer.h"
 #include "ModelBasedPrognoser.h"
+#include "Models/PrognosticsModel.h"
 #include "Observers/Observer.h"
 #include "Predictors/Predictor.h"
-#include "PrognosticsModel.h"
 
 namespace PCOE {
     class BenchmarkPrognoser : public ModelBasedPrognoser {

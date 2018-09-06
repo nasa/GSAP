@@ -29,9 +29,9 @@
 #include "ConfigMap.h"
 #include "Loading/LoadEstimatorFactory.h"
 #include "ModelBasedPrognoser.h"
+#include "Models/PrognosticsModelFactory.h"
 #include "Observers/ObserverFactory.h"
 #include "Predictors/PredictorFactory.h"
-#include "PrognosticsModelFactory.h"
 #include "UData.h"
 
 namespace PCOE {
@@ -74,7 +74,7 @@ namespace PCOE {
             // If not specified, use default
             loadEstimator = loadEstFact.Create(DEFAULT_LOAD_EST, configMap);
         }
-            
+
         // Create Trajectory Service
         TrajectoryService trajectoryService;
 

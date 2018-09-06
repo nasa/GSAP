@@ -5,8 +5,8 @@
 //
 
 #include "TCPSocketTests.h"
-#include "TCPServer.h"
-#include "TCPSocket.h"
+#include "Net/TCPServer.h"
+#include "Net/TCPSocket.h"
 #include "Test.h"
 #include <cstring>
 #include <sstream>

@@ -13,11 +13,10 @@
 #include "Loading/LoadEstimatorFactory.h"
 #include "Messages/Message.h"
 #include "Messages/MessageId.h"
-#include "ModelFactory.h"
+#include "Models/PrognosticsModelFactory.h"
 #include "Observers/Observer.h"
 #include "Observers/ObserverFactory.h"
 #include "Predictors/PredictorFactory.h"
-#include "PrognosticsModelFactory.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;

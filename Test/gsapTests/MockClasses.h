@@ -4,10 +4,10 @@
 #include "Loading/LoadEstimator.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
-#include "Model.h"
+#include "Models/Model.h"
+#include "Models/PrognosticsModel.h"
 #include "Observers/Observer.h"
 #include "Predictors/Predictor.h"
-#include "PrognosticsModel.h"
 
 class MessageCounter final : public IMessageProcessor {
 public:

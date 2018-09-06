@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "Contracts.h"
-#include "Model.h"
+#include "Models/Model.h"
 #include "ThreadSafeLog.h"
 #include "UData.h"
 

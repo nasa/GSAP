@@ -1,13 +1,12 @@
-/// @file
-/// @copyright Copyright (c) 2018 United States Government as represented by
-///            the Administrator of the National Aeronautics and Space
-///            Administration. All Rights Reserved.
-
-#include "TCPServer.h"
+// Copyright (c) 2016-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <thread>
+
+#include "Net/TCPServer.h"
 
 #ifdef _WIN32
 #define _EAFNOSUPPORT WSAEAFNOSUPPORT

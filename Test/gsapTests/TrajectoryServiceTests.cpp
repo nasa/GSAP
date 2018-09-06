@@ -4,11 +4,11 @@
 #include <string>
 #include <thread>
 
-#include "EventDrivenTrajectoryService.h"
 #include "Messages/Message.h"
 #include "Messages/MessageBus.h"
 #include "Messages/WaypointMessage.h"
 #include "Test.h"
+#include "Trajectory/EventDrivenTrajectoryService.h"
 #include "TrajectoryServiceTests.h"
 
 namespace PCOE {

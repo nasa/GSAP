@@ -60,10 +60,11 @@ endif()
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     # /EHsc: Specifies the model of exception handling.
     # /GL:   Enables whole program optimization.
-    # /Gm:   Enables minimal rebuild.
+    # /Gm:   Enable minimal rebuilds; conflicts with /MP
     # /GS:   Buffers security check.
     # /MD:   Creates a multithreaded DLL using MSVCRT.lib.
     # /MDd:  Creates a debug multithreaded DLL using MSVCRTD.lib.
+    # /MP:   Multiprocess compilation
     # /O2:   Creates fast code.
     # /Od:   Disables optimization.
     # /Oi:   Generates intrinsic functions.
@@ -72,9 +73,9 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     # /W4:   Sets which warning level to output.
     # /wd:   Disable warning
     # /Zi:   Generates complete debugging information.
-    set(CMAKE_CXX_FLAGS "/EHsc /GS /sdl- /W4 /wd\"4996\" /Zi")
-    set(CMAKE_CXX_FLAGS_DEBUG "/Gm /MDd /Od /RTC1")
-    set(CMAKE_CXX_FLAGS_RELEASE "/GL /Gm- /MD /O2 /Oi")
+    set(CMAKE_CXX_FLAGS "/EHsc /GS /sdl- /W4 /wd\"4996\" /Zi /MP /Gm-")
+    set(CMAKE_CXX_FLAGS_DEBUG "/MDd /Od /RTC1")
+    set(CMAKE_CXX_FLAGS_RELEASE "/GL /MD /O2 /Oi")
 else()
     message(FATAL_ERROR "${CMAKE_CXX_COMPILER_ID} is not recognized.")
 endif()

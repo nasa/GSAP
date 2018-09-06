@@ -4,7 +4,7 @@
 #define TANK3_H
 #include <vector>
 
-#include "Model.h"
+#include "Models/Model.h"
 
 class Tank3 final : public PCOE::Model {
 public:

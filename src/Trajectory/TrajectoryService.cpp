@@ -1,13 +1,12 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-
 #include <stdexcept>
 #include <thread>
 
 #include "Messages/WaypointMessage.h"
 #include "ThreadSafeLog.h"
-#include "TrajectoryService.h"
+#include "Trajectory/TrajectoryService.h"
 
 namespace PCOE {
     static const Log& log = Log::Instance();
