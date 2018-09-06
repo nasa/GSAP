@@ -98,20 +98,43 @@ namespace EventDrivenPredictorTests {
                          "Predictor produced prediction during construction");
 
         // First set of messages initializes observer
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 0.0)));
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput1, src, 0.0)));
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestOutput0, src, 0.0)));
+        auto timestamp = MessageClock::time_point(MessageClock::duration(1000));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput0, src, timestamp, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput1, src, timestamp, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestOutput0, src, timestamp, 0.0)));
         bus.processAll();
         Assert::AreEqual(0,
                          listener.getCount(),
                          "Predictor produced prediction after one set of data");
 
         // Second set of messages should trigger a state estimate and prediction
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 0.0)));
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput1, src, 0.0)));
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestOutput0, src, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput0, src, timestamp, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput1, src, timestamp, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestOutput0, src, timestamp, 0.0)));
         bus.processAll();
         Assert::AreEqual(1, listener.getCount(), "Predictor didn't produce prediction");
+        auto msg = listener.getLastMessage();
+        auto predictionTimestamp = msg->getTimestamp();
+        Assert::AreEqual(timestamp, predictionTimestamp, "Unexpected prediction timestamp");
+
+        timestamp = MessageClock::now();
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput0, src, timestamp, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput1, src, timestamp, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestOutput0, src, timestamp, 0.0)));
+        bus.processAll();
+        Assert::AreEqual(2, listener.getCount(), "Predictor didn't produce 2nd prediction");
+        msg = listener.getLastMessage();
+        predictionTimestamp = msg->getTimestamp();
+        Assert::AreEqual(timestamp, predictionTimestamp, "Unexpected 2nd prediction timestamp");
     }
 
     void fullConfig() {
