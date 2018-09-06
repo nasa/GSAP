@@ -1,39 +1,39 @@
 /**  EmptyPrognosticsModel - Header
-*   @file       EmptyPrognosticsModel.h
-*   @ingroup    GSAP-Support
-*
-*   @brief      EmptyPrognosticsModel model class for prognostics
-*
-*   @author     Matthew Daigle
-*   @version    1.1.0
-*
-*   @pre        N/A
-*
-*      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
-*      Created: January 10, 2017
-*
-*   @copyright Copyright (c) 2016-2018 United States Government as represented by
-*     the Administrator of the National Aeronautics and Space Administration.
-*     All Rights Reserved.
-*/
+ *   @file       EmptyPrognosticsModel.h
+ *   @ingroup    GSAP-Support
+ *
+ *   @brief      EmptyPrognosticsModel model class for prognostics
+ *
+ *   @author     Matthew Daigle
+ *   @version    1.1.0
+ *
+ *   @pre        N/A
+ *
+ *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
+ *      Created: January 10, 2017
+ *
+ *   @copyright Copyright (c) 2016-2018 United States Government as represented by
+ *     the Administrator of the National Aeronautics and Space Administration.
+ *     All Rights Reserved.
+ */
 
 #ifndef EmptyPrognosticsModel_H
 #define EmptyPrognosticsModel_H
 
 #include <vector>
 
-#include "PrognosticsModel.h"
 #include "ConfigMap.h"
-#include "ModelFactory.h"
-#include "PrognosticsModelFactory.h"
+#include "Models/ModelFactory.h"
+#include "Models/PrognosticsModel.h"
+#include "Models/PrognosticsModelFactory.h"
 
 class EmptyPrognosticsModel final : public PCOE::PrognosticsModel {
- public:
+public:
     // Constructor
     EmptyPrognosticsModel();
 
     // Constructor based on configMap
-    EmptyPrognosticsModel(const PCOE::ConfigMap & paramMap);
+    EmptyPrognosticsModel(const PCOE::ConfigMap& paramMap);
 
     /**
      * Calculate the model state using the given sampling time.
@@ -50,7 +50,7 @@ class EmptyPrognosticsModel final : public PCOE::PrognosticsModel {
                         const input_type& u,
                         const noise_type& n,
                         double dt) const override;
-    
+
     /**
      * Calculate the model output.
      *
@@ -65,7 +65,7 @@ class EmptyPrognosticsModel final : public PCOE::PrognosticsModel {
                           const state_type& x,
                           const input_type& u,
                           const noise_type& n) const override;
-    
+
     /**
      * Initialize the model state.
      *
@@ -74,15 +74,14 @@ class EmptyPrognosticsModel final : public PCOE::PrognosticsModel {
      * @returns The initial model state vector.
      **/
     state_type initialize(const input_type& u, const output_type& z) const override;
-    
+
     /** @brief      Execute threshold equation
-    *   @param      t Time
-    *   @param      x State vector
-    *   @param      u Input vector
-    **/
-    bool thresholdEqn(const double t, const Model::state_type & x, const Model::input_type & u);
-    
-    
+     *   @param      t Time
+     *   @param      x State vector
+     *   @param      u Input vector
+     **/
+    bool thresholdEqn(const double t, const Model::state_type& x, const Model::input_type& u);
+
     /** Calculate predicted outputs of the model. Predicted outputs are those
      * that are not measured, but are interested in being predicted for
      * prognostics.

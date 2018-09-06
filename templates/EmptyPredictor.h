@@ -25,7 +25,7 @@
 #include <vector>
 
 #include "ConfigMap.h"
-#include "Model.h"
+#include "Models/Model.h"
 #include "Predictors/Predictor.h"
 
 namespace PCOE {
@@ -39,7 +39,10 @@ namespace PCOE {
          * @param ts     The trajectory service to be used by the predictor
          * @param config Configuration map specifying predictor parameters.
          **/
-        explicit EmptyPredictor(const PrognosticsModel& m, LoadEstimator& le, TrajectoryService& ts, ConfigMap& config);
+        explicit EmptyPredictor(const PrognosticsModel& m,
+                                LoadEstimator& le,
+                                TrajectoryService& ts,
+                                ConfigMap& config);
 
         /**
          * Predict future events and values of system variables

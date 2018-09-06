@@ -21,7 +21,7 @@
 #define EmptyModel_H
 
 #include "ConfigMap.h"
-#include "Model.h"
+#include "Models/Model.h"
 
 class EmptyModel final : public PCOE::Model {
 public:
@@ -61,7 +61,7 @@ public:
                           const state_type& x,
                           const input_type& u,
                           const noise_type& n) const override;
-    
+
     /**
      * Initialize the model state.
      *
