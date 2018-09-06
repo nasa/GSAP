@@ -23,9 +23,9 @@
 
 #include "Test.h"
 
-#include "BatteryModel.h"
 #include "Matrix.h"
-#include "ModelFactory.h"
+#include "Models/BatteryModel.h"
+#include "Models/ModelFactory.h"
 #include "ObserverTests.h"
 #include "Observers/ParticleFilter.h"
 #include "Observers/UnscentedKalmanFilter.h"
@@ -289,7 +289,7 @@ void testUKFBatteryInitialize() {
     // double dt = 0.1;
     double t = 0;
     UKF.initialize(t, x, u);
-    
+
     // MORE TESTS
 }
 
