@@ -21,9 +21,9 @@
 
 #include "Test.h"
 
-#include "BatteryModel.h"
-#include "Model.h"
 #include "ModelTests.h"
+#include "Models/BatteryModel.h"
+#include "Models/Model.h"
 #include "Tank3.h"
 
 using namespace PCOE;
