@@ -83,6 +83,7 @@ set (HEADERS
     inc/Messages/WaypointMessage.h
     inc/Model.h
     inc/Observers/EventDrivenObserver.h
+    inc/Observers/ExtendedKalmanFilter.h
     inc/Observers/Observer.h
     inc/Observers/ObserverFactory.h
     inc/Observers/ParticleFilter.h
@@ -136,6 +137,7 @@ set(SRCS
     src/Messages/MessageId.cpp
     src/Messages/WaypointMessage.cpp
     src/Observers/EventDrivenObserver.cpp
+    src/Observers/ExtendedKalmanFilter.cpp
     src/Observers/ParticleFilter.cpp
     src/Observers/UnscentedKalmanFilter.cpp
     src/PContainer.cpp

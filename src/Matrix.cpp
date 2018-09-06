@@ -35,6 +35,10 @@ namespace PCOE {
     Matrix::Matrix(const std::vector<double>& v) : Matrix(v.size(), 1) {
         std::copy(v.cbegin(), v.cend(), data);
     }
+    
+    Matrix::Matrix(DynamicArray<double>& a) : Matrix(a.size(), 1) {
+        std::copy(a.cbegin(), a.cend(), data);
+    }
 
     Matrix::Matrix(const Matrix& other)
         : M(other.M), N(other.N), data(new double[other.M * other.N]) {

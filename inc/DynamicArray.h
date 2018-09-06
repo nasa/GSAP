@@ -205,7 +205,7 @@ namespace PCOE {
         const_reference operator[](size_type pos) const {
             return storage[pos];
         }
-
+        
         /**
          * Returns a reference to the first element of the array. The behavior
          * of this method is undefined when the array has size 0.
@@ -308,6 +308,38 @@ namespace PCOE {
         iterator rend() {
             return storage.end();
         }
+        
+        /**
+         * Elementwise addition
+         */
+        inline DynamicArray& operator+=(DynamicArray& toAdd) {
+            for (size_type i = 0; i < len; ++i) {
+                this->data[i] += toAdd[i];
+            }
+            return *this;
+        }
+        
+        inline friend DynamicArray operator+(DynamicArray lhs, const DynamicArray& rhs){
+            return lhs += rhs;
+        }
+        
+        
+        
+        /**
+         * Elementwise subtraction
+         */
+        inline DynamicArray& operator-=(DynamicArray& toSubtract) {
+            for (size_type i = 0; i < len; ++i) {
+                this->data[i] -= toSubtract[i];
+            }
+            return *this;
+        }
+        
+        inline friend DynamicArray operator-(DynamicArray lhs, const DynamicArray& rhs){
+            return lhs -= rhs;
+        }
+        
+
 
         /**
          * Returns an constant iterator to the first element of the array.
