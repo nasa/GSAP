@@ -3,13 +3,10 @@
 // All Rights Reserved.
 #ifndef PCOE_LOADESTIMATOR_H
 #define PCOE_LOADESTIMATOR_H
-
 #include <stdexcept>
 #include <vector>
 
 namespace PCOE {
-    const std::string LOAD_EST_SAMPLES_KEY = "LoadEstimator.SampleCount";
-
     /**
      * Abstract base class that defines the interface for load estimators.
      *
