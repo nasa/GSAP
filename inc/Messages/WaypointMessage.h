@@ -19,23 +19,6 @@ namespace PCOE {
         /**
          * Constructs a new instance of @{code WaypointMessage}.
          *
-         * @param id     The id of the message.
-         * @param source The source of the message.
-         * @param eta    The ETA of the waypoint
-         * @param lat    The latitude of the waypoint
-         * @param lon    The longitude of the waypoint
-         * @param alt    The altitude of the waypoint
-         **/
-        WaypointMessage(PCOE::MessageId id,
-                        std::string source,
-                        time_point eta,
-                        double lat,
-                        double lon,
-                        double alt);
-
-        /**
-         * Constructs a new instance of @{code WaypointMessage}.
-         *
          * @param id        The id of the message.
          * @param source    The source of the message.
          * @param timestamp The time at which the message or the data contained
