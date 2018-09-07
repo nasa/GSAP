@@ -3,6 +3,8 @@
 // All Rights Reserved.
 #ifndef PCOE_SCALARMESSAGE_H
 #define PCOE_SCALARMESSAGE_H
+#include <iostream>
+
 #include "Contracts.h"
 #include "Messages/Message.h"
 

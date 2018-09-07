@@ -3,6 +3,7 @@
 // All Rights Reserved.
 #ifndef PCOE_VECTORMESSAGE_H
 #define PCOE_VECTORMESSAGE_H
+#include <iostream>
 #include <vector>
 
 #include "Contracts.h"
