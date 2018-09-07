@@ -7,6 +7,7 @@
 
 #include "Contracts.h"
 #include "Messages/MessageBus.h"
+#include "Messages/ScalarMessage.h"
 #include "Messages/VectorMessage.h"
 
 namespace PCOE {
