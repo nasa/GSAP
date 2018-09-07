@@ -5,11 +5,11 @@
 #define PCOE_GAUSSIANLOADESTIMATOR_H
 #include <random>
 
-#include "ConfigMap.h"
-#include "Contracts.h"
 #include "Loading/LoadEstimator.h"
 
 namespace PCOE {
+    class ConfigMap;
+
     /**
      * Produces a constant load estimate including gaussian noise. The load
      * estimate is configured when the {@code GaussianLoadEstimator} is created.
@@ -33,24 +33,7 @@ namespace PCOE {
          * @param config The configuration used to initialize the load
          *               estimator.
          **/
-        GaussianLoadEstimator(const ConfigMap& config) {
-            const std::string LOADING_KEY = "LoadEstimator.Loading";
-            const std::string STDDEV_KEY = "LoadEstimator.StdDev";
-            requireKeys(config, {LOADING_KEY, STDDEV_KEY});
-
-            baseLoading = config.getDoubleVector(LOADING_KEY);
-            if (config.getVector(STDDEV_KEY).size() == 1) {
-                Require(stdDeviations.size() == 0, "StdDev initial size");
-                stdDeviations.resize(baseLoading.size(), config.getDouble(STDDEV_KEY));
-            }
-            else {
-                stdDeviations = config.getDoubleVector(STDDEV_KEY);
-                Require(stdDeviations.size() == baseLoading.size(), "StdDev config size");
-            }
-
-            std::random_device rd;
-            rng.seed(rd());
-        }
+        GaussianLoadEstimator(const ConfigMap& config);
 
         /**
          * Returns the loading configured when the current instance was
@@ -59,16 +42,7 @@ namespace PCOE {
          * @param t      Not used.
          * @return       The current estimated load.
          **/
-        LoadEstimate estimateLoad(const double t) override {
-            static_cast<void>(t);
-
-            std::vector<double> loading(baseLoading.size());
-            for (std::size_t i = 0; i < loading.size(); ++i) {
-                std::normal_distribution<> dist(baseLoading[i], stdDeviations[i]);
-                loading[i] = dist(rng);
-            }
-            return loading;
-        }
+        LoadEstimate estimateLoad(const double t) override;
 
     private:
         std::mt19937 rng;

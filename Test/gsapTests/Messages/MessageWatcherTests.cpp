@@ -7,6 +7,8 @@
 #include "DynamicArray.h"
 #include "Messages/MessageBus.h"
 #include "Messages/MessageWatcher.h"
+#include "Messages/ScalarMessage.h"
+#include "Messages/VectorMessage.h"
 #include "MockClasses.h"
 #include "Test.h"
 

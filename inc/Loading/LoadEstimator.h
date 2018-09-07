@@ -3,15 +3,10 @@
 // All Rights Reserved.
 #ifndef PCOE_LOADESTIMATOR_H
 #define PCOE_LOADESTIMATOR_H
-
 #include <stdexcept>
 #include <vector>
 
-#include "Models/PrognosticsModel.h"
-
 namespace PCOE {
-    const std::string LOAD_EST_SAMPLES_KEY = "LoadEstimator.SampleCount";
-
     /**
      * Abstract base class that defines the interface for load estimators.
      *
@@ -32,7 +27,7 @@ namespace PCOE {
          *
          * @see addLoad
          **/
-        virtual bool canAddLoad() {
+        virtual inline bool canAddLoad() {
             return false;
         }
 
@@ -46,7 +41,7 @@ namespace PCOE {
          *
          * @see canAddLoad
          **/
-        virtual void addLoad(const LoadMeasurement& load) {
+        virtual inline void addLoad(const LoadMeasurement& load) {
             static_cast<void>(load);
             throw std::runtime_error("Not supported");
         };

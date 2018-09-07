@@ -13,6 +13,7 @@
 #include "Loading/LoadEstimatorFactory.h"
 #include "Messages/Message.h"
 #include "Messages/MessageId.h"
+#include "Messages/ScalarMessage.h"
 #include "Models/PrognosticsModelFactory.h"
 #include "Observers/Observer.h"
 #include "Observers/ObserverFactory.h"

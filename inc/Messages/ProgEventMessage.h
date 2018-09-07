@@ -4,7 +4,7 @@
 #ifndef PCOE_MESSAGES_PROGEVENT_H
 #define PCOE_MESSAGES_PROGEVENT_H
 
-#include "Messages/Message.h"
+#include "Messages/ScalarMessage.h"
 #include "ProgEvent.h"
 
 namespace PCOE {

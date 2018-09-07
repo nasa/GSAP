@@ -4,7 +4,8 @@
 #ifndef PCOE_MESSAGES_UDATAMESSAGE_H
 #define PCOE_MESSAGES_UDATAMESSAGE_H
 
-#include "Messages/Message.h"
+#include "Messages/ScalarMessage.h"
+#include "Messages/VectorMessage.h"
 #include "UData.h"
 
 namespace PCOE {

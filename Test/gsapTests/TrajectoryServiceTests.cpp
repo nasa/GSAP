@@ -4,8 +4,10 @@
 #include <string>
 #include <thread>
 
+#include "Messages/EmptyMessage.h"
 #include "Messages/Message.h"
 #include "Messages/MessageBus.h"
+#include "Messages/ScalarMessage.h"
 #include "Messages/WaypointMessage.h"
 #include "Test.h"
 #include "Trajectory/EventDrivenTrajectoryService.h"
@@ -29,16 +31,18 @@ namespace PCOE {
                                0,
                                "Savepoints should be empty before start");
 
-        mb.publish(std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteStart, TEST_SRC)));
+        mb.publish(std::shared_ptr<Message>(
+            new EmptyMessage(MessageId::RouteStart, TEST_SRC, MessageClock::now())));
         Test::Assert::AreEqual(tc.getSavePts().size(), 0, "Savepoints should be empty after start");
 
         auto time = MessageClock::now();
-        mb.publish(std::shared_ptr<Message>(
-            new WaypointMessage(MessageId::RouteSetWP, TEST_SRC, time, 38.0098, -122.119, 30)));
+        mb.publish(std::shared_ptr<Message>(new WaypointMessage(
+            MessageId::RouteSetWP, TEST_SRC, MessageClock::now(), time, 38.0098, -122.119, 30)));
         auto time2 = MessageClock::now();
+        mb.publish(std::shared_ptr<Message>(new WaypointMessage(
+            MessageId::RouteSetWP, TEST_SRC, MessageClock::now(), time2, 38.0099, -122.118, 30)));
         mb.publish(std::shared_ptr<Message>(
-            new WaypointMessage(MessageId::RouteSetWP, TEST_SRC, time2, 38.0099, -122.118, 30)));
-        mb.publish(std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteEnd, TEST_SRC)));
+            new EmptyMessage(MessageId::RouteEnd, TEST_SRC, MessageClock::now())));
 
         mb.processAll();
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -80,7 +84,8 @@ namespace PCOE {
         tmp = sp.begin();
         Test::Assert::AreEqual(*tmp, time);
 
-        mb.publish(std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteClear, TEST_SRC)));
+        mb.publish(std::shared_ptr<Message>(
+            new EmptyMessage(MessageId::RouteClear, TEST_SRC, MessageClock::now())));
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         sp = tc.getSavePts();
         Test::Assert::AreEqual(sp.size(), 0, "Checking result of clear waypoint");

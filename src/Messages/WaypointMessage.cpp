@@ -1,17 +1,11 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
+#include <iostream>
+
 #include "Messages/WaypointMessage.h"
 
 namespace PCOE {
-    WaypointMessage::WaypointMessage(PCOE::MessageId id,
-                                     std::string source,
-                                     time_point eta,
-                                     double lat,
-                                     double lon,
-                                     double alt)
-        : Message(id, source), eta(eta), point(lat, lon, alt) {}
-
     WaypointMessage::WaypointMessage(PCOE::MessageId id,
                                      std::string source,
                                      time_point timestamp,

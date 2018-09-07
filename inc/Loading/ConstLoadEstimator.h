@@ -4,10 +4,11 @@
 #ifndef PCOE_CONSTLOADESTIMATOR_H
 #define PCOE_CONSTLOADESTIMATOR_H
 
-#include "ConfigMap.h"
 #include "Loading/LoadEstimator.h"
 
 namespace PCOE {
+    class ConfigMap;
+
     /**
      * Produces a constant load estimate. The load estimate is configured when
      * the {@code ConstLoadEstimator} is created and all calls to
@@ -28,12 +29,7 @@ namespace PCOE {
          * @param config The configuration used to initialize the load
          *               estimator.
          **/
-        ConstLoadEstimator(const ConfigMap& config) {
-            const std::string LOADING_KEY = "LoadEstimator.Loading";
-            requireKeys(config, {LOADING_KEY});
-
-            loading = config.getDoubleVector(LOADING_KEY);
-        }
+        ConstLoadEstimator(const ConfigMap& config);
 
         /**
          * Returns the loading configured when the current instance was
@@ -42,11 +38,7 @@ namespace PCOE {
          * @param t      Not used.
          * @return       The current estimated load.
          **/
-        LoadEstimate estimateLoad(const double t) override {
-            static_cast<void>(t);
-
-            return loading;
-        }
+        LoadEstimate estimateLoad(const double t) override;
 
     private:
         std::vector<double> loading;

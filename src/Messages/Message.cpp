@@ -1,8 +1,10 @@
 // Copyright (c) 2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-#include "Messages/Message.h"
+#include <iostream>
+
 #include "Contracts.h"
+#include "Messages/Message.h"
 
 namespace PCOE {
     void Message::serialize(std::ostream& os) const {
