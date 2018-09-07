@@ -36,11 +36,11 @@ namespace PCOE {
         Test::Assert::AreEqual(tc.getSavePts().size(), 0, "Savepoints should be empty after start");
 
         auto time = MessageClock::now();
-        mb.publish(std::shared_ptr<Message>(
-            new WaypointMessage(MessageId::RouteSetWP, TEST_SRC, time, 38.0098, -122.119, 30)));
+        mb.publish(std::shared_ptr<Message>(new WaypointMessage(
+            MessageId::RouteSetWP, TEST_SRC, MessageClock::now(), time, 38.0098, -122.119, 30)));
         auto time2 = MessageClock::now();
-        mb.publish(std::shared_ptr<Message>(
-            new WaypointMessage(MessageId::RouteSetWP, TEST_SRC, time2, 38.0099, -122.118, 30)));
+        mb.publish(std::shared_ptr<Message>(new WaypointMessage(
+            MessageId::RouteSetWP, TEST_SRC, MessageClock::now(), time2, 38.0099, -122.118, 30)));
         mb.publish(std::shared_ptr<Message>(
             new EmptyMessage(MessageId::RouteEnd, TEST_SRC, MessageClock::now())));
 
