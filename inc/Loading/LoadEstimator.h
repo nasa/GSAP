@@ -7,8 +7,6 @@
 #include <stdexcept>
 #include <vector>
 
-#include "Models/PrognosticsModel.h"
-
 namespace PCOE {
     const std::string LOAD_EST_SAMPLES_KEY = "LoadEstimator.SampleCount";
 
@@ -32,7 +30,7 @@ namespace PCOE {
          *
          * @see addLoad
          **/
-        virtual bool canAddLoad() {
+        virtual inline bool canAddLoad() {
             return false;
         }
 
@@ -46,7 +44,7 @@ namespace PCOE {
          *
          * @see canAddLoad
          **/
-        virtual void addLoad(const LoadMeasurement& load) {
+        virtual inline void addLoad(const LoadMeasurement& load) {
             static_cast<void>(load);
             throw std::runtime_error("Not supported");
         };

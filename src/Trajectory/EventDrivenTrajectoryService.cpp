@@ -6,6 +6,7 @@
 
 #include "Contracts.h"
 #include "Messages/Message.h"
+#include "Messages/ScalarMessage.h"
 #include "Messages/WaypointMessage.h"
 #include "ThreadSafeLog.h"
 #include "Trajectory/EventDrivenTrajectoryService.h"

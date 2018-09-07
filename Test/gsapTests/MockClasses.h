@@ -168,7 +168,7 @@ public:
                   const ConfigMap& config)
         : Predictor(m, le, trajService, config) {}
 
-    Prediction predict(double, const std::vector<UData>& state) override {
+    Prediction predict(double, const std::vector<UData>&) override {
         ProgEvent event(MessageId::TestEvent0, {UData()}, {UData()});
 
         return Prediction({event}, std::vector<DataPoint>());

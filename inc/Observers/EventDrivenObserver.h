@@ -67,8 +67,8 @@ namespace PCOE {
         std::string source;
         MessageWatcher<double> inputWatcher;
         MessageWatcher<double> outputWatcher;
-        std::shared_ptr<DoubleVecMessage> inputMsg;
-        std::shared_ptr<DoubleVecMessage> outputMsg;
+        std::shared_ptr<Message> inputMsg;
+        std::shared_ptr<Message> outputMsg;
     };
 }
 

@@ -4,6 +4,7 @@
 #include <thread>
 #include <utility>
 
+#include "Messages/ScalarMessage.h"
 #include "MockClasses.h"
 #include "Observers/EventDrivenObserver.h"
 #include "Test.h"

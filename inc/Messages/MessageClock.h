@@ -21,12 +21,12 @@ namespace PCOE {
     class MessageClock {
     public:
         /**
-         * The representation of the clock duration.
+         * The type used internally to store the clock duration in ticks.
          **/
         using rep = std::uint64_t;
 
         /**
-         * A ration representing the tick period of the clock in seconds.
+         * A ratio representing the tick period of the clock in seconds.
          **/
         using period = std::micro;
 
@@ -50,8 +50,11 @@ namespace PCOE {
         // isn't possible as long as we are relying solely on
         // std::chrono::system_clock as a time source, since the system clock is
         // itself not steady.
+        // TODO (JW): I can't remember anymore why we are using system_clock
+        // rather than std::chrono::steady_clock. Should look into that and
+        // document it here.
         /**
-         * Indicates that sucsessive calls to @{code now} do no yield
+         * Indicates that sucsessive calls to @{code now} do not yield
          * monotonically increasing results.
          **/
         const bool is_steady = false;

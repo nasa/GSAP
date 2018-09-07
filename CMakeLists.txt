@@ -129,7 +129,11 @@ set(SRCS
     src/DataPoint.cpp
     src/DataPoints.cpp
     src/GaussianVariable.cpp
+    src/Loading/ConstLoadEstimator.cpp
+    src/Loading/GaussianLoadEstimator.cpp
+    src/Loading/MovingAverageLoadEstimator.cpp
     src/Matrix.cpp
+    src/Messages/EmptyMessage.cpp
     src/Messages/Message.cpp
     src/Messages/MessageBus.cpp
     src/Messages/MessageId.cpp

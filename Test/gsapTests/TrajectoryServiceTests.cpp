@@ -4,8 +4,10 @@
 #include <string>
 #include <thread>
 
+#include "Messages/EmptyMessage.h"
 #include "Messages/Message.h"
 #include "Messages/MessageBus.h"
+#include "Messages/ScalarMessage.h"
 #include "Messages/WaypointMessage.h"
 #include "Test.h"
 #include "Trajectory/EventDrivenTrajectoryService.h"

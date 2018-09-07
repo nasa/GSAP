@@ -48,11 +48,11 @@ namespace PCOE {
         switch (message->getMessageId()) {
         case MessageId::ModelInputVector:
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Set input message");
-            inputMsg = std::dynamic_pointer_cast<DoubleVecMessage, Message>(message);
+            inputMsg = message;
             break;
         case MessageId::ModelOutputVector:
             log.WriteLine(LOG_TRACE, MODULE_NAME, "Set ouput message");
-            outputMsg = std::dynamic_pointer_cast<DoubleVecMessage, Message>(message);
+            outputMsg = message;
             break;
         default:
             Unreachable("Unexpected message type");
@@ -66,10 +66,13 @@ namespace PCOE {
     }
 
     void EventDrivenObserver::stepObserver() {
+        auto imsgVec = std::dynamic_pointer_cast<DoubleVecMessage, Message>(inputMsg);
+        auto omsgVec = std::dynamic_pointer_cast<DoubleVecMessage, Message>(outputMsg);
+
         auto timestamp = std::max(inputMsg->getTimestamp(), outputMsg->getTimestamp());
         double timestampSeconds = seconds(timestamp);
-        const auto& u = Model::input_type(inputMsg->getValue());
-        const auto& z = Model::output_type(outputMsg->getValue());
+        const auto& u = Model::input_type(imsgVec->getValue());
+        const auto& z = Model::output_type(omsgVec->getValue());
         if (!observer->isInitialized()) {
             log.FormatLine(LOG_TRACE,
                            MODULE_NAME,
