@@ -5,11 +5,6 @@
 #include "Contracts.h"
 
 namespace PCOE {
-    EmptyMessage::EmptyMessage(MessageId id, std::string source) : Message(id, source) {
-        Expect((static_cast<std::uint64_t>(id) & 0x0000FF0000000000L) == 0,
-               "Message id is not empty");
-    }
-
     EmptyMessage::EmptyMessage(MessageId id, std::string source, time_point timestamp)
         : Message(id, source, timestamp) {
         Expect((static_cast<std::uint64_t>(id) & 0x0000FF0000000000L) == 0,
