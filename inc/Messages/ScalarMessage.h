@@ -21,19 +21,6 @@ namespace PCOE {
         /**
          * Constructs a new instance of @{code ScalarMessage}.
          *
-         * @param id     The id of the message.
-         * @param source The source of the message.
-         * @param value  The value of the message.
-         **/
-        ScalarMessage(MessageId id, std::string source, const T& value)
-            : Message(id, source), value(value) {
-            Expect((static_cast<std::uint64_t>(id) & 0x0000300000000000L) > 0,
-                   "Message id is not scalar");
-        }
-
-        /**
-         * Constructs a new instance of @{code ScalarMessage}.
-         *
          * @param id        The id of the message.
          * @param source    The source of the message.
          * @param timestamp The time at which the message or the data contained

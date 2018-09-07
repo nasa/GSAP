@@ -32,25 +32,31 @@ namespace EventDrivenObserverTests {
         EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tm)), src);
 
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate on construction");
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput0, src, MessageClock::now(), 0.0)));
         bus.processAll();
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate before init (1)");
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput1, src, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput1, src, MessageClock::now(), 0.0)));
         bus.processAll();
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate before init (2)");
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestOutput0, src, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestOutput0, src, MessageClock::now(), 0.0)));
         bus.processAll();
         Assert::AreEqual(0,
                          listener.getCount(),
                          "obs produced state estimate after first set of data");
 
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput0, src, MessageClock::now(), 0.0)));
         bus.processAll();
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate on 1 input");
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput1, src, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput1, src, MessageClock::now(), 0.0)));
         bus.processAll();
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate on 2 inputs");
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestOutput0, src, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestOutput0, src, MessageClock::now(), 0.0)));
         bus.processAll();
         Assert::AreEqual(1,
                          listener.getCount(),

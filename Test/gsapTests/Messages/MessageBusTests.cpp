@@ -13,7 +13,8 @@ using namespace PCOE::Test;
 
 class TestMessage final : public Message {
 public:
-    TestMessage(MessageId id, const std::string& source) : Message(id, source) {}
+    TestMessage(MessageId id, const std::string& source)
+        : Message(id, source, MessageClock::now()) {}
 
 protected:
     std::uint16_t getPayloadSize() const override {
