@@ -35,10 +35,12 @@ namespace MessageWatcherTests {
         MessageWatcher<double> watcher(bus, src, ids, resultId);
 
         Assert::AreEqual(0, counter.getCount(), "No data");
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput0, src, MessageClock::now(), 0.0)));
         bus.processAll();
         Assert::AreEqual(0, counter.getCount(), "1 input");
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput1, src, 0.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput1, src, MessageClock::now(), 0.0)));
         bus.processAll();
         Assert::AreEqual(1, counter.getCount(), "Both inputs");
 
@@ -59,13 +61,16 @@ namespace MessageWatcherTests {
         MessageWatcher<double> watcher(bus, src, ids, resultId);
 
         Assert::AreEqual(0, counter.getCount(), "No data");
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 1.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput0, src, MessageClock::now(), 1.0)));
         bus.processAll();
         Assert::AreEqual(0, counter.getCount(), "Input0 first value");
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput0, src, 2.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput0, src, MessageClock::now(), 2.0)));
         bus.processAll();
         Assert::AreEqual(0, counter.getCount(), "Input0 second value");
-        bus.publish(std::shared_ptr<Message>(new DoubleMessage(MessageId::TestInput1, src, 3.0)));
+        bus.publish(std::shared_ptr<Message>(
+            new DoubleMessage(MessageId::TestInput1, src, MessageClock::now(), 3.0)));
         bus.processAll();
         Assert::AreEqual(1, counter.getCount(), "1 message per complete set");
 

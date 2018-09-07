@@ -24,15 +24,6 @@ namespace PCOE {
         using time_point = MessageClock::time_point;
 
         /**
-         * Constructs a new instance of @{code Message} with the timestamp set
-         * to the current time.
-         *
-         * @param id     The id of the message.
-         * @param source The source of the message.
-         **/
-        Message(MessageId id, std::string source) : Message(id, source, MessageClock::now()) {}
-
-        /**
          * Constructs a new instance of @{code Message}.
          *
          * @param id        The id of the message.

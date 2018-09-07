@@ -76,8 +76,10 @@ namespace PCOE {
         catch (std::out_of_range) {
         }
 
-        mb.publish(std::shared_ptr<Message>(
-            new U64Message(MessageId::RouteDeleteWP, TEST_SRC, time2.time_since_epoch().count())));
+        mb.publish(std::shared_ptr<Message>(new U64Message(MessageId::RouteDeleteWP,
+                                                           TEST_SRC,
+                                                           MessageClock::now(),
+                                                           time2.time_since_epoch().count())));
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         sp = tc.getSavePts();
         Test::Assert::AreEqual(sp.size(), 1, "Checking result of delete waypoint");
