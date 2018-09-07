@@ -58,20 +58,6 @@ namespace PCOE {
         }
 
         /**
-         * Constructs a new instance of @{code VectorMessage}, with the
-         * contents of {@param values}.
-         *
-         * @param id     The id of the message.
-         * @param source The source of the message.
-         * @param value  The value of the message.
-         **/
-        VectorMessage(MessageId id, std::string source, std::initializer_list<T> values)
-            : Message(id, source), values(values) {
-            Expect((static_cast<std::uint64_t>(id) & 0x0000C00000000000L) > 0,
-                   "Message id is not vector");
-        }
-
-        /**
          * Constructs a new instance of @{code VectorMessage} with the
          * contents of {@param values}.
          *
