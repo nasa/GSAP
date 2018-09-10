@@ -1,19 +1,22 @@
-// Copyright © 2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
+// Copyright © 2018 United States Government as represented by the Administrator of the National
+// Aeronautics and Space Administration.  All Rights Reserved.
 #ifndef TANK3_H
 #define TANK3_H
-
 #include <vector>
-#include "Model.h"
+
+#include "Models/Model.h"
 
 class Tank3 final : public PCOE::Model {
 public:
     // Constructor
-    Tank3() {
-        numStates = 3;
-        inputs = {"u1","u2","u3"};
-        outputs = {"p1m","p2m","p3m"};
-        m_dt = 1;
-    }
+    Tank3()
+        : PCOE::Model(3,
+                      {PCOE::MessageId::TestInput0,
+                       PCOE::MessageId::TestInput1,
+                       PCOE::MessageId::TestInput2},
+                      {PCOE::MessageId::TestOutput0,
+                       PCOE::MessageId::TestOutput1,
+                       PCOE::MessageId::TestOutput2}) {}
 
     // State indices
     struct stateIndices {
@@ -52,8 +55,19 @@ public:
         double R2c3;
     } parameters;
 
-    void stateEqn(const double t, std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & n, const double dt);
-    void outputEqn(const double t, const std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & n, std::vector<double> & z);
-    void initialize(std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & z);
+    using Model::stateEqn;
+
+    state_type stateEqn(const double t,
+                        const state_type& x,
+                        const input_type& u,
+                        const noise_type& n,
+                        const double dt) const override;
+
+    output_type outputEqn(const double t,
+                          const state_type& x,
+                          const input_type& u,
+                          const noise_type& n) const override;
+
+    state_type initialize(const input_type& u, const output_type& z) const override;
 };
 #endif

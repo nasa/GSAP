@@ -21,9 +21,9 @@
 
 #include "BenchmarkTimer.h"
 #include "ModelBasedPrognoser.h"
-#include "Observer.h"
-#include "Predictor.h"
-#include "PrognosticsModel.h"
+#include "Models/PrognosticsModel.h"
+#include "Observers/Observer.h"
+#include "Predictors/Predictor.h"
 
 namespace PCOE {
     class BenchmarkPrognoser : public ModelBasedPrognoser {
@@ -35,7 +35,7 @@ namespace PCOE {
          * @brief Benchmark Prognoser Constructor
          * @param config Map of config parameters from the prognoser config file
          */
-        BenchmarkPrognoser(GSAPConfigMap& config);
+        BenchmarkPrognoser(ConfigMap& config);
         ~BenchmarkPrognoser(); // destructor
         void step();
     };

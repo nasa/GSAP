@@ -92,14 +92,6 @@ if [ $ec -ne 0 ]; then
 fi
 failedTests=$(($failedTests+$ec));
 
-./batteryPrognoserTests
-echo -e "\n"
-ec=$?
-if [ $ec -ne 0 ]; then
-    echo -e "${PURPLE}$ec tests failed.${NORMAL}\n\n\n"
-fi
-failedTests=$(($failedTests+$ec));
-
 echo -e "\n\n${YELLOW}${failedTests} tests failed.${NORMAL}"
 popd;
 

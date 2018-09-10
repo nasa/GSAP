@@ -8,83 +8,54 @@
  */
 
 #include <algorithm>
+#include <cmath>
 #include <string>
 #include <vector>
-#include <cmath>
 
-#include "Model.h"
+#include "Models/Model.h"
 #include "UData.h"
 
-#include "Exceptions.h"
 #include "EmptyObserver.h"
+#include "Exceptions.h"
 
 namespace PCOE {
-    
-    // Set model
-    void EmptyObserver::setModel(Model * model) {
-        // Set the model pointer
-        // pModel = model;
-    }
-    
+    const static Log& log = Log::Instance();
+
+    const std::string MODULE_NAME = "OBS-Empty";
+
+    EmptyObserver::EmptyObserver(const Model& m, const Matrix Q, const Matrix R) : Observer(m) {}
+
     // Initialize function (required by Observer interface)
-    void EmptyObserver::initialize(const double t0, const std::vector<double> & x0,
-                                           const std::vector<double> & u0) {
+    void EmptyObserver::initialize(const double t0,
+                                   const Model::state_type& x0,
+                                   const Model::input_type& u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
-        
-        // Check that model has been set
-        if (pModel == NULL) {
-            log.WriteLine(LOG_ERROR, MODULE_NAME, "EmptyObserver does not have a model!");
-            throw ConfigurationError("EmptyObserver does not have a model!");
-        }
-        
-        // Initialize time, inputs
-        m_t = t0;
-        m_uOld = u0;
-        
-        // Other initialization activities
+        auto initialized_state = model.getStateVector();
+
+        // Initialization activities
         // ...
-        
-        // Set initialized flag
-        m_initialized = true;
+
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initialize completed");
     }
-    
-    // Get state mean
-    const std::vector<double> & EmptyObserver::getStateMean() const {
-        // return xEstimated;
-    }
-    
-    // Get output mean
-    const std::vector<double> & EmptyObserver::getOutputMean() const {
-        // return zEstimated;
-    }
-    
+
     // Step function (required by Observer interface)
-    void EmptyObserver::step(const double newT, const std::vector<double> & u,
-                                     const std::vector<double> & z) {
+    void EmptyObserver::step(double t, const Model::input_type& u, const Model::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
-        
+
         if (!isInitialized()) {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "Called step before initialized");
             throw std::domain_error("EmptyObserver::step not initialized");
         }
-        
-        // Update time
-        double dt = newT - m_t;
-        m_t = newT;
-        if (dt <= 0) {
-            log.WriteLine(LOG_ERROR, MODULE_NAME, "dt is less than or equal to zero");
-            throw std::domain_error("EmptyObserver::step dt is 0");
-        }
-        
+
         // Perform state estimation
         // ...
-        
-        // Update uOld
-        m_uOld = u;
     }
-    
+
     std::vector<UData> EmptyObserver::getStateEstimate() const {
-        // return state;
+        std::vector<UData> state(model.getStateSize());
+
+        // Fill state
+
+        return state;
     }
 }
