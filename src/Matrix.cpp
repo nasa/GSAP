@@ -6,7 +6,10 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <numeric>
 #include <stdexcept>
+
+#include "Contracts.h"
 
 namespace PCOE {
     /***********************************************************************/
@@ -14,6 +17,8 @@ namespace PCOE {
     /***********************************************************************/
     Matrix::Matrix() : M(0), N(0), data(nullptr) {}
 
+    // Note (JW): Note the parens at the end of the array allocation. This
+    // value-initializes the array.
     Matrix::Matrix(std::size_t m, std::size_t n) : M(m), N(n), data(new double[m * n]()) {}
 
     Matrix::Matrix(std::size_t m, std::size_t n, double value)
@@ -32,6 +37,115 @@ namespace PCOE {
         }
     }
 
+    Matrix::Matrix(std::initializer_list<std::reference_wrapper<const Matrix>> l) {
+        Expect(l.size() > 0, "Concat constructor called with empty list");
+        std::size_t m = l.begin()->get().rows();
+        std::size_t n = l.begin()->get().cols();
+        bool allSameSize = std::all_of(l.begin(), l.end(), [=](const Matrix& i) {
+            return i.rows() == m && i.cols() == n;
+        });
+        if (allSameSize) {
+            throw std::domain_error(
+                "Ambiguous matrix construction. Please specify the desired matrix dimensions");
+        }
+
+        // First, try concatenating by columns
+        bool rowsMatch =
+            std::none_of(l.begin(), l.end(), [=](const Matrix& i) { return i.rows() != m; });
+        if (rowsMatch) {
+            M = m;
+            N = std::accumulate(l.begin(), l.end(), 0, [](std::size_t i, const Matrix& j) {
+                return i + j.cols();
+            });
+            data = new double[M * N];
+
+            // Everything matches up to concatenate by column
+            // TODO (JW): Optimize me
+            std::size_t i = 0;
+            for (const Matrix& matrix : l) {
+                for (std::size_t j = 0; j < matrix.cols(); ++j) {
+                    this->col(i, matrix.col(j));
+                    ++i;
+                }
+            }
+            return;
+        }
+
+        // Concatenating by column didn't work, try concatenating by row
+        bool colsMatch =
+            std::none_of(l.begin(), l.end(), [=](const Matrix& i) { return i.cols() != n; });
+        if (colsMatch) {
+            M = std::accumulate(l.begin(), l.end(), 0, [](std::size_t i, const Matrix& j) {
+                return i + j.rows();
+            });
+            N = n;
+            data = new double[M * N];
+
+            // Everything matches up to concatenate by column
+            // TODO (JW): Optimize me
+            std::size_t i = 0;
+            for (const Matrix& matrix : l) {
+                for (std::size_t j = 0; j < matrix.rows(); ++j) {
+                    this->row(i, matrix.row(j));
+                    ++i;
+                }
+            }
+            return;
+        }
+
+        // Neither concatenation worked, so fail.
+        throw std::domain_error("The provided matrices do not fit in the specified dimensions");
+    }
+
+    Matrix::Matrix(std::size_t m,
+                   std::size_t n,
+                   std::initializer_list<std::reference_wrapper<const Matrix>> l)
+        : Matrix(m, n) {
+        Expect(l.size() > 0, "Sized concat constructor called with empty list");
+        // First, try concatenating by columns
+        bool rowsMatch =
+            std::none_of(l.begin(), l.end(), [=](const Matrix& i) { return i.rows() != m; });
+        std::size_t columnCount =
+            std::accumulate(l.begin(), l.end(), 0, [](std::size_t i, const Matrix& j) {
+                return i + j.cols();
+            });
+        if (rowsMatch && columnCount == n) {
+            // Everything matches up to concatenate by column
+            // TODO (JW): Optimize me
+            std::size_t i = 0;
+            for (const Matrix& matrix : l) {
+                for (std::size_t j = 0; j < matrix.cols(); ++j) {
+                    this->col(i, matrix.col(j));
+                    ++i;
+                }
+            }
+            return;
+        }
+
+        // Concatenating by column didn't work, try concatenating by row
+        bool colsMatch =
+            std::none_of(l.begin(), l.end(), [=](const Matrix& i) { return i.cols() != n; });
+        std::size_t rowCount =
+            std::accumulate(l.begin(), l.end(), 0, [](std::size_t i, const Matrix& j) {
+                return i + j.rows();
+            });
+        if (colsMatch && rowCount == m) {
+            // Everything matches up to concatenate by column
+            // TODO (JW): Optimize me
+            std::size_t i = 0;
+            for (const Matrix& matrix : l) {
+                for (std::size_t j = 0; j < matrix.rows(); ++j) {
+                    this->row(i, matrix.row(j));
+                    ++i;
+                }
+            }
+            return;
+        }
+
+        // Neither concatenation worked, so fail.
+        throw std::domain_error("The provided matrices do not fit in the specified dimensions");
+    }
+
     Matrix::Matrix(const std::vector<double>& v) : Matrix(v.size(), 1) {
         std::copy(v.cbegin(), v.cend(), data);
     }
@@ -42,6 +156,9 @@ namespace PCOE {
     }
 
     Matrix::Matrix(Matrix&& other) : Matrix() {
+        if (*this == other) {
+            return;
+        }
         swap(*this, other);
     }
 
@@ -281,7 +398,7 @@ namespace PCOE {
         }
         return *this;
     }
-    
+
     Matrix& Matrix::operator%=(double rhs) {
         for (std::size_t i = 0; i < M * N; i++) {
             data[i] = std::fmod(data[i], rhs);
@@ -296,7 +413,7 @@ namespace PCOE {
         }
         return result;
     }
-    
+
     Matrix Matrix::elementwiseDivide(const Matrix& mat) const {
         Matrix result(*this);
         for (std::size_t i = 0; i < M * N; i++) {
@@ -304,7 +421,7 @@ namespace PCOE {
         }
         return result;
     }
-    
+
     /***********************************************************************/
     /* Operations                                                          */
     /***********************************************************************/

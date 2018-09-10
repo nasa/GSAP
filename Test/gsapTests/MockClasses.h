@@ -212,7 +212,7 @@ public:
     }
 
     void deallocate(pointer ptr, size_type n) {
-        size_type bytes = sizeof(value_type) * n;
+        static_cast<void>(n);
         std::free(static_cast<void_pointer>(ptr));
     }
 

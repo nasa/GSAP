@@ -12,7 +12,6 @@
 #include "FrameworkTests.h"
 #include "GaussianVariableTests.h"
 #include "Loading/LoadEstimatorTests.h"
-#include "MatrixTests.h"
 #include "Messages/MessageBusTests.h"
 #include "Messages/MessageWatcherTests.h"
 #include "ModelTests.h"
@@ -32,11 +31,15 @@
 
 using namespace PCOE::Test;
 
+namespace MatrixTests {
+    void registerTests(TestContext& context);
+}
+
 int main() {
     TestContext context;
     // Trajectory Service
     context.AddTest("Trajectory Service", PCOE::testTrajectoryService, "Trajectory Service");
-    
+
     // Config Map Tests
     context.AddTest("Load Arguments", configMapLoadArgs, "Config Map");
     context.AddTest("Use", configMapUse, "Config Map");
@@ -86,7 +89,7 @@ int main() {
     context.AddTest("Initialization", testDPointInit, "DPoint");
     context.AddTest("Update", testDPointUpdate, "DPoint");
 
-    TestMatrix::registerTests(context);
+    MatrixTests::registerTests(context);
 
     // Model Tests
     context.AddTest("Tank Initialization", testTankInitialize, "Model Tank");
