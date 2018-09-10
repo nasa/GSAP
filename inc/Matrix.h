@@ -1,7 +1,6 @@
 // Copyright (c) 2016-2018 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-
 #ifndef GSAP_MATRIX_H
 #define GSAP_MATRIX_H
 
@@ -21,7 +20,7 @@ namespace PCOE {
      * @author Matthew Daigle
      * @since 1.0
      **/
-    class Matrix {
+    class Matrix final {
     public:
         struct ConstRowVector;
         struct RowVector;
@@ -29,7 +28,8 @@ namespace PCOE {
         /* Constructors, Destructor and Assignment Operator                    */
         /***********************************************************************/
 
-        /** @brief Constructs a new empty Matrix.
+        /**
+         * Constructs a new empty Matrix.
          */
         Matrix();
 
@@ -54,11 +54,66 @@ namespace PCOE {
          *         Elements are initialized sequentially in row-major order by the
          *         elements in @p l
          *
-         *  @param m     The number of rows in the matrix.
-         *  @param n     The number of columns in the matrix.
-         *  @param value The initial value of elements in the matrix.
+         *  @param m The number of rows in the matrix.
+         *  @param n The number of columns in the matrix.
+         *  @param l The initial values of elements in the matrix.
          */
         Matrix(std::size_t m, std::size_t n, std::initializer_list<double> l);
+
+        /**
+         * Constructs a new Matrix that is a concatenation of the matrices
+         * provided in @p l.
+         *
+         * @remarks
+         * The size of the resulting matrix is determined by the size of the
+         * matrices in @p l. If all matrices have the same number of rows, their
+         * columns will be concatenated. If all matrices have the same number of
+         * columns, their rows will be concatenated.
+         *
+         * @example
+         * // 1, 1
+         * // 2, 2
+         * // 3, 3
+         * Matrix a(3, 2, { 1, 1, 2, 2, 3, 3});
+         *
+         * // 4, 4
+         * Matrix b(1, 2, {4, 4})
+         *
+         * // 5
+         * // 6
+         * // 7
+         * Matrix c(3, 1, { 5, 6, 7});
+         *
+         * // 1, 1
+         * // 2, 2
+         * // 3, 3
+         * // 4, 4
+         * Matrix d({a, b});
+         *
+         * // 1, 1, 5
+         * // 2, 2, 6
+         * // 3, 3, 7
+         * Matrix e({a, c});
+         *
+         * @param l A list of matrices to concatenate
+         */
+        explicit Matrix(std::initializer_list<std::reference_wrapper<const Matrix>> l);
+
+        /**
+         * Constructs a new Matrix with storage for m by n elements. Elements
+         * are initialized by copying the provided list of matrices. If all of
+         * the matrices have @p m rows, the columns of each matrix are copied
+         * sequentially into the new matrix. If all of the matrices have @p n
+         * columns, the rows of each matrix are copied into the new matrix
+         * sequentially.
+         *
+         * @param m The number of rows in the matrix.
+         * @param n The number of columns in the matrix.
+         * @param l The matrices to concatenate
+         */
+        Matrix(std::size_t m,
+               std::size_t n,
+               std::initializer_list<std::reference_wrapper<const Matrix>> l);
 
         /** @brief Constructs a new Matrix representing a column vector with
          *         the elements of @p v.
@@ -396,7 +451,7 @@ namespace PCOE {
         inline friend Matrix operator/(Matrix lhs, double rhs) {
             return lhs /= rhs;
         }
-        
+
         /**
          *  Applies modulo to each element inplace
          *
@@ -404,7 +459,7 @@ namespace PCOE {
          *  @returns    A reference to the current matrix.
          **/
         Matrix& operator%=(double rhs);
-        
+
         /**
          *  Applies modulo to each element
          *
@@ -415,7 +470,7 @@ namespace PCOE {
         inline friend Matrix operator%(Matrix lhs, double rhs) {
             return lhs %= rhs;
         }
-        
+
         /**
          *  Applies modulo by each element.
          *
@@ -424,15 +479,15 @@ namespace PCOE {
          *  @returns    A new matrix containing the result.
          **/
         inline friend Matrix operator%(double lhs, Matrix rhs) {
-            rhs.apply([lhs](double x) { return std::fmod(lhs, x); } );
+            rhs.apply([lhs](double x) { return std::fmod(lhs, x); });
             return rhs;
         }
-        
+
         /**
          *  Multiply elementwise
          */
         Matrix elementwiseMultiply(const Matrix& mat) const;
-        
+
         /**
          *  Divide Elementwise
          */
@@ -441,22 +496,21 @@ namespace PCOE {
         /***********************************************************************/
         /* Operations                                                          */
         /***********************************************************************/
-        
+
         /**
          *  Applies function to each element in the matrix
          *
          *  @param  function    Function to be applied to each element
          *  @return affected Matrix
          */
-        template<typename Fn>
+        template <typename Fn>
         Matrix& apply(Fn&& function) {
             for (size_t i = 0; i < M * N; i++) {
                 data[i] = function(data[i]);
             }
             return *this;
         }
-        
-        
+
         /** @brief Calculates the adjoint of the matrix
          *
          *  @returns A matrix containing the adjoint of the current matrix.

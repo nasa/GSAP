@@ -1,101 +1,22 @@
-/**  MatrixTests - Body
- *   @file      Unit tests for Matrix class
- *   @ingroup   GPIC++
- *
- *   @brief     Unit tests for Matrix classes
- *
- *   @author    Matthew Daigle
- *   @version   1.1.0
- *
- *   @pre       N/A
- *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: April 7, 2016
- *
- *   @copyright Copyright (c) 2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
-
+// Copyright (c) 2016-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #include <iostream>
 #include <random>
 #include <sstream>
 
 #include "Matrix.h"
-#include "MatrixTests.h"
 #include "Test.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
-namespace TestMatrix {
+namespace MatrixTests {
     static std::random_device rd;
     static std::mt19937 rng(rd());
     static std::uniform_real_distribution<> dist(-1000, 1000);
 
     const std::size_t ITERATIONS = 20;
-
-    void registerTests(PCOE::Test::TestContext& context) {
-        // Matrix Creation
-        context.AddTest("construct_default", TestMatrix::construct_default, "Matrix");
-        context.AddTest("construct_size", TestMatrix::construct_size, "Matrix");
-        context.AddTest("construct_initialvalue", TestMatrix::construct_initialvalue, "Matrix");
-        context.AddTest("construct_initializerlist",
-                        TestMatrix::construct_initializerlist,
-                        "Matrix");
-        context.AddTest("construct_vector", TestMatrix::construct_vector, "Matrix");
-        context.AddTest("construct_copy", TestMatrix::construct_copy, "Matrix");
-        context.AddTest("construct_move", TestMatrix::construct_move, "Matrix");
-        context.AddTest("operator_assign", TestMatrix::operator_assign, "Matrix");
-        // Comparison operators
-        context.AddTest("operator_equal", TestMatrix::operator_equal, "Matrix");
-        context.AddTest("operator_notequal", TestMatrix::operator_notequal, "Matrix");
-        context.AddTest("issquare", TestMatrix::issquare, "Matrix");
-        // Basic operations
-        context.AddTest("rows", TestMatrix::rows, "Matrix");
-        context.AddTest("cols", TestMatrix::cols, "Matrix");
-        context.AddTest("indexer", TestMatrix::indexer, "Matrix");
-        context.AddTest("indexer_const", TestMatrix::indexer_const, "Matrix");
-        context.AddTest("at", TestMatrix::at, "Matrix");
-        context.AddTest("const_at", TestMatrix::const_at, "Matrix");
-        context.AddTest("col_get", TestMatrix::col_get, "Matrix");
-        context.AddTest("col_setmatrix", TestMatrix::col_setmatrix, "Matrix");
-        context.AddTest("col_setvector", TestMatrix::col_setvector, "Matrix");
-        context.AddTest("row_get", TestMatrix::row_get, "Matrix");
-        context.AddTest("row_setmatrix", TestMatrix::row_setmatrix, "Matrix");
-        context.AddTest("row_setvector", TestMatrix::row_setvector, "Matrix");
-        context.AddTest("operator_vector", TestMatrix::operator_vector, "Matrix");
-        context.AddTest("resize", TestMatrix::resize, "Matrix");
-        // Arithmetic operations
-        context.AddTest("Negate Matrix", negate_matrix, "Matrix");
-        context.AddTest("add_matrix", TestMatrix::add_matrix, "Matrix");
-        context.AddTest("add_scalar", TestMatrix::add_scalar, "Matrix");
-        context.AddTest("subtract_matrix", TestMatrix::subtract_matrix, "Matrix");
-        context.AddTest("subtract_salar", TestMatrix::subtract_salar, "Matrix");
-        context.AddTest("multiply_matrix", TestMatrix::multiply_matrix, "Matrix");
-        context.AddTest("multiply_scalar", TestMatrix::multiply_scalar, "Matrix");
-        context.AddTest("divide_scalar", TestMatrix::divide_scalar, "Matrix");
-        context.AddTest("modulo_by_scalar", TestMatrix::modulo_by_scalar, "Matrix");
-        context.AddTest("modulo_scalar", TestMatrix::modulo_scalar, "Matrix");
-        context.AddTest("elementwiseOperators_matrix", TestMatrix::elementwiseOperators_matrix, "Matrix");
-        // Complex operations
-        context.AddTest("adjoint", TestMatrix::adjoint, "Matrix");
-        context.AddTest("cofactors", TestMatrix::cofactors, "Matrix");
-        context.AddTest("determinant", TestMatrix::determinant, "Matrix");
-        context.AddTest("laplace determinant", TestMatrix::laplaceDet, "Matrix");
-        context.AddTest("diagonal", TestMatrix::diagonal, "Matrix");
-        context.AddTest("inverse", TestMatrix::inverse, "Matrix");
-        context.AddTest("minors", TestMatrix::minors, "Matrix");
-        context.AddTest("submatrix", TestMatrix::submatrix, "Matrix");
-        context.AddTest("transpose", TestMatrix::transpose, "Matrix");
-        context.AddTest("identity", TestMatrix::identity, "Matrix");
-        // Special operations
-        context.AddTest("cholesky", TestMatrix::cholesky, "Matrix");
-        context.AddTest("weightedmean", TestMatrix::weightedmean, "Matrix");
-        context.AddTest("weightedcovariance", TestMatrix::weightedcovariance, "Matrix");
-        // Stream insertion
-        context.AddTest("stream insertion operator", TestMatrix::streamInsertionOperator, "Matrix");
-    }
 
     void construct_default() {
         try {
@@ -173,6 +94,89 @@ namespace TestMatrix {
             catch (...) {
                 Assert::Fail("Constructor threw an exception");
             }
+        }
+    }
+
+    void construct_concat() {
+        const Matrix a(3,
+                       2,
+                       {
+                           1,
+                           1,
+                           2,
+                           2,
+                           3,
+                           3,
+                       });
+        const Matrix b(1, 2, {4, 4});
+        const Matrix c(3, 1, {5, 6, 7});
+
+        Matrix d({a, b});
+        Assert::AreEqual(d.rows(), a.rows() + b.rows(), "Number of rows incorrect for row concat");
+        Assert::AreEqual(d.cols(), a.cols(), "Number of columns incorrect for row concat");
+        Assert::AreEqual(d.at(0, 0), a.at(0, 0), 1e-12, "Top left incorrect for row concat");
+        Assert::AreEqual(d.at(3, 1), b.at(0, 1), 1e-12, "Bottom right incorrect for row concat");
+
+        Matrix e({a, c});
+        Assert::AreEqual(e.rows(), a.rows(), "Number of rows incorrect for col concat");
+        Assert::AreEqual(e.cols(), a.cols() + c.cols(), "Number of cols incorrect for col concat");
+        Assert::AreEqual(e.at(0, 0), a.at(0, 0), 1e-12, "Top left incorrect for col concat");
+        Assert::AreEqual(e.at(2, 2), c.at(2, 0), 1e-12, "Bottom right incorrect for col concat");
+
+        try {
+            Matrix f({a, a});
+            Assert::Fail("Concat constructor constructed ambiguous matrix");
+        }
+        catch (std::domain_error&) {
+        }
+
+        try {
+            Matrix f({b, c});
+            Assert::Fail("Concat constructor constructed impossible matrix");
+        }
+        catch (std::domain_error&) {
+        }
+    }
+
+    void construct_concat_sized() {
+        const Matrix a(3,
+                       2,
+                       {
+                           1,
+                           1,
+                           2,
+                           2,
+                           3,
+                           3,
+                       });
+        const Matrix b(3,
+                       2,
+                       {
+                           4,
+                           4,
+                           5,
+                           5,
+                           6,
+                           6,
+                       });
+
+        Matrix d(3, 4, {a, b});
+        Assert::AreEqual(d.rows(), 3, "Number of rows incorrect for col concat");
+        Assert::AreEqual(d.cols(), 4, "Number of cols incorrect for col concat");
+        Assert::AreEqual(d.at(0, 0), a.at(0, 0), 1e-12, "Top left incorrect for col concat");
+        Assert::AreEqual(d.at(2, 3), b.at(2, 1), 1e-12, "Bottom right incorrect for col concat");
+
+        Matrix e(6, 2, {a, b});
+        Assert::AreEqual(e.rows(), 6, "Number of rows incorrect for row concat");
+        Assert::AreEqual(e.cols(), 2, "Number of columns incorrect for row concat");
+        Assert::AreEqual(e.at(0, 0), a.at(0, 0), 1e-12, "Top left incorrect for row concat");
+        Assert::AreEqual(e.at(5, 1), b.at(2, 1), 1e-12, "Bottom right incorrect for row concat");
+
+        try {
+            Matrix f(3, 3, {b});
+            Assert::Fail("Concat constructor constructed impossible matrix");
+        }
+        catch (std::domain_error&) {
         }
     }
 
@@ -965,7 +969,7 @@ namespace TestMatrix {
             }
         }
     }
-    
+
     void modulo_by_scalar() {
         const std::size_t m = 20;
         const std::size_t n = 10;
@@ -996,7 +1000,7 @@ namespace TestMatrix {
             }
         }
     }
-    
+
     void modulo_scalar() {
         const std::size_t m = 20;
         const std::size_t n = 10;
@@ -1020,7 +1024,7 @@ namespace TestMatrix {
             }
         }
     }
-    
+
     void elementwiseOperators_matrix() {
         const std::size_t m = 20;
         const std::size_t n = 10;
@@ -1376,5 +1380,67 @@ namespace TestMatrix {
         catch (...) {
             Assert::Fail("Exception occurred in left bitwise shift.");
         }
+    }
+
+    void registerTests(PCOE::Test::TestContext& context) {
+        // Matrix Creation
+        context.AddTest("Default Constructor", construct_default, "Matrix");
+        context.AddTest("Sized Constructor", construct_size, "Matrix");
+        context.AddTest("Inital Value Constructor", construct_initialvalue, "Matrix");
+        context.AddTest("Initalizer List constructor", construct_initializerlist, "Matrix");
+        context.AddTest("std::vector Constructor", construct_vector, "Matrix");
+        context.AddTest("Concatenation Constructor", construct_concat, "Matrix");
+        context.AddTest("Sized Concatenation Constructor", construct_concat_sized, "Matrix");
+        context.AddTest("Copy Constructor", construct_copy, "Matrix");
+        context.AddTest("Move Constructor", construct_move, "Matrix");
+        context.AddTest("Assignment Operator", operator_assign, "Matrix");
+        // Comparison operators
+        context.AddTest("operator_equal", operator_equal, "Matrix");
+        context.AddTest("operator_notequal", operator_notequal, "Matrix");
+        context.AddTest("issquare", issquare, "Matrix");
+        // Basic operations
+        context.AddTest("rows", rows, "Matrix");
+        context.AddTest("cols", cols, "Matrix");
+        context.AddTest("indexer", indexer, "Matrix");
+        context.AddTest("indexer_const", indexer_const, "Matrix");
+        context.AddTest("at", at, "Matrix");
+        context.AddTest("const_at", const_at, "Matrix");
+        context.AddTest("col_get", col_get, "Matrix");
+        context.AddTest("col_setmatrix", col_setmatrix, "Matrix");
+        context.AddTest("col_setvector", col_setvector, "Matrix");
+        context.AddTest("row_get", row_get, "Matrix");
+        context.AddTest("row_setmatrix", row_setmatrix, "Matrix");
+        context.AddTest("row_setvector", row_setvector, "Matrix");
+        context.AddTest("operator_vector", operator_vector, "Matrix");
+        context.AddTest("resize", resize, "Matrix");
+        // Arithmetic operations
+        context.AddTest("Negate Matrix", negate_matrix, "Matrix");
+        context.AddTest("add_matrix", add_matrix, "Matrix");
+        context.AddTest("add_scalar", add_scalar, "Matrix");
+        context.AddTest("subtract_matrix", subtract_matrix, "Matrix");
+        context.AddTest("subtract_salar", subtract_salar, "Matrix");
+        context.AddTest("multiply_matrix", multiply_matrix, "Matrix");
+        context.AddTest("multiply_scalar", multiply_scalar, "Matrix");
+        context.AddTest("divide_scalar", divide_scalar, "Matrix");
+        context.AddTest("modulo_by_scalar", modulo_by_scalar, "Matrix");
+        context.AddTest("modulo_scalar", modulo_scalar, "Matrix");
+        context.AddTest("elementwiseOperators_matrix", elementwiseOperators_matrix, "Matrix");
+        // Complex operations
+        context.AddTest("adjoint", adjoint, "Matrix");
+        context.AddTest("cofactors", cofactors, "Matrix");
+        context.AddTest("determinant", determinant, "Matrix");
+        context.AddTest("laplace determinant", laplaceDet, "Matrix");
+        context.AddTest("diagonal", diagonal, "Matrix");
+        context.AddTest("inverse", inverse, "Matrix");
+        context.AddTest("minors", minors, "Matrix");
+        context.AddTest("submatrix", submatrix, "Matrix");
+        context.AddTest("transpose", transpose, "Matrix");
+        context.AddTest("identity", identity, "Matrix");
+        // Special operations
+        context.AddTest("cholesky", cholesky, "Matrix");
+        context.AddTest("weightedmean", weightedmean, "Matrix");
+        context.AddTest("weightedcovariance", weightedcovariance, "Matrix");
+        // Stream insertion
+        context.AddTest("stream insertion operator", streamInsertionOperator, "Matrix");
     }
 }
