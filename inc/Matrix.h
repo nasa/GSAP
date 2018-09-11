@@ -22,41 +22,49 @@ namespace PCOE {
      **/
     class Matrix final {
     public:
+        /**
+         * A proxy class that exposes a row from the matrix for reading.
+         **/
         struct ConstRowVector;
+
+        /**
+         * A proxy class that exposes a row from the matrix for reading and
+         * writing.
+         **/
         struct RowVector;
-        /***********************************************************************/
-        /* Constructors, Destructor and Assignment Operator                    */
-        /***********************************************************************/
 
         /**
          * Constructs a new empty Matrix.
          */
         Matrix();
 
-        /** @brief Constructs a new Matrix with storage for m by n elements.
-         *         Elements are value-initialized.
+        /**
+         * Constructs a new Matrix with storage for m by n elements. Elements
+         * are value-initialized.
          *
-         *  @param m The number of rows in the matrix.
-         *  @param n The number of columns in the matrix.
+         * @param m The number of rows in the matrix.
+         * @param n The number of columns in the matrix.
          */
         Matrix(std::size_t m, std::size_t n);
 
-        /** @brief Constructs a new Matrix with storage for m by n elements. Elements
-         *         are initialized to @p value.
+        /**
+         * Constructs a new Matrix with storage for m by n elements. Elements
+         * are initialized to @p value.
          *
-         *  @param m The number of rows in the matrix.
-         *  @param n The number of columns in the matrix.
-         *  @param value The initial value of elements in the matrix.
+         * @param m The number of rows in the matrix.
+         * @param n The number of columns in the matrix.
+         * @param value The initial value of elements in the matrix.
          */
         Matrix(std::size_t m, std::size_t n, double value);
 
-        /** @brief Constructs a new Matrix with storage for m by n elements.
-         *         Elements are initialized sequentially in row-major order by the
-         *         elements in @p l
+        /**
+         * Constructs a new Matrix with storage for m by n elements. Elements
+         * are initialized sequentially in row-major order by the elements in @p
+         * l.
          *
-         *  @param m The number of rows in the matrix.
-         *  @param n The number of columns in the matrix.
-         *  @param l The initial values of elements in the matrix.
+         * @param m The number of rows in the matrix.
+         * @param n The number of columns in the matrix.
+         * @param l The initial values of elements in the matrix.
          */
         Matrix(std::size_t m, std::size_t n, std::initializer_list<double> l);
 
@@ -301,8 +309,18 @@ namespace PCOE {
          */
         void row(std::size_t m, const std::vector<double>& value);
 
+        /**
+         * Copies the elements of the matrix to a std::vector<double>.
+         **/
         explicit operator std::vector<double>() const;
 
+        /**
+         * Resizes the matrix and copies as much data as possible to the new
+         * matrix.
+         *
+         * @param m The new number of rows in the matrix.
+         * @param n The new number of columns in the matrix
+         **/
         void resize(std::size_t m, std::size_t n);
 
         /***********************************************************************/
@@ -311,172 +329,186 @@ namespace PCOE {
         /**
          * Negates each element of the matrix.
          *
-         * @return    A new matrix in which each element has been negated.
+         * @return A new matrix in which each element has been negated.
          **/
         Matrix operator-();
 
-        /** @brief Adds the specified matrix to the current matrix.
+        /**
+         * Adds the specified matrix to the current matrix.
          *
-         *  @param rhs The matrix to add.
-         *  @returns   A reference to the current matrix.
-         *  @exception std::domain_error If @p rhs is not the same size as the
-         *             current matrix.
+         * @param rhs The matrix to add.
+         * @returns   A reference to the current matrix.
+         * @exception std::domain_error If @p rhs is not the same size as the
+         *            current matrix.
          */
         Matrix& operator+=(const Matrix& rhs);
 
-        /** @brief Adds two matrices.
+        /**
+         * Adds two matrices.
          *
-         *  @param lhs The first matrix to add.
-         *  @param rhs The second matrix to add.
-         *  @returns   A new matrix containing the result.
-         *  @exception std::domain_error If @p lhs and @p rhs are not the same size.
+         * @param lhs The first matrix to add.
+         * @param rhs The second matrix to add.
+         * @returns   A new matrix containing the result.
+         * @exception std::domain_error If @p lhs and @p rhs are not the same size.
          */
         inline friend Matrix operator+(Matrix lhs, const Matrix& rhs) {
             return lhs += rhs;
         }
 
-        /** @brief Adds a scalar to the current matrix.
+        /**
+         * Adds a scalar to the current matrix.
          *
-         *  @param rhs The scalar to add.
-         *  @returns   A reference to the current matrix.
+         * @param rhs The scalar to add.
+         * @returns   A reference to the current matrix.
          */
         Matrix& operator+=(double rhs);
 
-        /** @brief Adds a scalar to a matrix.
+        /**
+         * Adds a scalar to a matrix.
          *
-         *  @param lhs The matrix to add to
-         *  @param rhs The scalar to add.
-         *  @returns   A new matrix containing the result.
+         * @param lhs The matrix to add to
+         * @param rhs The scalar to add.
+         * @returns   A new matrix containing the result.
          */
         inline friend Matrix operator+(Matrix lhs, double rhs) {
             return lhs += rhs;
         }
 
-        /** @brief Adds a scalar to a matrix.
+        /**
+         * Adds a scalar to a matrix.
          *
-         *  @param lhs The scalar to add.
-         *  @param rhs The matrix to add to
-         *  @returns   A new matrix containing the result.
+         * @param lhs The scalar to add.
+         * @param rhs The matrix to add to
+         * @returns   A new matrix containing the result.
          */
         inline friend Matrix operator+(double lhs, Matrix rhs) {
             return rhs += lhs;
         }
 
-        /** @brief Subtracks the specified matrix to the current matrix.
+        /**
+         * Subtracts the specified matrix to the current matrix.
          *
-         *  @param rhs The matrix to subtract.
-         *  @returns   A reference to the current matrix.
-         *  @exception std::domain_error If @p rhs is not the same size as the
-         *             current matrix.
+         * @param rhs The matrix to subtract.
+         * @returns   A reference to the current matrix.
+         * @exception std::domain_error If @p rhs is not the same size as the
+         *            current matrix.
          */
         Matrix& operator-=(const Matrix& rhs);
 
         /** @brief Subtracts two matrices.
          *
-         *  @param lhs The first matrix to subtract.
-         *  @param rhs The second matrix to subtract.
-         *  @returns   A new matrix containing the result.
-         *  @exception std::domain_error If @p lhs and @p rhs are not the same size.
+         * @param lhs The first matrix to subtract.
+         * @param rhs The second matrix to subtract.
+         * @returns   A new matrix containing the result.
+         * @exception std::domain_error If @p lhs and @p rhs are not the same size.
          */
         inline friend Matrix operator-(Matrix lhs, const Matrix& rhs) {
             return lhs -= rhs;
         }
 
-        /** @brief Subtracts a scalar from the current matrix.
+        /**
+         * Subtracts a scalar from the current matrix.
          *
-         *  @param rhs The scalar to subtract.
-         *  @returns   A reference to the current matrix.
+         * @param rhs The scalar to subtract.
+         * @returns   A reference to the current matrix.
          */
         Matrix& operator-=(double other);
 
-        /** @brief Subtracts a scalar from a matrix.
+        /**
+         * Subtracts a scalar from a matrix.
          *
-         *  @param lhs The matrix to subtract from
-         *  @param rhs The scalar to subtract.
-         *  @returns   A new matrix containing the result.
+         * @param lhs The matrix to subtract from
+         * @param rhs The scalar to subtract.
+         * @returns   A new matrix containing the result.
          */
         inline friend Matrix operator-(Matrix lhs, double rhs) {
             return lhs -= rhs;
         }
 
-        /** @brief Multiplies the current matrix by another matrix.
+        /**
+         * Multiplies the current matrix by another matrix.
          *
-         *  @param rhs The matrix to multiply by.
-         *  @returns   A new matrix containing the result.
-         *  @exception std::domain_error If the number of rows in the argument does
-         *             not match the number of columns in the current matrix.
+         * @param rhs The matrix to multiply by.
+         * @returns   A new matrix containing the result.
+         * @exception std::domain_error If the number of rows in the argument does
+         *            not match the number of columns in the current matrix.
          */
         Matrix operator*(const Matrix& rhs) const;
 
-        /** @brief Multiplies the current matrix by a scalar.
+        /**
+         *  Multiplies the current matrix by a scalar.
          *
-         *  @param rhs The scalar to multiply by.
-         *  @returns   A reference to the current matrix.
+         * @param rhs The scalar to multiply by.
+         * @returns   A reference to the current matrix.
          */
         Matrix& operator*=(double rhs);
 
-        /** @brief Mulitiplies a matrix by a scalar.
+        /**
+         * Mulitiplies a matrix by a scalar.
          *
-         *  @param lhs The matrix to multiply.
-         *  @param rhs The scalar to multiply by.
-         *  @returns   A new matrix containing the result.
+         * @param lhs The matrix to multiply.
+         * @param rhs The scalar to multiply by.
+         * @returns   A new matrix containing the result.
          */
         inline friend Matrix operator*(Matrix lhs, double rhs) {
             return lhs *= rhs;
         }
 
-        /** @brief Mulitiplies a matrix by a scalar.
+        /**
+         * Mulitiplies a matrix by a scalar.
          *
-         *  @param lhs The scalar to multiply by.
-         *  @param rhs The matrix to multiply.
-         *  @returns   A new matrix containing the result.
+         * @param lhs The scalar to multiply by.
+         * @param rhs The matrix to multiply.
+         * @returns   A new matrix containing the result.
          */
         inline friend Matrix operator*(double lhs, Matrix rhs) {
             return rhs *= lhs;
         }
 
-        /** @brief Divides the current matrix by a scalar.
+        /**
+         * Divides the current matrix by a scalar.
          *
-         *  @param rhs The scalar to divide by.
-         *  @returns   A reference to the current matrix.
+         * @param rhs The scalar to divide by.
+         * @returns   A reference to the current matrix.
          */
         Matrix& operator/=(double rhs);
 
-        /** @brief Divides a matrix by a scalar.
+        /**
+         * Divides a matrix by a scalar.
          *
-         *  @param lhs The matrix to divide.
-         *  @param rhs The scalar to divide by.
-         *  @returns   A new matrix containing the result.
+         * @param lhs The matrix to divide.
+         * @param rhs The scalar to divide by.
+         * @returns   A new matrix containing the result.
          */
         inline friend Matrix operator/(Matrix lhs, double rhs) {
             return lhs /= rhs;
         }
 
         /**
-         *  Applies modulo to each element inplace
+         * Applies modulo to each element inplace
          *
-         *  @param  rhs The number to modulo by
-         *  @returns    A reference to the current matrix.
+         * @param  rhs The number to modulo by
+         * @returns    A reference to the current matrix.
          **/
         Matrix& operator%=(double rhs);
 
         /**
-         *  Applies modulo to each element
+         * Applies modulo to each element
          *
-         *  @param  lhs Matrix on which modulo will be preformed
-         *  @param  rhs The number to modulo by
-         *  @returns    A new matrix containing the result.
+         * @param  lhs Matrix on which modulo will be preformed
+         * @param  rhs The number to modulo by
+         * @returns    A new matrix containing the result.
          **/
         inline friend Matrix operator%(Matrix lhs, double rhs) {
             return lhs %= rhs;
         }
 
         /**
-         *  Applies modulo by each element.
+         * Applies modulo by each element.
          *
-         *  @param  lhs Number on which modulo is performed
-         *  @param  rhs Matrix to which modulo will be preformed
-         *  @returns    A new matrix containing the result.
+         * @param  lhs Number on which modulo is performed
+         * @param  rhs Matrix to which modulo will be preformed
+         * @returns    A new matrix containing the result.
          **/
         inline friend Matrix operator%(double lhs, Matrix rhs) {
             rhs.apply([lhs](double x) { return std::fmod(lhs, x); });
@@ -484,12 +516,12 @@ namespace PCOE {
         }
 
         /**
-         *  Multiply elementwise
+         * Multiply elementwise
          */
         Matrix elementwiseMultiply(const Matrix& mat) const;
 
         /**
-         *  Divide Elementwise
+         * Divide Elementwise
          */
         Matrix elementwiseDivide(const Matrix& mat) const;
 
@@ -498,10 +530,10 @@ namespace PCOE {
         /***********************************************************************/
 
         /**
-         *  Applies function to each element in the matrix
+         * Applies function to each element in the matrix
          *
-         *  @param  function    Function to be applied to each element
-         *  @return affected Matrix
+         * @param  function    Function to be applied to each element
+         * @return affected Matrix
          */
         template <typename Fn>
         Matrix& apply(Fn&& function) {
