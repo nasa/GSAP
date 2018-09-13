@@ -42,6 +42,7 @@ set(SRCS
     ModelTests.cpp
     Observers/EventDrivenObserverTests.cpp
     ObserverTests.cpp
+    Predictors/BatteryResultTests.cpp
     Predictors/EventDrivenPredictorTests.cpp
     PredictorTests.cpp
     ThreadTests.cpp

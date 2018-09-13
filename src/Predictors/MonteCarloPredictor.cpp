@@ -197,7 +197,7 @@ namespace PCOE {
                 }
 
                 // Update state for t to t+dt
-                model.stateEqn(t_s, x, loadEstimate, noise, model.getDefaultTimeStep());
+                x = model.stateEqn(t_s, x, loadEstimate, noise, model.getDefaultTimeStep());
             }
         }
 
