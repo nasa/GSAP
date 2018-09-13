@@ -35,8 +35,15 @@ namespace MatrixTests {
     void registerTests(TestContext& context);
 }
 
+namespace BatteryResultTests {
+    void registerTests(TestContext& context);
+}
+
 int main() {
     TestContext context;
+
+    BatteryResultTests::registerTests(context);
+
     // Trajectory Service
     context.AddTest("Trajectory Service", PCOE::testTrajectoryService, "Trajectory Service");
 
