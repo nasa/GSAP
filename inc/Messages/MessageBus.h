@@ -8,6 +8,7 @@
 #include <future>
 #include <mutex>
 #include <unordered_map>
+#include <vector>
 
 #include "Messages/IMessagePublisher.h"
 
