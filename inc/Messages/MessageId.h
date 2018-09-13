@@ -68,7 +68,7 @@ namespace PCOE {
         RouteStart = 0x6272000000000600L,
         RouteEnd = 0x6272000000000601L,
         RouteClear = 0x6272000000000602L,
-        RouteDeleteWP = 0x6272240000000603L,
+        RouteDeleteWP = 0x6272140000000603L,
         RouteSetWP = 0x6272380600000604L,
         TestInput0 = 0x627232000000FE00L,
         TestInput1 = 0x627232000000FE01L,
