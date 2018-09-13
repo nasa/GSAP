@@ -105,7 +105,7 @@ namespace EventDrivenPredictorTests {
             new DoubleMessage(MessageId::TestInput1, src, timestamp, 0.0)));
         bus.publish(std::shared_ptr<Message>(
             new DoubleMessage(MessageId::TestOutput0, src, timestamp, 0.0)));
-        bus.processAll();
+        bus.waitAll();
         Assert::AreEqual(0,
                          listener.getCount(),
                          "Predictor produced prediction after one set of data");
@@ -117,7 +117,7 @@ namespace EventDrivenPredictorTests {
             new DoubleMessage(MessageId::TestInput1, src, timestamp, 0.0)));
         bus.publish(std::shared_ptr<Message>(
             new DoubleMessage(MessageId::TestOutput0, src, timestamp, 0.0)));
-        bus.processAll();
+        bus.waitAll();
         Assert::AreEqual(1, listener.getCount(), "Predictor didn't produce prediction");
         auto msg = listener.getLastMessage();
         auto predictionTimestamp = msg->getTimestamp();
@@ -130,7 +130,7 @@ namespace EventDrivenPredictorTests {
             new DoubleMessage(MessageId::TestInput1, src, timestamp, 0.0)));
         bus.publish(std::shared_ptr<Message>(
             new DoubleMessage(MessageId::TestOutput0, src, timestamp, 0.0)));
-        bus.processAll();
+        bus.waitAll();
         Assert::AreEqual(2, listener.getCount(), "Predictor didn't produce 2nd prediction");
         msg = listener.getLastMessage();
         predictionTimestamp = msg->getTimestamp();
@@ -283,17 +283,17 @@ namespace EventDrivenPredictorTests {
                               20.0);
 
         bus.publish(std::shared_ptr<Message>(dm0));
-        bus.processAll();
+        bus.waitAll();
         bus.publish(std::shared_ptr<Message>(dm1));
-        bus.processAll();
+        bus.waitAll();
         bus.publish(std::shared_ptr<Message>(dm2));
-        bus.processAll();
+        bus.waitAll();
         bus.publish(std::shared_ptr<Message>(dm3));
-        bus.processAll();
+        bus.waitAll();
         bus.publish(std::shared_ptr<Message>(dm4));
-        bus.processAll();
+        bus.waitAll();
         bus.publish(std::shared_ptr<Message>(dm5));
-        bus.processAll();
+        bus.waitAll();
         Assert::AreEqual(1, listener.getCount(), "Predictor didn't produce prediction");
     }
 }

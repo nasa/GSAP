@@ -34,8 +34,6 @@ public:
 };
 
 namespace MessageBusTests {
-    static const auto PUBLISH_DELAY = std::chrono::milliseconds(5);
-
     void constructor() {
         MessageBus bus; // Default construct without exception
     }
@@ -55,7 +53,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.waitAll();
         Assert::AreEqual(2, consumer.msgCount, "Consumer got the wrong number of messages");
     }
 
@@ -68,7 +66,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.waitAll();
         Assert::AreEqual(1, consumer.msgCount, "Consumer got the wrong number of messages");
     }
 
@@ -82,7 +80,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.waitAll();
         Assert::AreEqual(2, consumer.msgCount, "Consumer got the wrong number of messages");
     }
 
@@ -95,7 +93,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.waitAll();
         Assert::AreEqual(2, consumer.msgCount, "Consumer got the wrong number of messages");
 
         bus.unsubscribe(&consumer);
@@ -103,7 +101,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.waitAll();
         Assert::AreEqual(2, consumer.msgCount, "Consumer got the wrong number of messages");
     }
 
@@ -117,7 +115,7 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.waitAll();
         Assert::AreEqual(3, consumer.msgCount, "Consumer got the wrong number of messages");
 
         bus.unsubscribe(&consumer, "test");
@@ -125,7 +123,55 @@ namespace MessageBusTests {
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput1, "test")));
         bus.publish(std::shared_ptr<Message>(new TestMessage(MessageId::TestInput0, "Other")));
-        std::this_thread::sleep_for(std::chrono::milliseconds(PUBLISH_DELAY));
+        bus.waitAll();
         Assert::AreEqual(4, consumer.msgCount, "Consumer got the wrong number of messages");
+    }
+
+    void waitForTimeouts() {
+        using namespace std::chrono;
+        MessageBus bus;
+
+        auto start = high_resolution_clock::now();
+        bus.waitFor(milliseconds(2));
+        auto stop = high_resolution_clock::now();
+        std::chrono::nanoseconds diff = stop - start;
+        Assert::IsTrue(diff > milliseconds(2), "waitFor min");
+        // Note (JW): Technically, the maximum is unbounded (once we block, we
+        // are at the mercy of the OS scheduler), but I think if we don't return
+        // within 100ms something is probably wrong.
+        Assert::IsTrue(diff < milliseconds(100), "waitFor max");
+
+        TestMessageProcesor consumer;
+    }
+
+    void waitUntilTimeouts() {
+        using namespace std::chrono;
+        MessageBus bus;
+
+        auto start = high_resolution_clock::now();
+        bus.waitUntil(start + milliseconds(2));
+        auto stop = high_resolution_clock::now();
+        std::chrono::nanoseconds diff = stop - start;
+        Assert::IsTrue(diff > milliseconds(2), "waitFor min");
+        // Note (JW): Technically, the maximum is unbounded (once we block, we
+        // are at the mercy of the OS scheduler), but I think if we don't return
+        // within 100ms something is probably wrong.
+        Assert::IsTrue(diff < milliseconds(100), "waitFor max");
+
+        TestMessageProcesor consumer;
+    }
+
+    void registerTests(TestContext& context) {
+        context.AddTest("construct", MessageBusTests::constructor, "MessageBus");
+        context.AddTest("publish", MessageBusTests::publish, "MessageBus");
+        context.AddTest("subscribeAll", MessageBusTests::subscribeAll, "MessageBus");
+        context.AddTest("subscribeMultiSource",
+                        MessageBusTests::subscribeMultiSource,
+                        "MessageBus");
+        context.AddTest("subscribe", MessageBusTests::subscribe, "MessageBus");
+        context.AddTest("unsubscribe", MessageBusTests::unsubscribe, "MessageBus");
+        context.AddTest("unsubscribePartial", MessageBusTests::unsubscribePartial, "MessageBus");
+        context.AddTest("waitForTimeouts", MessageBusTests::waitForTimeouts, "MessageBus");
+        context.AddTest("waitUntilTimeouts", MessageBusTests::waitUntilTimeouts, "MessageBus");
     }
 }

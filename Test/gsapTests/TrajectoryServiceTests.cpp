@@ -44,7 +44,7 @@ namespace PCOE {
         mb.publish(std::shared_ptr<Message>(
             new EmptyMessage(MessageId::RouteEnd, TEST_SRC, MessageClock::now())));
 
-        mb.processAll();
+        mb.waitAll();
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         auto sp = tc.getSavePts();
         Test::Assert::AreEqual(sp.size(), 2, "GetSavePts size incorrect");

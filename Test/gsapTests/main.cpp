@@ -12,7 +12,6 @@
 #include "FrameworkTests.h"
 #include "GaussianVariableTests.h"
 #include "Loading/LoadEstimatorTests.h"
-#include "Messages/MessageBusTests.h"
 #include "Messages/MessageWatcherTests.h"
 #include "ModelTests.h"
 #include "ObserverTests.h"
@@ -36,6 +35,10 @@ namespace MatrixTests {
 }
 
 namespace BatteryResultTests {
+    void registerTests(TestContext& context);
+}
+
+namespace MessageBusTests {
     void registerTests(TestContext& context);
 }
 
@@ -197,13 +200,7 @@ int main() {
     context.AddTest("subscribe", TestCommunicator::subscribe, "Common Communicator");
     context.AddTest("stop", TestCommunicator::stop, "Common Communicator");
 
-    context.AddTest("construct", MessageBusTests::constructor, "MessageBus");
-    context.AddTest("publish", MessageBusTests::publish, "MessageBus");
-    context.AddTest("subscribeAll", MessageBusTests::subscribeAll, "MessageBus");
-    context.AddTest("subscribeMultiSource", MessageBusTests::subscribeMultiSource, "MessageBus");
-    context.AddTest("subscribe", MessageBusTests::subscribe, "MessageBus");
-    context.AddTest("unsubscribe", MessageBusTests::unsubscribe, "MessageBus");
-    context.AddTest("unsubscribePartial", MessageBusTests::unsubscribePartial, "MessageBus");
+    MessageBusTests::registerTests(context);
 
     context.AddTest("Construct", MessageWatcherTests::constructor, "MessageWatcher");
     context.AddTest("Publish", MessageWatcherTests::publish, "MessageWatcher");

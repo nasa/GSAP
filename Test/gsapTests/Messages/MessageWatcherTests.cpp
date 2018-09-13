@@ -37,11 +37,11 @@ namespace MessageWatcherTests {
         Assert::AreEqual(0, counter.getCount(), "No data");
         bus.publish(std::shared_ptr<Message>(
             new DoubleMessage(MessageId::TestInput0, src, MessageClock::now(), 0.0)));
-        bus.processAll();
+        bus.waitAll();
         Assert::AreEqual(0, counter.getCount(), "1 input");
         bus.publish(std::shared_ptr<Message>(
             new DoubleMessage(MessageId::TestInput1, src, MessageClock::now(), 0.0)));
-        bus.processAll();
+        bus.waitAll();
         Assert::AreEqual(1, counter.getCount(), "Both inputs");
 
         auto msg = dynamic_cast<VectorMessage<double>*>(counter.getLastMessage().get());
@@ -63,15 +63,15 @@ namespace MessageWatcherTests {
         Assert::AreEqual(0, counter.getCount(), "No data");
         bus.publish(std::shared_ptr<Message>(
             new DoubleMessage(MessageId::TestInput0, src, MessageClock::now(), 1.0)));
-        bus.processAll();
+        bus.waitAll();
         Assert::AreEqual(0, counter.getCount(), "Input0 first value");
         bus.publish(std::shared_ptr<Message>(
             new DoubleMessage(MessageId::TestInput0, src, MessageClock::now(), 2.0)));
-        bus.processAll();
+        bus.waitAll();
         Assert::AreEqual(0, counter.getCount(), "Input0 second value");
         bus.publish(std::shared_ptr<Message>(
             new DoubleMessage(MessageId::TestInput1, src, MessageClock::now(), 3.0)));
-        bus.processAll();
+        bus.waitAll();
         Assert::AreEqual(1, counter.getCount(), "1 message per complete set");
 
         auto msg = dynamic_cast<VectorMessage<double>*>(counter.getLastMessage().get());

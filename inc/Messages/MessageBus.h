@@ -3,10 +3,11 @@
 // All Rights Reserved.
 #ifndef PCOE_MESSAGES_MESSAGEBUS_H
 #define PCOE_MESSAGES_MESSAGEBUS_H
+#include <condition_variable>
+#include <deque>
 #include <future>
 #include <mutex>
 #include <unordered_map>
-#include <vector>
 
 #include "Messages/IMessagePublisher.h"
 
@@ -15,28 +16,33 @@ namespace PCOE {
      * A collection of message subcribers that receive messages based on their
      * message Id's.
      *
+     * @remarks
      * For each message that is published, the set of subscribers for that
      * message is determined, and each subscriber in that set is called in its
      * own {@code std::async} instance. The behavior of those instances is
-     * controller by the launch policy specified when the message bus is
+     * controlled by the launch policy specified when the message bus is
      * constructed.
      *
+     * @remarks
      * By default, the {@code std::launch::async} policy is specified, which
      * launches each {@code std::async} instance on its own thread. In this
      * mode, no active management of the message bus is required, as message
-     * procesing will proceed automatically on threads managed by the message
-     * bus.
+     * procesing will proceed automatically on the threads spawned by
+     * {@code std::async}, and the message bus will automatically clean up the
+     * completed futures.
      *
+     * @remarks
      * If {@code std::launch::defered} is specified (either alone or as part of
-     * a bitmask), the end user must periodically call {@code processOne} or
-     * {@code processAll} to ensure that the futures representing calls to
+     * a bitmask), the end user must periodically call {@code wait} or one of
+     * its alternates to ensure that the futures representing calls to
      * individual subscribers are eventually executed. If
      * {@code std::launch::defered} is specified alone, the MessageBus will only
-     * make progres when one of the message bus's process methods is called. If
+     * make progres when one of the message bus's wait methods is called. If
      * {@code std::launch::defered} is specified as part of a mask that includes
      * other options, it is implementation-defined whether the bus will process
      * messages without user intervention.
      *
+     * @remarks
      * The order in which subscribers are notified of new messages is not well
      * defined. In the case where {@code std::launch::async} is used, all
      * standard caveats about thread execution ordering apply. In other cases,
@@ -76,32 +82,88 @@ namespace PCOE {
 
         /**
          * Removes a single message callback from the internal queue and waits
-         * for its completion. Ultimately, this method results in calling
-         * {@code std::future::get}, so the specifics of how that callback is
-         * executed match the implementation details of that method.
+         * for its completion. If the queue is empty, blocks until a message is
+         * inserted into the queue.
+         *
+         * @remarks
+         * Ultimately, this method results in calling
+         * {@code std::future::get}, thus the exact execution model is dependent
+         * on the behavior of that method.
          **/
-        void processOne();
+        void wait();
 
         /**
-         * Removes a message callbacks from the internal queue one at a time and
-         * waits for their completion, continuing until the internal queue is
-         * empty. Ultimately, this method results in calling
-         * {@code std::future::get}, so the specifics of how that callbacks are
-         * executed match the implementation details of that method.
+         * Behaves as if {@code wait} is called repeatedly in a loop until the
+         * internal queue is empty, except that if the queue is empty at the
+         * time {@code waitAll} is called, it will return immediately.
          **/
-        void processAll();
+        void waitAll();
+
+        /**
+         * Removes a single message callback from the internal queue and waits
+         * for its completion. If the queue is empty, blocks until a message is
+         * inserted into the queue or until the specied duration has elapsed.
+         *
+         * @remarks
+         * The timeout specified by {@p dur} is used only while waiting for a
+         * message to be inserted into the internal queue. Once a message is
+         * dequed, the function will block until the message has completed
+         * processing.
+         *
+         * @remarks
+         * Ultimately, this method results in calling {@code std::future::get},
+         * thus the exact execution model is dependent on the behavior of that
+         * method.
+         *
+         * @param dur The amount of time to wait for a message to be inserted.
+         **/
+        template <class Rep, class Period>
+        void waitFor(std::chrono::duration<Rep, Period> dur) {
+            std::future<void> f = try_dequeue_for(dur);
+            if (f.valid()) {
+                f.get();
+            }
+        }
+
+        /**
+         * Removes a single message callback from the internal queue and waits
+         * for its completion. If the queue is empty, blocks until a message is
+         * inserted into the queue or until the specied time has been reached.
+         *
+         * @remarks
+         * The timeout specified by {@p timeout} is used only while waiting for
+         * a message to be inserted into the internal queue. Once a message is
+         * dequed, the function will block until the message has completed
+         * processing.
+         *
+         * @remarks
+         * Ultimately, this method results in calling {@code std::future::get},
+         * thus the exact execution model is dependent on the behavior of that
+         * method.
+         *
+         * @param timeout The time at which to give up waiting.
+         **/
+        template <class Clock, class Duration>
+        void waitUntil(std::chrono::time_point<Clock, Duration> timeout) {
+            std::future<void> f = try_dequeue_until(timeout);
+            if (f.valid()) {
+                f.get();
+            }
+        }
 
         /**
          * Registers the given consumer to receive messages with the given Id.
          *
          * @param consumer A pointer to a message consumer. The pointer is a
-         *                 raw, unmanaged pointer, which the message bus
-         *                 assumes will be valid for its lifetime. The @{code
+         *                 raw, unmanaged pointer, which the message bus assumes
+         *                 will be valid for its lifetime. The @{code
          *                 MessageBus} will does not assume ownership of the
          *                 consumer.
          * @param source   The source of messages that the consumer is
          *                 interested in.
          * @param id       The id of the message the consumer is interested in.
+         *                 if no {@p id} is specified, the consumer will receive
+         *                 all messages from the source.
          **/
         void subscribe(IMessageProcessor* consumer,
                        std::string source,
@@ -132,15 +194,43 @@ namespace PCOE {
         void publish(std::shared_ptr<Message> message) override;
 
     private:
+        void clear_completed();
+        void enqueue(std::future<void> message);
+        std::future<void> dequeue();
+
+        template <class Rep, class Period>
+        std::future<void> try_dequeue_for(std::chrono::duration<Rep, Period> rel_time) {
+            std::unique_lock<std::mutex> lock(queue_mutex);
+            if (!queue_cv.wait_for(lock, rel_time, [&]() { return !queue.empty(); })) {
+                return std::future<void>();
+            }
+
+            std::future<void> f = std::move(queue.front());
+            queue.pop_front();
+            return f;
+        }
+
+        template <class Clock, class Duration>
+        std::future<void> try_dequeue_until(std::chrono::time_point<Clock, Duration> timeout_time) {
+            std::unique_lock<std::mutex> lock(queue_mutex);
+            if (!queue_cv.wait_until(lock, timeout_time, [&]() { return !queue.empty(); })) {
+                return std::future<void>();
+            }
+
+            std::future<void> f = std::move(queue.front());
+            queue.pop_front();
+            return f;
+        }
+
         using callback_pair = std::pair<MessageId, IMessageProcessor*>;
-        using mutex = std::recursive_mutex;
-        using lock_guard = std::lock_guard<mutex>;
-        using unique_lock = std::unique_lock<mutex>;
 
         const std::launch launchPolicy;
         std::unordered_map<std::string, std::vector<callback_pair>> subscribers;
-        std::vector<std::future<void>> futures;
-        mutable mutex m;
+        std::deque<std::future<void>> queue;
+
+        std::recursive_mutex subs_mutex;
+        std::mutex queue_mutex;
+        std::condition_variable queue_cv;
     };
 }
 #endif
