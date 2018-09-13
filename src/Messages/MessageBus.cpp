@@ -5,6 +5,7 @@
 #include <future>
 #include <vector>
 
+#include "Contracts.h"
 #include "Messages/MessageBus.h"
 #include "ThreadSafeLog.h"
 
@@ -12,50 +13,25 @@ namespace PCOE {
     static const Log& log = Log::Instance();
     static const std::string MODULE_NAME = "M-BUS";
 
-    void MessageBus::processOne() {
-        unique_lock lock(m);
-        log.FormatLine(LOG_TRACE,
-                       MODULE_NAME,
-                       "Processing one message. %u in queue.",
-                       futures.size());
-        if (!futures.empty()) {
-            std::future<void> f = std::move(futures.back());
-            futures.pop_back();
-
-            // Note (JW): Unlock before calling get because the mutex is not
-            //            recursive and processing one message often leads to
-            //            the publishing of further messages.
-            lock.unlock();
-            f.get();
-            log.WriteLine(LOG_TRACE, MODULE_NAME, "Message processed");
-        }
+    void MessageBus::wait() {
+        std::future<void> f = dequeue();
+        Require(f.valid(), "Invalid future in queue");
+        f.get();
     }
 
-    void MessageBus::processAll() {
-        unique_lock lock(m);
-        log.FormatLine(LOG_TRACE,
-                       MODULE_NAME,
-                       "Processing all messages. Starting with %u in queue.",
-                       futures.size());
-        while (!futures.empty()) {
-            std::future<void> f = std::move(futures.back());
-            futures.pop_back();
-
-            // Note (JW): Unlock before calling get because the mutex is not
-            //            recursive and processing one message often leads to
-            //            the publishing of further messages.
-            lock.unlock();
-            f.get();
-            log.FormatLine(LOG_TRACE,
-                           MODULE_NAME,
-                           "Processed message. %u left in queue.",
-                           futures.size());
-            lock.lock();
-        }
+    void MessageBus::waitAll() {
+        bool valid = false;
+        do {
+            std::future<void> f = try_dequeue_for(std::chrono::milliseconds(0));
+            valid = f.valid();
+            if (valid) {
+                f.get();
+            }
+        } while (valid);
     }
 
     void MessageBus::subscribe(IMessageProcessor* consumer, std::string source, MessageId id) {
-        lock_guard guard(m);
+        std::lock_guard<std::recursive_mutex> guard(subs_mutex);
         log.FormatLine(LOG_TRACE,
                        MODULE_NAME,
                        "Adding subscriber %x for source '%s' and id %x",
@@ -66,7 +42,7 @@ namespace PCOE {
     }
 
     void MessageBus::unsubscribe(IMessageProcessor* consumer) {
-        lock_guard guard(m);
+        std::lock_guard<std::recursive_mutex> guard(subs_mutex);
         log.FormatLine(LOG_TRACE, MODULE_NAME, "Removing subscriber %x", consumer);
         for (auto i : subscribers) {
             unsubscribe(consumer, i.first);
@@ -74,7 +50,7 @@ namespace PCOE {
     }
 
     void MessageBus::unsubscribe(IMessageProcessor* consumer, const std::string& source) {
-        lock_guard guard(m);
+        std::lock_guard<std::recursive_mutex> guard(subs_mutex);
         log.FormatLine(LOG_TRACE,
                        MODULE_NAME,
                        "Adding subscriber %x for source '%s'",
@@ -94,24 +70,8 @@ namespace PCOE {
                   vec.end());
     }
 
-    static bool future_ready(std::future<void>& f) {
-        // Note (JW): Only calls to future.get trigger exception propagation, so
-        //            first we do a 0 wait, then if the future is ready we call
-        //            get, even though the return type is void, to trigger any
-        //            exceptions that may have occured. We do this here because
-        //            ready futures will be discarded immediately following this
-        //            call in the `publish` function below and discarding the
-        //            future without calling get will discard any stored
-        //            exceptions along with it.
-        bool ready = f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
-        if (ready) {
-            f.get();
-        }
-        return ready;
-    }
-
     void MessageBus::publish(std::shared_ptr<Message> message) {
-        lock_guard guard(m);
+        std::unique_lock<std::recursive_mutex> lock(subs_mutex);
         log.FormatLine(LOG_TRACE,
                        MODULE_NAME,
                        "Publishing message from source %s with id %x",
@@ -129,14 +89,56 @@ namespace PCOE {
                                MODULE_NAME,
                                "Creating future for subscriber %x",
                                it.second);
-                auto f = std::async(launchPolicy,
-                                    &IMessageProcessor::processMessage,
-                                    it.second,
-                                    message);
-                futures.push_back(std::move(f));
+                enqueue(std::async(launchPolicy,
+                                   &IMessageProcessor::processMessage,
+                                   it.second,
+                                   message));
             }
         }
 
-        futures.erase(std::remove_if(futures.begin(), futures.end(), future_ready), futures.end());
+        lock.unlock(); // No need to hold the subs lock while pruning callback queue
+        clear_completed();
+    }
+
+    static bool future_ready(std::future<void>& f) {
+        // Note (JW): Only calls to future.get trigger exception propagation, so
+        //            first we do a 0 wait, then if the future is ready we call
+        //            get, even though the return type is void, to trigger any
+        //            exceptions that may have occured. We do this here because
+        //            ready futures will be discarded immediately following this
+        //            call in the `clear_completed` function below and
+        //            discarding the future without calling get will discard any
+        //            stored exceptions along with it.
+        Expect(f.valid(), "Invalid future in queue");
+        bool ready = f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+        if (ready) {
+            f.get();
+        }
+        return ready;
+    }
+
+    void MessageBus::clear_completed() {
+        std::lock_guard<std::mutex> lock(queue_mutex);
+        queue.erase(std::remove_if(queue.begin(), queue.end(), future_ready), queue.end());
+    }
+
+    void MessageBus::enqueue(std::future<void> msg) {
+        // Note (JW): Unlock before notify to prevent the case where another
+        // thread is waiting, receives a notification, and is imediately
+        // blocked because this thread is still holding the lock.
+        std::unique_lock<std::mutex> lock(queue_mutex);
+        queue.push_back(std::move(msg));
+        lock.unlock();
+
+        queue_cv.notify_one();
+    }
+
+    std::future<void> MessageBus::dequeue() {
+        std::unique_lock<std::mutex> lock(queue_mutex);
+        queue_cv.wait(lock, [&]() { return !queue.empty(); });
+
+        std::future<void> msg = std::move(queue.front());
+        queue.pop_front();
+        return msg;
     }
 }

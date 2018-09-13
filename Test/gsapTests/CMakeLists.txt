@@ -5,7 +5,6 @@ set(HEADERS
     DPointTests.h
     DynamicArrayTests.h
     Loading/LoadEstimatorTests.h
-    Messages/MessageBusTests.h
     Messages/MessageWatcherTests.h
     MockClasses.h
     ModelTests.h
