@@ -57,8 +57,8 @@ void testMonteCarloBatteryPredict() {
     PrognosticsModelFactory& pProgModelFactory = PrognosticsModelFactory::instance();
     std::unique_ptr<PrognosticsModel> model =
         std::unique_ptr<PrognosticsModel>(pProgModelFactory.Create("Battery", configMap));
-    auto u0 = Model::input_type({0});
-    auto z0 = Model::output_type({20, 4.2});
+    auto u0 = BatteryModel::input_type({0});
+    auto z0 = BatteryModel::output_type({20, 4.2});
     auto x = model->initialize(u0, z0);
 
     TestLoadEstimator le(configMap);

@@ -25,7 +25,6 @@
 
 #include "Matrix.h"
 #include "Models/BatteryModel.h"
-#include "Models/ModelFactory.h"
 #include "ObserverTests.h"
 #include "Observers/ParticleFilter.h"
 #include "Observers/UnscentedKalmanFilter.h"
@@ -173,7 +172,7 @@ void testUKFTankStep() {
     // Simulate to get outputs for time t
     t += dt;
     x = TankModel.stateEqn(t, x, u, ns, dt);
-    z = TankModel.outputEqn(t, x, u, no);
+    z = TankModel.outputEqn(t, x, no);
 
     // Step UKF for time t
     UKF.step(t, u, z);
@@ -247,7 +246,7 @@ void testUKFTankGetInputs() {
     // Simulate to get outputs for time t
     t += dt;
     x = TankModel.stateEqn(t, x, u, ns, dt);
-    z = TankModel.outputEqn(t, x, u, no);
+    z = TankModel.outputEqn(t, x, no);
 
     // Step UKF for time t
     u[0] = 1;
@@ -261,8 +260,8 @@ void testUKFBatteryInitialize() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    auto u0 = Model::input_type({0});
-    auto z0 = Model::output_type({20, 4.2});
+    auto u0 = BatteryModel::input_type({0});
+    auto z0 = BatteryModel::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Set up inputs
@@ -298,8 +297,8 @@ void testUKFBatteryStep() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    auto u0 = Model::input_type({0});
-    auto z0 = Model::output_type({20, 4.2});
+    auto u0 = BatteryModel::input_type({0});
+    auto z0 = BatteryModel::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Set up inputs
@@ -339,7 +338,7 @@ void testUKFBatteryStep() {
     t += dt;
     u[0] = 1;
     x = battery.stateEqn(t, x, u, xNoise, dt);
-    auto z = battery.outputEqn(t, x, u, zNoise);
+    auto z = battery.outputEqn(t, x, zNoise);
 
     // Step UKF for time t
     UKF.step(t, u, z);
@@ -462,8 +461,8 @@ void testPFBatteryInitialize() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    auto u0 = Model::input_type({0});
-    auto z0 = Model::output_type({20, 4.2});
+    auto u0 = BatteryModel::input_type({0});
+    auto z0 = BatteryModel::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Set up inputs
@@ -495,8 +494,8 @@ void testPFBatteryStep() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    auto u0 = Model::input_type({0});
-    auto z0 = Model::output_type({20, 4.2});
+    auto u0 = BatteryModel::input_type({0});
+    auto z0 = BatteryModel::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Set up inputs
@@ -535,7 +534,7 @@ void testPFBatteryStep() {
     t += dt;
     u[0] = 1;
     x = battery.stateEqn(t, x, u, xNoise, dt);
-    auto z = battery.outputEqn(t, x, u, zNoise);
+    auto z = battery.outputEqn(t, x, zNoise);
 
     // Step UKF for time t
     PF.step(t, u, z);

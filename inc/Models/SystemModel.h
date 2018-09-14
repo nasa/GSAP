@@ -59,9 +59,10 @@ namespace PCOE {
      * @author Mattew Daigle
      * @author Jason Watkins
      * @author Julian Vu
+     * @authon Chris Teubert
      * @since 1.0
      **/
-    class Model {
+    class SystemModel {
     public:
         using size_type = std::size_t;
         using input_type = InputVector;
@@ -71,7 +72,7 @@ namespace PCOE {
         using noise_type = std::vector<double>;
 
         /**
-         * Initializes the model with the given parameters.
+         * Initializes the system model with the given parameters.
          *
          * @param stateSize The number of values in the state vector.
          * @param inputs    The names of the model inputs. The size of this
@@ -81,7 +82,7 @@ namespace PCOE {
          *                  parameter also determines the number of values in
          *                  the output vector.
          **/
-        Model(state_type::size_type stateSize,
+        SystemModel(state_type::size_type stateSize,
               std::vector<MessageId> inputs,
               std::vector<MessageId> outputs)
             : stateSize(stateSize), inputs(std::move(inputs)), outputs(std::move(outputs)) {}
@@ -92,7 +93,7 @@ namespace PCOE {
          * cleaned up, even if the destructor is called through a pointer of the
          * base class type.
          **/
-        virtual ~Model() = default;
+        virtual ~SystemModel() = default;
 
         /**
          * Calculate the model state using the default sampling time.
@@ -131,14 +132,11 @@ namespace PCOE {
          *
          * @param t  Time
          * @param x  The model state vector at the current time step.
-         * @param u  The model input vector at the current time step.
          * @param n  The process noise vector.
-         * @param z  The model output vector at the current time step.
          * @return   The model output vector at the next time step.
          **/
         virtual output_type outputEqn(const double t,
                                       const state_type& x,
-                                      const input_type& u,
                                       const noise_type& n) const = 0;
 
         /**

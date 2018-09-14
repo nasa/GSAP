@@ -71,8 +71,8 @@ namespace PCOE {
 
         auto timestamp = std::max(inputMsg->getTimestamp(), outputMsg->getTimestamp());
         double timestampSeconds = seconds(timestamp);
-        const auto& u = Model::input_type(imsgVec->getValue());
-        const auto& z = Model::output_type(omsgVec->getValue());
+        const auto& u = SystemModel::input_type(imsgVec->getValue());
+        const auto& z = SystemModel::output_type(omsgVec->getValue());
         if (!observer->isInitialized()) {
             log.FormatLine(LOG_TRACE,
                            MODULE_NAME,

@@ -4,7 +4,7 @@
 #ifndef PCOE_PROGNOSTICSMODEL_H
 #define PCOE_PROGNOSTICSMODEL_H
 
-#include "Model.h"
+#include "SystemModel.h"
 
 #include <vector>
 
@@ -27,7 +27,7 @@ namespace PCOE {
      * @author Julian Vu
      * @since 1.0
      **/
-    class PrognosticsModel : public Model {
+    class PrognosticsModel : public SystemModel {
     public:
         using predicted_output_type = PredictedOutputVector;
 
@@ -52,7 +52,7 @@ namespace PCOE {
                          std::vector<std::string> predictedOutputs,
                          std::vector<MessageId> events,
                          size_type inputParamCount)
-            : Model(stateSize, inputs, outputs),
+            : SystemModel(stateSize, inputs, outputs),
               events(events),
               predictedOutputs(predictedOutputs),
               inputParameterCount(inputParamCount) {}
@@ -90,12 +90,10 @@ namespace PCOE {
          *
          * @param t Time
          * @param x The model state vector at the current time step.
-         * @param u The model input vector at the current time step.
          * @return  true if the threshold is reached; otherwise, false.
          **/
         virtual bool thresholdEqn(const double t,
-                                  const state_type& x,
-                                  const input_type& u) const = 0;
+                                  const state_type& x) const = 0;
 
         /**
          * Calculate event state.
@@ -111,14 +109,10 @@ namespace PCOE {
          *
          * @param t  Time
          * @param x  The model state vector at the current time step.
-         * @param u  The model input vector at the current time step.
-         * @param z  The model output vector at the current time step.
          * @return   The model output vector at the next time step.
          **/
         virtual predicted_output_type predictedOutputEqn(const double t,
-                                                         const state_type& x,
-                                                         const input_type& u,
-                                                         const output_type& z) const = 0;
+                                                         const state_type& x) const = 0;
 
         /**
          * Gets the number of input parameters required by the current model.
