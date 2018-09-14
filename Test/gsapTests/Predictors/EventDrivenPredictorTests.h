@@ -7,4 +7,6 @@ namespace EventDrivenPredictorTests {
     void processMessage();
 
     void fullConfig();
+    
+    void savePts();
 }

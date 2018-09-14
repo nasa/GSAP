@@ -151,7 +151,7 @@ namespace PCOE {
             double timeOfCurrentSavePt = std::numeric_limits<double>::infinity();
             auto currentSavePt = savePts.begin();
             if (currentSavePt != savePts.end()) {
-                timeOfCurrentSavePt = (*currentSavePt).time_since_epoch().count();
+                timeOfCurrentSavePt = (*currentSavePt).time_since_epoch().count()/1000000;
             }
 
             for (double t_s = time_s; t_s <= time_s + horizon; t_s += model.getDefaultTimeStep()) {
@@ -174,12 +174,12 @@ namespace PCOE {
                     // predicted values)
                     ++currentSavePt;
                     if (currentSavePt != savePts.end()) {
-                        timeOfCurrentSavePt = (*currentSavePt).time_since_epoch().count();
+                        timeOfCurrentSavePt = currentSavePt->time_since_epoch().count()/100000;
                     }
                     auto z = model.getOutputVector();
                     auto predictedOutput = model.predictedOutputEqn(t_s, x, loadEstimate, z);
                     for (unsigned int p = 0; p < predictedOutput.size(); p++) {
-                        sysTrajectories[p][savePtIndex][sample] = z[p];
+                        sysTrajectories[p][savePtIndex][sample] = predictedOutput[p];
                     }
 
                     // Write to eventState property

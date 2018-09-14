@@ -46,7 +46,7 @@ int main() {
     TestContext context;
 
     BatteryResultTests::registerTests(context);
-
+    
     // Trajectory Service
     context.AddTest("Trajectory Service", PCOE::testTrajectoryService, "Trajectory Service");
 
@@ -216,6 +216,7 @@ int main() {
                     EventDrivenPredictorTests::processMessage,
                     "EventDrivenPredictor");
     context.AddTest("Full Config", EventDrivenPredictorTests::fullConfig, "EventDrivenPredictor");
+    context.AddTest("Save Points", EventDrivenPredictorTests::savePts, "EventDrivenPredictor");
 
     DynamicArrayTests::registerTests(context);
 
