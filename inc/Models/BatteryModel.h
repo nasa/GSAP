@@ -143,14 +143,11 @@ public:
      *
      * @param t  Time
      * @param x  The model state vector at the current time step.
-     * @param u  The model input vector at the current time step.
      * @param n  The process noise vector.
-     * @param dt The size of the time step to calculate
      * @return   The model output vector at the next time step.
      **/
     output_type outputEqn(double t,
                           const state_type& x,
-                          const input_type& u,
                           const noise_type& n) const override;
 
     /**
@@ -167,10 +164,9 @@ public:
      *
      * @param t  Time
      * @param x  The model state vector at the current time step.
-     * @param u  The model input vector at the current time step.
      * @return  true if the threshold is reached; otherwise, false.
      **/
-    bool thresholdEqn(double t, const state_type& x, const input_type& u) const override;
+    bool thresholdEqn(double t, const state_type& x) const override;
 
     /** Calculate predicted outputs of the model. Predicted outputs are those
      * that are not measured, but are interested in being predicted for
@@ -178,14 +174,10 @@ public:
      *
      * @param t  Time
      * @param x  The model state vector at the current time step.
-     * @param u  The model input vector at the current time step.
-     * @param z  The model output vector at the current time step.
      * @return   The model output vector at the next time step.
      **/
     predicted_output_type predictedOutputEqn(double t,
-                                             const state_type& x,
-                                             const input_type& u,
-                                             const output_type& z) const override;
+                                             const state_type& x) const override;
 
     event_state_type eventStateEqn(const state_type& x) const override;
 

@@ -25,7 +25,7 @@
 #include <vector>
 
 #include "ConfigMap.h"
-#include "Models/Model.h"
+#include "Models/SystemModel.h"
 #include "Predictors/Predictor.h"
 
 namespace PCOE {

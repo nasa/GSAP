@@ -27,11 +27,11 @@ namespace PCOE {
     // Other string constants
     const std::string MODULE_NAME = "OBS-PF";
 
-    ParticleFilter::ParticleFilter(const Model& m) : Observer(m) {
+    ParticleFilter::ParticleFilter(const SystemModel& m) : Observer(m) {
         uPrev = model.getInputVector();
     }
 
-    ParticleFilter::ParticleFilter(const Model& m,
+    ParticleFilter::ParticleFilter(const SystemModel& m,
                                    std::size_t count,
                                    std::vector<double>& processNoise,
                                    std::vector<double>& sensorNoise)
@@ -54,7 +54,7 @@ namespace PCOE {
         particles.w.resize(particleCount);
     }
 
-    ParticleFilter::ParticleFilter(const Model& m, const ConfigMap& config) : ParticleFilter(m) {
+    ParticleFilter::ParticleFilter(const SystemModel& m, const ConfigMap& config) : ParticleFilter(m) {
         requireKeys(config, {N_KEY, PN_KEY, SN_KEY});
 
         // Set N
@@ -97,8 +97,8 @@ namespace PCOE {
     }
 
     void ParticleFilter::initialize(const double t0,
-                                    const Model::state_type& x0,
-                                    const Model::input_type& u0) {
+                                    const SystemModel::state_type& x0,
+                                    const SystemModel::input_type& u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
         // TODO (JW): This contract is now stated in the constructor, so it
         //            should be guaranteed here. Consider removing.
@@ -121,9 +121,9 @@ namespace PCOE {
         // Initialize particles
         for (size_t p = 0; p < particleCount; p++) {
             particles.X.col(p, x0.vec());
-            Model::output_type z0 = model.getOutputVector();
+            SystemModel::output_type z0 = model.getOutputVector();
             std::vector<double> zeroNoise(model.getOutputSize(), 0);
-            z0 = model.outputEqn(t0, x0, u0, zeroNoise);
+            z0 = model.outputEqn(t0, x0, zeroNoise);
             particles.Z.col(p, z0.vec());
             // Set w all equal, since we aren't adding any noise
             particles.w[p] = 1.0 / particleCount;
@@ -134,8 +134,8 @@ namespace PCOE {
     }
 
     void ParticleFilter::step(const double newT,
-                              const Model::input_type& u,
-                              const Model::output_type& z) {
+                              const SystemModel::input_type& u,
+                              const SystemModel::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
         Expect(initialized, "Step before initialization");
         Expect(newT - lastTime > 0, "Time has not advanced");
@@ -149,10 +149,10 @@ namespace PCOE {
             generateProcessNoise(noise);
 
             // Generate new particle
-            auto xNew = Model::state_type(static_cast<std::vector<double>>(particles.X.col(p)));
+            auto xNew = SystemModel::state_type(static_cast<std::vector<double>>(particles.X.col(p)));
             xNew = model.stateEqn(newT, xNew, uPrev, noise, dt);
             particles.X.col(p, xNew.vec());
-            auto zNew = model.outputEqn(newT, xNew, u, zeroNoise);
+            auto zNew = model.outputEqn(newT, xNew, zeroNoise);
             particles.Z.col(p, zNew.vec());
 
             // Set weight
@@ -253,8 +253,8 @@ namespace PCOE {
         }
     }
 
-    double ParticleFilter::likelihood(const Model::output_type& zActual,
-                                      const Model::output_type& zPredicted) {
+    double ParticleFilter::likelihood(const SystemModel::output_type& zActual,
+                                      const SystemModel::output_type& zPredicted) {
         // Compute innovation
         Matrix zA(zActual.size(), 1);
         Matrix zP(zActual.size(), 1);
@@ -276,7 +276,7 @@ namespace PCOE {
         }
     }
 
-    Model::state_type ParticleFilter::weightedMean(const Matrix& M,
+    SystemModel::state_type ParticleFilter::weightedMean(const Matrix& M,
                                                    const std::vector<double>& weights) {
         Expect(M.rows() == model.getStateSize(), "M rows does not match model state size");
         Expect(M.cols() == weights.size(), "M cols does not match weights size");

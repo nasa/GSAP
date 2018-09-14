@@ -34,7 +34,7 @@ namespace PCOE {
          * model. This constructor is only intended to be used by other
          * constructors in particle filter to set up model-related parameters.
          **/
-        explicit ParticleFilter(const Model& m);
+        explicit ParticleFilter(const SystemModel& m);
 
     public:
         /**
@@ -48,7 +48,7 @@ namespace PCOE {
          * @param processNoise  The process noise.
          * @param sensorNoise   The sensor noise.
          **/
-        ParticleFilter(const Model& m,
+        ParticleFilter(const SystemModel& m,
                        size_t particleCount,
                        std::vector<double>& processNoise,
                        std::vector<double>& sensorNoise);
@@ -62,7 +62,7 @@ namespace PCOE {
          * @param config A config from which particle count, process noise, and
          *               sensor noise will be read.
          **/
-        ParticleFilter(const Model& m, const ConfigMap& config);
+        ParticleFilter(const SystemModel& m, const ConfigMap& config);
 
         /**
          * Initializes the particles and sets the initial state estimate.
@@ -72,8 +72,8 @@ namespace PCOE {
          * @param u0 Initial model input
          **/
         void initialize(const double t0,
-                        const Model::state_type& x0,
-                        const Model::input_type& u0) override;
+                        const SystemModel::state_type& x0,
+                        const SystemModel::input_type& u0) override;
 
         /**
          * Performs a single state estimation with the given model inputs and
@@ -83,7 +83,7 @@ namespace PCOE {
          * @param u The model input vector at time @{code t}.
          * @param z The model output vector at time @{code t}.
          **/
-        void step(double t, const Model::input_type& u, const Model::output_type& z) override;
+        void step(double t, const SystemModel::input_type& u, const SystemModel::output_type& z) override;
 
         /**
          * Sets the miniumn effective number of particles.
@@ -140,11 +140,11 @@ namespace PCOE {
 
         void generateProcessNoise(std::vector<double>& noise);
 
-        double likelihood(const Model::output_type& zActual, const Model::output_type& zPredicted);
+        double likelihood(const SystemModel::output_type& zActual, const SystemModel::output_type& zPredicted);
 
         void setSensorCovariance();
 
-        Model::state_type weightedMean(const Matrix& M, const std::vector<double>& weights);
+        SystemModel::state_type weightedMean(const Matrix& M, const std::vector<double>& weights);
     };
 }
 

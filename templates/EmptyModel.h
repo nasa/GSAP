@@ -21,9 +21,9 @@
 #define EmptyModel_H
 
 #include "ConfigMap.h"
-#include "Models/Model.h"
+#include "Models/SystemModel.h"
 
-class EmptyModel final : public PCOE::Model {
+class EmptyModel final : public PCOE::SystemModel {
 public:
     // Constructor
     EmptyModel();
@@ -52,14 +52,12 @@ public:
      *
      * @param t  Time
      * @param x  The model state vector at the current time step.
-     * @param u  The model input vector at the current time step.
      * @param n  The process noise vector.
      * @param dt The size of the time step to calculate
      * @return   The model output vector at the next time step.
      **/
     output_type outputEqn(double t,
                           const state_type& x,
-                          const input_type& u,
                           const noise_type& n) const override;
 
     /**

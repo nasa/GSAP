@@ -25,7 +25,7 @@ namespace PCOE {
     // Other string constants
     const std::string MODULE_NAME = "OBS-UKF";
 
-    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model& m) : Observer(m) {
+    UnscentedKalmanFilter::UnscentedKalmanFilter(const SystemModel& m) : Observer(m) {
         xEstimated = model.getStateVector();
         uPrev = model.getInputVector();
         zEstimated = model.getOutputVector();
@@ -39,7 +39,7 @@ namespace PCOE {
         sigmaX.beta = 0;
     }
 
-    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model& m, Matrix q, Matrix r)
+    UnscentedKalmanFilter::UnscentedKalmanFilter(const SystemModel& m, Matrix q, Matrix r)
         : UnscentedKalmanFilter(m) {
         Expect(q.rows() == q.cols(), "q is not square");
         Expect(q.rows() == model.getStateSize(), "Size of q does not match model state size");
@@ -51,7 +51,7 @@ namespace PCOE {
     }
 
     // ConfigMap-based Constructor
-    UnscentedKalmanFilter::UnscentedKalmanFilter(const Model& model, const ConfigMap& config)
+    UnscentedKalmanFilter::UnscentedKalmanFilter(const SystemModel& model, const ConfigMap& config)
         : UnscentedKalmanFilter(model) {
         requireKeys(config, {Q_KEY, R_KEY});
 
@@ -102,8 +102,8 @@ namespace PCOE {
     }
 
     void UnscentedKalmanFilter::initialize(const double t0,
-                                           const Model::state_type& x0,
-                                           const Model::input_type& u0) {
+                                           const SystemModel::state_type& x0,
+                                           const SystemModel::input_type& u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
 
         // Initialize time, state, inputs
@@ -119,7 +119,7 @@ namespace PCOE {
 
         // Compute corresponding output estimate
         std::vector<double> zeroNoiseZ(model.getOutputSize());
-        zEstimated = model.outputEqn(lastTime, xEstimated, uPrev, zeroNoiseZ);
+        zEstimated = model.outputEqn(lastTime, xEstimated, zeroNoiseZ);
 
         // Set initialized flag
         initialized = true;
@@ -127,8 +127,8 @@ namespace PCOE {
     }
 
     void UnscentedKalmanFilter::step(const double timestamp,
-                                     const Model::input_type& u,
-                                     const Model::output_type& z) {
+                                     const SystemModel::input_type& u,
+                                     const SystemModel::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
         Expect(isInitialized(), "Not initialized");
         Expect(timestamp - lastTime > 0, "Time has not advanced");
@@ -149,7 +149,7 @@ namespace PCOE {
         Matrix Xkk1(model.getStateSize(), sigmaPointCount);
         std::vector<double> zeroNoise(model.getStateSize());
         for (unsigned int i = 0; i < sigmaPointCount; i++) {
-            auto x = Model::state_type(static_cast<std::vector<double>>(sigmaX.M.col(i)));
+            auto x = SystemModel::state_type(static_cast<std::vector<double>>(sigmaX.M.col(i)));
             x = model.stateEqn(timestamp, x, uPrev, zeroNoise, dt);
             Xkk1.col(i, x.vec());
         }
@@ -164,8 +164,7 @@ namespace PCOE {
         for (unsigned int i = 0; i < sigmaPointCount; i++) {
             auto zkk1 =
                 model.outputEqn(timestamp,
-                                Model::state_type(static_cast<std::vector<double>>(Xkk1.col(i))),
-                                u,
+                                SystemModel::state_type(static_cast<std::vector<double>>(Xkk1.col(i))),
                                 zeroNoise);
             Zkk1.col(i, zkk1.vec());
         }
@@ -208,11 +207,11 @@ namespace PCOE {
         zkk1m.col(0, zkk1);
         zm.col(0, z.vec());
         Matrix xk1m = xkk1m + Kk * (zm - zkk1m);
-        xEstimated = Model::state_type(static_cast<std::vector<double>>(xk1m.col(0)));
+        xEstimated = SystemModel::state_type(static_cast<std::vector<double>>(xk1m.col(0)));
 
         // Compute output estimate
         std::vector<double> zeroNoiseZ(model.getOutputSize());
-        zEstimated = model.outputEqn(timestamp, xEstimated, u, zeroNoiseZ);
+        zEstimated = model.outputEqn(timestamp, xEstimated, zeroNoiseZ);
 
         // Compute covariance
         P = Pkk1 - Kk * Pzz * Kk.transpose();
@@ -221,7 +220,7 @@ namespace PCOE {
         uPrev = u;
     }
 
-    void UnscentedKalmanFilter::computeSigmaPoints(const Model::state_type& mx,
+    void UnscentedKalmanFilter::computeSigmaPoints(const SystemModel::state_type& mx,
                                                    const Matrix& Pxx,
                                                    SigmaPoints& sigma) {
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Computing sigma points");
