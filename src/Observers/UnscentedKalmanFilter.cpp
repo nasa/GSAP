@@ -162,10 +162,10 @@ namespace PCOE {
         // Propagate sigma points through output equation
         Matrix Zkk1(model.getOutputSize(), sigmaPointCount);
         for (unsigned int i = 0; i < sigmaPointCount; i++) {
-            auto zkk1 =
-                model.outputEqn(timestamp,
-                                SystemModel::state_type(static_cast<std::vector<double>>(Xkk1.col(i))),
-                                zeroNoise);
+            auto zkk1 = model.outputEqn(timestamp,
+                                        SystemModel::state_type(
+                                            static_cast<std::vector<double>>(Xkk1.col(i))),
+                                        zeroNoise);
             Zkk1.col(i, zkk1.vec());
         }
 

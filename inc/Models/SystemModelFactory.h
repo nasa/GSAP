@@ -22,9 +22,9 @@
 #ifndef PCOE_MODELFACTORY_H
 #define PCOE_MODELFACTORY_H
 
-#include "SystemModel.h"
 #include "Factory.h"
 #include "Singleton.h"
+#include "SystemModel.h"
 
 namespace PCOE {
     /**
@@ -34,17 +34,16 @@ namespace PCOE {
      *  @see        Factory
      *  @note       Uses Factory template parent class.
      **/
-    class SystemModelFactory : public Factory<SystemModel>,
-        public Singleton<SystemModelFactory> {
+    class SystemModelFactory : public Factory<SystemModel>, public Singleton<SystemModelFactory> {
         friend class Singleton<SystemModelFactory>;
-     private:
+
+    private:
         /**
          *  @brief      ModelFactory Constructor
          *  @note       Is private to prevent users from creating a new ModelFactory
          *              Consistant with the singleton pattern
          **/
-        SystemModelFactory() {
-        };
+        SystemModelFactory(){};
     };
 }
 

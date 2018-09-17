@@ -146,9 +146,7 @@ public:
      * @param n  The process noise vector.
      * @return   The model output vector at the next time step.
      **/
-    output_type outputEqn(double t,
-                          const state_type& x,
-                          const noise_type& n) const override;
+    output_type outputEqn(double t, const state_type& x, const noise_type& n) const override;
 
     /**
      * Initialize the model state.
@@ -176,8 +174,7 @@ public:
      * @param x  The model state vector at the current time step.
      * @return   The model output vector at the next time step.
      **/
-    predicted_output_type predictedOutputEqn(double t,
-                                             const state_type& x) const override;
+    predicted_output_type predictedOutputEqn(double t, const state_type& x) const override;
 
     event_state_type eventStateEqn(const state_type& x) const override;
 
