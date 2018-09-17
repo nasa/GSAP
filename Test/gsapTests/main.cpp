@@ -46,7 +46,7 @@ int main() {
     TestContext context;
 
     BatteryResultTests::registerTests(context);
-    
+
     // Trajectory Service
     context.AddTest("Trajectory Service", PCOE::testTrajectoryService, "Trajectory Service");
 
