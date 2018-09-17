@@ -354,7 +354,7 @@ namespace EventDrivenPredictorTests {
         bus.publish(
             std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteStart, src, timestamp)));
 
-        auto time = timestamp + MessageClock::duration(50000000);
+        auto time = timestamp + std::chrono::seconds(50);
         bus.publish(std::shared_ptr<Message>(new WaypointMessage(
             MessageId::RouteSetWP, src, MessageClock::now(), time, 38.0098, -122.119, 30)));
         auto time2 = timestamp + MessageClock::duration(75000000);
@@ -367,7 +367,7 @@ namespace EventDrivenPredictorTests {
         DoubleMessage* dm1 = new DoubleMessage(MessageId::Watts, src, timestamp, 8);
         DoubleMessage* dm2 = new DoubleMessage(MessageId::Centigrade, src, timestamp, 18.74);
 
-        timestamp += MessageClock::duration(1000000);
+        timestamp += std::chrono::seconds(1);
         DoubleMessage* dm3 = new DoubleMessage(MessageId::Volts, src, timestamp, 4.03);
         DoubleMessage* dm4 = new DoubleMessage(MessageId::Watts, src, timestamp, 8);
         DoubleMessage* dm5 = new DoubleMessage(MessageId::Centigrade, src, timestamp, 18.68);
@@ -387,7 +387,7 @@ namespace EventDrivenPredictorTests {
 
         Assert::AreEqual(1, listener.getCount(), "Predictor didn't produce prediction");
 
-        timestamp += MessageClock::duration(1000000);
+        timestamp += std::chrono::seconds(1);
         DoubleMessage* dm6 = new DoubleMessage(MessageId::Volts, src, timestamp, 4.00);
         DoubleMessage* dm7 = new DoubleMessage(MessageId::Watts, src, timestamp, 8);
         DoubleMessage* dm8 = new DoubleMessage(MessageId::Centigrade, src, timestamp, 19.40);
