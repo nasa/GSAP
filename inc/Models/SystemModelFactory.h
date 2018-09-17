@@ -22,6 +22,7 @@
 #ifndef PCOE_MODELFACTORY_H
 #define PCOE_MODELFACTORY_H
 
+#include "BatteryModel.h"
 #include "Factory.h"
 #include "Singleton.h"
 #include "SystemModel.h"
@@ -43,7 +44,9 @@ namespace PCOE {
          *  @note       Is private to prevent users from creating a new ModelFactory
          *              Consistant with the singleton pattern
          **/
-        SystemModelFactory(){};
+        SystemModelFactory() {
+            Register<BatteryModel>("Battery");
+        };
     };
 }
 
