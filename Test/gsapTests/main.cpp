@@ -216,6 +216,7 @@ int main() {
                     EventDrivenPredictorTests::processMessage,
                     "EventDrivenPredictor");
     context.AddTest("Full Config", EventDrivenPredictorTests::fullConfig, "EventDrivenPredictor");
+    context.AddTest("Save Points", EventDrivenPredictorTests::savePts, "EventDrivenPredictor");
 
     DynamicArrayTests::registerTests(context);
 
