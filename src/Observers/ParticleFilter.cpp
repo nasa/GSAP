@@ -54,7 +54,8 @@ namespace PCOE {
         particles.w.resize(particleCount);
     }
 
-    ParticleFilter::ParticleFilter(const SystemModel& m, const ConfigMap& config) : ParticleFilter(m) {
+    ParticleFilter::ParticleFilter(const SystemModel& m, const ConfigMap& config)
+        : ParticleFilter(m) {
         requireKeys(config, {N_KEY, PN_KEY, SN_KEY});
 
         // Set N
@@ -149,7 +150,8 @@ namespace PCOE {
             generateProcessNoise(noise);
 
             // Generate new particle
-            auto xNew = SystemModel::state_type(static_cast<std::vector<double>>(particles.X.col(p)));
+            auto xNew =
+                SystemModel::state_type(static_cast<std::vector<double>>(particles.X.col(p)));
             xNew = model.stateEqn(newT, xNew, uPrev, noise, dt);
             particles.X.col(p, xNew.vec());
             auto zNew = model.outputEqn(newT, xNew, zeroNoise);
@@ -277,7 +279,7 @@ namespace PCOE {
     }
 
     SystemModel::state_type ParticleFilter::weightedMean(const Matrix& M,
-                                                   const std::vector<double>& weights) {
+                                                         const std::vector<double>& weights) {
         Expect(M.rows() == model.getStateSize(), "M rows does not match model state size");
         Expect(M.cols() == weights.size(), "M cols does not match weights size");
 

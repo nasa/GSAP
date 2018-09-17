@@ -226,10 +226,10 @@ BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryMo
 
 // Battery State Equation
 SystemModel::state_type BatteryModel::stateEqn(double,
-                                         const state_type& x,
-                                         const input_type& u,
-                                         const noise_type& n,
-                                         double dt) const {
+                                               const state_type& x,
+                                               const input_type& u,
+                                               const noise_type& n,
+                                               double dt) const {
     // Extract states
     double Tb = x[0];
     double Vo = x[1];
@@ -338,8 +338,9 @@ SystemModel::state_type BatteryModel::stateEqn(double,
 }
 
 // Battery Output Equation
-SystemModel::output_type
-BatteryModel::outputEqn(double, const state_type& x, const noise_type& n) const {
+SystemModel::output_type BatteryModel::outputEqn(double,
+                                                 const state_type& x,
+                                                 const noise_type& n) const {
     // Extract states
     const double& Tb = x[0];
     const double& Vo = x[1];

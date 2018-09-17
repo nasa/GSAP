@@ -4,8 +4,8 @@
 #include "Loading/LoadEstimator.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
-#include "Models/SystemModel.h"
 #include "Models/PrognosticsModel.h"
+#include "Models/SystemModel.h"
 #include "Observers/Observer.h"
 #include "Predictors/Predictor.h"
 
@@ -43,7 +43,8 @@ private:
 class TestModel final : public SystemModel {
 public:
     TestModel()
-        : SystemModel(2, {MessageId::TestInput0, MessageId::TestInput1}, {MessageId::TestOutput0}) {}
+        : SystemModel(2, {MessageId::TestInput0, MessageId::TestInput1}, {MessageId::TestOutput0}) {
+    }
 
     state_type stateEqn(const double,
                         const state_type& x,
@@ -53,9 +54,7 @@ public:
         return x;
     }
 
-    output_type outputEqn(const double,
-                          const state_type&,
-                          const noise_type&) const override {
+    output_type outputEqn(const double, const state_type&, const noise_type&) const override {
         return output_type();
     }
 
@@ -81,9 +80,7 @@ public:
         return x;
     }
 
-    output_type outputEqn(const double,
-                          const state_type&,
-                          const noise_type&) const override {
+    output_type outputEqn(const double, const state_type&, const noise_type&) const override {
         return output_type();
     }
 
@@ -99,8 +96,7 @@ public:
         return 0;
     }
 
-    predicted_output_type predictedOutputEqn(const double,
-                                             const state_type&) const override {
+    predicted_output_type predictedOutputEqn(const double, const state_type&) const override {
         return getPredictedOutputVector();
     }
 };
@@ -128,7 +124,9 @@ class TestObserver final : public Observer {
 public:
     TestObserver(const SystemModel& model) : Observer(model) {}
 
-    void initialize(double t0, const SystemModel::state_type& x0, const SystemModel::input_type& u0) override {
+    void initialize(double t0,
+                    const SystemModel::state_type& x0,
+                    const SystemModel::input_type& u0) override {
         xPrev = x0;
         uPrev = u0;
         std::vector<double> zeroNoiseZ(model.getOutputSize());
@@ -136,7 +134,9 @@ public:
         initialized = true;
     }
 
-    void step(double t, const SystemModel::input_type& u, const SystemModel::output_type&) override {
+    void step(double t,
+              const SystemModel::input_type& u,
+              const SystemModel::output_type&) override {
         std::vector<double> zeroNoiseX(model.getStateSize());
         xPrev = model.stateEqn(t, xPrev, u, zeroNoiseX);
     }

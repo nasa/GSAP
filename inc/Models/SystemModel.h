@@ -83,8 +83,8 @@ namespace PCOE {
          *                  the output vector.
          **/
         SystemModel(state_type::size_type stateSize,
-              std::vector<MessageId> inputs,
-              std::vector<MessageId> outputs)
+                    std::vector<MessageId> inputs,
+                    std::vector<MessageId> outputs)
             : stateSize(stateSize), inputs(std::move(inputs)), outputs(std::move(outputs)) {}
 
         /**
