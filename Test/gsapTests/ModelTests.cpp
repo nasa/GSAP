@@ -23,7 +23,7 @@
 
 #include "ModelTests.h"
 #include "Models/BatteryModel.h"
-#include "Models/Model.h"
+#include "Models/SystemModel.h"
 #include "Tank3.h"
 
 using namespace PCOE;
@@ -126,7 +126,7 @@ void testTankOutputEqn() {
 
     // Output equation
     double t = 0;
-    auto z = TankModel.outputEqn(t, x, u, no);
+    auto z = TankModel.outputEqn(t, x, no);
 
     // Check values of z
     Assert::AreEqual(0.1, z[0], 1e-12);
@@ -152,8 +152,8 @@ void testBatteryInitialization() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    auto u0 = Model::input_type({0.4});
-    auto z0 = Model::output_type({20, 4.0});
+    auto u0 = BatteryModel::input_type({0.4});
+    auto z0 = BatteryModel::output_type({20, 4.0});
     auto x = battery.initialize(u0, z0);
 
     // Check states
@@ -176,18 +176,18 @@ void testBatteryStateEqn() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    auto u0 = Model::input_type({0.4});
-    auto z0 = Model::output_type({20, 4.0});
+    auto u0 = BatteryModel::input_type({0.4});
+    auto z0 = BatteryModel::output_type({20, 4.0});
     auto x = battery.initialize(u0, z0);
 
     // Set noise vector
     std::vector<double> zeroNoise(8);
 
     // Set input vector
-    auto u = Model::input_type({1});
+    auto u = BatteryModel::input_type({1});
 
     // Compute next state
-    x = battery.Model::stateEqn(0, x, u, zeroNoise);
+    x = battery.SystemModel::stateEqn(0, x, u, zeroNoise);
 
     // Check states
     Assert::AreEqual(293.15, x[battery.indices.states.Tb], 1e-12);
@@ -212,18 +212,18 @@ void testBatteryOutputEqn() {
     BatteryModel battery = BatteryModel();
 
     // Initialize
-    auto u0 = Model::input_type({0.4});
-    auto z0 = Model::output_type({20, 4.0});
+    auto u0 = BatteryModel::input_type({0.4});
+    auto z0 = BatteryModel::output_type({20, 4.0});
     auto x = battery.initialize(u0, z0);
 
     // Set noise vector
     std::vector<double> zeroNoise(2);
 
     // Set input vector
-    auto u = Model::input_type({1});
+    auto u = BatteryModel::input_type({1});
 
     // Compute output
-    auto z = battery.outputEqn(0, x, u, zeroNoise);
+    auto z = battery.outputEqn(0, x, zeroNoise);
 
     // Check outputs
     Assert::IsTrue(z[battery.indices.outputs.Vm] > 3.999871 &&
@@ -236,15 +236,15 @@ void testBatteryThresholdEqn() {
     BatteryModel battery = BatteryModel();
 
     // Set input vector
-    auto u = Model::input_type({1});
+    auto u = BatteryModel::input_type({1});
 
     // Initialize
-    auto u0 = Model::input_type({0.4});
-    auto z0 = Model::output_type({20, 4.0});
+    auto u0 = BatteryModel::input_type({0.4});
+    auto z0 = BatteryModel::output_type({20, 4.0});
     auto x = battery.initialize(u0, z0);
 
     // Check that not at threshold
-    Assert::AreEqual(false, battery.thresholdEqn(0, x, u));
+    Assert::AreEqual(false, battery.thresholdEqn(0, x));
 
     // Re-initialize to lower voltage
     u0[0] = 0.3;
@@ -253,7 +253,7 @@ void testBatteryThresholdEqn() {
     x = battery.initialize(u0, z0);
 
     // Check that at threshold
-    Assert::AreEqual(true, battery.thresholdEqn(0, x, u));
+    Assert::AreEqual(true, battery.thresholdEqn(0, x));
 }
 
 void testBatteryPredictedOutputEqn() {
@@ -261,16 +261,16 @@ void testBatteryPredictedOutputEqn() {
     BatteryModel battery = BatteryModel();
 
     // Set input vector
-    auto u = Model::input_type({1});
+    auto u = BatteryModel::input_type({1});
 
     // Initialize
-    auto u0 = Model::input_type({0.4});
-    auto z0 = Model::output_type({20, 4.2});
+    auto u0 = BatteryModel::input_type({0.4});
+    auto z0 = BatteryModel::output_type({20, 4.2});
     auto x = battery.initialize(u0, z0);
 
     // Set up predicted outputs
     auto z = battery.getOutputVector();
-    auto predictedOutput = battery.predictedOutputEqn(0, x, u, z);
+    auto predictedOutput = battery.predictedOutputEqn(0, x);
 
     // Check values
     Assert::AreEqual(0, predictedOutput.size());

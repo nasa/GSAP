@@ -225,11 +225,11 @@ BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryMo
 }
 
 // Battery State Equation
-Model::state_type BatteryModel::stateEqn(double,
-                                         const state_type& x,
-                                         const input_type& u,
-                                         const noise_type& n,
-                                         double dt) const {
+SystemModel::state_type BatteryModel::stateEqn(double,
+                                               const state_type& x,
+                                               const input_type& u,
+                                               const noise_type& n,
+                                               double dt) const {
     // Extract states
     double Tb = x[0];
     double Vo = x[1];
@@ -338,8 +338,9 @@ Model::state_type BatteryModel::stateEqn(double,
 }
 
 // Battery Output Equation
-Model::output_type
-BatteryModel::outputEqn(double, const state_type& x, const input_type&, const noise_type& n) const {
+SystemModel::output_type BatteryModel::outputEqn(double,
+                                                 const state_type& x,
+                                                 const noise_type& n) const {
     // Extract states
     const double& Tb = x[0];
     const double& Vo = x[1];
@@ -415,9 +416,9 @@ BatteryModel::outputEqn(double, const state_type& x, const input_type&, const no
 }
 
 // Battery Threshold Equation
-bool BatteryModel::thresholdEqn(double t, const state_type& x, const input_type& u) const {
+bool BatteryModel::thresholdEqn(double t, const state_type& x) const {
     // Compute based on voltage, so use output equation to get voltage
-    auto z = outputEqn(t, x, u, std::vector<double>(2));
+    auto z = outputEqn(t, x, std::vector<double>(2));
 
     // Determine if voltage (second element in z) is below VEOD threshold
     return z[1] <= parameters.VEOD;
@@ -425,14 +426,12 @@ bool BatteryModel::thresholdEqn(double t, const state_type& x, const input_type&
 
 // Battery Predicted Outputs Equation
 PrognosticsModel::predicted_output_type BatteryModel::predictedOutputEqn(double,
-                                                                         const state_type&,
-                                                                         const input_type&,
-                                                                         const output_type&) const {
+                                                                         const state_type&) const {
     // Return empty vector because there are no predicted outputs.
     return getPredictedOutputVector();
 }
 
-Model::event_state_type BatteryModel::eventStateEqn(const state_type& x) const {
+SystemModel::event_state_type BatteryModel::eventStateEqn(const state_type& x) const {
     // Compute "nominal" SOC
     double qnS = x[indices.states.qnS];
     double qnB = x[indices.states.qnB];
@@ -542,7 +541,7 @@ void BatteryModel::setParameters(const double qMobile, const double Vol) {
 }
 
 // Initialize state, given an initial voltage, current, and temperature
-Model::state_type BatteryModel::initialize(const input_type& u, const output_type& z) const {
+SystemModel::state_type BatteryModel::initialize(const input_type& u, const output_type& z) const {
     std::stringstream ss;
     ss << "Inputs: ";
     for (std::size_t i = 0; i < u.size(); ++i) {

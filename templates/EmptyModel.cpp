@@ -15,7 +15,7 @@
 using namespace PCOE;
 
 // Number of state variables
-const Model::state_type::size_type STATE_SIZE = 2;
+const SystemModel::state_type::size_type STATE_SIZE = 2;
 
 // Inputs to model (e.g., current)
 auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
@@ -23,7 +23,7 @@ auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
 // Outputs of model (e.g., voltage)
 auto OUTPUTS = {MessageId::TestOutput0, MessageId::TestOutput1};
 
-EmptyModel::EmptyModel() : Model(STATE_SIZE, INPUTS, OUTPUTS) {}
+EmptyModel::EmptyModel() : SystemModel(STATE_SIZE, INPUTS, OUTPUTS) {}
 
 // Constructor based on configMap
 EmptyModel::EmptyModel(const ConfigMap& configMap) : EmptyModel::EmptyModel() {
@@ -31,10 +31,10 @@ EmptyModel::EmptyModel(const ConfigMap& configMap) : EmptyModel::EmptyModel() {
 }
 
 // EmptyModel State Equation
-Model::state_type EmptyModel::stateEqn(double t,
-                                       const Model::state_type& x,
-                                       const Model::input_type& u,
-                                       const Model::noise_type& n,
+SystemModel::state_type EmptyModel::stateEqn(double t,
+                                       const SystemModel::state_type& x,
+                                       const SystemModel::input_type& u,
+                                       const SystemModel::noise_type& n,
                                        double dt) const {
     auto new_state = getStateVector();
 
@@ -45,10 +45,9 @@ Model::state_type EmptyModel::stateEqn(double t,
 }
 
 // EmptyModel Output Equation
-Model::output_type EmptyModel::outputEqn(double t,
-                                         const Model::state_type& x,
-                                         const Model::input_type& u,
-                                         const Model::noise_type& n) const {
+SystemModel::output_type EmptyModel::outputEqn(double t,
+                                         const SystemModel::state_type& x,
+                                         const SystemModel::noise_type& n) const {
     auto output = getOutputVector();
 
     // Fill output
@@ -58,9 +57,9 @@ Model::output_type EmptyModel::outputEqn(double t,
 }
 
 // Initialize state, given initial inputs and outputs
-Model::state_type EmptyModel::initialize(const Model::input_type& u,
-                                         const Model::output_type& z) const {
-    Model::state_type initialized_state = getStateVector();
+SystemModel::state_type EmptyModel::initialize(const SystemModel::input_type& u,
+                                         const SystemModel::output_type& z) const {
+    SystemModel::state_type initialized_state = getStateVector();
 
     // Fill initialized_state
     // e.g., initialized_state[0] = SOMEVALUE;

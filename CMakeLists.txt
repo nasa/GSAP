@@ -85,8 +85,8 @@ set (HEADERS
     inc/Messages/WaypointMessage.h
     inc/ModelBasedPrognoser.h
     inc/Models/BatteryModel.h
-    inc/Models/Model.h
-    inc/Models/ModelFactory.h
+    inc/Models/SystemModel.h
+    inc/Models/SystemModelFactory.h
     inc/Models/PrognosticsModel.h
     inc/Models/PrognosticsModelFactory.h
     inc/Net/TCPServer.h

@@ -6,7 +6,7 @@
 using namespace std;
 
 // Tank3 State Equation
-PCOE::Model::state_type Tank3::stateEqn(const double,
+PCOE::SystemModel::state_type Tank3::stateEqn(const double,
                                         const state_type& x,
                                         const input_type& u,
                                         const noise_type& n,
@@ -49,8 +49,8 @@ PCOE::Model::state_type Tank3::stateEqn(const double,
 }
 
 // Tank3 Output Equation
-PCOE::Model::output_type
-Tank3::outputEqn(const double, const state_type& x, const input_type&, const noise_type& n) const {
+PCOE::SystemModel::output_type
+Tank3::outputEqn(const double, const state_type& x, const noise_type& n) const {
     // Extract states
     double m1 = x[0];
     double m2 = x[1];
@@ -78,7 +78,7 @@ Tank3::outputEqn(const double, const state_type& x, const input_type&, const noi
     return z_out;
 }
 
-PCOE::Model::state_type Tank3::initialize(const input_type&, const output_type&) const {
+PCOE::SystemModel::state_type Tank3::initialize(const input_type&, const output_type&) const {
     auto x = getStateVector();
     x[0] = 0;
     x[1] = 0;

@@ -4,13 +4,13 @@
 #define TANK3_H
 #include <vector>
 
-#include "Models/Model.h"
+#include "Models/SystemModel.h"
 
-class Tank3 final : public PCOE::Model {
+class Tank3 final : public PCOE::SystemModel {
 public:
     // Constructor
     Tank3()
-        : PCOE::Model(3,
+        : PCOE::SystemModel(3,
                       {PCOE::MessageId::TestInput0,
                        PCOE::MessageId::TestInput1,
                        PCOE::MessageId::TestInput2},
@@ -55,7 +55,7 @@ public:
         double R2c3;
     } parameters;
 
-    using Model::stateEqn;
+    using SystemModel::stateEqn;
 
     state_type stateEqn(const double t,
                         const state_type& x,
@@ -65,7 +65,6 @@ public:
 
     output_type outputEqn(const double t,
                           const state_type& x,
-                          const input_type& u,
                           const noise_type& n) const override;
 
     state_type initialize(const input_type& u, const output_type& z) const override;

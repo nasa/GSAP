@@ -141,7 +141,7 @@ namespace PCOE {
             }
             // Update with mean and covariance
             xRandom = xMean + PxxChol * xRandom;
-            auto x = Model::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
+            auto x = SystemModel::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
 
             // 3. Simulate until time limit reached
             std::vector<double> inputParams(model.getInputParameterCount());
@@ -163,7 +163,7 @@ namespace PCOE {
                 // Check threshold at time t and set timeOfEvent if reaching for first time
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
-                if (model.thresholdEqn(t_s, x, loadEstimate)) {
+                if (model.thresholdEqn(t_s, x)) {
                     eventToe[sample] = t_s;
                     eventToe.updated(stateTimestamp);
                     break;
@@ -176,9 +176,9 @@ namespace PCOE {
                     if (currentSavePt != savePts.end()) {
                         timeOfCurrentSavePt = seconds(*currentSavePt);
                     }
-                    
-                    auto z = model.outputEqn(t_s, x, loadEstimate, processNoise);
-                    auto predictedOutput = model.predictedOutputEqn(t_s, x, loadEstimate, z);
+
+                    auto predictedOutput = model.predictedOutputEqn(t_s, x);
+
                     for (unsigned int p = 0; p < predictedOutput.size(); p++) {
                         sysTrajectories[p][savePtIndex][sample] = predictedOutput[p];
                     }
