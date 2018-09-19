@@ -84,6 +84,22 @@ namespace TestUData {
         }
     }
 
+    void construct_scalar() {
+        try {
+            UData ud = 1.0;
+        }
+        catch (...) {
+            Assert::Fail("Scalar assignment threw an exception");
+        }
+
+        try {
+            UData ud(2.0);
+        }
+        catch (...) {
+            Assert::Fail("Scalar constructor threw an exception");
+        }
+    }
+
     void construct_copy() {
         UData ud1(UType::MeanSD);
         UData ud2(ud1);
@@ -167,6 +183,20 @@ namespace TestUData {
         ud5[0] = 42.31;
         Assert::IsTrue(ud1 != ud2, "Object with data is equal to default object");
         Assert::IsTrue(ud2 != ud5, "Objects with different data are equal");
+    }
+
+    void operator_double() {
+        UData ud = 42.0;
+        double value = static_cast<double>(ud);
+        Assert::AreEqual(42.0, value, 1e-12, "Cast of point UData failed");
+
+        try {
+            UData ud2(UType::MeanSD);
+            double v2 = static_cast<double>(ud2);
+            Assert::Fail("Cast of mean/sd UData succeeded");
+        }
+        catch (const std::domain_error&) {
+        }
     }
 
     void dist() {
