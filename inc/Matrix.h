@@ -644,6 +644,10 @@ namespace PCOE {
 
         Matrix weightedMean(const Matrix& w) const;
 
+        inline const double* getData() const {
+            return data;
+        }
+
         /***********************************************************************/
         /* Static Operations                                                   */
         /***********************************************************************/
