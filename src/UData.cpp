@@ -60,6 +60,10 @@ namespace PCOE {
         uncertainty(ut);
     }
 
+    UData::UData(double value) : UData(UType::Point) {
+        m_data[0] = value;
+    }
+
     UData::UData(const UData& other) : m_interface(nullptr) {
         m_dist = other.m_dist;
         m_data = other.m_data;
@@ -149,6 +153,13 @@ namespace PCOE {
     //*------------------------------*
     //|        Access Double         |
     //*------------------------------*
+
+    UData::operator double() const {
+        if (m_uncertainty != UType::Point || m_data.size() != 1) {
+            throw std::domain_error("Invalid conversion to double");
+        }
+        return m_data[0];
+    }
 
     UData::Proxy UData::operator[](const size_type key) {
         if (key >= m_data.size()) {
