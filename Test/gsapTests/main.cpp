@@ -62,11 +62,13 @@ int main() {
     // UData Tests
     context.AddTest("construct_default", TestUData::construct_default, "UData");
     context.AddTest("construct_type", TestUData::construct_type, "UData");
+    context.AddTest("construct_scalar", TestUData::construct_scalar, "UData");
     context.AddTest("construct_copy", TestUData::construct_copy, "UData");
     context.AddTest("construct_move", TestUData::construct_move, "UData");
     context.AddTest("operator_assign", TestUData::operator_assign, "UData");
     context.AddTest("operator_equal", TestUData::operator_equal, "UData");
     context.AddTest("operator_notequal", TestUData::operator_notequal, "UData");
+    context.AddTest("operator_double", TestUData::operator_double, "UData");
     context.AddTest("dist", TestUData::dist, "UData");
     context.AddTest("npoints", TestUData::npoints, "UData");
     context.AddTest("size", TestUData::size, "UData");

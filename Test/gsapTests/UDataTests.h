@@ -22,11 +22,13 @@
 namespace TestUData {
     void construct_default();
     void construct_type();
+    void construct_scalar();
     void construct_copy();
     void construct_move();
     void operator_assign();
     void operator_equal();
     void operator_notequal();
+    void operator_double();
     void dist();
     void npoints();
     void size();
