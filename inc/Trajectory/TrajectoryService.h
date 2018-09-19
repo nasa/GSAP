@@ -35,6 +35,13 @@ namespace PCOE {
         std::set<time_point> getSavePts() const override;
 
         /**
+         * @return The entire trajectory stored by the trajectory service.
+         **/
+        inline const std::map<time_point, Point3D>& getTrajectory() const {
+            return waypoints;
+        }
+
+        /**
          *  Get a point along a trajectory corresponding to a specific timepoint
          *  @param  tp  The timepoint for which to find the correlated position
          */
