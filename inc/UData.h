@@ -103,6 +103,20 @@ namespace PCOE {
          **/
         explicit UData(const UType uType);
 
+        /**
+         * Constructs a new instance of UData with the UType::Point type and the
+         * given value.
+         *
+         * @remarks
+         * Because there are many use-cases where a UData is required by the
+         * interface of GSAP but the data is only a single point, this
+         * constructor is allowed to by implicit, allowing for an automatic cast
+         * of a double to a UData.
+         *
+         * @param value The value associated with the UData.
+         **/
+        UData(double value);
+
         /** @brief Constructs a new instance of UData with the same properties
          *         as the given UData object.
          *
@@ -301,6 +315,15 @@ namespace PCOE {
         //*------------------------------*
         //|        Access Double         |
         //*------------------------------*
+
+        /**
+         * Casts the given UData to a scalar.
+         *
+         * @remarks
+         * This operator will fail if used on a UData that does not have the
+         * type UType::Point.
+         **/
+        explicit operator double() const;
 
         /** @brief      Uncertain data element access operator
          *  @param      key     Access a specific element of the Uncertain Data Vector
