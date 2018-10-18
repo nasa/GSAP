@@ -65,7 +65,7 @@ namespace PCOE {
         std::size_t qValueIndex = 0;
         for (std::size_t row = 0; row < qDim; row++) {
             for (std::size_t col = 0; col < qDim; col++) {
-                Q[row][col] = std::stod(QValues[qValueIndex]);
+                Q.at(row, col) = std::stod(QValues[qValueIndex]);
                 qValueIndex++;
             }
         }
@@ -80,7 +80,7 @@ namespace PCOE {
         std::size_t rValueIndex = 0;
         for (std::size_t row = 0; row < rDim; row++) {
             for (std::size_t col = 0; col < rDim; col++) {
-                R[row][col] = std::stod(RValues[rValueIndex]);
+                R.at(row, col) = std::stod(RValues[rValueIndex]);
                 rValueIndex++;
             }
         }
@@ -231,14 +231,14 @@ namespace PCOE {
 
         // First sigma point is the mean
         for (unsigned int i = 0; i < stateSize; i++) {
-            sigma.M[i][0] = mx[i];
+            sigma.M.at(i, 0) = mx[i];
         }
 
         // Compute a matrix square root using Cholesky decomposition
         Matrix nkPxx = Pxx;
         for (unsigned int i = 0; i < nkPxx.rows(); i++) {
             for (unsigned int j = 0; j < nkPxx.cols(); j++) {
-                nkPxx[i][j] *= (stateSize + sigma.kappa);
+                nkPxx.at(i, j) *= (stateSize + sigma.kappa);
             }
         }
         Matrix matrixSq = nkPxx.chol();
@@ -247,7 +247,7 @@ namespace PCOE {
         for (unsigned int i = 0; i < stateSize; i++) {
             // Set column
             for (unsigned int j = 0; j < stateSize; j++) {
-                sigma.M[i][j + 1] = mx[i] + matrixSq[i][j];
+                sigma.M.at(i, j + 1) = mx[i] + matrixSq.at(i, j);
             }
         }
 
@@ -255,7 +255,7 @@ namespace PCOE {
         for (unsigned int i = 0; i < stateSize; i++) {
             // Set column
             for (unsigned int j = 0; j < stateSize; j++) {
-                sigma.M[i][j + stateSize + 1] = mx[i] - matrixSq[i][j];
+                sigma.M.at(i, j + stateSize + 1) = mx[i] - matrixSq.at(i, j);
             }
         }
 

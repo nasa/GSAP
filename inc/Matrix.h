@@ -10,6 +10,8 @@
 #include <iostream>
 #include <vector>
 
+#include "Eigen/Dense"
+
 namespace PCOE {
 #undef minor
 
@@ -130,6 +132,14 @@ namespace PCOE {
          */
         explicit Matrix(const std::vector<double>& v);
 
+        /**
+         * Constructs a new matrix from an Eigen expression base.
+         *
+         * @param other The expression used to initialize the matrix.
+         **/
+        template <typename T>
+        Matrix(const Eigen::EigenBase<T>& other) : matrix(other) {}
+
         /** @brief Constructs a new Matrix by copying the elements of @p other.
          *
          *  @param other A matrix of the same type and size from which to copy
@@ -195,40 +205,12 @@ namespace PCOE {
         /***********************************************************************/
         /** @brief Gets the number of rows in the current matrix. */
         inline std::size_t rows() const {
-            return M;
+            return matrix.rows();
         }
 
         /** @brief Gets the number of columns in the current matrix. */
         inline std::size_t cols() const {
-            return N;
-        }
-
-        /** @brief Gets a mutable row vector that can be further indexed to get a
-         *         reference to an element in the matrix.
-         *
-         *  @remarks The indexing operator does not perform bounds checking.
-         *           attempting to access an element outside the bounds of the
-         *           matrix is undefined behavior. For a version that throws on
-         *           out-of-bounds access, use the @see{at} method.
-         *
-         *  @param m The zero-based row to get.
-         */
-        inline RowVector operator[](std::size_t m) {
-            return RowVector(data + (m * N));
-        }
-
-        /** @brief Gets an immutable row vector that can be further indexed to get
-         *         an element in the matrix.
-         *
-         *  @remarks The indexing operator does not perform bounds checking.
-         *           attempting to access an element outside the bounds of the
-         *           matrix is undefined behavior. For a version that throws on
-         *           out-of-bounds access, use the @see{at} method.
-         *
-         *  @param m The zero-based row to get.
-         */
-        inline ConstRowVector operator[](std::size_t m) const {
-            return ConstRowVector(data + (m * N));
+            return matrix.cols();
         }
 
         /** @brief Gets a reference the element at the specified location.
@@ -537,8 +519,10 @@ namespace PCOE {
          */
         template <typename Fn>
         Matrix& apply(Fn&& function) {
-            for (size_t i = 0; i < M * N; i++) {
-                data[i] = function(data[i]);
+            for (std::size_t i = 0; i < rows(); ++i) {
+                for (std::size_t j = 0; j < cols(); ++j) {
+                    matrix(i, j) = function(matrix(i, j));
+                }
             }
             return *this;
         }
@@ -645,7 +629,7 @@ namespace PCOE {
         Matrix weightedMean(const Matrix& w) const;
 
         inline const double* getData() const {
-            return data;
+            return matrix.data();
         }
 
         /***********************************************************************/
@@ -690,21 +674,7 @@ namespace PCOE {
         };
 
     private:
-        /***********************************************************************/
-        /* Internal implementation helpers                                     */
-        /* !!!WARNING: These function do not do any error checking!!!          */
-        /***********************************************************************/
-        double laplaceDet() const;
-
-        bool cholInternal(Matrix& r) const;
-        bool croutInternal(Matrix& r, double& mult) const;
-
-        /***********************************************************************/
-        /* Class data members                                                  */
-        /***********************************************************************/
-        std::size_t M;
-        std::size_t N;
-        double* data;
+        Eigen::MatrixXd matrix;
     };
 }
 

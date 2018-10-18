@@ -119,7 +119,7 @@ namespace PCOE {
         if (state.front().uncertainty() == UType::MeanCovar) {
             Matrix Pxx(model.getStateSize(), model.getStateSize());
             for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
-                xMean[xIndex][0] = state[xIndex][MEAN];
+                xMean.at(xIndex, 0) = state[xIndex][MEAN];
                 std::vector<double> covariance = state[xIndex].getVec(COVAR());
                 Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
             }
@@ -159,7 +159,7 @@ namespace PCOE {
                 Matrix xRandom(model.getStateSize(), 1);
                 static std::normal_distribution<> standardDistribution(0, 1);
                 for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
-                    xRandom[xIndex][0] = standardDistribution(generator);
+                    xRandom.at(xIndex, 0) = standardDistribution(generator);
                 }
                 // Update with mean and covariance
                 xRandom = xMean + PxxChol * xRandom;

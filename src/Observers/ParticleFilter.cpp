@@ -173,7 +173,7 @@ namespace PCOE {
             state[i].uncertainty(UType::WeightedSamples);
             state[i].npoints(particleCount);
             for (std::size_t p = 0; p < particleCount; p++) {
-                state[i][SAMPLE(p)] = particles.X[i][p];
+                state[i][SAMPLE(p)] = particles.X.at(i, p);
                 state[i][WEIGHT(p)] = particles.w[p];
             }
         }
@@ -265,7 +265,7 @@ namespace PCOE {
         Matrix I = zA - zP;
         Matrix expArgument = -0.5 * I.transpose() * R.inverse() * I;
         double lh = 1.0 / pow(2.0 * PI, zActual.size() / 2.0) * 1.0 / sqrt(R.determinant()) *
-                    exp(expArgument[0][0]);
+                    exp(expArgument.at(0, 0));
         return lh;
     }
 
@@ -274,7 +274,7 @@ namespace PCOE {
         R = Matrix(sensorNoiseVariance.size(), sensorNoiseVariance.size(), 0);
         // Fill diagonals
         for (std::size_t i = 0; i < sensorNoiseVariance.size(); i++) {
-            R[i][i] = sensorNoiseVariance[i];
+            R.at(i, i) = sensorNoiseVariance[i];
         }
     }
 
@@ -290,7 +290,7 @@ namespace PCOE {
 
         auto result = model.getStateVector();
         for (std::size_t i = 0; i < result.size(); i++) {
-            result[i] = wMean[0][i];
+            result[i] = wMean.at(0, i);
         }
         return result;
     }
