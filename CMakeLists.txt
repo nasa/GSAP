@@ -1,37 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(GSAP)
-
-set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin/)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-
-set(GSAP_INSTALL_BIN_DIR bin)
-set(GSAP_INSTALL_LIB_DIR lib)
-set(GSAP_INSTALL_INCLUDE_DIR include)
-set(GSAP_INSTALL_EXAMPLE_DIR example)
-
-# This hootenanny is to give the user a better default value for the
-# install path in the GUI window. It seems we can't do this directly
-# with SET for built-in variables like CMAKE_INSTALL_PREFIX.
-set(INSTALL_DIRECTORY "${PROJECT_BINARY_DIR}/install" CACHE PATH
-    "Directory to install to.")
-set(CMAKE_INSTALL_PREFIX ${INSTALL_DIRECTORY} CACHE INTERNAL
-    "Install path prefix, prepended onto install directories." FORCE)
-
 # Build option for enabling compiler and linker flags for gathering coverage data
 # In command line, set option this way:
 # cmake -DCoverage=ON <build folder>
 option(Coverage "Coverage" OFF)
-
-include(compiler_flags.cmake)
 
 # Check command line to see if OpenMP is to be used.
 option(UseOpenMP "UseOpenMP" FALSE)
@@ -51,7 +23,7 @@ if (UseOpenMP)
     endif()
 endif()
 
-set (HEADERS
+set(HEADERS
     inc/BenchmarkTimer.h
     inc/Communicator.h
     inc/CommunicatorFactory.h
@@ -166,13 +138,10 @@ set(SRCS
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)
 add_library(gsap ${HEADERS} ${SRCS})
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Test/)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/example/)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/templates/)
 
 install(TARGETS gsap
   LIBRARY DESTINATION ${GSAP_INSTALL_LIB_DIR}
   ARCHIVE DESTINATION ${GSAP_INSTALL_LIB_DIR})
 
-install(DIRECTORY inc/ DESTINATION ${GSAP_INSTALL_INCLUDE_DIR})
-install(FILES compiler_flags.cmake DESTINATION ${GSAP_INSTALL_EXAMPLE_DIR} )
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/inc/ DESTINATION ${GSAP_INSTALL_INCLUDE_DIR})
+install(FILES compiler_flags.cmake DESTINATION ${GSAP_INSTALL_EXAMPLE_DIR})

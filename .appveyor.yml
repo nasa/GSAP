@@ -7,12 +7,13 @@ configuration:
   - Release
 
 before_build:
-    - cmake -G "Visual Studio 15 2017 Win64" .
+  - cd Test
+  - cmake -G "Visual Studio 15 2017 Win64" .
 
 build:
-  project: $(APPVEYOR_BUILD_FOLDER)\$(APPVEYOR_PROJECT_NAME).sln
+  project: $(APPVEYOR_BUILD_FOLDER)\Test\$(APPVEYOR_PROJECT_NAME).sln
 
 test_script:
-  - 'cd %APPVEYOR_BUILD_FOLDER%\bin'
+  - 'cd %APPVEYOR_BUILD_FOLDER%\Test\bin'
   - '.\gsapTests.exe'
   - '.\commCollectionTests.exe'

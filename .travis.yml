@@ -42,6 +42,15 @@ before_install:
 
 script:
   - set OPEN_MP_NUM_THREADS 4
+  - pushd example
+  - mkdir build
+  - mkdir bin
+  - pushd build
+  - cmake ..
+  - cmake --build .
+  - popd
+  - popd
+  - pushd Test
   - mkdir build
   - mkdir bin
   - mkdir coverage

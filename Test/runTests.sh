@@ -12,9 +12,9 @@ YELLOW="\033[0;33m"
 WHITE="\033[0;37m"
 NORMAL="\033[00m"
 
-# Expect this script to be in the test subdirectory, moving up to cpp will make life easier
+# Expect this script to be in the test subdirectory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-pushd "${DIR}/.."
+pushd "${DIR}"
 
 
 # Delete bin to make sure we get a clean build, and make sure the build Directory exists
