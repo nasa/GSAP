@@ -1,9 +1,12 @@
-# Expect this script to be in the test subdirectory, moving up to cpp will make life easier
-Push-Location "$PSScriptRoot/..";
+# Expect this script to be in the test subdirectory
+Push-Location "$PSScriptRoot";
 
 # Delete bin to make sure we get a clean build, and make sure the build Directory exists
 if (Test-Path bin) {
     Remove-Item -Recurse -Force bin;
+}
+if (Test-Path build/CMakeCache.txt) {
+    Remove-Item -Force build/CMakeCache.txt;
 }
 if (!(Test-Path build)) {
     New-Item build -ItemType Directory;

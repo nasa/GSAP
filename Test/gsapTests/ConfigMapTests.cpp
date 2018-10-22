@@ -16,7 +16,7 @@ using namespace PCOE;
 using namespace PCOE::Test;
 
 void configMapLoadArgs() {
-    const int argc   = 4;
+    const int argc = 4;
     char* argv[argc] = {"-test", "-test2", "-test3", "badTest"};
     ConfigMap theMap(argc, argv);
 }
@@ -49,8 +49,6 @@ void configMapUse() {
     theMap.set("testSetUInt32", UINT32_MAX);
     Assert::AreEqual(UINT32_MAX, theMap.getUInt32("testSetUInt32"), "Setting uint32 value failed.");
 
-
-
     // std::string exampleLine("test3:a,b,dslfjs,d");
     // theMap.add(exampleLine);
     // assert(theMap["test3"].size() == 4);
@@ -65,7 +63,7 @@ void configMapUse() {
 
 void configMapLoad() {
     ConfigMap theMap;
-    theMap.addSearchPath("../Test/gsapTests");
+    theMap.addSearchPath("../gsapTests");
     theMap = ConfigMap("Test.cfg");
     Assert::AreNotEqual(0, theMap.getVector("test")[0].compare("modelBasedPrognoser"));
 }
@@ -93,7 +91,7 @@ void configMapAddBadSearchPath() {
 
 void configMapTrim() {
     ConfigMap theMap;
-    theMap.addSearchPath("../Test/gsapTests");
+    theMap.addSearchPath("../gsapTests");
     theMap = ConfigMap("Test.cfg");
 }
 
