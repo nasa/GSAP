@@ -71,7 +71,9 @@ namespace PCOE {
         auto imsgVec = std::dynamic_pointer_cast<DoubleVecMessage, Message>(inputMsg);
         auto omsgVec = std::dynamic_pointer_cast<DoubleVecMessage, Message>(outputMsg);
 
-        auto timestamp = std::max(inputMsg->getTimestamp(), outputMsg->getTimestamp());
+        auto tIn = hasInputs ? inputMsg->getTimestamp() : Message::time_point();
+        auto tOut = hasOutputs ? outputMsg->getTimestamp() : Message::time_point();
+        auto timestamp = std::max(tIn, tOut);
         double timestampSeconds = seconds(timestamp);
         const auto& u =
             hasInputs ? SystemModel::input_type(imsgVec->getValue()) : SystemModel::input_type(0);
