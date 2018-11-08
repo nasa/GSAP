@@ -69,6 +69,8 @@ namespace PCOE {
         MessageWatcher<double> outputWatcher;
         std::shared_ptr<Message> inputMsg;
         std::shared_ptr<Message> outputMsg;
+        bool hasInputs;
+        bool hasOutputs;
     };
 }
 
