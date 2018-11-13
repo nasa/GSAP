@@ -44,7 +44,7 @@ namespace PCOE {
                        std::string sourceName,
                        const std::vector<MessageId> messages,
                        MessageId pubId)
-            : log(ThreadSafeLog::Instance()),
+            : log(Log::Instance()),
               messageBus(messageBus),
               source(std::move(sourceName)),
               pubId(pubId),
