@@ -9,6 +9,7 @@
 #include "Messages/MessageBus.h"
 #include "Messages/ScalarMessage.h"
 #include "Messages/VectorMessage.h"
+#include "ThreadSafeLog.h"
 
 namespace PCOE {
     /**
@@ -43,7 +44,8 @@ namespace PCOE {
                        std::string sourceName,
                        const std::vector<MessageId> messages,
                        MessageId pubId)
-            : messageBus(messageBus),
+            : log(ThreadSafeLog::Instance()),
+              messageBus(messageBus),
               source(std::move(sourceName)),
               pubId(pubId),
               values(messages.size()) {
@@ -51,6 +53,11 @@ namespace PCOE {
                 present.push_back(false);
                 msgIndices.insert(std::make_pair(messages[i], i));
                 messageBus.subscribe(this, source, messages[i]);
+                log.FormatLine(LOG_DEBUG,
+                               "MSGWACH",
+                               "Subscribed to id 0x%llx for source %s",
+                               messages[i],
+                               source);
             }
             Ensure(messages.size() == values.size(), "Mismatched container sizes");
             Ensure(present.size() == values.size(), "Mismatched present and value sizes");
@@ -72,6 +79,11 @@ namespace PCOE {
             lock_guard guard(m);
             auto smsg = dynamic_cast<ScalarMessage<T>*>(message.get());
             Expect(smsg != nullptr, "Unexpected message type");
+            log.FormatLine(LOG_DEBUG,
+                           "MSGWACH",
+                           "Processing message with id 0x%llx from source %s",
+                           static_cast<std::uint64_t>(message->getMessageId()),
+                           message->getSource());
 
             std::size_t i = msgIndices.at(message->getMessageId());
             values[i] = smsg->getValue();
@@ -82,6 +94,10 @@ namespace PCOE {
 
             if (allPresent()) {
                 auto vmsg = new VectorMessage<T>(pubId, source, message->getTimestamp(), values);
+                log.FormatLine(LOG_DEBUG,
+                               "MSGWACH",
+                               "Publishming message for source %s",
+                               message->getSource());
                 messageBus.publish(std::shared_ptr<Message>(vmsg));
                 reset();
             }
@@ -122,6 +138,7 @@ namespace PCOE {
         using mutex = std::mutex;
         using lock_guard = std::lock_guard<mutex>;
 
+        Log& log;
         MessageBus& messageBus;
         std::string source;
         MessageId pubId;
