@@ -57,7 +57,7 @@ namespace PCOE {
                                "MSGWACH",
                                "Subscribed to id 0x%llx for source %s",
                                messages[i],
-                               source);
+                               source.c_str());
             }
             Ensure(messages.size() == values.size(), "Mismatched container sizes");
             Ensure(present.size() == values.size(), "Mismatched present and value sizes");
@@ -83,7 +83,7 @@ namespace PCOE {
                            "MSGWACH",
                            "Processing message with id 0x%llx from source %s",
                            static_cast<std::uint64_t>(message->getMessageId()),
-                           message->getSource());
+                           message->getSource().c_str());
 
             std::size_t i = msgIndices.at(message->getMessageId());
             values[i] = smsg->getValue();
@@ -97,7 +97,7 @@ namespace PCOE {
                 log.FormatLine(LOG_DEBUG,
                                "MSGWACH",
                                "Publishming message for source %s",
-                               message->getSource());
+                               message->getSource().c_str());
                 messageBus.publish(std::shared_ptr<Message>(vmsg));
                 reset();
             }
