@@ -262,7 +262,7 @@ SystemModel::state_type BatteryModel::stateEqn(double,
     auto xpS2 = xpS * xpS;
     auto xpS2_1 = 2 * xpS - 1;
     auto xpS2_xpS = xpS2 - xpS;
-    double xSp = qpS / parameters.qBMax;
+    double xSp = qpS / parameters.qSMax;
     double qdotDiffusionBSp = (CpBulk - CpSurface) / parameters.tDiffusion;
     double Ven8 = parameters.An8 * (16 * xnS2_xnS * pow(xnS2_1, 7) + pow(xnS2_1, 9)) / parameters.F;
     double Ven7 = parameters.An7 * (14 * xnS2_xnS * pow(xnS2_1, 6) + pow(xnS2_1, 8)) / parameters.F;
