@@ -1,0 +1,53 @@
+language: cpp
+
+# Use reasonable compiler versions
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+            - lcov
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+        - COMPENV="gcc"
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+            - lcov
+      env:
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+        - COMPENV="clang"
+    - os: osx
+      compiler: clang
+      env:
+        - MATRIX_EVAL=""
+        - COMPENV="clang"
+    - os: osx
+      env:
+        - MATRIX_EVAL="GENERATOR='-G Xcode'"
+        - COMPENV=""
+
+before_install:
+    - eval "${MATRIX_EVAL}"
+
+script:
+  - mkdir build
+  - mkdir bin
+  - pushd build
+  - cmake ..
+  - cmake --build .
+  - popd
+  - pushd bin
+  - ./supportTests
+  - ./frameworkTests
+  - ./commCollectionTests
