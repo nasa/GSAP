@@ -429,7 +429,7 @@ void testUKFBatteryStep()
 
     // Check x
     std::vector<double> xMean = UKF.getStateMean();
-	Assert::AreEqual(-3.515545e-11, xMean[1], 1e-17, "xMean[1]");
+	Assert::AreEqual(-3.518852e-11, xMean[1], 1e-17, "xMean[1]");
     Assert::AreEqual(760, xMean[5], 1e-12, "xMean[5]");
 
     // Check z
