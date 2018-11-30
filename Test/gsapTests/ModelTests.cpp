@@ -195,8 +195,7 @@ void testBatteryStateEqn() {
                    x[battery.indices.states.Vo] < 0.14611);
     Assert::IsTrue(x[battery.indices.states.Vsn] > 1.34338e-5 &&
                    x[battery.indices.states.Vsn] < 1.34339e-5);
-    Assert::IsTrue(x[battery.indices.states.Vsp] > 7.66013e-6 &&
-                   x[battery.indices.states.Vsp] < 7.6601342e-6);
+    Assert::AreEqual(3.5303160541594348e-06, x[battery.indices.states.Vsp], 1e-11);
     Assert::IsTrue(x[battery.indices.states.qnB] > 5.62818e3 &&
                    x[battery.indices.states.qnB] < 5.62819e3);
     Assert::IsTrue(x[battery.indices.states.qnS] > 6.251e2 &&

@@ -246,7 +246,7 @@ namespace BatteryResultTests {
         Assert::AreEqual(1.04722e-19, x_est[2].get(7), 1e-5, "t=1, x_est[2], covariance 7");
         Assert::AreEqual(4.75476e-11, x_est[2].get(8), 1e-5, "t=1, x_est[2], covariance 8");
 
-        Assert::AreEqual(6.31926e-05, x_est[3].get(0), 1e-5, "t=1, x_est[3], mean");
+        Assert::AreEqual(2.76897e-05, x_est[3].get(0), 1e-5, "t=1, x_est[3], mean");
         Assert::AreEqual(2.15026e-17, x_est[3].get(1), 1e-5, "t=1, x_est[3], covariance 1");
         Assert::AreEqual(8.98124e-13, x_est[3].get(2), 1e-5, "t=1, x_est[3], covariance 2");
         Assert::AreEqual(2.62552e-15, x_est[3].get(3), 1e-5, "t=1, x_est[3], covariance 3");
