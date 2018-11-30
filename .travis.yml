@@ -41,38 +41,13 @@ before_install:
     - eval "${MATRIX_EVAL}"
 
 script:
-  - set OPEN_MP_NUM_THREADS 4
-  - pushd example
   - mkdir build
   - mkdir bin
   - pushd build
   - cmake ..
   - cmake --build .
   - popd
-  - popd
-  - pushd Test
-  - mkdir build
-  - mkdir bin
-  - mkdir coverage
-  - mkdir -p bin/testresults
-  - pushd build
-  - cmake -DCoverage=ON .. $GENERATOR
-  - cmake --build . --target install
-  - popd
-  - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$COMPENV" == "gcc" ]; then
-    pushd coverage;
-    lcov -b ../Test/ -c -q -i -d ../build/CMakeFiles/gsap.dir/ -o .coverage.initial;
-    popd;
-    fi
   - pushd bin
-  - ./gsapTests
+  - ./supportTests
+  - ./frameworkTests
   - ./commCollectionTests
-  - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$COMPENV" == "gcc" ]; then
-    popd;
-    pushd coverage;
-    lcov -b ../ -c -q -d ../build/CMakeFiles/gsap.dir/ -o .coverage.run;
-    lcov -a .coverage.initial -a .coverage.run -o .coverage.total;
-    lcov -r .coverage.total 'usr/include/c++/*' -o .coverage.filtered;
-    popd;
-    fi
-
