@@ -288,7 +288,7 @@ void Battery::stateEqn(const double,
     auto xpS2_xpS = xpS2 - xpS;
     
     // Continue state estimation
-    double xSp    = qpS / parameters.qBMax;
+    double xSp    = qpS / parameters.qSMax;
     double qdotDiffusionBSp = (CpBulk - CpSurface) / parameters.tDiffusion;
     double Ven8 = parameters.An8 * (16 * xnS2_xnS * pow(xnS2_1, 7) + pow(xnS2_1, 9)) / parameters.F;
     double Ven7 = parameters.An7 * (14 * xnS2_xnS * pow(xnS2_1, 6) + pow(xnS2_1, 8)) / parameters.F;
