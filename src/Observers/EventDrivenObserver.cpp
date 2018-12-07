@@ -21,7 +21,9 @@ namespace PCOE {
           outputWatcher(bus,
                         source,
                         observer->getModel().getOutputs(),
-                        MessageId::ModelOutputVector) {
+                        MessageId::ModelOutputVector),
+          hasInputs(observer->getModel().getInputs().size() > 0),
+          hasOutputs(observer->getModel().getOutputs().size() > 0) {
         Expect(observer, "Observer pointer is empty");
         lock_guard guard(m);
         bus.subscribe(this, source, MessageId::ModelInputVector);
@@ -58,7 +60,7 @@ namespace PCOE {
             Unreachable("Unexpected message type");
         }
 
-        if (inputMsg && outputMsg) {
+        if ((inputMsg || !hasInputs) && (outputMsg || !hasOutputs)) {
             stepObserver();
             inputMsg = nullptr;
             outputMsg = nullptr;
@@ -69,10 +71,14 @@ namespace PCOE {
         auto imsgVec = std::dynamic_pointer_cast<DoubleVecMessage, Message>(inputMsg);
         auto omsgVec = std::dynamic_pointer_cast<DoubleVecMessage, Message>(outputMsg);
 
-        auto timestamp = std::max(inputMsg->getTimestamp(), outputMsg->getTimestamp());
+        auto tIn = hasInputs ? inputMsg->getTimestamp() : Message::time_point();
+        auto tOut = hasOutputs ? outputMsg->getTimestamp() : Message::time_point();
+        auto timestamp = std::max(tIn, tOut);
         double timestampSeconds = seconds(timestamp);
-        const auto& u = SystemModel::input_type(imsgVec->getValue());
-        const auto& z = SystemModel::output_type(omsgVec->getValue());
+        const auto& u =
+            hasInputs ? SystemModel::input_type(imsgVec->getValue()) : SystemModel::input_type(0);
+        const auto& z = hasOutputs ? SystemModel::output_type(omsgVec->getValue())
+                                   : SystemModel::output_type(0);
         if (!observer->isInitialized()) {
             log.FormatLine(LOG_TRACE,
                            MODULE_NAME,
