@@ -14,11 +14,16 @@ namespace PCOE {
     class Point3D {
     public:
         /**
-         *  Create a new point in 3D space
+         * Create a new point at the origin.
+         **/
+        Point3D() : Point3D(0.0, 0.0, 0.0) {}
+
+        /**
+         * Create a new point in 3D space
          *
-         *  @param  lat Latitude
-         *  @param  lon Longitude
-         *  @param  alt Altitude
+         * @param  lat Latitude
+         * @param  lon Longitude
+         * @param  alt Altitude
          */
         Point3D(double lat, double lon, double alt) : lat(lat), lon(lon), alt(alt) {}
 
