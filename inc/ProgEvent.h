@@ -186,7 +186,7 @@ namespace PCOE {
          * generally be the same as the start time.
          **/
         inline const UData& getEndTime() const {
-            return startTime;
+            return endTime;
         }
 
         /**
