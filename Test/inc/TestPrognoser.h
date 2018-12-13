@@ -11,17 +11,10 @@
 
 #include "Prognoser.h"
 #include "ThreadSafeLog.h"
-#include "PrognoserFactory.h"
-
-namespace PCOE {
-    class ConfigMap;
-}
 
 class TestPrognoser: public PCOE::Prognoser {
  public:
     TestPrognoser(PCOE::ConfigMap & paramMap);
-    void step();
-    void checkResultValidity();
-    void checkInputValidity();
+    Prediction step(std::map<MessageId, Datum<double> > data) override;
 };
 #endif

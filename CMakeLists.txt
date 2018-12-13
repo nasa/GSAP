@@ -119,7 +119,6 @@ set(SRCS
     src/Observers/UnscentedKalmanFilter.cpp
     src/PContainer.cpp
     src/PlaybackCommunicator.cpp
-    src/Prognoser.cpp
     src/Predictors/EventDrivenPredictor.cpp
     src/Predictors/MonteCarloPredictor.cpp
     src/RandomCommunicator.cpp

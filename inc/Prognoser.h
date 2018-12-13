@@ -31,24 +31,15 @@
 #ifndef PCOE_Prognoser_H
 #define PCOE_Prognoser_H
 
-#include <functional>
 #include <map>
-#include <string>
-#include <vector>
 
+#include "ConfigMap.h"
 #include "DataStore.h"
 #include "Messages/MessageId.h"
-#include "Thread.h" // For Start, Stop, pause, ... etc.
+#include "Predictors/Predictor.h" // SHOULDNT BE NEEDED FOR PROGNOSER- MOVE TO OWN FILE
 
 namespace PCOE {
-    class ConfigMap;
-
-    // This class is needed to bind getValue. Bind requires const copy constructor, which
-    // cannot be provided for CommManager (is deleted).
-    // The wrapper has a copy constructor to allow this. The getValue method calls
-    // getvalue for the wrapped CommManager
-
-    class Prognoser : public Thread {
+    class Prognoser {
     public:
         /** @brief      Common Prognoser Constructor
          *  @param      config Map of configuration parameters in the prognoser configuration
@@ -61,46 +52,11 @@ namespace PCOE {
          *      2. initializes the communications manager and logger, which both the
          *         common and component prognosers use.
          */
-        Prognoser(ConfigMap& config);
-
-        /**  @brief       Main Prognostics Thread
-         *
-         *   Directs the main prognostics loop- runs until monitor->stop()
-         */
-        void run() override;
-
-        /// Save the current state to the prognostic history file
-        void saveState() const;
-
-        /// Load the last state from the prognostic history file
-        void loadHistory();
-
-        /// Reset the prognostic history file (incase of maintanance, etc.)
-        void resetHistory() const;
+		Prognoser(ConfigMap& config) {};
 
         //*-------------------------------------------------------*
         //|     Virtual methods - Used by Component Prognoser     |
         //*-------------------------------------------------------*
-
-        /** @brief     check the validity of any input (sensor) data.
-         *
-         *             This could be as simple as bound checks or a complicated
-         *             analysis. By default this is not done- making this step
-         *             optional in the component prognoser implementation
-         */
-        virtual void checkInputValidity() {}
-
-        /** @brief     check if there is enough new data to preform prognosis
-         *  @return    if there is enough data
-         *
-         *             Check if the data exists and is new enough to be used for
-         *             prognosis. If false is returned prognostics steps will be
-         *             skipped. By default this returns true- making this step
-         *             optional in the component prognoser implementation
-         */
-        virtual bool isEnoughData() const {
-            return true;
-        }
 
         /** @brief     Prognostic Step
          *
@@ -108,31 +64,10 @@ namespace PCOE {
          *             enough data. This is a required method in any component
          *             prognoser
          */
-        virtual void step() = 0;
-
-        /** @brief     check the validity of any prognostics results.
-         *
-         *             This could be as simple as bound checks or a complicated
-         *             analysis. By default this a simple bounds test on timeToEvent
-         *             - making this step optional in the component prognoser
-         *             implementation
-         *             Default implemented in Prognoser
-         */
-        virtual void checkResultValidity();
-
-    protected:
-        Datum<double> getValue(MessageId key);
-
-    private:
-        std::string histFileName; ///< Name of history file
-        std::vector<std::string> histStr; ///< Current contents of history file
-
-        unsigned int loopInterval; ///< Time between prognostic loops (ms)
-        unsigned int saveInterval; ///< Loops between saves
-        bool saveEnabled;
-
-        std::map<MessageId, std::function<Datum<double>(void)>> lookup;
+        virtual Prediction step(std::map<MessageId, Datum<double> > data) = 0;
+		
+	protected:
+		Log & log = Log::Instance();
     };
 }
-
 #endif // PCOE_Prognoser_H
