@@ -39,11 +39,9 @@ namespace PCOE {
     const std::string MODEL_KEY = "model";
     const std::string OBSERVER_KEY = "observer";
     const std::string PREDICTOR_KEY = "predictor";
-    const std::string NUMSAMPLES_KEY = "Predictor.numSamples";
-    const std::string HORIZON_KEY = "Predictor.horizon";
     const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
 
-    const std::string DEFAULT_LOAD_EST = "movingAverage";
+    const std::string DEFAULT_LOAD_EST = "MovingAverage";
 	
 	std::string moduleName = "ModelBasedPrognoser";
 
@@ -51,7 +49,7 @@ namespace PCOE {
         : Prognoser(configMap), initialized(false) {
         // Check for required config parameters
         requireKeys(configMap,
-                    {MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY, NUMSAMPLES_KEY, HORIZON_KEY});
+                    {MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
@@ -166,9 +164,8 @@ namespace PCOE {
             }
             catch (...) {
                 log.WriteLine(LOG_ERROR, moduleName, "Error in Step, skipping");
-				return EmptyPrediction();
             }
         }
-		
+		return EmptyPrediction();
     }
 }

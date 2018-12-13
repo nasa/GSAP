@@ -13,6 +13,7 @@
 #include "GaussianVariableTests.h"
 #include "Loading/LoadEstimatorTests.h"
 #include "Messages/MessageWatcherTests.h"
+#include "ModelBasedPrognoserTests.h"
 #include "ModelTests.h"
 #include "ObserverTests.h"
 #include "Observers/EventDrivenObserverTests.h"
@@ -99,6 +100,8 @@ int main() {
     // DPoint Tests
     context.AddTest("Initialization", testDPointInit, "DPoint");
     context.AddTest("Update", testDPointUpdate, "DPoint");
+	
+	context.AddTest("Mock Model Test", testWithMockModel, "MBP");
 
     MatrixTests::registerTests(context);
 

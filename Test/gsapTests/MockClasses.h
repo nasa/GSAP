@@ -42,7 +42,7 @@ private:
 
 class TestModel final : public SystemModel {
 public:
-    TestModel()
+    TestModel(const ConfigMap & = ConfigMap())
         : SystemModel(2, {MessageId::TestInput0, MessageId::TestInput1}, {MessageId::TestOutput0}) {
     }
 
@@ -65,7 +65,7 @@ public:
 
 class TestPrognosticsModel final : public PrognosticsModel {
 public:
-    TestPrognosticsModel()
+    TestPrognosticsModel(const ConfigMap & = ConfigMap())
         : PrognosticsModel(2,
                            {MessageId::TestInput0, MessageId::TestInput1},
                            {MessageId::TestOutput0},
@@ -122,7 +122,7 @@ private:
 
 class TestObserver final : public Observer {
 public:
-    TestObserver(const SystemModel& model) : Observer(model) {}
+    TestObserver(const SystemModel& model, const ConfigMap & = ConfigMap()) : Observer(model) {}
 
     void initialize(double t0,
                     const SystemModel::state_type& x0,
@@ -160,7 +160,7 @@ class TestPredictor final : public Predictor {
 public:
     TestPredictor(const PrognosticsModel& m,
                   LoadEstimator& le,
-                  TrajectoryService& trajService,
+                  const TrajectoryService& trajService,
                   const ConfigMap& config)
         : Predictor(m, le, trajService, config) {}
 
@@ -213,7 +213,7 @@ public:
     }
 
     friend bool operator==(const TestAllocator& lhs, const TestAllocator& rhs) {
-        return true;
+        return lhs == rhs;
     }
 
     friend bool operator!=(const TestAllocator& lhs, const TestAllocator& rhs) {

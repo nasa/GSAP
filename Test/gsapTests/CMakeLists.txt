@@ -7,6 +7,7 @@ set(HEADERS
     Loading/LoadEstimatorTests.h
     Messages/MessageWatcherTests.h
     MockClasses.h
+	ModelBasedPrognoserTests.h
     ModelTests.h
     Observers/EventDrivenObserverTests.h
     ObserverTests.h
@@ -37,6 +38,7 @@ set(SRCS
     MatrixTests.cpp
     Messages/MessageBusTests.cpp
     Messages/MessageWatcherTests.cpp
+	ModelBasedPrognoserTests.cpp
     ModelTests.cpp
     Observers/EventDrivenObserverTests.cpp
     ObserverTests.cpp
