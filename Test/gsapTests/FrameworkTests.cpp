@@ -12,7 +12,6 @@
 
 #include "FrameworkTests.h"
 #include "ConfigMap.h"
-#include "ProgManager.h"
 #include "PrognoserFactory.h"
 #include "Test.h"
 #include "TestPrognoser.h"

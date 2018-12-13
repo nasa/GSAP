@@ -19,7 +19,6 @@ set(HEADERS
     ParticleFilterTests.h
     TCPSocketTests.h
     UDPSocketTests.h
-    ProgManagerTests.h
     TrajectoryServiceTests.h
 )
 
@@ -54,7 +53,6 @@ set(SRCS
     CommunicatorTests.cpp
     FrameworkTests.cpp
     main.cpp
-    ProgManagerTests.cpp
     TrajectoryServiceTests.cpp
 )
 

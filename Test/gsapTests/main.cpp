@@ -19,7 +19,6 @@
 #include "ParticleFilterTests.h"
 #include "PredictorTests.h"
 #include "Predictors/EventDrivenPredictorTests.h"
-#include "ProgManagerTests.h"
 #include "StatisticalToolsTests.h"
 #include "TCPSocketTests.h"
 #include "Test.h"
@@ -190,13 +189,7 @@ int main() {
 
     context.AddTest("Prognoser Factory", PrognoserFactoryTest);
 
-    // ProgManager
-    context.AddTest("construct_default", TestProgManager::construct_default, "ProgManager");
-    context.AddTest("construct_path", TestProgManager::construct_path, "ProgManager");
-    context.AddTest("construct_config", TestProgManager::construct_config, "ProgManager");
-    context.AddTest("setConfig_path", TestProgManager::setConfig_path, "ProgManager");
-    context.AddTest("setConfig_config", TestProgManager::setConfig_config, "ProgManager");
-
+	// Communicator Tests
     context.AddTest("construct", TestCommunicator::construct, "Common Communicator");
     context.AddTest("enqueue", TestCommunicator::enqueue, "Common Communicator");
     context.AddTest("subscribe", TestCommunicator::subscribe, "Common Communicator");
