@@ -465,10 +465,10 @@ namespace PCOE {
         double r = 1;
         Matrix A(M, N);
         // if (cholInternal(A)) {
-        //	for (std::size_t i = 0; i < N; i++) {
-        //		r *= A(i, i) * A[i][i];
-        //	}
-        //	return r;
+        //    for (std::size_t i = 0; i < N; i++) {
+        //	    r *= A(i, i) * A[i][i];
+        //    }
+        //    return r;
         //}
         if (croutInternal(A, r)) {
             for (std::size_t i = 0; i < N; i++) {

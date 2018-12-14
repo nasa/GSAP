@@ -77,7 +77,6 @@ set(HEADERS
     inc/PlaybackCommunicator.h
     inc/Point3D.h
     inc/ProgEvent.h
-    inc/ProgManager.h
     inc/Prognoser.h
     inc/PrognoserFactory.h
     inc/RandomCommunicator.h
@@ -120,8 +119,6 @@ set(SRCS
     src/Observers/UnscentedKalmanFilter.cpp
     src/PContainer.cpp
     src/PlaybackCommunicator.cpp
-    src/ProgManager.cpp
-    src/Prognoser.cpp
     src/Predictors/EventDrivenPredictor.cpp
     src/Predictors/MonteCarloPredictor.cpp
     src/RandomCommunicator.cpp

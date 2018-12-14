@@ -5,15 +5,15 @@
  *
  *   @brief     Model-based Prognoser Class
  *
- *   General model-based prognoser class. It gets created for a specified model, observer, and
- * predictor.
+ *   General model-based prognoser class. It gets created for a specified model, observer,
+ *   predictor, and load-estimator.
  *
  *   @author    Matthew Daigle
+ *   @author    Christopher Teubert
  *   @version   1.1.0
  *
- *   @pre       Prognostic Configuration File and Prognoster Configuration Files
+ *   @pre       Prognoster Configuration Files or all of the following: model, observer, predictor, load estimator
  *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
  *      Created: March 16, 2016
  *
  *   @copyright Copyright (c) 2018 United States Government as represented by
@@ -25,10 +25,10 @@
 #define PCOE_MODELBASEDPROGNOSER_H
 
 #include <memory>
+#include <map>
 
 #include "Models/PrognosticsModel.h"
 #include "Observers/Observer.h"
-#include "Predictors/Predictor.h"
 #include "Prognoser.h"
 
 namespace PCOE {
@@ -42,10 +42,18 @@ namespace PCOE {
         double lastTime;
 
     public:
-        /** @brief      Model-based Prognoser Constructor
+        /** @brief      Create a model based prognoser from configuration
          *  @param      config Map of config parameters from the prognoser config file
          */
         ModelBasedPrognoser(ConfigMap& config);
+	    
+	    /** @brief 	    Create a model based prognoser from parts
+	     *    @param	    mdl	    Prognostics model
+	     *    @param	    obs	    Observer
+	     *    @param	    pred    Predictor
+	     *  @param	    ldest    Load Estimator
+	     **/
+	    ModelBasedPrognoser(PrognosticsModel & mdl, Observer & obs, Predictor & pred, LoadEstimator & ldest);
 
         /** @brief     Prognostic Monitor Step
          *
@@ -53,39 +61,7 @@ namespace PCOE {
          *             enough data. This is a required method in any component
          *             prognoser
          */
-        void step();
-
-        //*------------------------------------------------------*
-        //|          Optional Methods- Uncomment to use          |
-        //*------------------------------------------------------*
-
-        /** @brief     check the validity of any input (sensor) data.
-         *
-         *             This could be as simple as bound checks or a complicated
-         *             analysis. By default this is not done- making this step
-         *             optional in the component prognoser implementation
-         */
-        // void checkInputValidity() {};
-
-        /** @brief     check if there is enough new data to preform prognosis
-         *  @return    if there is enough data
-         *
-         *             Check if the data exists and is new enough to be used for
-         *             prognosis. If false is returned prognostics steps will be
-         *             skipped. By default this returns true- making this step
-         *             optional in the component prognoser implementation
-         */
-        // bool isEnoughData() {return true;};
-
-        /** @brief     check the validity of any prognostics results.
-         *
-         *             This could be as simple as bound checks or a complicated
-         *             analysis. By default this a simple bounds test on timeToEvent
-         *             - making this step optional in the component prognoser
-         *             implementation
-         *             Default implemented in Prognoser
-         */
-        // void checkResultValidity();
+	    Prediction step(std::map<MessageId, Datum<double> > data);
     };
 
     extern bool regModelProg;

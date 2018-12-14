@@ -9,7 +9,6 @@
 #include <string>
 
 #include "TestPrognoser.h"
-#include "ConfigMap.h"
 
 using namespace PCOE;
 
@@ -24,13 +23,7 @@ Prognoser(paramMap) {
     }
 }
 
-void TestPrognoser::step() {
+Prediction TestPrognoser::step(std::map<MessageId, Datum<double> >) {
+    return Prediction::EmptyPrediction();
 }
 
-void TestPrognoser::checkResultValidity() {
-    log.WriteLine(LOG_INFO, MODULE_NAME, "Checking Result Validity");
-}
-
-void TestPrognoser::checkInputValidity() {
-    log.WriteLine(LOG_INFO, MODULE_NAME, "Checking Input Validity");
-}

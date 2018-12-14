@@ -19,47 +19,38 @@
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
+#include <vector>
+
 #include "ConfigMap.h"
+#include "DataPoint.h"
 #include "EmptyPrognoser.h"
+#include "ProgEvent.h"
 
 namespace PCOE {
+    std::string moduleName = "Empty Prognoser";
     EmptyPrognoser::EmptyPrognoser(ConfigMap & configMap) :
         Prognoser(configMap) {
-        // DEFINE EVENTS FOR THIS SPECIFIC PROGNOSER
-        // Ex:
-            // results.addEvent("EOL");
 
         // Handle Configuration
         log.WriteLine(LOG_DEBUG, moduleName, "Configuring");
         // std::string a = configMap.at("ExampleParam");
     }
 
-    void EmptyPrognoser::step() {
-        log.WriteLine(LOG_TRACE, moduleName, "Running Monitor Step");
-
-        // Update States
-    //    results.state["STATE1"].set(1.1);
-    //    results.state["STATE2"].set(0.9);
-
-        log.WriteLine(LOG_TRACE, moduleName, "Running Prediction Step");
-        // Update Time To Events
-        //    results.timeToEvent[MEAN].set(1.5);
-
-        // Update Future Safety Metrics
+    Prediction EmptyPrognoser::step(std::map<MessageId, Datum<double> > data) {
+	    // Run calculations
+	    std::vector<ProgEvent> events;
+	    std::vector<UData> state = {UData(1.0)}; // Example
+	    UData toe = UData(124222.01); // Example time of event
+	    events.push_back(ProgEvent(MessageId::TestEvent0, state, toe));
+	    
+	    std::vector<DataPoint> trajectories; // System Trajectories
+	    DataPoint exampleTrajectory;
+	    exampleTrajectory.setNumTimes(1); // Save only one time
+	    exampleTrajectory[0] = UData(0.5);
+	    trajectories.push_back(exampleTrajectory);
+	    
+	    Prediction pred(events, trajectories);
+	    return pred;
+	    
     }
-
-    // *------------------------------------------------------*
-    // |          Optional Methods- Uncomment to use          |
-    // *------------------------------------------------------*
-    // void EmptyPrognoser::checkInputValidity() {
-    // }
-    //
-    // bool EmptyPrognoser::isEnoughData() {
-    //    ///@todo(CT): Fill out example of checking if there is enough data
-    //    return true
-    // }
-    //
-    // void EmptyPrognoser::checkResultValidity() {
-    //    ///@todo(CT): Fill out example of setting to invalid
-    // }
 }

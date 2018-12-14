@@ -19,8 +19,13 @@
 namespace PCOE {
     class Prediction {
     public:
-        Prediction(std::vector<ProgEvent>&& events, std::vector<DataPoint>&& trajectories)
-            : events(events), sysTrajectories(trajectories) {}
+        Prediction(std::vector<ProgEvent> events, std::vector<DataPoint> trajectories)
+            : events(std::move(events)), sysTrajectories(std::move(trajectories)) {}
+		
+        static Prediction & EmptyPrediction() {
+            static Prediction emptyPrediction({},{});
+            return emptyPrediction;
+	    }
 
         inline const std::vector<ProgEvent>& getEvents() const {
             return events;
@@ -31,8 +36,8 @@ namespace PCOE {
         }
 
     private:
-        std::vector<ProgEvent> events;
-        std::vector<DataPoint> sysTrajectories;
+	    std::vector<ProgEvent> events;
+	    std::vector<DataPoint> sysTrajectories;
     };
 
     /**
