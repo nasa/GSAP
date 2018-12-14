@@ -9,16 +9,11 @@
  *      1. handle all the common operations (getting/sending data, saving results,
  *         handling prognoser history file, etc.) and,
  *      2. setup the structure of the component prognoser with virtual functions.
- *      3. contain the main prognostics loop
  *   As a design choice- we try to offload as much of the process to the common
  *   prognoser as possible to simplify integrating additional prognosers.
  *
- *   @note      THIS SOFTWARE IS DESIGNED TO WORK WITH OS X 10.11, and Windows V #####
- *
  *   @author    Chris Teubert
- *   @version   1.1.0
- *
- *   @pre       Prognostic Configuration File and Prognoser Configuration Files
+ *   @version   1.2.0
  *
  *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
  *      Created: November 11, 2015
@@ -47,12 +42,11 @@ namespace PCOE {
          *
          *  The common prognoser constructor is called from the component prognoser
          *  constructor. It is passed in any configuration parameters in the prognoser
-         *  configuration file and does the following:
-         *      1. configures those parameters
-         *      2. initializes the communications manager and logger, which both the
-         *         common and component prognosers use.
+         *  configuration file
          */
-		Prognoser(ConfigMap& config) {};
+		Prognoser(ConfigMap& ) {};
+		
+		Prognoser() = default;
 
         //*-------------------------------------------------------*
         //|     Virtual methods - Used by Component Prognoser     |

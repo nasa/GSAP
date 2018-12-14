@@ -85,6 +85,15 @@ namespace PCOE {
                                              trajectoryService,
                                              configMap);
     }
+	
+	ModelBasedPrognoser::ModelBasedPrognoser(PrognosticsModel & mdl,
+											 Observer & obs,
+											 Predictor & pred,
+											 LoadEstimator & ldest) :
+		model(&mdl), observer(&obs), predictor(&pred), loadEstimator(&ldest),
+		Prognoser(), initialized(false)  {
+		
+	}
 
 	Prediction ModelBasedPrognoser::step(std::map<MessageId, Datum<double> > data) {
         // Get new time (convert to seconds)
