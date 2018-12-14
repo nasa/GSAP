@@ -77,9 +77,11 @@ void testWithMockModel() {
     mbp.step(data);
     
     // First Step
-    data[MessageId::TestInput0] = Datum<double>(1);
-    data[MessageId::TestInput1] = Datum<double>(2);
-    data[MessageId::TestOutput0] = Datum<double>(3);
+    auto a = std::chrono::milliseconds(data[MessageId::TestInput0].getTime() + PCOE::Datum<UData>::ms_rep(1000));
+    PCOE::Datum<UData>::time_point newTime = PCOE::Datum<UData>::time_point(a);
+    data[MessageId::TestInput0].setTime(newTime);
+    data[MessageId::TestInput1].setTime(newTime);
+    data[MessageId::TestOutput0].setTime(newTime);
     result = mbp.step(data);
     
     Assert::AreEqual(result.getEvents().size(), 1);
