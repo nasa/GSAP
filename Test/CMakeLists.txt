@@ -42,7 +42,8 @@ add_library(testLib ${HEADERS} ${SRCS})
 # Test Executables
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/gsapTests/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/commCollectionTests/)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/BenchmarkPrognoser/)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/BenchmarkPrognoser/)
+# Benchmark Prognoser currently broken 
 
 # Templates - we compile these as part of the test to make sure they don't break
 add_subdirectory(

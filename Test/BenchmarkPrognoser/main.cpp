@@ -7,8 +7,6 @@
 //  Aeronautics and Space Administration.  All Rights Reserved.
 //
 
-#include "ProgManager.h"
-
 #include "BenchmarkPrognoser.h"
 #include "PrognoserFactory.h"
 
