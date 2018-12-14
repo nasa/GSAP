@@ -42,7 +42,7 @@ private:
 
 class TestModel final : public SystemModel {
 public:
-    TestModel(const ConfigMap & = ConfigMap())
+    TestModel(const ConfigMap& = ConfigMap())
         : SystemModel(2, {MessageId::TestInput0, MessageId::TestInput1}, {MessageId::TestOutput0}) {
     }
 
@@ -122,7 +122,7 @@ private:
 
 class TestObserver final : public Observer {
 public:
-    TestObserver(const SystemModel& model, const ConfigMap & = ConfigMap()) : Observer(model) {}
+    TestObserver(const SystemModel& model, const ConfigMap& = ConfigMap()) : Observer(model) {}
 
     void initialize(double t0,
                     const SystemModel::state_type& x0,
