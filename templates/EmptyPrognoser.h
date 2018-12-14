@@ -32,45 +32,13 @@ namespace PCOE {
          */
         EmptyPrognoser(ConfigMap& config);
 
-        /** @brief     Prognostic Monitor Step
-         *
-         *             Preform model updates. This is done every step where there is
-         *             enough data. This is a required method in any component
-         *             prognoser
-         */
-        void step();
-
-        //*------------------------------------------------------*
-        //|          Optional Methods- Uncomment to use          |
-        //*------------------------------------------------------*
-
-        /** @brief     check the validity of any input (sensor) data.
-         *
-         *             This could be as simple as bound checks or a complicated
-         *             analysis. By default this is not done- making this step
-         *             optional in the component prognoser implementation
-         */
-        // void checkInputValidity() {}
-
-        /** @brief     check if there is enough new data to preform prognosis
-         *  @return    if there is enough data
-         *
-         *             Check if the data exists and is new enough to be used for
-         *             prognosis. If false is returned prognostics steps will be
-         *             skipped. By default this returns true- making this step
-         *             optional in the component prognoser implementation
-         */
-        // bool isEnoughData() {return true;}
-
-        /** @brief     check the validity of any prognostics results.
-         *
-         *             This could be as simple as bound checks or a complicated
-         *             analysis. By default this a simple bounds test on timeToEvent
-         *             - making this step optional in the component prognoser
-         *             implementation
-         *             Default implemented in Prognoser
-         */
-        // void checkResultValidity();
+		/** @brief     Prognostic Monitor Step
+		 *
+		 *             Preform model updates. This is done every step where there is
+		 *             enough data. This is a required method in any component
+		 *             prognoser
+		 */
+		Prediction step(std::map<MessageId, Datum<double> > data) override;
     };
 }
 
