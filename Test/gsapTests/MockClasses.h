@@ -81,7 +81,7 @@ public:
     }
 
     output_type outputEqn(const double, const state_type&, const noise_type&) const override {
-        return output_type();
+		return output_type({3});
     }
 
     state_type initialize(const input_type& u, const output_type&) const override {
@@ -164,8 +164,9 @@ public:
                   const ConfigMap& config)
         : Predictor(m, le, trajService, config) {}
 
-    Prediction predict(double, const std::vector<UData>&) override {
-        ProgEvent event(MessageId::TestEvent0, {UData()}, {UData()});
+    Prediction predict(double, const std::vector<UData>& state) override {
+		auto prediction = UData(( (double) state[1].get() + (double) state[0].get() )/2);
+		ProgEvent event(MessageId::TestEvent0, state, prediction);
 
         return Prediction({event}, std::vector<DataPoint>());
     }
