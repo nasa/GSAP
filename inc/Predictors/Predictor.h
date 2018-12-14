@@ -20,7 +20,7 @@ namespace PCOE {
     class Prediction {
     public:
         Prediction(std::vector<ProgEvent> events, std::vector<DataPoint> trajectories)
-            : events(events), sysTrajectories(trajectories) {}
+            : events(std::move(events)), sysTrajectories(std::move(trajectories)) {}
 		
         static Prediction & EmptyPrediction() {
             static Prediction emptyPrediction({},{});
