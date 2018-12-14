@@ -17,10 +17,15 @@
 #include "Trajectory/TrajectoryService.h"
 
 namespace PCOE {
-	class Prediction {
+    class Prediction {
     public:
         Prediction(std::vector<ProgEvent> events, std::vector<DataPoint> trajectories)
             : events(events), sysTrajectories(trajectories) {}
+		
+        static Prediction & EmptyPrediction() {
+            static Prediction emptyPrediction({},{});
+            return emptyPrediction;
+	    }
 
         inline const std::vector<ProgEvent>& getEvents() const {
             return events;
@@ -31,15 +36,9 @@ namespace PCOE {
         }
 
     private:
-		std::vector<ProgEvent> events; 
-		std::vector<DataPoint> sysTrajectories;
+	    std::vector<ProgEvent> events;
+	    std::vector<DataPoint> sysTrajectories;
     };
-	
-	class EmptyPrediction : public Prediction {
-	public:
-		EmptyPrediction(): Prediction(std::vector<ProgEvent>(), std::vector<DataPoint>()) {
-		}
-	};
 
     /**
      * Represents a model-based predictor.

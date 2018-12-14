@@ -100,8 +100,8 @@ int main() {
     // DPoint Tests
     context.AddTest("Initialization", testDPointInit, "DPoint");
     context.AddTest("Update", testDPointUpdate, "DPoint");
-	
-	context.AddTest("Mock Model Test", testWithMockModel, "MBP");
+    
+    context.AddTest("Mock Model Test", testWithMockModel, "MBP");
 
     MatrixTests::registerTests(context);
 
@@ -192,7 +192,7 @@ int main() {
 
     context.AddTest("Prognoser Factory", PrognoserFactoryTest);
 
-	// Communicator Tests
+    // Communicator Tests
     context.AddTest("construct", TestCommunicator::construct, "Common Communicator");
     context.AddTest("enqueue", TestCommunicator::enqueue, "Common Communicator");
     context.AddTest("subscribe", TestCommunicator::subscribe, "Common Communicator");

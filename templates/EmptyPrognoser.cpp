@@ -27,7 +27,7 @@
 #include "ProgEvent.h"
 
 namespace PCOE {
-	std::string moduleName = "Empty Prognoser";
+    std::string moduleName = "Empty Prognoser";
     EmptyPrognoser::EmptyPrognoser(ConfigMap & configMap) :
         Prognoser(configMap) {
 
@@ -37,20 +37,20 @@ namespace PCOE {
     }
 
     Prediction EmptyPrognoser::step(std::map<MessageId, Datum<double> > data) {
-		// Run calculations
-		std::vector<ProgEvent> events;
-		std::vector<UData> state = {UData(1.0)}; // Example
-		UData toe = UData(124222.01); // Example time of event
-		events.push_back(ProgEvent(MessageId::TestEvent0, state, toe));
-		
-		std::vector<DataPoint> trajectories; // System Trajectories
-		DataPoint exampleTrajectory;
-		exampleTrajectory.setNumTimes(1); // Save only one time
-		exampleTrajectory[0] = UData(0.5);
-		trajectories.push_back(exampleTrajectory);
-		
-		Prediction pred(events, trajectories);
-		return pred;
-		
-	}
+	    // Run calculations
+	    std::vector<ProgEvent> events;
+	    std::vector<UData> state = {UData(1.0)}; // Example
+	    UData toe = UData(124222.01); // Example time of event
+	    events.push_back(ProgEvent(MessageId::TestEvent0, state, toe));
+	    
+	    std::vector<DataPoint> trajectories; // System Trajectories
+	    DataPoint exampleTrajectory;
+	    exampleTrajectory.setNumTimes(1); // Save only one time
+	    exampleTrajectory[0] = UData(0.5);
+	    trajectories.push_back(exampleTrajectory);
+	    
+	    Prediction pred(events, trajectories);
+	    return pred;
+	    
+    }
 }

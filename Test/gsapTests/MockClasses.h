@@ -65,7 +65,7 @@ public:
 
 class TestPrognosticsModel final : public PrognosticsModel {
 public:
-    TestPrognosticsModel(const ConfigMap & = ConfigMap())
+    TestPrognosticsModel(const ConfigMap& = ConfigMap())
         : PrognosticsModel(2,
                            {MessageId::TestInput0, MessageId::TestInput1},
                            {MessageId::TestOutput0},
@@ -81,7 +81,7 @@ public:
     }
 
     output_type outputEqn(const double, const state_type&, const noise_type&) const override {
-		return output_type({3});
+	    return output_type({3});
     }
 
     state_type initialize(const input_type& u, const output_type&) const override {
@@ -165,8 +165,8 @@ public:
         : Predictor(m, le, trajService, config) {}
 
     Prediction predict(double, const std::vector<UData>& state) override {
-		auto prediction = UData(( (double) state[1].get() + (double) state[0].get() )/2);
-		ProgEvent event(MessageId::TestEvent0, state, prediction);
+	    auto prediction = UData((state[1].get() + state[0].get())/2);
+	    ProgEvent event(MessageId::TestEvent0, state, prediction);
 
         return Prediction({event}, std::vector<DataPoint>());
     }
@@ -214,7 +214,7 @@ public:
     }
 
     friend bool operator==(const TestAllocator& lhs, const TestAllocator& rhs) {
-        return lhs == rhs;
+        return true;
     }
 
     friend bool operator!=(const TestAllocator& lhs, const TestAllocator& rhs) {

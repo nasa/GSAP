@@ -1,16 +1,9 @@
 /**  PredictorTests - Header
 *   @file      Unit tests for Predictor classes
-*   @ingroup   GPIC++
-*   @ingroup	Predictors
-*
-*   @brief     Unit tests for Predictor classes
 *
 *   @author    Matthew Daigle
 *   @version   1.1.0
 *
-*   @pre       N/A
-*
-*      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
 *      Created: March 25, 2016
 *
 *   @copyright Copyright (c) 2018 United States Government as represented by

@@ -42,8 +42,8 @@ namespace PCOE {
     const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
 
     const std::string DEFAULT_LOAD_EST = "MovingAverage";
-	
-	std::string moduleName = "ModelBasedPrognoser";
+    
+    std::string moduleName = "ModelBasedPrognoser";
 
     ModelBasedPrognoser::ModelBasedPrognoser(ConfigMap& configMap)
         : Prognoser(configMap), initialized(false) {
@@ -85,17 +85,17 @@ namespace PCOE {
                                              trajectoryService,
                                              configMap);
     }
-	
-	ModelBasedPrognoser::ModelBasedPrognoser(PrognosticsModel & mdl,
-											 Observer & obs,
-											 Predictor & pred,
-											 LoadEstimator & ldest) :
-		model(&mdl), observer(&obs), predictor(&pred), loadEstimator(&ldest),
-		Prognoser(), initialized(false)  {
-		
-	}
+    
+    ModelBasedPrognoser::ModelBasedPrognoser(PrognosticsModel & mdl,
+    	    	    	    	    	     Observer & obs,
+    	    	    	    	    	     Predictor & pred,
+    	    	    	    	    	     LoadEstimator & ldest) :
+	    model(&mdl), observer(&obs), predictor(&pred), loadEstimator(&ldest),
+	    Prognoser(), initialized(false)  {
+	    
+    }
 
-	Prediction ModelBasedPrognoser::step(std::map<MessageId, Datum<double> > data) {
+    Prediction ModelBasedPrognoser::step(std::map<MessageId, Datum<double> > data) {
         // Get new time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
         double newT_s = data[model->getInputs()[0]].getTime() / 1.0e3;
@@ -104,7 +104,7 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
         auto u = model->getInputVector();
         auto z = model->getOutputVector();
-		auto inputNames = model->getInputs();
+	    auto inputNames = model->getInputs();
         for (unsigned int i = 0; i < model->getInputSize(); i++) {
             log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %u", i);
             MessageId & input_name = inputNames[i];
@@ -120,23 +120,23 @@ namespace PCOE {
             if (!input.isSet()) {
                 // Do nothing if data not yet available
                 log.WriteLine(LOG_TRACE, "PROG-MBP", "Data not yet available. Returning.");
-                return EmptyPrediction();
+	    	    return Prediction::EmptyPrediction();
             }
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
-			u[i] = input;
+    	    u[i] = input;
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Adding load");
             if (loadEstimator->canAddLoad()) {
                 loadEstimator->addLoad(u.vec());
             }
         }
         for (unsigned int i = 0; i < model->getOutputSize(); i++) {
-			log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
-			Datum<double> output = data[model->getOutputs()[i]];
+    	    log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
+    	    Datum<double> output = data[model->getOutputs()[i]];
             if (!output.isSet()) {
                 // Do nothing if data not yet available
-                return EmptyPrediction();
+                return Prediction::EmptyPrediction();
             }
-			z[i] = output;
+    	    z[i] = output;
         }
 
         // If this is the first step, will want to initialize the observer and the predictor
@@ -151,7 +151,7 @@ namespace PCOE {
             // If time has not advanced, skip this step
             if (newT_s <= lastTime) {
                 log.WriteLine(LOG_TRACE, moduleName, "Skipping step because time did not advance.");
-                return EmptyPrediction();
+                return Prediction::EmptyPrediction();
             }
 
             try {
@@ -169,12 +169,12 @@ namespace PCOE {
 
                 // Set lastTime
                 lastTime = newT_s;
-				return prediction;
+	    	    return prediction;
             }
             catch (...) {
                 log.WriteLine(LOG_ERROR, moduleName, "Error in Step, skipping");
             }
         }
-		return EmptyPrediction();
+	    return Prediction::EmptyPrediction();
     }
 }

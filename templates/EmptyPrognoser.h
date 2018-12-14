@@ -32,13 +32,13 @@ namespace PCOE {
          */
         EmptyPrognoser(ConfigMap& config);
 
-		/** @brief     Prognostic Monitor Step
-		 *
-		 *             Preform model updates. This is done every step where there is
-		 *             enough data. This is a required method in any component
-		 *             prognoser
-		 */
-		Prediction step(std::map<MessageId, Datum<double> > data) override;
+	    /** @brief     Prognostic Monitor Step
+	     *
+	     *             Preform model updates. This is done every step where there is
+	     *             enough data. This is a required method in any component
+	     *             prognoser
+	     */
+	    Prediction step(std::map<MessageId, Datum<double> > data) override;
     };
 }
 

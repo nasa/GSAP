@@ -1,19 +1,19 @@
 set(HEADERS
-	EmptyCommunicator.h
-	EmptyModel.h
-	EmptyObserver.h
-	EmptyPredictor.h
-	EmptyPrognoser.h
-	EmptyPrognosticsModel.h
+    EmptyCommunicator.h
+    EmptyModel.h
+    EmptyObserver.h
+    EmptyPredictor.h
+    EmptyPrognoser.h
+    EmptyPrognosticsModel.h
 )
 
 set(SRCS
-	EmptyCommunicator.cpp
-	EmptyModel.cpp
-	EmptyObserver.cpp
-	EmptyPredictor.cpp
-	EmptyPrognoser.cpp
-	EmptyPrognosticsModel.cpp
+    EmptyCommunicator.cpp
+    EmptyModel.cpp
+    EmptyObserver.cpp
+    EmptyPredictor.cpp
+    EmptyPrognoser.cpp
+    EmptyPrognosticsModel.cpp
 )
 
 

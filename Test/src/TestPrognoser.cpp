@@ -24,6 +24,6 @@ Prognoser(paramMap) {
 }
 
 Prediction TestPrognoser::step(std::map<MessageId, Datum<double> >) {
-	return EmptyPrediction();
+    return Prediction::EmptyPrediction();
 }
 

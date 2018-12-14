@@ -31,7 +31,7 @@
 #include "ConfigMap.h"
 #include "DataStore.h"
 #include "Messages/MessageId.h"
-#include "Predictors/Predictor.h" // SHOULDNT BE NEEDED FOR PROGNOSER- MOVE TO OWN FILE
+#include "Predictors/Predictor.h"
 
 namespace PCOE {
     class Prognoser {
@@ -44,9 +44,9 @@ namespace PCOE {
          *  constructor. It is passed in any configuration parameters in the prognoser
          *  configuration file
          */
-		Prognoser(ConfigMap& ) {};
-		
-		Prognoser() = default;
+	    Prognoser(ConfigMap& ) {};
+	    
+	    Prognoser() = default;
 
         //*-------------------------------------------------------*
         //|     Virtual methods - Used by Component Prognoser     |
@@ -58,10 +58,10 @@ namespace PCOE {
          *             enough data. This is a required method in any component
          *             prognoser
          */
-        virtual Prediction step(std::map<MessageId, Datum<double> > data) = 0;
-		
-	protected:
-		Log & log = Log::Instance();
+        virtual Prediction step(std::map<MessageId, Datum<double>> data) = 0;
+	    
+    protected:
+	    Log& log = Log::Instance();
     };
 }
 #endif // PCOE_Prognoser_H
