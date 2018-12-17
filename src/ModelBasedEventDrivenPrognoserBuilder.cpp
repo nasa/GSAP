@@ -28,6 +28,10 @@ static std::vector<std::string> split(const std::string& value) {
 namespace PCOE {
     const static Log& log = Log::Instance();
     
+    const std::string MODEL_KEY = "model";
+    const std::string OBSERVER_KEY = "observer";
+    const std::string PREDICTOR_KEY = "predictor";
+    
     const std::string MODULE_NAME = "MBEDPrognoserBuilder";
     
     class DummyModel final : public PrognosticsModel {
@@ -101,20 +105,20 @@ namespace PCOE {
     void ModelBasedEventDrivenPrognoserBuilder::setModelName(const std::string& value, bool isPrognosticsModel) {
         lock_guard guard(m);
         Expect(value.length() > 0, "Model name length");
-        modelName = value;
+        config.set(MODEL_KEY, value);
         modelIsPrognosticsModel = isPrognosticsModel;
     }
 
     void ModelBasedEventDrivenPrognoserBuilder::setObserverName(const std::string& value) {
         lock_guard guard(m);
         Expect(value.length() > 0, "Observer name length");
-        observerName = value;
+        config.set(OBSERVER_KEY, value);
     }
 
     void ModelBasedEventDrivenPrognoserBuilder::setPredictorName(const std::string& value) {
         lock_guard guard(m);
         Expect(value.length() > 0, "Predictor name length");
-        predictorName = value;
+        config.set(PREDICTOR_KEY, value);
     }
 
     EventDrivenPrognoser ModelBasedEventDrivenPrognoserBuilder::build(PCOE::MessageBus& bus,
@@ -130,67 +134,55 @@ namespace PCOE {
         EventDrivenTrajectoryService* ts = new EventDrivenTrajectoryService(bus, std::unique_ptr<TrajectoryService>(new TrajectoryService()), trajectorySource);
         container.addEventListener(ts);
         
-        if (loadEstimatorName.empty() && config.hasKey("loadEstimator")) {
-            loadEstimatorName = config.getString("loadEstimator");
+        if (config.hasKey(LOAD_ESTIMATOR_KEY)) {
+            log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building load estimator %s", config.getString(LOAD_ESTIMATOR_KEY).c_str());
+        } else {
+            log.FormatLine(LOG_INFO, MODULE_NAME, "Using default Load Estimator: %s", DEFAULT_LOAD_ESTIMATOR.c_str());
+            config.set(LOAD_ESTIMATOR_KEY, DEFAULT_LOAD_ESTIMATOR);
         }
-        if (!loadEstimatorName.empty()) {
-            log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building load estimator %s", loadEstimatorName.c_str());
-            auto& factory = LoadEstimatorFactory::instance();
-            loadEstimator = factory.Create(loadEstimatorName, config).release();
-            container.setLoadEstimator(loadEstimator);
-        }
-        else {
-            log.WriteLine(LOG_WARN, MODULE_NAME, "No load estimator name found");
-        }
+        auto& factory = LoadEstimatorFactory::instance();
+        loadEstimator = factory.Create(config.getString(LOAD_ESTIMATOR_KEY), config).release();
+        container.setLoadEstimator(loadEstimator);
         
-
-        if (modelName.empty() && config.hasKey("model")) {
-            modelName = config.getString("model");
-        }
-        if (!modelName.empty() && !modelIsPrognosticsModel) {
-            log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building model %s", modelName.c_str());
-            auto& factory = SystemModelFactory::instance();
-            model = factory.Create(modelName).release();
-            container.setModel(model);
-        }
-        else if (!modelName.empty()) {
-            log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building prognostics model %s", modelName.c_str());
-            auto& factory = PrognosticsModelFactory::instance();
-            progModel = factory.Create(modelName, config).release();
-            container.setModel(progModel);
-        }
-        else {
+        if (config.hasKey(MODEL_KEY)) {
+            std::string modelName = config.getString(MODEL_KEY);
+            if (modelIsPrognosticsModel) {
+                log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building prognostics model %s", modelName.c_str());
+                auto& factory = PrognosticsModelFactory::instance();
+                progModel = factory.Create(modelName, config).release();
+                container.setModel(progModel);
+            } else {
+                log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building model %s", modelName.c_str());
+                auto& factory = SystemModelFactory::instance();
+                model = factory.Create(modelName).release();
+                container.setModel(model);
+            }
+        } else {
             log.WriteLine(LOG_WARN, MODULE_NAME, "No model name found");
         }
-
-        if (observerName.empty() && config.hasKey("observer")) {
-            observerName = config.getString("observer");
-        }
-        if (!observerName.empty()) {
-            log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building observer %s", modelName.c_str());
+        
+        if (config.hasKey(OBSERVER_KEY)) {
+            std::string observerName = config.getString(OBSERVER_KEY);
+            log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building observer %s", observerName.c_str());
             auto& factory = ObserverFactory::instance();
             const SystemModel* m = progModel ? progModel : model;
             Require(m, "Observer missing model");
             observer = factory.Create(observerName, *m, config);
-        }
-        else {
+        } else {
             log.WriteLine(LOG_WARN, MODULE_NAME, "No observer name found");
         }
-
-        if (predictorName.empty() && config.hasKey("predictor")) {
-            predictorName = config.getString("predictor");
-        }
-        if (!predictorName.empty()) {
-            log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building predictor %s", modelName.c_str());
+        
+        if (config.hasKey(PREDICTOR_KEY)) {
+            std::string predictorName = config.getString(PREDICTOR_KEY);
+            log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building predictor %s", predictorName.c_str());
             auto& factory = PredictorFactory::instance();
             Require(progModel, "Predictor missing model");
             Require(loadEstimator, "Predictor missing load estimator");
             predictor = factory.Create(predictorName, *progModel, *loadEstimator, ts->getTrajectoryService(), config);
-        }
-        else {
+        } else {
             log.WriteLine(LOG_WARN, MODULE_NAME, "No predictor name found");
         }
-
+        
         if (observer) {
             container.addEventListener(new EventDrivenObserver(bus, std::move(observer), sensorSource));
         }
@@ -203,14 +195,5 @@ namespace PCOE {
         Ensure(!(model && progModel), "SystemModel and PrognosticsModel both created");
         log.WriteLine(LOG_WARN, MODULE_NAME, "Build complete");
         return std::move(container);
-    }
-
-    void ModelBasedEventDrivenPrognoserBuilder::reset() {
-        lock_guard guard(m);
-        config = ConfigMap();
-        loadEstimatorName.clear();
-        modelName.clear();
-        observerName.clear();
-        predictorName.clear();
     }
 }

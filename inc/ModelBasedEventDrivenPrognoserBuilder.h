@@ -10,6 +10,10 @@
 #include "EventDrivenPrognoserBuilder.h"
 
 namespace PCOE {
+    const extern std::string MODEL_KEY;
+    const extern std::string OBSERVER_KEY;
+    const extern std::string PREDICTOR_KEY;
+    
     /**
      * Collects information about a prognostics configuration and builds the
      * necessary classes.
@@ -26,13 +30,8 @@ namespace PCOE {
                                    const std::string& sensorSource,
                                    const std::string& trajectorySource) override;
 
-        void reset() override;
-
     private:
         bool modelIsPrognosticsModel;
-        std::string modelName;
-        std::string observerName;
-        std::string predictorName;
     };
 }
 #endif

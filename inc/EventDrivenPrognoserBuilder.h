@@ -10,6 +10,9 @@
 #include "EventDrivenPrognoser.h"
 
 namespace PCOE {
+    const extern std::string LOAD_ESTIMATOR_KEY;
+    const extern std::string DEFAULT_LOAD_ESTIMATOR;
+    
     /**
      * Collects information about a prognostics configuration and builds the
      * necessary classes.
@@ -24,6 +27,8 @@ namespace PCOE {
         
         void setConfigParam(const std::string& key, const std::string& value);
         
+        void setConfigParam(const std::string& key, const std::vector<std::string>& value);
+        
         virtual EventDrivenPrognoser build(PCOE::MessageBus& bus,
                                    const std::string& sensorSource,
                                    const std::string& trajectorySource);
@@ -36,7 +41,6 @@ namespace PCOE {
         
         mutable mutex m;
         PCOE::ConfigMap config;
-        std::string loadEstimatorName;
     };
     
     /**

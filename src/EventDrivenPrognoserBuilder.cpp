@@ -25,6 +25,10 @@ static std::vector<std::string> split(const std::string& value) {
 namespace PCOE {
     const static Log& log = Log::Instance();
     
+    const std::string LOAD_ESTIMATOR_KEY = "LoadEstimator";
+
+    const std::string DEFAULT_LOAD_ESTIMATOR = "MovingAverage";
+    
     const std::string MODULE_NAME = "EDPrognoserBuilder";
     
     class DummyLoadEstimator final : public LoadEstimator {
@@ -41,7 +45,7 @@ namespace PCOE {
     void EventDrivenPrognoserBuilder::setLoadEstimatorName(const std::string& value) {
         lock_guard guard(m);
         Expect(value.length() > 0, "Load estimator name length");
-        loadEstimatorName = value;
+        config.set(LOAD_ESTIMATOR_KEY, value);
     }
     
     void EventDrivenPrognoserBuilder::importConfig(const ConfigMap& config) {
@@ -58,7 +62,13 @@ namespace PCOE {
         config.set(key, split(value));
     }
     
-    EventDrivenPrognoser EventDrivenPrognoserBuilder::build(PCOE::MessageBus& bus,
+    void EventDrivenPrognoserBuilder::setConfigParam(const std::string& key, const std::vector<std::string>& value) {
+        lock_guard guard(m);
+        Expect(key.length() > 0, "key size");
+        config.set(key, value);
+    }
+    
+    EventDrivenPrognoser EventDrivenPrognoserBuilder::build(MessageBus& bus,
                                                                       const std::string& sensorSource,
                                                                       const std::string& trajectorySource) {
         lock_guard guard(m);
@@ -67,19 +77,15 @@ namespace PCOE {
         container.addEventListener(new EventDrivenTrajectoryService(
                                                                         bus, std::unique_ptr<TrajectoryService>(new TrajectoryService()), trajectorySource));
         
-        if (loadEstimatorName.empty() && config.hasKey("loadEstimator")) {
-            loadEstimatorName = config.getString("loadEstimator");
+        if (config.hasKey(LOAD_ESTIMATOR_KEY)) {
+            log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building load estimator %s", config.getString(LOAD_ESTIMATOR_KEY).c_str());
+        } else {
+            log.FormatLine(LOG_INFO, MODULE_NAME, "Using default Load Estimator: %s", DEFAULT_LOAD_ESTIMATOR.c_str());
+            config.set(LOAD_ESTIMATOR_KEY, DEFAULT_LOAD_ESTIMATOR);
         }
-        if (!loadEstimatorName.empty()) {
-            log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building load estimator %s", loadEstimatorName.c_str());
-            auto& factory = LoadEstimatorFactory::instance();
-            loadEstimator = factory.Create(loadEstimatorName, config).release();
-            container.setLoadEstimator(loadEstimator);
-        }
-        else {
-            log.WriteLine(LOG_WARN, MODULE_NAME, "No load estimator name found");
-        }
-        
+        auto& factory = LoadEstimatorFactory::instance();
+        loadEstimator = factory.Create(config.getString(LOAD_ESTIMATOR_KEY), config).release();
+        container.setLoadEstimator(loadEstimator);
         
         log.WriteLine(LOG_WARN, MODULE_NAME, "Build complete");
         return std::move(container);
@@ -88,6 +94,5 @@ namespace PCOE {
     void EventDrivenPrognoserBuilder::reset() {
         lock_guard guard(m);
         config = ConfigMap();
-        loadEstimatorName.clear();
     }
 }
