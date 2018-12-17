@@ -29,10 +29,13 @@
 using namespace PCOE;
 using namespace PCOE::Test;
 
-Datum<UData>::time_point addOneSecond(PCOE::Datum<UData>::ms_rep time) {
-    auto a = std::chrono::milliseconds(time + PCOE::Datum<UData>::ms_rep(1000));
-    return Datum<UData>::time_point(a);
+namespace MBProgTestSupport {
+    Datum<UData>::time_point addOneSecond(PCOE::Datum<UData>::ms_rep time) {
+        auto a = std::chrono::milliseconds(time + PCOE::Datum<UData>::ms_rep(1000));
+        return Datum<UData>::time_point(a);
+    }
 }
+using namespace MBProgTestSupport;
 
 void testWithMockModel() {
     PrognosticsModelFactory::instance().Register<TestPrognosticsModel>("Mock");
@@ -62,12 +65,12 @@ void testWithMockModel() {
     Assert::AreEqual(result.getEvents().size(), 1);
     Assert::AreEqual(result.getEvents()[0].getState()[0].get(), 1, 1e-6);
     Assert::AreEqual(result.getEvents()[0].getStartTime().get(), 1.5, 1e-6);
-    Assert::AreEqual(result.getSystemTrajectories().size(), 0);
+    Assert::AreEqual(result.getObservables().size(), 0);
     
     // No time passed
     Prediction result2 = mbp.step(data);
     Assert::AreEqual(result2.getEvents().size(), 0);
-    Assert::AreEqual(result2.getSystemTrajectories().size(), 0);
+    Assert::AreEqual(result2.getObservables().size(), 0);
     
     TestPrognosticsModel model(config);
     TestObserver obs(model, config);
@@ -88,10 +91,10 @@ void testWithMockModel() {
     Assert::AreEqual(result.getEvents().size(), 1);
     Assert::AreEqual(result.getEvents()[0].getState()[0].get(), 1, 1e-6);
     Assert::AreEqual(result.getEvents()[0].getStartTime().get(), 1.5, 1e-6);
-    Assert::AreEqual(result.getSystemTrajectories().size(), 0);
+    Assert::AreEqual(result.getObservables().size(), 0);
     
     // No time passed
     result2 = mbp2.step(data);
     Assert::AreEqual(result2.getEvents().size(), 0);
-    Assert::AreEqual(result2.getSystemTrajectories().size(), 0);
+    Assert::AreEqual(result2.getObservables().size(), 0);
 }

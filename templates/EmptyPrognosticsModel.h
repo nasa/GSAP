@@ -56,9 +56,7 @@ public:
      *
      * @param t  Time
      * @param x  The model state vector at the current time step.
-     * @param u  The model input vector at the current time step.
      * @param n  The process noise vector.
-     * @param dt The size of the time step to calculate
      * @return   The model output vector at the next time step.
      **/
     output_type outputEqn(double t,
@@ -77,21 +75,18 @@ public:
     /** @brief      Execute threshold equation
      *   @param      t Time
      *   @param      x State vector
-     *   @param      u Input vector
      **/
-    bool thresholdEqn(const double t, const state_type& x);
+    bool thresholdEqn(double t, const state_type& x) const override;
 
-    /** Calculate predicted outputs of the model. Predicted outputs are those
+    /** Calculate observables of the model. Observables are those
      * that are not measured, but are interested in being predicted for
      * prognostics.
      *
      * @param t  Time
      * @param x  The model state vector at the current time step.
-     * @param u  The model input vector at the current time step.
-     * @param z  The model output vector at the current time step.
      * @return   The model output vector at the next time step.
      **/
-    predicted_output_type predictedOutputEqn(double t,
+    observables_type observablesEqn(double t,
                                              const state_type& x) const override;
 };
 #endif

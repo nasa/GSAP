@@ -269,8 +269,8 @@ void testBatteryPredictedOutputEqn() {
 
     // Set up predicted outputs
     auto z = battery.getOutputVector();
-    auto predictedOutput = battery.predictedOutputEqn(0, x);
+    auto observables = battery.observablesEqn(0, x);
 
     // Check values
-    Assert::AreEqual(0, predictedOutput.size());
+    Assert::AreEqual(0, observables.size());
 }

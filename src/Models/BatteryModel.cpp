@@ -424,13 +424,6 @@ bool BatteryModel::thresholdEqn(double t, const state_type& x) const {
     return z[1] <= parameters.VEOD;
 }
 
-// Battery Predicted Outputs Equation
-PrognosticsModel::predicted_output_type BatteryModel::predictedOutputEqn(double,
-                                                                         const state_type&) const {
-    // Return empty vector because there are no predicted outputs.
-    return getPredictedOutputVector();
-}
-
 SystemModel::event_state_type BatteryModel::eventStateEqn(const state_type& x) const {
     // Compute "nominal" SOC
     double qnS = x[indices.states.qnS];

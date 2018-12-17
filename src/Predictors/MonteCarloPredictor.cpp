@@ -80,8 +80,8 @@ namespace PCOE {
             elem.uncertainty(UType::Samples);
             elem.npoints(sampleCount);
         }
-        std::vector<DataPoint> sysTrajectories(model.getPredictedOutputs().size());
-        for (auto& trajectory : sysTrajectories) {
+        std::vector<DataPoint> observables(model.getObservables().size());
+        for (auto& trajectory : observables) {
             trajectory.setUncertainty(UType::Samples);
             trajectory.setNumTimes(savePts.size());
             trajectory.setNPoints(sampleCount);
@@ -177,10 +177,10 @@ namespace PCOE {
                         timeOfCurrentSavePt = seconds(*currentSavePt);
                     }
 
-                    auto predictedOutput = model.predictedOutputEqn(t_s, x);
+                    auto observablesEstimate = model.observablesEqn(t_s, x);
 
-                    for (unsigned int p = 0; p < predictedOutput.size(); p++) {
-                        sysTrajectories[p][savePtIndex][sample] = predictedOutput[p];
+                    for (unsigned int p = 0; p < observablesEstimate.size(); p++) {
+                        observables[p][savePtIndex][sample] = observablesEstimate[p];
                     }
 
                     // Write to eventState property
@@ -206,6 +206,6 @@ namespace PCOE {
         return Prediction({ProgEvent(model.getEvents()[0],
                                      std::move(eventState),
                                      std::move(eventToe))},
-                          std::move(sysTrajectories));
+                          std::move(observables));
     }
 }

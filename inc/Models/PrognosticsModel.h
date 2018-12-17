@@ -25,11 +25,12 @@ namespace PCOE {
      * @author Matthew Daigle
      * @author Jason Watkins
      * @author Julian Vu
+     * @author Chris Teubert
      * @since 1.0
      **/
     class PrognosticsModel : public SystemModel {
     public:
-        using predicted_output_type = PredictedOutputVector;
+        using observables_type = PredictedOutputVector;
 
         /**
          * Initializes the model with the given parameters.
@@ -41,7 +42,7 @@ namespace PCOE {
          * @param outputs          The names of the model outputs. The size of
          *                         this parameter also determines the number of
          *                         values in the output vector.
-         * @param predictedOutputs The names of the predicted outputs produced
+         * @param observables      The names of the observables produced
          *                         by the model.
          * @param inputParamCount  The number of input parameters required by
          *                         inputEqn.
@@ -49,12 +50,12 @@ namespace PCOE {
         PrognosticsModel(state_type::size_type stateSize,
                          std::vector<MessageId> inputs,
                          std::vector<MessageId> outputs,
-                         std::vector<std::string> predictedOutputs,
+                         std::vector<std::string> observables,
                          std::vector<MessageId> events,
                          size_type inputParamCount)
             : SystemModel(stateSize, inputs, outputs),
               events(events),
-              predictedOutputs(predictedOutputs),
+              observables(observables),
               inputParameterCount(inputParamCount) {}
 
         /**
@@ -68,18 +69,18 @@ namespace PCOE {
          * @param outputs          The names of the model outputs. The size of
          *                         this parameter also determines the number of
          *                         values in the output vector.
-         * @param predictedOutputs The names of the predicted outputs produced
+         * @param observables      The names of the observables produced
          *                         by the model.
          **/
         PrognosticsModel(state_type::size_type stateSize,
                          std::vector<MessageId> inputs,
                          std::vector<MessageId> outputs,
-                         std::vector<std::string> predictedOutputs,
+                         std::vector<std::string> observables,
                          std::vector<MessageId> events)
             : PrognosticsModel(stateSize,
                                inputs,
                                outputs,
-                               predictedOutputs,
+                               observables,
                                events,
                                inputs.size()) {}
 
@@ -103,7 +104,7 @@ namespace PCOE {
          */
         virtual event_state_type eventStateEqn(const state_type& x) const = 0;
 
-        /** Calculate predicted outputs of the model. Predicted outputs are those
+        /** Calculate observables of the model. Observables are those
          * that are not measured, but are interested in being predicted for
          * prognostics.
          *
@@ -111,8 +112,10 @@ namespace PCOE {
          * @param x  The model state vector at the current time step.
          * @return   The model output vector at the next time step.
          **/
-        virtual predicted_output_type predictedOutputEqn(const double t,
-                                                         const state_type& x) const = 0;
+        virtual observables_type observablesEquation(const double t,
+                                                     const state_type& x) const {
+            return getObservablesVector();
+        };
 
         /**
          * Gets the number of input parameters required by the current model.
@@ -121,12 +124,12 @@ namespace PCOE {
             return inputParameterCount;
         }
 
-        inline predicted_output_type getPredictedOutputVector() const {
-            return predicted_output_type(predictedOutputs.size());
+        inline observables_type getObservablesVector() const {
+            return observables_type(observables.size());
         }
 
-        inline const std::vector<std::string>& getPredictedOutputs() const {
-            return predictedOutputs;
+        inline const std::vector<std::string>& getObservables() const {
+            return observables;
         }
 
         inline const std::vector<MessageId>& getEvents() const {
@@ -135,7 +138,7 @@ namespace PCOE {
 
     private:
         std::vector<MessageId> events;
-        std::vector<std::string> predictedOutputs;
+        std::vector<std::string> observables;
         size_type inputParameterCount;
     };
 }

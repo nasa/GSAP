@@ -95,10 +95,6 @@ public:
     event_state_type eventStateEqn(const state_type&) const override {
         return 0;
     }
-
-    predicted_output_type predictedOutputEqn(const double, const state_type&) const override {
-        return getPredictedOutputVector();
-    }
 };
 
 class TestLoadEstimator final : public LoadEstimator {
@@ -213,7 +209,7 @@ public:
         std::free(static_cast<void_pointer>(ptr));
     }
 
-    friend bool operator==(const TestAllocator& lhs, const TestAllocator& rhs) {
+    friend bool operator==(const TestAllocator& , const TestAllocator& ) {
         return true;
     }
 
