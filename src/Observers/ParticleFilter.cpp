@@ -97,7 +97,7 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Created particle filter");
     }
 
-    void ParticleFilter::initialize(const double t0,
+    void ParticleFilter::initialize(double t0,
                                     const SystemModel::state_type& x0,
                                     const SystemModel::input_type& u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
@@ -134,7 +134,7 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initialize completed");
     }
 
-    void ParticleFilter::step(const double newT,
+    HealthEstimate ParticleFilter::step(double newT,
                               const SystemModel::input_type& u,
                               const SystemModel::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");

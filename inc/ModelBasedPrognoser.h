@@ -61,7 +61,7 @@ namespace PCOE {
          *             enough data. This is a required method in any component
          *             prognoser
          */
-	    Prediction step(std::map<MessageId, Datum<double> > data);
+	    Prediction step(std::map<MessageId, Datum<double>> data);
     };
 
     extern bool regModelProg;
