@@ -43,7 +43,7 @@ private:
 class TestModel final : public SystemModel {
 public:
     TestModel(const ConfigMap& = ConfigMap())
-        : SystemModel(2, {MessageId::TestInput0, MessageId::TestInput1}, {MessageId::TestOutput0}) {
+    : SystemModel(2, {MessageId::TestInput0, MessageId::TestInput1}, {MessageId::TestOutput0}, {}, {MessageId::TestEvent0}) {
     }
 
     state_type stateEqn(const double,
@@ -91,7 +91,7 @@ public:
     bool thresholdEqn(const double, const state_type& x) const override {
         return x[0] != 0.0;
     }
-
+    
     event_state_type eventStateEqn(const state_type&) const override {
         return 0;
     }

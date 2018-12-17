@@ -144,7 +144,7 @@ namespace PCOE {
             auto x = SystemModel::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
 
             // 3. Simulate until time limit reached
-            std::vector<double> inputParams(model.getInputParameterCount());
+            SystemModel::input_type inputParams(model.getInputSize());
             eventToe[sample] = INFINITY;
 
             std::vector<double>::size_type savePtIndex = 0;
