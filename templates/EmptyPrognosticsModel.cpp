@@ -29,7 +29,7 @@ const std::vector<MessageId> EVENTS = {MessageId::TestEvent0};
 const BatteryModel::input_type::size_type INPUT_PARAM_COUNT = 1;
 
 EmptyPrognosticsModel::EmptyPrognosticsModel()
-    : PrognosticsModel(STATE_SIZE, INPUTS, OUTPUTS, PREDICTED_OUTPUTS, EVENTS, INPUT_PARAM_COUNT) {
+    : PrognosticsModel(STATE_SIZE, INPUTS, OUTPUTS, PREDICTED_OUTPUTS, EVENTS) {
     // Default constructor
 }
 
