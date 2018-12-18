@@ -73,8 +73,8 @@ public:
     state_type initialize(const input_type& u, const output_type& z) const override;
 
     /** @brief      Execute threshold equation
-     *   @param      t Time
-     *   @param      x State vector
+     *   @param     t Time
+     *   @param     x State vector
      **/
     bool thresholdEqn(double t, const state_type& x) const override;
 
