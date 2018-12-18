@@ -149,7 +149,7 @@ namespace PCOE {
 
             // 3. Simulate until time limit reached
             SystemModel::input_type inputParams(model.getInputSize());
-            for (auto && toe: eventToe) {
+            for (auto&& toe: eventToe) {
                 toe[sample] = INFINITY;
             }
 
@@ -170,10 +170,12 @@ namespace PCOE {
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
                 auto thresholdMet = model.thresholdEqn(t_s, x);
-                if (thresholdMet[0]) {
-                    eventToe[0][sample] = t_s;
-                    eventToe[0].updated(stateTimestamp);
-                    break;
+                for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
+                    if (thresholdMet[eventId]) {
+                        eventToe[eventId][sample] = t_s;
+                        eventToe[eventId].updated(stateTimestamp);
+                        break;
+                    }
                 }
 
                 if (savePtIndex < savePts.size() && t_s > timeOfCurrentSavePt) {
