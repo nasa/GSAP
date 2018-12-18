@@ -427,7 +427,7 @@ SystemModel::event_state_type BatteryModel::eventStateEqn(const state_type& x) c
     // Compute "nominal" SOC
     double qnS = x[indices.states.qnS];
     double qnB = x[indices.states.qnB];
-    return (qnS + qnB) / parameters.qnMax;
+    return event_state_type({(qnS + qnB) / parameters.qnMax});
 }
 
 // Set model parameters, given qMobile

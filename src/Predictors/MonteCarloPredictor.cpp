@@ -184,7 +184,8 @@ namespace PCOE {
                     }
 
                     // Write to eventState property
-                    eventState[savePtIndex][sample] = model.eventStateEqn(x);
+                    auto eventStatesEstimate = model.eventStateEqn(x);
+                    eventState[savePtIndex][sample] = eventStatesEstimate[0]; // TODO(CT): Save all event states- assuming only one
 
                     // Update time index
                     savePtIndex++;

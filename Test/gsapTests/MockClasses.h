@@ -93,7 +93,7 @@ public:
     }
     
     event_state_type eventStateEqn(const state_type&) const override {
-        return 0;
+        return event_state_type({0.0});
     }
 };
 
