@@ -72,6 +72,7 @@ namespace PCOE {
         //            constructor. Shouldn't be possible here.
 
         auto savePts = savePointProvider.getSavePts();
+        auto eventNames = model.getEvents();
 
         UData eventToe(UType::Samples);
         eventToe.npoints(sampleCount);
@@ -205,7 +206,7 @@ namespace PCOE {
         }
 
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Prediction complete");
-        return Prediction({ProgEvent(model.getEvents()[0],
+        return Prediction({ProgEvent(eventNames[0],
                                      std::move(eventState),
                                      std::move(eventToe))},
                           std::move(observables));
