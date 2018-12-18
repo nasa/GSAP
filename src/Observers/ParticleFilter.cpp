@@ -134,7 +134,7 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initialize completed");
     }
 
-    HealthEstimate ParticleFilter::step(double newT,
+    void ParticleFilter::step(double newT,
                               const SystemModel::input_type& u,
                               const SystemModel::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
