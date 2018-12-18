@@ -149,7 +149,9 @@ namespace PCOE {
 
             // 3. Simulate until time limit reached
             SystemModel::input_type inputParams(model.getInputSize());
-            eventToe[0][sample] = INFINITY;
+            for (auto && toe: eventToe) {
+                toe[sample] = INFINITY;
+            }
 
             std::vector<double>::size_type savePtIndex = 0;
             double timeOfCurrentSavePt = std::numeric_limits<double>::infinity();
