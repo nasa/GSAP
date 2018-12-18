@@ -7,11 +7,36 @@
 #include <vector>
 
 #include "Contracts.h"
+#include "DataPoint.h"
 #include "Models/SystemModel.h"
+#include "ProgEvent.h"
 #include "ThreadSafeLog.h"
 #include "UData.h"
 
 namespace PCOE {
+    class HealthEstimate {
+    public:
+        HealthEstimate(std::vector<ProgEvent> events, std::vector<DataPoint> observables)
+        : events(std::move(events)), observables(std::move(observables)) {}
+        
+        static HealthEstimate & EmptyHealthEstimate() {
+            static HealthEstimate emptyHealthEstimate({},{});
+            return emptyHealthEstimate;
+        }
+        
+        inline const std::vector<ProgEvent>& getEvents() const {
+            return events;
+        }
+        
+        inline const std::vector<DataPoint>& getObservables() const {
+            return observables;
+        }
+        
+    protected:
+        std::vector<ProgEvent> events;
+        std::vector<DataPoint> observables;
+    };
+    
     /**
      * Represents an object that observes a model's state.
      *
@@ -102,6 +127,54 @@ namespace PCOE {
         const SystemModel& model;
 
         SystemModel::input_type uPrev;
+        
+        HealthEstimate produceHealthEstimate() {
+            std::vector<ProgEvent> events;
+            std::vector<DataPoint> observables;
+            std::vector<UData> states = getStateEstimate();
+            DynamicArray<UData>::size_type i = 0;
+            auto nSamples = states[0].size();
+            auto nStates = states.size();
+            auto nEvents = model.getEvents().size();
+            std::vector<UData> eventUdatas;
+            eventUdatas.resize(nEvents);
+            std::for_each(eventUdatas.begin(), eventUdatas.end(), [nSamples](UData& x) {x.uncertainty(UType::Samples); x.npoints(nSamples);});
+            UData eventState;
+            eventState.uncertainty(UType::Samples);
+            eventState.npoints(nSamples);
+            for (unsigned long sampleIndex = 0; sampleIndex < nSamples; sampleIndex++) {
+                auto state = model.getStateVector();
+                
+                for (unsigned long stateIndex = 0; stateIndex < nStates; stateIndex++) {
+                    state[stateIndex] = states[stateIndex][sampleIndex];
+                }
+                
+                auto eventStates = model.eventStateEqn(state);
+                int i = 0;
+            }
+            
+            for (auto eventName : model.getEvents()) {
+                ProgEvent newEvent(eventName, {eventState}, NAN);
+                events.push_back(newEvent);
+            }
+            
+            for (auto observableIndex = 0; observableIndex < model.getObservables().size(); observableIndex++) {
+                DataPoint newObservable;
+                newObservable.setNumTimes(1);
+                newObservable.setNumSamples(states[0].size());
+                for (auto sampleId = 0; sampleId<states[0].size(); sampleId++) {
+                    newObservable[0][sampleId] = model.observablesEqn(lastTime, states[observableIndex][sampleId]);
+                }
+            }
+            
+            for (auto observableValue : model.observablesEqn(lastTime, )) {
+                
+                newObservable.setNumTimes(1);
+                newObservable[0] = obsservableValue;
+            }
+            
+            return HealthEstimate(events, observables);
+        }
     };
 }
 #endif

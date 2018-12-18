@@ -10,36 +10,13 @@
 #include "CompositeSavePointProvider.h"
 #include "ConfigMap.h"
 #include "Contracts.h"
-#include "DataPoint.h"
 #include "Loading/LoadEstimator.h"
 #include "Models/PrognosticsModel.h"
+#include "Observers/Observer.h"
 #include "ProgEvent.h"
 #include "Trajectory/TrajectoryService.h"
 
 namespace PCOE {
-    class Prediction {
-    public:
-        Prediction(std::vector<ProgEvent> events, std::vector<DataPoint> observables)
-            : events(std::move(events)), observables(std::move(observables)) {}
-		
-        static Prediction & EmptyPrediction() {
-            static Prediction emptyPrediction({},{});
-            return emptyPrediction;
-	    }
-
-        inline const std::vector<ProgEvent>& getEvents() const {
-            return events;
-        }
-
-        inline const std::vector<DataPoint>& getObservables() const {
-            return observables;
-        }
-
-    private:
-	    std::vector<ProgEvent> events;
-	    std::vector<DataPoint> observables;
-    };
-
     /**
      * Represents a model-based predictor.
      *
@@ -85,7 +62,7 @@ namespace PCOE {
          * @param t     Time of prediction
          * @param state State of system at time of prediction
          **/
-        virtual Prediction predict(double t, const std::vector<UData>& state) = 0;
+        virtual HealthEstimate predict(double t, const std::vector<UData>& state) = 0;
 
         /**
          * Gets a list of the observables predicted by the
