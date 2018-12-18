@@ -68,21 +68,6 @@ namespace PCOE {
             eventListeners.push_back(listener);
         }
         
-        /** @brief     Prognostic Monitor Step
-         *
-         *             Preform model updates. This is done every step where there is
-         *             enough data. This is a required method in any component
-         *             prognoser
-         */
-        Prediction step(std::map<MessageId, Datum<double>> data) {
-            for (const auto& messagePair : data) {
-                ScalarMessage<double>* message = new ScalarMessage<double>(messagePair.first, src, Message::time_point(std::chrono::milliseconds(messagePair.second.getTime())), messagePair.second.get());
-                bus.publish(std::shared_ptr<Message>(message));
-            }
-            
-            return Prediction::EmptyPrediction();
-        }
-        
         /**
          * Handles messages representing updates to the model inputs and
          * outputs. When sufficient new data is collected, automaticlly triggers
