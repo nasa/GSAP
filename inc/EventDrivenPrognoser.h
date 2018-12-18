@@ -5,6 +5,8 @@
 #define PCOE_EVENTDRIVENPROGNOSER_H
 #include <memory>
 
+#include "Datum.h"
+#include "Messages/ScalarMessage.h"
 #include "Loading/LoadEstimator.h"
 #include "Models/SystemModel.h"
 #include "Observers/EventDrivenObserver.h"
@@ -19,13 +21,14 @@ namespace PCOE {
      * any validation, and will accept null pointers for any of its contructor
      * arguments.
      **/
-    class EventDrivenPrognoser final {
+    class EventDrivenPrognoser : public IMessageProcessor {
     public:
-        EventDrivenPrognoser() = default;
+        EventDrivenPrognoser(MessageBus& messageBus, std::string source): bus(messageBus), src(source) {
+        };
 
         EventDrivenPrognoser(const EventDrivenPrognoser&) = delete;
 
-        EventDrivenPrognoser(EventDrivenPrognoser&& other) {
+        EventDrivenPrognoser(EventDrivenPrognoser&& other) : bus(other.bus), src(other.src) {
             using std::swap;
             if (&other == this) {
                 return;
@@ -64,8 +67,36 @@ namespace PCOE {
             Expect(listener != nullptr, "null listener");
             eventListeners.push_back(listener);
         }
+        
+        /** @brief     Prognostic Monitor Step
+         *
+         *             Preform model updates. This is done every step where there is
+         *             enough data. This is a required method in any component
+         *             prognoser
+         */
+        Prediction step(std::map<MessageId, Datum<double>> data) {
+            for (const auto& messagePair : data) {
+                ScalarMessage<double>* message = new ScalarMessage<double>(messagePair.first, src, Message::time_point(std::chrono::milliseconds(messagePair.second.getTime())), messagePair.second.get());
+                bus.publish(std::shared_ptr<Message>(message));
+            }
+            
+            return Prediction::EmptyPrediction();
+        }
+        
+        /**
+         * Handles messages representing updates to the model inputs and
+         * outputs. When sufficient new data is collected, automaticlly triggers
+         * an observer step and publishes the result.
+         *
+         * @param message. The message to process.
+         **/
+        void processMessage(const std::shared_ptr<Message>& message) override {
+            
+        }
 
     private:
+        MessageBus& bus;
+        const std::string src;
         SystemModel* model = nullptr;
         LoadEstimator* loadEstimator = nullptr;
         std::vector<IMessageProcessor*> eventListeners;

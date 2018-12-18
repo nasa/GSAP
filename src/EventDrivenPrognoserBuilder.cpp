@@ -72,7 +72,7 @@ namespace PCOE {
                                                                       const std::string& sensorSource,
                                                                       const std::string& trajectorySource) {
         lock_guard guard(m);
-        EventDrivenPrognoser container;
+        EventDrivenPrognoser container(bus, "Test");
         LoadEstimator* loadEstimator = nullptr;
         container.addEventListener(new EventDrivenTrajectoryService(
                                                                         bus, std::unique_ptr<TrajectoryService>(new TrajectoryService()), trajectorySource));

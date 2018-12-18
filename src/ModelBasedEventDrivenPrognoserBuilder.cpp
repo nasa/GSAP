@@ -57,7 +57,7 @@ namespace PCOE {
                                                  const std::string& sensorSource,
                                                  const std::string& trajectorySource) {
         lock_guard guard(m);
-        EventDrivenPrognoser container;
+        EventDrivenPrognoser container(bus, "Test");
         SystemModel* model = nullptr;
         PrognosticsModel* progModel = nullptr;
         std::unique_ptr<Observer> observer;
@@ -122,6 +122,7 @@ namespace PCOE {
         if (predictor) {
             container.addEventListener(
                 new EventDrivenPredictor(bus, std::move(predictor), sensorSource));
+            bus.subscribe(&container, sensorSource);
         }
 
         Ensure(!(model && progModel), "SystemModel and PrognosticsModel both created");
