@@ -79,10 +79,13 @@ namespace PCOE {
             toe.uncertainty(UType::Samples);
             toe.npoints(sampleCount);
         }
-        std::vector<UData> eventState(savePts.size());
-        for (auto&& elem : eventState) {
-            elem.uncertainty(UType::Samples);
-            elem.npoints(sampleCount);
+        std::vector<std::vector<UData>> eventStates(eventNames.size());
+        for (auto&& eventState : eventStates) {
+            eventState.resize(savePts.size());
+            for (auto&& elem : eventState) {
+                elem.uncertainty(UType::Samples);
+                elem.npoints(sampleCount);
+            }
         }
         std::vector<DataPoint> observables(model.getObservables().size());
         for (auto& observable : observables) {
@@ -195,8 +198,11 @@ namespace PCOE {
 
                     // Write to eventState property
                     auto eventStatesEstimate = model.eventStateEqn(x);
-                    eventState[savePtIndex][sample] = eventStatesEstimate[0]; // TODO(CT): Save all event states- assuming only one
-
+                    
+                    for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
+                        eventStates[eventId][savePtIndex][sample] = eventStatesEstimate[eventId]; // TODO(CT): Save all event states- assuming only one
+                    }
+                        
                     // Update time index
                     savePtIndex++;
                 }
@@ -219,8 +225,9 @@ namespace PCOE {
         }
 
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Prediction complete");
+        
         return Prediction({ProgEvent(eventNames[0],
-                                     std::move(eventState),
+                                     std::move(eventStates[0]),
                                      std::move(eventToe[0]))},
                           std::move(observables));
     }
