@@ -79,7 +79,7 @@ bool EmptyPrognosticsModel::thresholdEqn(double t,
     bool hasReachedThreshold = false;
     // SET hasReachedThreshold
 
-    return hasReachedThreshold;
+    return {hasReachedThreshold};
 }
 
 PrognosticsModel::observables_type

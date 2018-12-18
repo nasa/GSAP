@@ -48,9 +48,9 @@ namespace PCOE {
          *
          * @param t Time
          * @param x The model state vector at the current time step.
-         * @return  true if the threshold is reached; otherwise, false.
+         * @return  For each event: true if the threshold is reached; otherwise, false.
          **/
-        virtual bool thresholdEqn(double t,
+        virtual std::vector<bool> thresholdEqn(double t,
                                   const state_type& x) const = 0;
     };
 }

@@ -88,8 +88,8 @@ public:
         return state_type(u.vec());
     }
 
-    bool thresholdEqn(const double, const state_type& x) const override {
-        return x[0] != 0.0;
+    std::vector<bool> thresholdEqn(const double, const state_type& x) const override {
+        return {x[0] != 0.0};
     }
     
     event_state_type eventStateEqn(const state_type&) const override {

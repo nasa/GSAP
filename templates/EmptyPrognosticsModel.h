@@ -75,8 +75,9 @@ public:
     /** @brief      Execute threshold equation
      *   @param     t Time
      *   @param     x State vector
+     *  @return     For each event: true if threshold is reached, otherwise false
      **/
-    bool thresholdEqn(double t, const state_type& x) const override;
+    std::vector<bool> thresholdEqn(double t, const state_type& x) const override;
 
     /** Calculate observables of the model. Observables are those
      * that are not measured, but are interested in being predicted for

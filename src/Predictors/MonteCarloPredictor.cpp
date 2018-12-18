@@ -163,7 +163,8 @@ namespace PCOE {
                 // Check threshold at time t and set timeOfEvent if reaching for first time
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
-                if (model.thresholdEqn(t_s, x)) {
+                auto thresholdMet = model.thresholdEqn(t_s, x);
+                if (thresholdMet[0]) {
                     eventToe[sample] = t_s;
                     eventToe.updated(stateTimestamp);
                     break;

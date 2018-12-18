@@ -162,9 +162,9 @@ public:
      *
      * @param t  Time
      * @param x  The model state vector at the current time step.
-     * @return  true if the threshold is reached; otherwise, false.
+     * @return  For each event: true if the threshold is reached; otherwise, false.
      **/
-    bool thresholdEqn(double t, const state_type& x) const override;
+    std::vector<bool> thresholdEqn(double t, const state_type& x) const override;
 
     event_state_type eventStateEqn(const state_type& x) const override;
 

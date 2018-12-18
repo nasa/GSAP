@@ -415,12 +415,12 @@ SystemModel::output_type BatteryModel::outputEqn(double,
 }
 
 // Battery Threshold Equation
-bool BatteryModel::thresholdEqn(double t, const state_type& x) const {
+std::vector<bool> BatteryModel::thresholdEqn(double t, const state_type& x) const {
     // Compute based on voltage, so use output equation to get voltage
     auto z = outputEqn(t, x, std::vector<double>(2));
 
     // Determine if voltage (second element in z) is below VEOD threshold
-    return z[1] <= parameters.VEOD;
+    return {z[1] <= parameters.VEOD};
 }
 
 SystemModel::event_state_type BatteryModel::eventStateEqn(const state_type& x) const {
