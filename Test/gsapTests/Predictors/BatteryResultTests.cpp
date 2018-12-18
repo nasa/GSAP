@@ -206,7 +206,7 @@ namespace BatteryResultTests {
         Assert::IsTrue(event.front() < 2500, "Lowest event time");
         Assert::IsTrue(event.back() > 2750, "Highest event time floor");
         Assert::IsTrue(event.back() < 3000, "Highest event time ceiling");
-        double mean = std::accumulate(event.begin(), event.end(), 0) / event.size();
+        double mean = std::accumulate(event.begin(), event.end(), 0.0) / event.size();
         Assert::AreEqual(mean, 2700, 100, "Mean ToE");
 
         t = 2.0;
@@ -302,7 +302,7 @@ namespace BatteryResultTests {
         Assert::IsTrue(event.front() < 2500, "Lowest event time");
         Assert::IsTrue(event.back() > 2750, "Highest event time floor");
         Assert::IsTrue(event.back() < 3000, "Highest event time ceiling");
-        mean = std::accumulate(event.begin(), event.end(), 0) / event.size();
+        mean = std::accumulate(event.begin(), event.end(), 0.0) / event.size();
         Assert::AreEqual(mean, 2700, 100, "Mean ToE");
     }
 
