@@ -81,10 +81,10 @@ namespace PCOE {
             elem.npoints(sampleCount);
         }
         std::vector<DataPoint> observables(model.getObservables().size());
-        for (auto& trajectory : observables) {
-            trajectory.setUncertainty(UType::Samples);
-            trajectory.setNumTimes(savePts.size());
-            trajectory.setNPoints(sampleCount);
+        for (auto& observable : observables) {
+            observable.setUncertainty(UType::Samples);
+            observable.setNumTimes(savePts.size());
+            observable.setNPoints(sampleCount);
         }
         auto stateTimestamp = getLowestTimestamp(state);
 

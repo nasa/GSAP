@@ -85,8 +85,8 @@ bool EmptyPrognosticsModel::thresholdEqn(double t,
 PrognosticsModel::observables_type
 EmptyPrognosticsModel::observablesEqn(double t,
                                           const state_type& x) const {
-    auto predictedOutputs = getObservablesVector();
-    // Fill predictedOutputs
+    auto observables = getObservablesVector();
+    // Fill observables
 
-    return predictedOutputs;
+    return observables;
 }
