@@ -170,11 +170,12 @@ namespace PCOE {
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
                 auto thresholdMet = model.thresholdEqn(t_s, x);
+                int thresholdsMet = 0;
                 for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
                     if (thresholdMet[eventId]) {
                         eventToe[eventId][sample] = t_s;
                         eventToe[eventId].updated(stateTimestamp);
-                        break;
+                        thresholdsMet++;
                     }
                 }
 
@@ -209,6 +210,11 @@ namespace PCOE {
 
                 // Update state for t to t+dt
                 x = model.stateEqn(t_s, x, loadEstimate, noise, model.getDefaultTimeStep());
+                
+                if (thresholdsMet == eventNames.size()) {
+                    // All thresholds met- stop simulating for sample
+                    break;
+                }
             }
         }
 
