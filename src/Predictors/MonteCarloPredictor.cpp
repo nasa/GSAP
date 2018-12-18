@@ -74,8 +74,11 @@ namespace PCOE {
         auto savePts = savePointProvider.getSavePts();
         auto eventNames = model.getEvents();
 
-        UData eventToe(UType::Samples);
-        eventToe.npoints(sampleCount);
+        std::vector<UData> eventToe(eventNames.size());
+        for (auto&& toe : eventToe) {
+            toe.uncertainty(UType::Samples);
+            toe.npoints(sampleCount);
+        }
         std::vector<UData> eventState(savePts.size());
         for (auto&& elem : eventState) {
             elem.uncertainty(UType::Samples);
@@ -146,7 +149,7 @@ namespace PCOE {
 
             // 3. Simulate until time limit reached
             SystemModel::input_type inputParams(model.getInputSize());
-            eventToe[sample] = INFINITY;
+            eventToe[0][sample] = INFINITY;
 
             std::vector<double>::size_type savePtIndex = 0;
             double timeOfCurrentSavePt = std::numeric_limits<double>::infinity();
@@ -166,8 +169,8 @@ namespace PCOE {
                 // event, and we don't want to overwrite that.
                 auto thresholdMet = model.thresholdEqn(t_s, x);
                 if (thresholdMet[0]) {
-                    eventToe[sample] = t_s;
-                    eventToe.updated(stateTimestamp);
+                    eventToe[0][sample] = t_s;
+                    eventToe[0].updated(stateTimestamp);
                     break;
                 }
 
@@ -208,7 +211,7 @@ namespace PCOE {
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Prediction complete");
         return Prediction({ProgEvent(eventNames[0],
                                      std::move(eventState),
-                                     std::move(eventToe))},
+                                     std::move(eventToe[0]))},
                           std::move(observables));
     }
 }
