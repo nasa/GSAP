@@ -226,9 +226,14 @@ namespace PCOE {
 
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Prediction complete");
         
-        return Prediction({ProgEvent(eventNames[0],
-                                     std::move(eventStates[0]),
-                                     std::move(eventToe[0]))},
+        std::vector<ProgEvent> events;
+        for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
+            events.push_back(ProgEvent(eventNames[eventId],
+                                       std::move(eventStates[eventId]),
+                                       std::move(eventToe[eventId])));
+        }
+        
+        return Prediction(std::move(events),
                           std::move(observables));
     }
 }
