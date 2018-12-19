@@ -66,6 +66,7 @@ void testWithMockModel() {
     Assert::AreEqual(result.getEvents()[0].getState()[0].get(), 1, 1e-6);
     Assert::AreEqual(result.getEvents()[0].getStartTime().get(), 1.5, 1e-6);
     Assert::AreEqual(result.getObservables().size(), 0);
+
     
     // No time passed
     Prediction result2 = mbp.step(data);
