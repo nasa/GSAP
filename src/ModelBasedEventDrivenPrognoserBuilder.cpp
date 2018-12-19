@@ -9,8 +9,10 @@
 #include "Loading/LoadEstimatorFactory.h"
 #include "Models/PrognosticsModelFactory.h"
 #include "Models/SystemModelFactory.h"
+#include "Observers/EventDrivenObserver.h"
 #include "Observers/Observer.h"
 #include "Observers/ObserverFactory.h"
+#include "Predictors/EventDrivenPredictor.h"
 #include "Predictors/PredictorFactory.h"
 
 namespace PCOE {

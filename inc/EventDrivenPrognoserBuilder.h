@@ -6,7 +6,9 @@
 #define PCOE_EVENTDRIVENPROGNOSERBUILDER_H
 
 #include <string>
+#include <vector>
 
+#include "ConfigMap.h"
 #include "EventDrivenPrognoser.h"
 
 namespace PCOE {

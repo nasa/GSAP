@@ -4,14 +4,14 @@
 #ifndef PCOE_EVENTDRIVENPROGNOSER_H
 #define PCOE_EVENTDRIVENPROGNOSER_H
 #include <memory>
+#include <string>
+#include <vector>
 
-#include "Datum.h"
-#include "Messages/ScalarMessage.h"
+#include "Contracts.h"
 #include "Loading/LoadEstimator.h"
+#include "Messages/IMessageProcessor.h"
+#include "Messages/MessageBus.h"
 #include "Models/SystemModel.h"
-#include "Observers/EventDrivenObserver.h"
-#include "Predictors/EventDrivenPredictor.h"
-#include "Trajectory/EventDrivenTrajectoryService.h"
 
 namespace PCOE {
     /**

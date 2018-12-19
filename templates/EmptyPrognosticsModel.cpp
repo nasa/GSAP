@@ -71,7 +71,7 @@ SystemModel::state_type EmptyPrognosticsModel::initialize(const input_type& u,
     return initialized_state;
 }
 
-bool EmptyPrognosticsModel::thresholdEqn(double t,
+std::vector<bool> EmptyPrognosticsModel::thresholdEqn(double t,
                                          const state_type& x) const {
     // Often uses outputs to calculate threshold, remove line if not relevant
     auto z = outputEqn(t, x, std::vector<double>(2));
