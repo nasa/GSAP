@@ -90,6 +90,7 @@ public:
 
         // Process Result
         ProgEvent result = *currentResult;
+        delete currentResult; // Make sure memory is freed
         return result;
     }
 
@@ -110,7 +111,7 @@ public:
                 lock_guard guard(processMessageMut); // Process one ProgEvent at once
                 ProgEventMessage* message = dynamic_cast<ProgEventMessage*>(rawMessage.get());
                 ProgEvent result = message->getValue();
-                currentResult = &result;
+                currentResult = new ProgEvent(result);
 
                 while (requests.size() > 0 && requests.front()->time <= message->getTimestamp()) {
                     Request* currentRequest = requests.front();
