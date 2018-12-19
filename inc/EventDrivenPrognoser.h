@@ -21,7 +21,7 @@ namespace PCOE {
      * any validation, and will accept null pointers for any of its contructor
      * arguments.
      **/
-    class EventDrivenPrognoser : public IMessageProcessor {
+    class EventDrivenPrognoser  {
     public:
         EventDrivenPrognoser(MessageBus& messageBus, std::string source): bus(messageBus), src(source) {
         };
@@ -66,17 +66,6 @@ namespace PCOE {
         void addEventListener(IMessageProcessor* listener) {
             Expect(listener != nullptr, "null listener");
             eventListeners.push_back(listener);
-        }
-        
-        /**
-         * Handles messages representing updates to the model inputs and
-         * outputs. When sufficient new data is collected, automaticlly triggers
-         * an observer step and publishes the result.
-         *
-         * @param message. The message to process.
-         **/
-        void processMessage(const std::shared_ptr<Message>& message) override {
-            
         }
 
     private:

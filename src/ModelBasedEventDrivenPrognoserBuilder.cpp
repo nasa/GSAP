@@ -13,18 +13,6 @@
 #include "Observers/ObserverFactory.h"
 #include "Predictors/PredictorFactory.h"
 
-static std::vector<std::string> split(const std::string& value) {
-    std::istringstream ss(value);
-    std::string token;
-    std::vector<std::string> result;
-
-    while (std::getline(ss, token, ',')) {
-        result.push_back(token);
-    }
-
-    return result;
-}
-
 namespace PCOE {
     const static Log& log = Log::Instance();
     
@@ -116,13 +104,13 @@ namespace PCOE {
         }
         
         if (observer) {
-            container.addEventListener(new EventDrivenObserver(bus, std::move(observer), sensorSource));
+            container.addEventListener(
+                new EventDrivenObserver(bus, std::move(observer), sensorSource));
         }
 
         if (predictor) {
             container.addEventListener(
                 new EventDrivenPredictor(bus, std::move(predictor), sensorSource));
-            bus.subscribe(&container, sensorSource);
         }
 
         Ensure(!(model && progModel), "SystemModel and PrognosticsModel both created");
