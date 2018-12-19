@@ -269,7 +269,7 @@ namespace PCOE {
             return events;
         }
 
-    protected:
+    private:
         double defaultTimeStep = 1.0;
         state_type::size_type stateSize;
         std::vector<MessageId> inputs;

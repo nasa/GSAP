@@ -42,7 +42,7 @@ namespace PCOE {
          **/
         ~EventDrivenPredictor();
         
-        std::string getName() {
+        const std::string& getName() {
             return source;
         }
 

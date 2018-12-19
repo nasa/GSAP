@@ -16,7 +16,7 @@ public:
                        PCOE::MessageId::TestInput2},
                       {PCOE::MessageId::TestOutput0,
                        PCOE::MessageId::TestOutput1,
-                          PCOE::MessageId::TestOutput2}, {}, {}) {}
+                       PCOE::MessageId::TestOutput2}, {}, {}) {}
 
     // State indices
     struct stateIndices {

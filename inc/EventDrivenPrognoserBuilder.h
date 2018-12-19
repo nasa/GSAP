@@ -12,9 +12,6 @@
 #include "EventDrivenPrognoser.h"
 
 namespace PCOE {
-    const extern std::string LOAD_ESTIMATOR_KEY;
-    const extern std::string DEFAULT_LOAD_ESTIMATOR;
-    
     /**
      * Collects information about a prognostics configuration and builds the
      * necessary classes.
@@ -23,6 +20,9 @@ namespace PCOE {
      **/
     class EventDrivenPrognoserBuilder {
     public:
+        static const std::string LOAD_ESTIMATOR_KEY;
+        static const std::string DEFAULT_LOAD_ESTIMATOR;
+        
         void setLoadEstimatorName(const std::string& value);
         
         void importConfig(const ConfigMap& config);

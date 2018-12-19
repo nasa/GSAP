@@ -18,7 +18,7 @@ namespace PCOE {
      * Holds a set of prognostic components that are related to each other. This
      * class doesn't "do" anything; it only acts as a container for other
      * objects that should be deallocated as a group. The container does not do
-     * any validation, and will accept null pointers for any of its contructor
+     * any validation, and will accept null pointers for any of its constructor
      * arguments.
      **/
     class EventDrivenPrognoser  {

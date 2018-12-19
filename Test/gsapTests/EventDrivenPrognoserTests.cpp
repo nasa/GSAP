@@ -1,22 +1,9 @@
-/**  Event-Driven Prognoser Tests - Header
- *   @class     EventDrivenPrognoserTests EventDrivenPrognoserTests.h
- *
- *   @brief     Event-Driven Prognoser Test Class
- *
- *   Tests for event-driven prognoser class.
- *
- *   @author    Chris Teubert
- *   @version   1.2.0
- *
- *      Created: December 17, 2018
- *
- *   @copyright Copyright (c) 2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
-
+// Copyright (c) 2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+#include <condition_variable>
+#include <mutex>
 #include <queue>
-#include <thread>
 
 #include "Datum.h"
 #include "EventDrivenPrognoser.h"
@@ -89,8 +76,8 @@ public:
         }
 
         // Process Result
+        requests_lock.lock();
         ProgEvent result = *currentResult;
-        delete currentResult; // Make sure memory is freed
         return result;
     }
 
@@ -111,7 +98,7 @@ public:
                 lock_guard guard(processMessageMut); // Process one ProgEvent at once
                 ProgEventMessage* message = dynamic_cast<ProgEventMessage*>(rawMessage.get());
                 ProgEvent result = message->getValue();
-                currentResult = new ProgEvent(result);
+                currentResult = std::shared_ptr<ProgEvent>(new ProgEvent(result));
 
                 while (requests.size() > 0 && requests.front()->time <= message->getTimestamp()) {
                     Request* currentRequest = requests.front();
@@ -119,6 +106,7 @@ public:
 
                     unique_lock lock(currentRequest->mut);
                     currentRequest->waiting = false;
+                    lock.unlock();
                     currentRequest->condition.notify_one();
                 }
                 break;
@@ -143,7 +131,7 @@ private:
     };
 
     MessageBus& bus;
-    ProgEvent* currentResult;
+    std::shared_ptr<ProgEvent> currentResult;
     mutex processMessageMut;
 
     std::queue<Request*> requests;

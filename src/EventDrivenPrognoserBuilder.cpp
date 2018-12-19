@@ -25,9 +25,9 @@ static std::vector<std::string> split(const std::string& value) {
 namespace PCOE {
     const static Log& log = Log::Instance();
     
-    const std::string LOAD_ESTIMATOR_KEY = "LoadEstimator";
+    const std::string EventDrivenPrognoserBuilder::LOAD_ESTIMATOR_KEY = "LoadEstimator";
 
-    const std::string DEFAULT_LOAD_ESTIMATOR = "MovingAverage";
+    const std::string EventDrivenPrognoserBuilder::DEFAULT_LOAD_ESTIMATOR = "MovingAverage";
     
     const std::string MODULE_NAME = "EDPrognoserBuilder";
     

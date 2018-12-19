@@ -45,7 +45,7 @@ namespace PCOE {
          **/
         ~EventDrivenObserver();
         
-        std::string getName() {
+        const std::string& getName() {
             return source;
         }
 
