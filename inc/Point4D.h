@@ -60,8 +60,15 @@ namespace PCOE {
         /**
          * Gets the waypoint time.
          **/
-        inline std::chrono::time_point<Clock, Duration> getTime() {
+        inline std::chrono::time_point<Clock, Duration> getTime() const {
             return time;
+        }
+
+        /**
+         * Get the states associated with the point.
+         **/
+        inline const std::vector<double> getStates() const {
+            return states;
         }
 
     private:
