@@ -33,7 +33,7 @@ namespace PCOE {
                 double lon,
                 double alt,
                 std::chrono::time_point<Clock, Duration> time,
-                std::vector<double> states)
+                std::vector<double> states = {})
             : lat(lat), lon(lon), alt(alt), time(time), states(std::move(states)) {}
 
         /**
