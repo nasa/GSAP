@@ -38,6 +38,16 @@ namespace PCOE {
 
         using DynamicArray::operator[];
     };
+    
+    class ObservablesVector final : public DynamicArray<double> {
+    public:
+        using DynamicArray::DynamicArray;
+        
+        using DynamicArray::operator=;
+        
+        using DynamicArray::operator[];
+    };
+
 
     /**
      * Represents a State-space representation model of a system. In particular,
@@ -68,7 +78,8 @@ namespace PCOE {
         using input_type = InputVector;
         using output_type = OutputVector;
         using state_type = StateVector;
-        using event_state_type = double;
+        using observables_type = ObservablesVector;
+        using event_state_type = StateVector;
         using noise_type = std::vector<double>;
 
         /**
@@ -84,8 +95,10 @@ namespace PCOE {
          **/
         SystemModel(state_type::size_type stateSize,
                     std::vector<MessageId> inputs,
-                    std::vector<MessageId> outputs)
-            : stateSize(stateSize), inputs(std::move(inputs)), outputs(std::move(outputs)) {}
+                    std::vector<MessageId> outputs,
+                    std::vector<std::string> observables,
+                    std::vector<MessageId> events)
+        : stateSize(stateSize), inputs(std::move(inputs)), outputs(std::move(outputs)), observables(std::move(observables)), events(std::move(events)) {}
 
         /**
          * Default destructor. A virtual default destructor is necessary to
@@ -138,6 +151,30 @@ namespace PCOE {
         virtual output_type outputEqn(const double t,
                                       const state_type& x,
                                       const noise_type& n) const = 0;
+        
+        /**
+         * Calculate event state.
+         *
+         * @param x  The model state vector at the current time step.
+         * @return   The
+         */
+        virtual event_state_type eventStateEqn(const state_type& x) const {
+            return event_state_type();
+        }
+        
+        /** Calculate observables of the model. Observables are those
+         * that are not measured, but are interested in being predicted for
+         * prognostics.
+         *
+         * @param t  Time
+         * @param x  The model state vector at the current time step.
+         * @return   The model output vector at the next time step.
+         **/
+        virtual observables_type observablesEqn(double t,
+                                                const state_type& x) const {
+            return getObservablesVector();
+        }
+
 
         /**
          * Initialize the model state.
@@ -220,11 +257,25 @@ namespace PCOE {
             return outputs;
         }
 
+        inline observables_type getObservablesVector() const {
+            return observables_type(observables.size());
+        }
+        
+        inline const std::vector<std::string>& getObservables() const {
+            return observables;
+        }
+        
+        inline const std::vector<MessageId>& getEvents() const {
+            return events;
+        }
+
     private:
         double defaultTimeStep = 1.0;
         state_type::size_type stateSize;
         std::vector<MessageId> inputs;
         std::vector<MessageId> outputs;
+        std::vector<std::string> observables;
+        std::vector<MessageId> events;
     };
 }
 

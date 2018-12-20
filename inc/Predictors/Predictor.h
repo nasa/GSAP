@@ -19,8 +19,8 @@
 namespace PCOE {
     class Prediction {
     public:
-        Prediction(std::vector<ProgEvent> events, std::vector<DataPoint> trajectories)
-            : events(std::move(events)), sysTrajectories(std::move(trajectories)) {}
+        Prediction(std::vector<ProgEvent> events, std::vector<DataPoint> observables)
+            : events(std::move(events)), observables(std::move(observables)) {}
 		
         static Prediction & EmptyPrediction() {
             static Prediction emptyPrediction({},{});
@@ -31,13 +31,13 @@ namespace PCOE {
             return events;
         }
 
-        inline const std::vector<DataPoint>& getSystemTrajectories() const {
-            return sysTrajectories;
+        inline const std::vector<DataPoint>& getObservables() const {
+            return observables;
         }
 
     private:
 	    std::vector<ProgEvent> events;
-	    std::vector<DataPoint> sysTrajectories;
+	    std::vector<DataPoint> observables;
     };
 
     /**
@@ -88,11 +88,11 @@ namespace PCOE {
         virtual Prediction predict(double t, const std::vector<UData>& state) = 0;
 
         /**
-         * Gets a list of the outputs (system trajectories) predicted by the
+         * Gets a list of the observables predicted by the
          * current predictor.
          **/
-        inline const std::vector<std::string>& getPredictedOutputs() {
-            return predictedOutputs;
+        inline const std::vector<std::string>& getObservableNames() {
+            return observables;
         }
 
     protected:
@@ -100,8 +100,8 @@ namespace PCOE {
          * Sets the outputs (system trajectories) predicted by the current
          * predictor.
          **/
-        inline void PredictedOutputs(std::vector<std::string> value) {
-            predictedOutputs = std::move(value);
+        inline void setObservableNames(std::vector<std::string> value) {
+            observables = std::move(value);
         }
 
         LoadEstimator& loadEstimator;
@@ -110,7 +110,7 @@ namespace PCOE {
         const TrajectoryService& trajService;
 
     private:
-        std::vector<std::string> predictedOutputs;
+        std::vector<std::string> observables;
     };
 }
 

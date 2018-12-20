@@ -29,6 +29,14 @@
 using namespace PCOE;
 using namespace PCOE::Test;
 
+namespace MBProgTestSupport {
+    Datum<UData>::time_point addOneSecond(PCOE::Datum<UData>::ms_rep time) {
+        auto a = std::chrono::milliseconds(time + PCOE::Datum<UData>::ms_rep(1000));
+        return Datum<UData>::time_point(a);
+    }
+}
+using namespace MBProgTestSupport;
+
 void testWithMockModel() {
     PrognosticsModelFactory::instance().Register<TestPrognosticsModel>("Mock");
     ObserverFactory::instance().Register<TestObserver>("Mock");
@@ -47,22 +55,23 @@ void testWithMockModel() {
     data[MessageId::TestOutput0] = Datum<double>(3);
     mbp.step(data);
     
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     // First Step
-    data[MessageId::TestInput0] = Datum<double>(1);
-    data[MessageId::TestInput1] = Datum<double>(2);
-    data[MessageId::TestOutput0] = Datum<double>(3);
+    auto newTime = addOneSecond(data[MessageId::TestInput0].getTime());
+    data[MessageId::TestInput0].setTime(newTime);
+    data[MessageId::TestInput1].setTime(newTime);
+    data[MessageId::TestOutput0].setTime(newTime);
     Prediction result = mbp.step(data);
     
     Assert::AreEqual(result.getEvents().size(), 1);
     Assert::AreEqual(result.getEvents()[0].getState()[0].get(), 1, 1e-6);
     Assert::AreEqual(result.getEvents()[0].getStartTime().get(), 1.5, 1e-6);
-    Assert::AreEqual(result.getSystemTrajectories().size(), 0);
+    Assert::AreEqual(result.getObservables().size(), 0);
+
     
     // No time passed
     Prediction result2 = mbp.step(data);
     Assert::AreEqual(result2.getEvents().size(), 0);
-    Assert::AreEqual(result2.getSystemTrajectories().size(), 0);
+    Assert::AreEqual(result2.getObservables().size(), 0);
     
     TestPrognosticsModel model(config);
     TestObserver obs(model, config);
@@ -71,26 +80,22 @@ void testWithMockModel() {
     ModelBasedPrognoser mbp2(config);
     
     // Initialize
-    data[MessageId::TestInput0] = Datum<double>(1);
-    data[MessageId::TestInput1] = Datum<double>(2);
-    data[MessageId::TestOutput0] = Datum<double>(3);
-    mbp.step(data);
+    mbp2.step(data);
     
     // First Step
-    auto a = std::chrono::milliseconds(data[MessageId::TestInput0].getTime() + PCOE::Datum<UData>::ms_rep(1000));
-    PCOE::Datum<UData>::time_point newTime = PCOE::Datum<UData>::time_point(a);
+    newTime = addOneSecond(data[MessageId::TestInput0].getTime());
     data[MessageId::TestInput0].setTime(newTime);
     data[MessageId::TestInput1].setTime(newTime);
     data[MessageId::TestOutput0].setTime(newTime);
-    result = mbp.step(data);
+    result = mbp2.step(data);
     
     Assert::AreEqual(result.getEvents().size(), 1);
     Assert::AreEqual(result.getEvents()[0].getState()[0].get(), 1, 1e-6);
     Assert::AreEqual(result.getEvents()[0].getStartTime().get(), 1.5, 1e-6);
-    Assert::AreEqual(result.getSystemTrajectories().size(), 0);
+    Assert::AreEqual(result.getObservables().size(), 0);
     
     // No time passed
-    result2 = mbp.step(data);
+    result2 = mbp2.step(data);
     Assert::AreEqual(result2.getEvents().size(), 0);
-    Assert::AreEqual(result2.getSystemTrajectories().size(), 0);
+    Assert::AreEqual(result2.getObservables().size(), 0);
 }

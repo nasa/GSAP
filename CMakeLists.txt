@@ -36,6 +36,7 @@ set(HEADERS
     inc/Datum.h
     inc/DynamicArray.h
     inc/EventDrivenPrognoser.h
+    inc/EventDrivenPrognoserBuilder.h
     inc/Exceptions.h
     inc/Factory.h
     inc/GaussianVariable.h
@@ -55,6 +56,7 @@ set(HEADERS
     inc/Messages/ProgEventMessage.h
     inc/Messages/UDataMessage.h
     inc/Messages/WaypointMessage.h
+    inc/ModelBasedEventDrivenPrognoserBuilder.h
     inc/ModelBasedPrognoser.h
     inc/Models/BatteryModel.h
     inc/Models/SystemModel.h
@@ -99,6 +101,7 @@ set(SRCS
     src/ConfigMap.cpp
     src/DataPoint.cpp
     src/DataPoints.cpp
+    src/EventDrivenPrognoserBuilder.cpp
     src/GaussianVariable.cpp
     src/Loading/ConstLoadEstimator.cpp
     src/Loading/GaussianLoadEstimator.cpp
@@ -109,6 +112,7 @@ set(SRCS
     src/Messages/MessageBus.cpp
     src/Messages/MessageId.cpp
     src/Messages/WaypointMessage.cpp
+    src/ModelBasedEventDrivenPrognoserBuilder.cpp
     src/ModelBasedPrognoser.cpp
     src/Models/BatteryModel.cpp
     src/Net/TCPSocket.cpp

@@ -162,19 +162,9 @@ public:
      *
      * @param t  Time
      * @param x  The model state vector at the current time step.
-     * @return  true if the threshold is reached; otherwise, false.
+     * @return  For each event: true if the threshold is reached; otherwise, false.
      **/
-    bool thresholdEqn(double t, const state_type& x) const override;
-
-    /** Calculate predicted outputs of the model. Predicted outputs are those
-     * that are not measured, but are interested in being predicted for
-     * prognostics.
-     *
-     * @param t  Time
-     * @param x  The model state vector at the current time step.
-     * @return   The model output vector at the next time step.
-     **/
-    predicted_output_type predictedOutputEqn(double t, const state_type& x) const override;
+    std::vector<bool> thresholdEqn(double t, const state_type& x) const override;
 
     event_state_type eventStateEqn(const state_type& x) const override;
 

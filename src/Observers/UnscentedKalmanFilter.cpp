@@ -101,7 +101,7 @@ namespace PCOE {
         log.WriteLine(LOG_INFO, MODULE_NAME, "Created UKF");
     }
 
-    void UnscentedKalmanFilter::initialize(const double t0,
+    void UnscentedKalmanFilter::initialize(double t0,
                                            const SystemModel::state_type& x0,
                                            const SystemModel::input_type& u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
@@ -126,7 +126,7 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initialize completed");
     }
 
-    void UnscentedKalmanFilter::step(const double timestamp,
+    void UnscentedKalmanFilter::step(double timestamp,
                                      const SystemModel::input_type& u,
                                      const SystemModel::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");

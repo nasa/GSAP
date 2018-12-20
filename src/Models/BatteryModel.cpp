@@ -70,8 +70,7 @@ BatteryModel::BatteryModel()
                        {MessageId::Watts},
                        {MessageId::Volts, MessageId::Centigrade},
                        {},
-                       {MessageId::BatteryEod},
-                       1) {
+                       {MessageId::BatteryEod}) {
     // Set some default parameters
     setParameters();
 }
@@ -416,26 +415,19 @@ SystemModel::output_type BatteryModel::outputEqn(double,
 }
 
 // Battery Threshold Equation
-bool BatteryModel::thresholdEqn(double t, const state_type& x) const {
+std::vector<bool> BatteryModel::thresholdEqn(double t, const state_type& x) const {
     // Compute based on voltage, so use output equation to get voltage
     auto z = outputEqn(t, x, std::vector<double>(2));
 
     // Determine if voltage (second element in z) is below VEOD threshold
-    return z[1] <= parameters.VEOD;
-}
-
-// Battery Predicted Outputs Equation
-PrognosticsModel::predicted_output_type BatteryModel::predictedOutputEqn(double,
-                                                                         const state_type&) const {
-    // Return empty vector because there are no predicted outputs.
-    return getPredictedOutputVector();
+    return {z[1] <= parameters.VEOD};
 }
 
 SystemModel::event_state_type BatteryModel::eventStateEqn(const state_type& x) const {
     // Compute "nominal" SOC
     double qnS = x[indices.states.qnS];
     double qnB = x[indices.states.qnB];
-    return (qnS + qnB) / parameters.qnMax;
+    return event_state_type({(qnS + qnB) / parameters.qnMax});
 }
 
 // Set model parameters, given qMobile

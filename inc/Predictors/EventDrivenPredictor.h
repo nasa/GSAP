@@ -41,6 +41,10 @@ namespace PCOE {
          * Unsubscribes the {@code EventDrivenPredictor} from the message bus.
          **/
         ~EventDrivenPredictor();
+        
+        const std::string& getName() {
+            return source;
+        }
 
         /**
          * Checks each message to see if it is a state update from the observer.

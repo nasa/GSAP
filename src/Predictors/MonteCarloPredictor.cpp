@@ -72,19 +72,26 @@ namespace PCOE {
         //            constructor. Shouldn't be possible here.
 
         auto savePts = savePointProvider.getSavePts();
+        auto eventNames = model.getEvents();
 
-        UData eventToe(UType::Samples);
-        eventToe.npoints(sampleCount);
-        std::vector<UData> eventState(savePts.size());
-        for (auto&& elem : eventState) {
-            elem.uncertainty(UType::Samples);
-            elem.npoints(sampleCount);
+        std::vector<UData> eventToe(eventNames.size());
+        for (auto&& toe : eventToe) {
+            toe.uncertainty(UType::Samples);
+            toe.npoints(sampleCount);
         }
-        std::vector<DataPoint> sysTrajectories(model.getPredictedOutputs().size());
-        for (auto& trajectory : sysTrajectories) {
-            trajectory.setUncertainty(UType::Samples);
-            trajectory.setNumTimes(savePts.size());
-            trajectory.setNPoints(sampleCount);
+        std::vector<std::vector<UData>> eventStates(eventNames.size());
+        for (auto&& eventState : eventStates) {
+            eventState.resize(savePts.size());
+            for (auto&& elem : eventState) {
+                elem.uncertainty(UType::Samples);
+                elem.npoints(sampleCount);
+            }
+        }
+        std::vector<DataPoint> observables(model.getObservables().size());
+        for (auto& observable : observables) {
+            observable.setUncertainty(UType::Samples);
+            observable.setNumTimes(savePts.size());
+            observable.setNPoints(sampleCount);
         }
         auto stateTimestamp = getLowestTimestamp(state);
 
@@ -144,8 +151,10 @@ namespace PCOE {
             auto x = SystemModel::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
 
             // 3. Simulate until time limit reached
-            std::vector<double> inputParams(model.getInputParameterCount());
-            eventToe[sample] = INFINITY;
+            SystemModel::input_type inputParams(model.getInputSize());
+            for (auto&& toe: eventToe) {
+                toe[sample] = INFINITY;
+            }
 
             std::vector<double>::size_type savePtIndex = 0;
             double timeOfCurrentSavePt = std::numeric_limits<double>::infinity();
@@ -163,10 +172,14 @@ namespace PCOE {
                 // Check threshold at time t and set timeOfEvent if reaching for first time
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
-                if (model.thresholdEqn(t_s, x)) {
-                    eventToe[sample] = t_s;
-                    eventToe.updated(stateTimestamp);
-                    break;
+                auto thresholdMet = model.thresholdEqn(t_s, x);
+                int thresholdsMet = 0;
+                for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
+                    if (thresholdMet[eventId]) {
+                        eventToe[eventId][sample] = t_s;
+                        eventToe[eventId].updated(stateTimestamp);
+                        thresholdsMet++;
+                    }
                 }
 
                 if (savePtIndex < savePts.size() && t_s > timeOfCurrentSavePt) {
@@ -177,15 +190,19 @@ namespace PCOE {
                         timeOfCurrentSavePt = seconds(*currentSavePt);
                     }
 
-                    auto predictedOutput = model.predictedOutputEqn(t_s, x);
+                    auto observablesEstimate = model.observablesEqn(t_s, x);
 
-                    for (unsigned int p = 0; p < predictedOutput.size(); p++) {
-                        sysTrajectories[p][savePtIndex][sample] = predictedOutput[p];
+                    for (unsigned int p = 0; p < observablesEstimate.size(); p++) {
+                        observables[p][savePtIndex][sample] = observablesEstimate[p];
                     }
 
                     // Write to eventState property
-                    eventState[savePtIndex][sample] = model.eventStateEqn(x);
-
+                    auto eventStatesEstimate = model.eventStateEqn(x);
+                    
+                    for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
+                        eventStates[eventId][savePtIndex][sample] = eventStatesEstimate[eventId]; // TODO(CT): Save all event states- assuming only one
+                    }
+                        
                     // Update time index
                     savePtIndex++;
                 }
@@ -199,13 +216,24 @@ namespace PCOE {
 
                 // Update state for t to t+dt
                 x = model.stateEqn(t_s, x, loadEstimate, noise, model.getDefaultTimeStep());
+                
+                if (thresholdsMet == eventNames.size()) {
+                    // All thresholds met- stop simulating for sample
+                    break;
+                }
             }
         }
 
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Prediction complete");
-        return Prediction({ProgEvent(model.getEvents()[0],
-                                     std::move(eventState),
-                                     std::move(eventToe))},
-                          std::move(sysTrajectories));
+        
+        std::vector<ProgEvent> events;
+        for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
+            events.push_back(ProgEvent(eventNames[eventId],
+                                       std::move(eventStates[eventId]),
+                                       std::move(eventToe[eventId])));
+        }
+        
+        return Prediction(std::move(events),
+                          std::move(observables));
     }
 }

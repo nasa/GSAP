@@ -243,7 +243,8 @@ void testBatteryThresholdEqn() {
     auto x = battery.initialize(u0, z0);
 
     // Check that not at threshold
-    Assert::AreEqual(false, battery.thresholdEqn(0, x));
+    bool result = battery.thresholdEqn(0, x)[0];
+    Assert::AreEqual(false, result);
 
     // Re-initialize to lower voltage
     u0[0] = 0.3;
@@ -252,7 +253,8 @@ void testBatteryThresholdEqn() {
     x = battery.initialize(u0, z0);
 
     // Check that at threshold
-    Assert::AreEqual(true, battery.thresholdEqn(0, x));
+    result = battery.thresholdEqn(0, x)[0];
+    Assert::AreEqual(true, result);
 }
 
 void testBatteryPredictedOutputEqn() {
@@ -269,8 +271,8 @@ void testBatteryPredictedOutputEqn() {
 
     // Set up predicted outputs
     auto z = battery.getOutputVector();
-    auto predictedOutput = battery.predictedOutputEqn(0, x);
+    auto observables = battery.observablesEqn(0, x);
 
     // Check values
-    Assert::AreEqual(0, predictedOutput.size());
+    Assert::AreEqual(0, observables.size());
 }

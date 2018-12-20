@@ -29,7 +29,7 @@ const std::vector<MessageId> EVENTS = {MessageId::TestEvent0};
 const BatteryModel::input_type::size_type INPUT_PARAM_COUNT = 1;
 
 EmptyPrognosticsModel::EmptyPrognosticsModel()
-    : PrognosticsModel(STATE_SIZE, INPUTS, OUTPUTS, PREDICTED_OUTPUTS, EVENTS, INPUT_PARAM_COUNT) {
+    : PrognosticsModel(STATE_SIZE, INPUTS, OUTPUTS, PREDICTED_OUTPUTS, EVENTS) {
     // Default constructor
 }
 
@@ -71,22 +71,22 @@ SystemModel::state_type EmptyPrognosticsModel::initialize(const input_type& u,
     return initialized_state;
 }
 
-bool EmptyPrognosticsModel::thresholdEqn(const double t,
-                                         const state_type& x) {
+std::vector<bool> EmptyPrognosticsModel::thresholdEqn(double t,
+                                         const state_type& x) const {
     // Often uses outputs to calculate threshold, remove line if not relevant
     auto z = outputEqn(t, x, std::vector<double>(2));
 
     bool hasReachedThreshold = false;
     // SET hasReachedThreshold
 
-    return hasReachedThreshold;
+    return {hasReachedThreshold};
 }
 
-PrognosticsModel::predicted_output_type
-EmptyPrognosticsModel::predictedOutputEqn(double t,
+PrognosticsModel::observables_type
+EmptyPrognosticsModel::observablesEqn(double t,
                                           const state_type& x) const {
-    auto predictedOutputs = getPredictedOutputVector();
-    // Fill predictedOutputs
+    auto observables = getObservablesVector();
+    // Fill observables
 
-    return predictedOutputs;
+    return observables;
 }

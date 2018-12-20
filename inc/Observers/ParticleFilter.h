@@ -71,7 +71,7 @@ namespace PCOE {
          * @param x0 Initial model state
          * @param u0 Initial model input
          **/
-        void initialize(const double t0,
+        void initialize(double t0,
                         const SystemModel::state_type& x0,
                         const SystemModel::input_type& u0) override;
 

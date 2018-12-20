@@ -23,7 +23,7 @@ auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
 // Outputs of model (e.g., voltage)
 auto OUTPUTS = {MessageId::TestOutput0, MessageId::TestOutput1};
 
-EmptyModel::EmptyModel() : SystemModel(STATE_SIZE, INPUTS, OUTPUTS) {}
+EmptyModel::EmptyModel() : SystemModel(STATE_SIZE, INPUTS, OUTPUTS, {}, {}) {}
 
 // Constructor based on configMap
 EmptyModel::EmptyModel(const ConfigMap& configMap) : EmptyModel::EmptyModel() {

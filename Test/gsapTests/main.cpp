@@ -9,6 +9,7 @@
 #include "DPointsTests.h"
 #include "DataStoreTests.h"
 #include "DynamicArrayTests.h"
+#include "EventDrivenPrognoserTests.h"
 #include "FrameworkTests.h"
 #include "GaussianVariableTests.h"
 #include "Loading/LoadEstimatorTests.h"
@@ -101,7 +102,9 @@ int main() {
     context.AddTest("Initialization", testDPointInit, "DPoint");
     context.AddTest("Update", testDPointUpdate, "DPoint");
     
-    context.AddTest("Mock Model Test", testWithMockModel, "MBP");
+    // Prognoser Tests
+    context.AddTest("Model Based Prognoser with Mock Model Test", testWithMockModel, "Model-Based Prognosers");
+    context.AddTest("Event DrivenPrognoser with Mock Model Test", testEDPWithMockModel, "Event-Driven Prognosers");
 
     MatrixTests::registerTests(context);
 

@@ -44,6 +44,10 @@ namespace PCOE {
          * Unsubscribes the {@code EventDrivenObserver} from the message bus.
          **/
         ~EventDrivenObserver();
+        
+        const std::string& getName() {
+            return source;
+        }
 
         /**
          * Handles messages representing updates to the model inputs and

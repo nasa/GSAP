@@ -43,7 +43,7 @@ private:
 class TestModel final : public SystemModel {
 public:
     TestModel(const ConfigMap& = ConfigMap())
-        : SystemModel(2, {MessageId::TestInput0, MessageId::TestInput1}, {MessageId::TestOutput0}) {
+        : SystemModel(2, {MessageId::TestInput0, MessageId::TestInput1}, {MessageId::TestOutput0}, {}, {MessageId::TestEvent0}) {
     }
 
     state_type stateEqn(const double,
@@ -88,16 +88,12 @@ public:
         return state_type(u.vec());
     }
 
-    bool thresholdEqn(const double, const state_type& x) const override {
-        return x[0] != 0.0;
+    std::vector<bool> thresholdEqn(const double, const state_type& x) const override {
+        return {x[0] != 0.0};
     }
 
     event_state_type eventStateEqn(const state_type&) const override {
-        return 0;
-    }
-
-    predicted_output_type predictedOutputEqn(const double, const state_type&) const override {
-        return getPredictedOutputVector();
+        return event_state_type({0.0});
     }
 };
 
@@ -213,7 +209,7 @@ public:
         std::free(static_cast<void_pointer>(ptr));
     }
 
-    friend bool operator==(const TestAllocator& lhs, const TestAllocator& rhs) {
+    friend bool operator==(const TestAllocator&, const TestAllocator&) {
         return true;
     }
 

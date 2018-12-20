@@ -16,7 +16,7 @@ public:
                        PCOE::MessageId::TestInput2},
                       {PCOE::MessageId::TestOutput0,
                        PCOE::MessageId::TestOutput1,
-                       PCOE::MessageId::TestOutput2}) {}
+                       PCOE::MessageId::TestOutput2}, {}, {}) {}
 
     // State indices
     struct stateIndices {
@@ -57,13 +57,13 @@ public:
 
     using SystemModel::stateEqn;
 
-    state_type stateEqn(const double t,
+    state_type stateEqn(double t,
                         const state_type& x,
                         const input_type& u,
                         const noise_type& n,
                         const double dt) const override;
 
-    output_type outputEqn(const double t,
+    output_type outputEqn(double t,
                           const state_type& x,
                           const noise_type& n) const override;
 

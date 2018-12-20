@@ -4,6 +4,7 @@ set(HEADERS
     DPointsTests.h
     DPointTests.h
     DynamicArrayTests.h
+    EventDrivenPrognoserTests.h
     Loading/LoadEstimatorTests.h
     Messages/MessageWatcherTests.h
     MockClasses.h
@@ -30,6 +31,7 @@ set(SRCS
     DPointsTests.cpp
     DPointTests.cpp
     DynamicArrayTests.cpp
+    EventDrivenPrognoserTests.cpp
     Loading/ConstLoadEstimatorTests.cpp
     Loading/GaussianLoadEstimatorTests.cpp
     Loading/LoadEstimatorTests.cpp
