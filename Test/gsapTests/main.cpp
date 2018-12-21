@@ -20,7 +20,6 @@
 #include "Observers/EventDrivenObserverTests.h"
 #include "ParticleFilterTests.h"
 #include "PredictorTests.h"
-#include "Predictors/EventDrivenPredictorTests.h"
 #include "StatisticalToolsTests.h"
 #include "TCPSocketTests.h"
 #include "Test.h"
@@ -40,6 +39,10 @@ namespace BatteryResultTests {
 }
 
 namespace MessageBusTests {
+    void registerTests(TestContext& context);
+}
+
+namespace EventDrivenPredictorTests {
     void registerTests(TestContext& context);
 }
 
@@ -101,10 +104,14 @@ int main() {
     // DPoint Tests
     context.AddTest("Initialization", testDPointInit, "DPoint");
     context.AddTest("Update", testDPointUpdate, "DPoint");
-    
+
     // Prognoser Tests
-    context.AddTest("Model Based Prognoser with Mock Model Test", testWithMockModel, "Model-Based Prognosers");
-    context.AddTest("Event DrivenPrognoser with Mock Model Test", testEDPWithMockModel, "Event-Driven Prognosers");
+    context.AddTest("Model Based Prognoser with Mock Model Test",
+                    testWithMockModel,
+                    "Model-Based Prognosers");
+    context.AddTest("Event DrivenPrognoser with Mock Model Test",
+                    testEDPWithMockModel,
+                    "Event-Driven Prognosers");
 
     MatrixTests::registerTests(context);
 
@@ -212,12 +219,7 @@ int main() {
                     EventDrivenObserverTests::processMessage,
                     "EventDrivenObserver");
 
-    context.AddTest("construct", EventDrivenPredictorTests::constructor, "EventDrivenPredictor");
-    context.AddTest("processMessage",
-                    EventDrivenPredictorTests::processMessage,
-                    "EventDrivenPredictor");
-    context.AddTest("Full Config", EventDrivenPredictorTests::fullConfig, "EventDrivenPredictor");
-    context.AddTest("Save Points", EventDrivenPredictorTests::savePts, "EventDrivenPredictor");
+    EventDrivenPredictorTests::registerTests(context);
 
     DynamicArrayTests::registerTests(context);
 

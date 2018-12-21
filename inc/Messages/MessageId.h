@@ -83,6 +83,7 @@ namespace PCOE {
         TestOutput3 = 0x627232000000FF03L,
         BatteryEod = 0x6272380100000000L,
         BatteryEol = 0x6272380100000100L,
+        Prediction = 0x6272380100000200L,
         TestEvent0 = 0x627238FF00000000L,
         Intialize = 0x627200FE00000000L,
         Start = 0x627200FF00000000L,

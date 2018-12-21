@@ -32,16 +32,20 @@ namespace PCOE {
          * @param observer   The predictor that the {@code EventDrivenPredictor}
          *                   uses to produce predictions.
          * @param source     The name of the source that is being observed.
+         * @param batch      True to publish a single message per prediction.
+         *                   False to send one message per event in the
+         *                   prediction.
          **/
         EventDrivenPredictor(MessageBus& messageBus,
                              std::unique_ptr<Predictor>&& predictor,
-                             std::string source);
+                             std::string source,
+                             bool batch = false);
 
         /**
          * Unsubscribes the {@code EventDrivenPredictor} from the message bus.
          **/
         ~EventDrivenPredictor();
-        
+
         const std::string& getName() {
             return source;
         }
@@ -63,6 +67,7 @@ namespace PCOE {
         MessageBus& bus;
         std::unique_ptr<Predictor> pred;
         std::string source;
+        bool batchEvents;
     };
 }
 #endif

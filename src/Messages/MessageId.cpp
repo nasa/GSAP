@@ -30,6 +30,7 @@ namespace PCOE {
             {"TestOutput3", MessageId::TestOutput3},
             {"BatteryEod", MessageId::BatteryEod},
             {"BatteryEol", MessageId::BatteryEol},
+            {"Prediction", MessageId::Prediction},
             {"RouteStart", MessageId::RouteStart},
             {"RouteEnd", MessageId::RouteEnd},
             {"RouteClear", MessageId::RouteClear},
