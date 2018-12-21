@@ -80,7 +80,7 @@ void testMonteCarloBatteryPredict() {
     // Compute mean of timeOfEvent and SOC at different time points
     double meanEOD = 0;
     auto& eod = prediction.getEvents()[0];
-    auto& toe = eod.getStartTime();
+    auto& toe = eod.getTOE();
     for (unsigned int i = 0; i < toe.npoints(); i++) {
         meanEOD += toe[i] / toe.npoints();
     }

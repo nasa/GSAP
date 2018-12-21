@@ -201,7 +201,7 @@ namespace BatteryResultTests {
         Assert::AreEqual(7.42001e-12, x_est[7].get(7), 1e-5, "t=1, x_est[7], covariance 7");
         Assert::AreEqual(1.86231e-10, x_est[7].get(8), 1e-5, "t=1, x_est[7], covariance 8");
         auto prediction = predictor.predict(t, x_est);
-        auto event = prediction.getEvents().front().getStartTime().getVec();
+        auto event = prediction.getEvents().front().getTOE().getVec();
         std::sort(event.begin(), event.end());
         Assert::IsTrue(event.front() < 2500, "Lowest event time");
         Assert::IsTrue(event.back() > 2750, "Highest event time floor");
@@ -297,7 +297,7 @@ namespace BatteryResultTests {
         Assert::AreEqual(2.54302e-10, x_est[7].get(8), 1e-5, "t=1, x_est[7], covariance 8");
 
         prediction = predictor.predict(t, x_est);
-        event = prediction.getEvents().front().getStartTime().getVec();
+        event = prediction.getEvents().front().getTOE().getVec();
         std::sort(event.begin(), event.end());
         Assert::IsTrue(event.front() < 2500, "Lowest event time");
         Assert::IsTrue(event.back() > 2750, "Highest event time floor");

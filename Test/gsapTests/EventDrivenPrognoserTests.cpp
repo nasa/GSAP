@@ -169,7 +169,7 @@ void testEDPWithMockModel() {
     data[MessageId::TestOutput0].setTime(newTime);
     ProgEvent result = comm.publish(data);
     Assert::AreEqual(result.getState()[0].get(), 1, 1e-6);
-    Assert::AreEqual(result.getStartTime().get(), 1.5, 1e-6);
+    Assert::AreEqual(result.getTOE().get(), 1.5, 1e-6);
 
     // TODO(CT): Test with Config map
     // ModelBasedPrognoser mbp(config);
@@ -196,5 +196,5 @@ void testEDPWithMockModel() {
     data2[MessageId::TestOutput0].setTime(newTime2);
     ProgEvent result2 = comm.publish(data2);
     Assert::AreEqual(result2.getState()[0].get(), 1, 1e-6);
-    Assert::AreEqual(result2.getStartTime().get(), 1.5, 1e-6);
+    Assert::AreEqual(result2.getTOE().get(), 1.5, 1e-6);
 }
