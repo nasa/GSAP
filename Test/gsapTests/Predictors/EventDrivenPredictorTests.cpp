@@ -26,45 +26,6 @@ using namespace PCOE;
 using namespace PCOE::Test;
 
 namespace EventDrivenPredictorTests {
-    class PowerConverter final : public IMessageProcessor {
-    public:
-        PowerConverter(MessageBus& bus, const ConfigMap&, const std::string& source) : bus(bus) {
-            bus.subscribe(this, source, MessageId::Volts);
-            bus.subscribe(this, source, MessageId::Watts);
-        }
-
-        void processMessage(const std::shared_ptr<Message>& message) override {
-            lock_guard guard(m);
-            switch (message->getMessageId()) {
-            case MessageId::Volts: {
-                DoubleMessage* vmsg = dynamic_cast<DoubleMessage*>(message.get());
-                volts = vmsg->getValue();
-                break;
-            }
-            case MessageId::Watts: {
-                DoubleMessage* wmsg = dynamic_cast<DoubleMessage*>(message.get());
-                double current = wmsg->getValue() / volts;
-                auto imsg = std::shared_ptr<Message>(new DoubleMessage(MessageId::Amperes,
-                                                                       message->getSource(),
-                                                                       message->getTimestamp(),
-                                                                       current));
-                bus.publish(imsg);
-                break;
-            }
-            default:
-                Unreachable("Unexpected message id");
-            }
-        }
-
-    private:
-        using mutex = std::mutex;
-        using lock_guard = std::lock_guard<mutex>;
-
-        mutable mutex m;
-        MessageBus& bus;
-        double volts;
-    };
-
     void constructor() {
         MessageBus bus;
         TestPrognosticsModel tpm;
@@ -230,66 +191,27 @@ namespace EventDrivenPredictorTests {
         MessageCounter listener(bus, src, MessageId::BatteryEod);
         ConfigMap config = createConfig();
 
-        std::unique_ptr<PrognosticsModel> model;
-        std::unique_ptr<LoadEstimator> loadEstimator;
-        std::unique_ptr<Observer> observer;
-        std::unique_ptr<Predictor> predictor;
-        std::vector<std::unique_ptr<IMessageProcessor>> eventListeners;
         TrajectoryService trajService;
+        BatteryModel model(config);
+        ConstLoadEstimator le(config);
+        EventDrivenObserver edObs(bus,
+                                  std::unique_ptr<Observer>(
+                                      new UnscentedKalmanFilter(model, config)),
+                                  src);
+        EventDrivenPredictor edPred(bus,
+                                    std::unique_ptr<Predictor>(
+                                        new MonteCarloPredictor(model, le, trajService, config)),
+                                    src);
 
-        auto& mfactory = PrognosticsModelFactory::instance();
-        model = mfactory.Create("Battery", config);
-        eventListeners.push_back(
-            std::unique_ptr<IMessageProcessor>(new PowerConverter(bus, config, src)));
+        auto timestamp = MessageClock::time_point(MessageClock::duration(1535391267115000));
+        DoubleMessage* dm0 = new DoubleMessage(MessageId::Volts, src, timestamp, 12.2);
+        DoubleMessage* dm1 = new DoubleMessage(MessageId::Watts, src, timestamp, 2);
+        DoubleMessage* dm2 = new DoubleMessage(MessageId::Centigrade, src, timestamp, 20.0);
 
-        auto& lefactory = LoadEstimatorFactory::instance();
-        loadEstimator = lefactory.Create("Const", config);
-
-        auto& ofactory = ObserverFactory::instance();
-        observer = ofactory.Create("UKF", *model, config);
-
-        auto& pfactory = PredictorFactory::instance();
-        predictor = pfactory.Create("MC", *model, *loadEstimator, trajService, config);
-
-        auto edObs = observer ? std::unique_ptr<EventDrivenObserver>(
-                                    new EventDrivenObserver(bus, std::move(observer), src))
-                              : nullptr;
-
-        auto edPred = predictor ? std::unique_ptr<EventDrivenPredictor>(
-                                      new EventDrivenPredictor(bus, std::move(predictor), src))
-                                : nullptr;
-
-        DoubleMessage* dm0 =
-            new DoubleMessage(MessageId::Volts,
-                              src,
-                              MessageClock::time_point(MessageClock::duration(1535391267115000)),
-                              12.2);
-        DoubleMessage* dm1 =
-            new DoubleMessage(MessageId::Watts,
-                              src,
-                              MessageClock::time_point(MessageClock::duration(1535391267115000)),
-                              2);
-        DoubleMessage* dm2 =
-            new DoubleMessage(MessageId::Centigrade,
-                              src,
-                              MessageClock::time_point(MessageClock::duration(1535391267115000)),
-                              20.0);
-
-        DoubleMessage* dm3 =
-            new DoubleMessage(MessageId::Volts,
-                              src,
-                              MessageClock::time_point(MessageClock::duration(1535391268115000)),
-                              12.2);
-        DoubleMessage* dm4 =
-            new DoubleMessage(MessageId::Watts,
-                              src,
-                              MessageClock::time_point(MessageClock::duration(1535391268115000)),
-                              2);
-        DoubleMessage* dm5 =
-            new DoubleMessage(MessageId::Centigrade,
-                              src,
-                              MessageClock::time_point(MessageClock::duration(1535391268115000)),
-                              20.0);
+        timestamp += std::chrono::seconds(1);
+        DoubleMessage* dm3 = new DoubleMessage(MessageId::Volts, src, timestamp, 12.2);
+        DoubleMessage* dm4 = new DoubleMessage(MessageId::Watts, src, timestamp, 2);
+        DoubleMessage* dm5 = new DoubleMessage(MessageId::Centigrade, src, timestamp, 20.0);
 
         bus.publish(std::shared_ptr<Message>(dm0));
         bus.waitAll();
@@ -315,41 +237,20 @@ namespace EventDrivenPredictorTests {
         MessageCounter listener(bus, src, MessageId::BatteryEod);
         ConfigMap config = createConfig();
 
-        std::unique_ptr<PrognosticsModel> model;
-        std::unique_ptr<LoadEstimator> loadEstimator;
-        std::unique_ptr<Observer> observer;
-        std::unique_ptr<Predictor> predictor;
-        std::vector<std::unique_ptr<IMessageProcessor>> eventListeners;
         EventDrivenTrajectoryService trajService(bus,
                                                  std::unique_ptr<TrajectoryService>(
                                                      new TrajectoryService()),
                                                  src);
-
-        auto& mfactory = PrognosticsModelFactory::instance();
-        model = mfactory.Create("Battery", config);
-        eventListeners.push_back(
-            std::unique_ptr<IMessageProcessor>(new PowerConverter(bus, config, src)));
-
-        auto& lefactory = LoadEstimatorFactory::instance();
-        loadEstimator = lefactory.Create("Const", config);
-
-        auto& ofactory = ObserverFactory::instance();
-        observer = ofactory.Create("UKF", *model, config);
-
-        auto& pfactory = PredictorFactory::instance();
-        predictor = pfactory.Create("MC",
-                                    *model,
-                                    *loadEstimator,
-                                    trajService.getTrajectoryService(),
-                                    config);
-
-        auto edObs = observer ? std::unique_ptr<EventDrivenObserver>(
-                                    new EventDrivenObserver(bus, std::move(observer), src))
-                              : nullptr;
-
-        auto edPred = predictor ? std::unique_ptr<EventDrivenPredictor>(
-                                      new EventDrivenPredictor(bus, std::move(predictor), src))
-                                : nullptr;
+        BatteryModel model(config);
+        ConstLoadEstimator le(config);
+        EventDrivenObserver edObs(bus,
+                                  std::unique_ptr<Observer>(
+                                      new UnscentedKalmanFilter(model, config)),
+                                  src);
+        EventDrivenPredictor edPred(bus,
+                                    std::unique_ptr<Predictor>(new MonteCarloPredictor(
+                                        model, le, trajService.getTrajectoryService(), config)),
+                                    src);
 
         bus.publish(
             std::shared_ptr<Message>(new EmptyMessage(MessageId::RouteStart, src, timestamp)));
@@ -402,5 +303,59 @@ namespace EventDrivenPredictorTests {
         auto event = msg->getValue();
         auto eventState = event.getState();
         Assert::AreEqual(eventState.size(), 2); // Number of savepoints from trajectory
+    }
+
+    void batch() {
+        static Log& log = Log::Instance();
+        log.SetVerbosity(LOG_TRACE);
+        std::string src = "3701";
+        MessageBus bus(std::launch::deferred);
+        MessageCounter listener(bus, src, MessageId::Prediction);
+        ConfigMap config = createConfig();
+
+        TrajectoryService trajService;
+        BatteryModel model(config);
+        ConstLoadEstimator le(config);
+        EventDrivenObserver edObs(bus,
+                                  std::unique_ptr<Observer>(
+                                      new UnscentedKalmanFilter(model, config)),
+                                  src);
+        EventDrivenPredictor edPred(bus,
+                                    std::unique_ptr<Predictor>(
+                                        new MonteCarloPredictor(model, le, trajService, config)),
+                                    src,
+                                    true);
+
+        auto timestamp = MessageClock::time_point(MessageClock::duration(1535391267115000));
+        DoubleMessage* dm0 = new DoubleMessage(MessageId::Volts, src, timestamp, 12.2);
+        DoubleMessage* dm1 = new DoubleMessage(MessageId::Watts, src, timestamp, 2);
+        DoubleMessage* dm2 = new DoubleMessage(MessageId::Centigrade, src, timestamp, 20.0);
+
+        timestamp += std::chrono::seconds(1);
+        DoubleMessage* dm3 = new DoubleMessage(MessageId::Volts, src, timestamp, 12.2);
+        DoubleMessage* dm4 = new DoubleMessage(MessageId::Watts, src, timestamp, 2);
+        DoubleMessage* dm5 = new DoubleMessage(MessageId::Centigrade, src, timestamp, 20.0);
+
+        bus.publish(std::shared_ptr<Message>(dm0));
+        bus.waitAll();
+        bus.publish(std::shared_ptr<Message>(dm1));
+        bus.waitAll();
+        bus.publish(std::shared_ptr<Message>(dm2));
+        bus.waitAll();
+        bus.publish(std::shared_ptr<Message>(dm3));
+        bus.waitAll();
+        bus.publish(std::shared_ptr<Message>(dm4));
+        bus.waitAll();
+        bus.publish(std::shared_ptr<Message>(dm5));
+        bus.waitAll();
+        Assert::AreEqual(1, listener.getCount(), "Predictor didn't produce prediction");
+    }
+
+    void registerTests(TestContext& context) {
+        context.AddTest("construct", constructor, "EventDrivenPredictor");
+        context.AddTest("processMessage", processMessage, "EventDrivenPredictor");
+        context.AddTest("Full Config", fullConfig, "EventDrivenPredictor");
+        context.AddTest("Save Points", savePts, "EventDrivenPredictor");
+        context.AddTest("Batch Result", batch, "EventDrivenPredictor");
     }
 }

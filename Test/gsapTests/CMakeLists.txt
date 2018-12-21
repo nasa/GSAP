@@ -12,7 +12,6 @@ set(HEADERS
     ModelTests.h
     Observers/EventDrivenObserverTests.h
     ObserverTests.h
-    Predictors/EventDrivenPredictorTests.h
     PredictorTests.h
     ThreadTests.h
     UDataTests.h
