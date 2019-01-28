@@ -38,16 +38,15 @@ namespace PCOE {
 
         using DynamicArray::operator[];
     };
-    
+
     class ObservablesVector final : public DynamicArray<double> {
     public:
         using DynamicArray::DynamicArray;
-        
+
         using DynamicArray::operator=;
-        
+
         using DynamicArray::operator[];
     };
-
 
     /**
      * Represents a State-space representation model of a system. In particular,
@@ -98,7 +97,11 @@ namespace PCOE {
                     std::vector<MessageId> outputs,
                     std::vector<std::string> observables,
                     std::vector<MessageId> events)
-        : stateSize(stateSize), inputs(std::move(inputs)), outputs(std::move(outputs)), observables(std::move(observables)), events(std::move(events)) {}
+            : stateSize(stateSize),
+              inputs(std::move(inputs)),
+              outputs(std::move(outputs)),
+              observables(std::move(observables)),
+              events(std::move(events)) {}
 
         /**
          * Default destructor. A virtual default destructor is necessary to
@@ -151,7 +154,7 @@ namespace PCOE {
         virtual output_type outputEqn(const double t,
                                       const state_type& x,
                                       const noise_type& n) const = 0;
-        
+
         /**
          * Calculate event state.
          *
@@ -159,9 +162,10 @@ namespace PCOE {
          * @return   The
          */
         virtual event_state_type eventStateEqn(const state_type& x) const {
+            (void)x;
             return event_state_type();
         }
-        
+
         /** Calculate observables of the model. Observables are those
          * that are not measured, but are interested in being predicted for
          * prognostics.
@@ -170,11 +174,11 @@ namespace PCOE {
          * @param x  The model state vector at the current time step.
          * @return   The model output vector at the next time step.
          **/
-        virtual observables_type observablesEqn(double t,
-                                                const state_type& x) const {
+        virtual observables_type observablesEqn(double t, const state_type& x) const {
+            (void)t;
+            (void)x;
             return getObservablesVector();
         }
-
 
         /**
          * Initialize the model state.
@@ -260,11 +264,11 @@ namespace PCOE {
         inline observables_type getObservablesVector() const {
             return observables_type(observables.size());
         }
-        
+
         inline const std::vector<std::string>& getObservables() const {
             return observables;
         }
-        
+
         inline const std::vector<MessageId>& getEvents() const {
             return events;
         }

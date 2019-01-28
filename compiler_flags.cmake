@@ -73,7 +73,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     # /W4:   Sets which warning level to output.
     # /wd:   Disable warning
     # /Zi:   Generates complete debugging information.
-    set(CMAKE_CXX_FLAGS "/EHsc /GS /sdl- /W4 /wd\"4996\" /Zi /MP /Gm-")
+    set(CMAKE_CXX_FLAGS "/EHsc /GS /sdl- /W4 /wd\"4996\" /wd\"4458\" /Zi /MP /Gm-")
     set(CMAKE_CXX_FLAGS_DEBUG "/MDd /Od /RTC1")
     set(CMAKE_CXX_FLAGS_RELEASE "/GL /MD /O2 /Oi")
 else()

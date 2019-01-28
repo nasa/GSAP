@@ -50,8 +50,8 @@ namespace PCOE {
                     throw std::out_of_range("Cannot extrapolate time before first waypoint");
                 }
                 // Interpolate
-                double tmp = (time - lastTime).count();
-                double tmp2 = (waypoint.first - lastTime).count();
+                double tmp = static_cast<double>((time - lastTime).count());
+                double tmp2 = static_cast<double>((waypoint.first - lastTime).count());
                 double ratio = tmp / tmp2;
                 auto lat = lastWP->getLatitude() +
                            (waypoint.second.getLatitude() - lastWP->getLatitude()) * ratio;
