@@ -1,5 +1,4 @@
 set(HEADERS
-    EmptyCommunicator.h
     EmptyModel.h
     EmptyObserver.h
     EmptyPredictor.h
@@ -8,14 +7,12 @@ set(HEADERS
 )
 
 set(SRCS
-    EmptyCommunicator.cpp
     EmptyModel.cpp
     EmptyObserver.cpp
     EmptyPredictor.cpp
     EmptyPrognoser.cpp
     EmptyPrognosticsModel.cpp
 )
-
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../inc/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/)

@@ -1,23 +1,7 @@
-/**  EmptyPredictor - Header
- *   @file      EmptyPredictor Class
- *   @ingroup   GPIC++
- *   @ingroup    Predictors
- *
- *   @brief     EmptyPredictor Class - Class defining the EmptyPredictor
- *
- *   @author    Matthew Daigle
- *   @version   1.1.0
- *
- *   @pre       N/A
- *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: January 10, 2017
- *
- *   @copyright Copyright (c) 2017-2018 United States Government as represented by
+/**  @copyright Copyright (c) 2017-2019 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
-
 #ifndef PCOE_EmptyPredictor_H
 #define PCOE_EmptyPredictor_H
 
@@ -53,5 +37,4 @@ namespace PCOE {
         Prediction predict(double t, const std::vector<UData>& state) override;
     };
 }
-
 #endif // PCOE_EmptyPredictor_H

@@ -1,4 +1,4 @@
-// Copyright (c) 2018 United States Government as represented by the
+// Copyright (c) 2018-2019 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #include <thread>
@@ -79,5 +79,11 @@ namespace MessageWatcherTests {
         Assert::AreEqual(2, msgValues.size(), "Watcher message size");
         Assert::AreEqual(2.0, msgValues[0], 1e-15, "Watcher message value 0");
         Assert::AreEqual(3.0, msgValues[1], 1e-15, "Watcher message value 1");
+    }
+    
+    void registerTests(TestContext& context) {
+        context.AddTest("Construct", MessageWatcherTests::constructor, "MessageWatcher");
+        context.AddTest("Publish", MessageWatcherTests::publish, "MessageWatcher");
+        context.AddTest("Message Count", MessageWatcherTests::messageCount, "MessageWatcher");
     }
 }

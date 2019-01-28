@@ -1,22 +1,7 @@
-/**  EmptyModel - Header
- *   @file       EmptyModel.h
- *   @ingroup    GSAP-Support
- *
- *   @brief      EmptyModel model class for prognostics
- *
- *   @author     Matthew Daigle
- *   @version    1.1.0
- *
- *   @pre        N/A
- *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: January 10, 2017
- *
- *   @copyright Copyright (c) 2017-2018 United States Government as represented by
+/**  @copyright Copyright (c) 2017-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
-
 #ifndef EmptyModel_H
 #define EmptyModel_H
 
@@ -69,5 +54,4 @@ public:
      **/
     state_type initialize(const input_type& u, const output_type& z) const override;
 };
-
 #endif

@@ -1,11 +1,6 @@
-//
-//  TestPrognoser.cpp
-//  Generic Infrastructure Example
-//
-//  Created by Chris Teubert on 4/18/16.
-//  Copyright © 2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.  All Rights Reserved.
-//
-
+// Copyright (c) 2018-2019 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #include <string>
 
 #include "TestPrognoser.h"

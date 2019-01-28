@@ -1,23 +1,7 @@
-/**  EmptyObserver - Header
- *   @file       EmptyObserver.h
- *   @ingroup    GPIC++
- *   @defgroup   Observer     Observer
- *
- *   @brief      EmptyObserver class
- *
- *   @author     Matthew Daigle
- *   @version    1.1.0
- *
- *   @pre        N/A
- *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: January 10, 2017
- *
- *   @copyright Copyright (c) 2017-2018 United States Government as represented by
+/**  @copyright Copyright (c) 2017-2019 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
-
 #ifndef PCOE_EmptyObserver_H
 #define PCOE_EmptyObserver_H
 
@@ -61,5 +45,4 @@ namespace PCOE {
         std::vector<UData> getStateEstimate() const override;
     };
 }
-
 #endif // PCOE_EmptyObserver_H
