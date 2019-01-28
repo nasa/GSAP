@@ -3,7 +3,6 @@
 // All Rights Reserved.
 #include <fstream>
 
-#include "CommunicatorTests.h"
 #include "ConfigMapTests.h"
 #include "DPointTests.h"
 #include "DPointsTests.h"
@@ -16,16 +15,14 @@
 #include "Messages/MessageWatcherTests.h"
 #include "ModelBasedPrognoserTests.h"
 #include "ModelTests.h"
-#include "ObserverTests.h"
+#include "Observers/ObserverTests.h"
 #include "Observers/EventDrivenObserverTests.h"
-#include "ParticleFilterTests.h"
-#include "PredictorTests.h"
+#include "Observers/ParticleFilterTests.h"
+#include "Predictors/PredictorTests.h"
 #include "StatisticalToolsTests.h"
-#include "TCPSocketTests.h"
 #include "Test.h"
 #include "ThreadTests.h"
 #include "TrajectoryServiceTests.h"
-#include "UDPSocketTests.h"
 #include "UDataTests.h"
 
 using namespace PCOE::Test;
@@ -182,32 +179,6 @@ int main() {
     context.AddTest("Get State Estimate", getStateEstimate, "Particle Filter");
 
     LoadEstimatorTests::registerTests(context);
-
-    // TCPSocket Tests
-    context.AddTest("TCPSocket Constructor", testTCPctor, "TCPSocket");
-    context.AddTest("TCPServer Constructor", testTCPServerCtor, "TCPSocket");
-    context.AddTest("TCPSocket Send and Receive", testTCPSendAndReceive, "TCPSocket");
-    context.AddTest("TCPSocket Closers", testTCPClose, "TCPSocket");
-    context.AddTest("TCPSocket NoDelay", testTCPNoDelay, "TCPSocket");
-    context.AddTest("TCPSocket ReceiveBufferSize", testTCPReceiveBufferSize, "TCPSocket");
-    context.AddTest("TCPSocket ReceiveTimeout", testTCPReceiveTimeout, "TCPSocket");
-    context.AddTest("TCPSocket SendBufferSize", testTCPSendBufferSize, "TCPSocket");
-    context.AddTest("TCPSocket SendTimeout", testTCPSendTimeout, "TCPSocket");
-    context.AddTest("TCPSocket Exceptions", testTCPExceptions, "TCPSocket");
-
-    // UDPSocket Tests
-    context.AddTest("UDPSocket Constructor", testUDPCtor, "UDPSocket");
-    context.AddTest("UDPSocket Send", testUDPSendandReceive, "UDPSocket");
-    context.AddTest("UDPSocket Exception Handling", testExceptionHandling, "UDPSocket");
-
-    context.AddTest("Prognoser Factory", PrognoserFactoryTest);
-
-    // Communicator Tests
-    context.AddTest("construct", TestCommunicator::construct, "Common Communicator");
-    context.AddTest("enqueue", TestCommunicator::enqueue, "Common Communicator");
-    context.AddTest("subscribe", TestCommunicator::subscribe, "Common Communicator");
-    context.AddTest("stop", TestCommunicator::stop, "Common Communicator");
-
     MessageBusTests::registerTests(context);
 
     context.AddTest("Construct", MessageWatcherTests::constructor, "MessageWatcher");

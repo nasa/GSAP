@@ -4,12 +4,12 @@
 //
 //  Created by Julian Vu on 2/28/17.
 
-#include "ParticleFilterTests.h"
 #include "ConfigMap.h"
 #include "Exceptions.h"
 #include "Models/BatteryModel.h"
 #include "Models/SystemModel.h"
 #include "Observers/ParticleFilter.h"
+#include "Observers/ParticleFilterTests.h"
 #include "Tank3.h"
 #include "Test.h"
 

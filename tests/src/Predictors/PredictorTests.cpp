@@ -13,8 +13,8 @@
 #include "MockClasses.h"
 #include "Models/BatteryModel.h"
 #include "Models/PrognosticsModelFactory.h"
-#include "PredictorTests.h"
 #include "Predictors/MonteCarloPredictor.h"
+#include "Predictors/PredictorTests.h"
 #include "Test.h"
 #include "UData.h"
 

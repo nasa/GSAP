@@ -25,7 +25,7 @@
 
 #include "Matrix.h"
 #include "Models/BatteryModel.h"
-#include "ObserverTests.h"
+#include "Observers/ObserverTests.h"
 #include "Observers/ParticleFilter.h"
 #include "Observers/UnscentedKalmanFilter.h"
 #include "Tank3.h"
