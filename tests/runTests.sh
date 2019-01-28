@@ -68,23 +68,7 @@ pushd bin
 echo -e "\n\n${YELLOW}Running Tests.${NORMAL}"
 failedTests=0;
 
-./supportTests
-echo -e "\n"
-ec=$?
-if [ $ec -ne 0 ]; then
-    echo -e "${PURPLE}$ec tests failed.${NORMAL}\n\n\n"
-fi
-failedTests=$(($failedTests+$ec));
-
-./frameworkTests
-echo -e "\n"
-ec=$?
-if [ $ec -ne 0 ]; then
-    echo -e "${PURPLE}$ec tests failed.${NORMAL}\n\n\n"
-fi
-failedTests=$(($failedTests+$ec));
-
-./commCollectionTests
+./tests
 echo -e "\n"
 ec=$?
 if [ $ec -ne 0 ]; then

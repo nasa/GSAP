@@ -37,14 +37,7 @@ Push-Location bin;
 Write-Host "`nRunning Tests." -ForegroundColor Yellow;
 $failedTests = 0;
 
-./gsapTests.exe;
-Write-Host "";
-if ($lastExitCode -ne 0) {
-    Write-Warning "$lastExitCode tests failed.`n`n`n";
-}
-$failedTests += $lastExitCode;
-
-./commCollectionTests.exe;
+./tests.exe;
 Write-Host "";
 if ($lastExitCode -ne 0) {
     Write-Warning "$lastExitCode tests failed.`n`n`n";
