@@ -42,9 +42,14 @@ before_install:
 
 script:
   - set OPEN_MP_NUM_THREADS 4
-  - pushd example
+  - pushd examples/simple
   - mkdir build
-  - mkdir bin
+  - pushd build
+  - cmake ..
+  - cmake --build .
+  - popd
+  - pushd examples/async
+  - mkdir build
   - pushd build
   - cmake ..
   - cmake --build .
