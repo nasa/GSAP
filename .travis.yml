@@ -44,16 +44,13 @@ script:
   - set OPEN_MP_NUM_THREADS 4
   - pushd examples/simple
   - mkdir build
-  - pushd build
-  - cmake ..
+  - cmake .
   - cmake --build .
   - popd
   - pushd examples/async
   - mkdir build
-  - pushd build
-  - cmake ..
+  - cmake .
   - cmake --build .
-  - popd
   - popd
   - pushd tests
   - mkdir build
