@@ -50,7 +50,7 @@ script:
   - cmake --build .
   - popd
   - popd
-  - pushd Test
+  - pushd tests
   - mkdir build
   - mkdir bin
   - mkdir coverage
@@ -61,12 +61,11 @@ script:
   - popd
   - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$COMPENV" == "gcc" ]; then
     pushd coverage;
-    lcov -b ../Test/ -c -q -i -d ../build/CMakeFiles/gsap.dir/ -o .coverage.initial;
+    lcov -b ../tests/ -c -q -i -d ../build/CMakeFiles/gsap.dir/ -o .coverage.initial;
     popd;
     fi
   - pushd bin
-  - ./gsapTests
-  - ./commCollectionTests
+  - ./tests
   - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$COMPENV" == "gcc" ]; then
     popd;
     pushd coverage;
