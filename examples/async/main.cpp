@@ -117,13 +117,9 @@ public:
         std::sort(samples.begin(), samples.end());
         double eod_median = samples.at(samples.size() / 2);
 
-        // Finally, we jump through some hoops to format the result as an ISO
-        // date-time.
+        // Finally, we print the number of milliseconds until EoD
         auto eod_dur = milliseconds(static_cast<unsigned long>(eod_median * 1000.0));
-        auto eod_time_point = system_clock::time_point(eod_dur);
-        auto eod_time_t = system_clock::to_time_t(eod_time_point);
-        std::tm tm = *std::localtime(&eod_time_t);
-        std::cout << "Predicted median EoD: " << std::put_time(&tm, "%F %T") << std::endl;
+        std::cout << "Predicted median EoD: " << eod_dur.count() << "ms" << std::endl;
     }
 
 private:
