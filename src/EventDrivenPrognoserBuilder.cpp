@@ -64,10 +64,8 @@ namespace PCOE {
                                                             const std::string& trajectorySource) {
         lock_guard guard(m);
         EventDrivenPrognoser container(bus);
-        container.addEventListener(
-            new EventDrivenTrajectoryService(bus,
-                                             std::make_unique<TrajectoryService>(),
-                                             trajectorySource));
+        container.addEventListener(new EventDrivenTrajectoryService(
+            bus, std::unique_ptr<TrajectoryService>(new TrajectoryService()), trajectorySource));
 
         if (config.hasKey(LOAD_ESTIMATOR_KEY)) {
             log.FormatLine(LOG_DEBUG,
