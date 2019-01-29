@@ -62,6 +62,7 @@ std::vector<std::map<MessageId, Datum<double>>> read_file(const std::string& fil
 // This example sets up a simple synchronos prognoser to predict battery end of
 // discharge using a Monte Carlo predictor and an Unscented Kalman Filter.
 int main() {
+    using namespace std::chrono;
     // Read battery data from a file.
     auto data = read_file("data_const_load.csv");
 
@@ -99,7 +100,10 @@ int main() {
         auto samples = eod_time.getVec();
         std::sort(samples.begin(), samples.end());
         double eod_median = samples.at(samples.size() / 2);
-        std::cout << eod_median << std::endl;
+        auto now =  MessageClock::now();
+        auto now_s = duration_cast<std::chrono::seconds>(now.time_since_epoch());
+        std::cout << "Predicted median EoD: " << eod_median << " s (T- "
+                  << (eod_median-now_s.count())<< " s)" << std::endl;
     }
 
     return 0;

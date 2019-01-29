@@ -118,10 +118,13 @@ public:
         double eod_median = samples.at(samples.size() / 2);
 
         // Finally, we print the number of milliseconds until EoD
-        auto eod_dur = milliseconds(static_cast<unsigned long>(eod_median * 1000.0));
-        std::cout << "Predicted median EoD: " << eod_dur.count() << "ms" << std::endl;
+        auto eod_dur = std::chrono::seconds(static_cast<unsigned long>(eod_median));
+        auto now =  MessageClock::now();
+        auto now_s = duration_cast<std::chrono::seconds>(now.time_since_epoch());
+        std::cout << "Predicted median EoD: " << eod_dur.count() << " s (T- "
+                  << (eod_dur-now_s).count() << " s)" << std::endl;
     }
-
+ 
 private:
     MessageBus& bus;
 };
