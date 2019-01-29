@@ -1,5 +1,6 @@
-// Copyright © 2018 United States Government as represented by the Administrator of the National
-// Aeronautics and Space Administration.  All Rights Reserved.
+// Copyright (c) 2016-2019 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #include "Tank3.h"
 #include <vector>
 

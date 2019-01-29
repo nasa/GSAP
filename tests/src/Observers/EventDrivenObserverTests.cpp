@@ -1,4 +1,4 @@
-// Copyright (c) 2018 United States Government as represented by the
+// Copyright (c) 2018-2019 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #include <thread>
@@ -13,7 +13,6 @@ using namespace PCOE;
 using namespace PCOE::Test;
 
 namespace EventDrivenObserverTests {
-
     void constructor() {
         MessageBus bus;
         TestModel tm;
@@ -61,5 +60,10 @@ namespace EventDrivenObserverTests {
         Assert::AreEqual(1,
                          listener.getCount(),
                          "obs didn't produce state estimate after two sets of data");
+    }
+    
+    void registerTests(TestContext& context) {
+        context.AddTest("construct", constructor, "EventDrivenObserver");
+        context.AddTest("processMessage", processMessage, "EventDrivenObserver");
     }
 }

@@ -1,43 +1,27 @@
-/**  Unit Test functions for UData- Body
- *   @file      Unit Testing functions for UData
- *
- *   @brief     A set of functions to be used with UnitTester. These functions
- *              test all the aspects of UData
- *
- *   @ingroup   UData
- *
- *   @author    Chris Teubert <christopher.a.teubert@nasa.gov>
- *   @author    Jason Watkins <jason-watkins@outlook.com>
- *   @version   0.2.0
- *   @date      March 5, 2016
- *
- *   @copyright Copyright (c) 2013-2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- **/
-
+// Copyright (c) 2018-2019 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
 #include <chrono>
 #include <thread>
 
 #include "Test.h"
 #include "UData.h"
-#include "UDataTests.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
-static std::vector<double> getTestVec() {
-    std::vector<double> a;
-    a.push_back(1.3);
-    a.push_back(4.4);
-    a.push_back(5.5);
-    a.push_back(2.1);
-    a.push_back(3.3);
-    a.push_back(6.2);
-    return a;
-}
+namespace UDataTests {
+    static std::vector<double> getTestVec() {
+        std::vector<double> a;
+        a.push_back(1.3);
+        a.push_back(4.4);
+        a.push_back(5.5);
+        a.push_back(2.1);
+        a.push_back(3.3);
+        a.push_back(6.2);
+        return a;
+    }
 
-namespace TestUData {
     void construct_default() {
         try {
             UData ud;
@@ -649,5 +633,35 @@ namespace TestUData {
                        std::abs(ud[WEIGHT(3)] - 0.25) < 1e-12);
         std::size_t size = ud.getVec().size();
         Assert::AreEqual(10, size);
+    }
+    
+    void registerTests(PCOE::Test::TestContext& context) {
+        context.AddTest("construct_default", construct_default, "UData");
+        context.AddTest("construct_type", construct_type, "UData");
+        context.AddTest("construct_scalar", construct_scalar, "UData");
+        context.AddTest("construct_copy", construct_copy, "UData");
+        context.AddTest("construct_move", construct_move, "UData");
+        context.AddTest("operator_assign", operator_assign, "UData");
+        context.AddTest("operator_equal", operator_equal, "UData");
+        context.AddTest("operator_notequal", operator_notequal, "UData");
+        context.AddTest("operator_double", operator_double, "UData");
+        context.AddTest("dist", dist, "UData");
+        context.AddTest("npoints", npoints, "UData");
+        context.AddTest("size", size, "UData");
+        context.AddTest("uncertainty", uncertainty, "UData");
+        context.AddTest("updated", updated, "UData");
+        context.AddTest("valid", valid, "UData");
+        context.AddTest("operator_not", operator_not, "UData");
+        context.AddTest("iterators_forward", iterators_forward, "UData");
+        context.AddTest("iterators_reverse", iterators_reverse, "UData");
+        context.AddTest("access_double", access_double, "UData");
+        context.AddTest("access_pair", access_pair, "UData");
+        context.AddTest("access_vector", access_vector, "UData");
+        context.AddTest("point", point, "UData");
+        context.AddTest("meanSD", meanSD, "UData");
+        context.AddTest("meanCovar", meanCovar, "UData");
+        context.AddTest("percentiles", percentiles, "UData");
+        context.AddTest("samples", samples, "UData");
+        context.AddTest("wSamples", wSamples, "UData");
     }
 }

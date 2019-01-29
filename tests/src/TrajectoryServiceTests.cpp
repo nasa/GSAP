@@ -1,4 +1,4 @@
-// Copyright (c) 2018 United States Government as represented by the
+// Copyright (c) 2018-2019 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #include <string>
@@ -11,9 +11,11 @@
 #include "Messages/WaypointMessage.h"
 #include "Test.h"
 #include "Trajectory/EventDrivenTrajectoryService.h"
-#include "TrajectoryServiceTests.h"
 
-namespace PCOE {
+using namespace PCOE;
+using namespace PCOE::Test;
+
+namespace TrajectoryServiceTests {
     const std::string TEST_SRC = "Test";
 
     void testTrajectoryService() {
@@ -91,5 +93,9 @@ namespace PCOE {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         sp = tc.getSavePts();
         Test::Assert::AreEqual(sp.size(), 0, "Checking result of clear waypoint");
+    }
+    
+    void registerTests(TestContext& context) {
+        context.AddTest("Trajectory Service", testTrajectoryService, "Trajectory Service");
     }
 }

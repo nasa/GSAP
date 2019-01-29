@@ -16,31 +16,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 
 set(HEADERS
-    inc/ConfigMapTests.h
-    inc/DataStoreTests.h
-    inc/DPointsTests.h
-    inc/DPointTests.h
-    inc/DynamicArrayTests.h
-    inc/EventDrivenPrognoserTests.h
-    inc/GaussianVariableTests.h
-    inc/Loading/LoadEstimatorTests.h
-    inc/Messages/MessageWatcherTests.h
     inc/MockClasses.h
-    inc/ModelBasedPrognoserTests.h
-    inc/ModelTests.h
-    inc/Observers/EventDrivenObserverTests.h
-    inc/Observers/ObserverTests.h
-    inc/Observers/ParticleFilterTests.h
-    inc/Predictors/PredictorTests.h
-    inc/StatisticalToolsTests.h
     inc/Tank3.h
     inc/Test.h
     inc/TestPrognoser.h
-    inc/ThreadTests.h
-    inc/TrajectoryServiceTests.h
-    inc/UDataTests.h
 )
-
 
 set(SRCS
     src/ConfigMapTests.cpp
@@ -49,7 +29,6 @@ set(SRCS
     src/DPointTests.cpp
     src/DynamicArrayTests.cpp
     src/EventDrivenPrognoserTests.cpp
-    src/FrameworkTests.cpp
     src/GaussianVariableTests.cpp
     src/Loading/ConstLoadEstimatorTests.cpp
     src/Loading/GaussianLoadEstimatorTests.cpp
@@ -74,7 +53,6 @@ set(SRCS
     src/TrajectoryServiceTests.cpp
     src/UDataTests.cpp
 )
-
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../inc/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc/)

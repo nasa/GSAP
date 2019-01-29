@@ -1,9 +1,9 @@
-// Copyright (c) 2018 United States Government as represented by the
+// Copyright (c) 2018-2019 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-#include "DynamicArrayTests.h"
 #include "DynamicArray.h"
 #include "MockClasses.h"
+#include "Test.h"
 
 // TODO (JW): Total bytes allocated by std::vector is not predictable or
 //            consistent between platforms. Need to replace std::vector in the

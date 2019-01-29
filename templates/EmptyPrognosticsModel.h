@@ -1,22 +1,7 @@
-/**  EmptyPrognosticsModel - Header
- *   @file       EmptyPrognosticsModel.h
- *   @ingroup    GSAP-Support
- *
- *   @brief      EmptyPrognosticsModel model class for prognostics
- *
- *   @author     Matthew Daigle
- *   @version    1.1.0
- *
- *   @pre        N/A
- *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: January 10, 2017
- *
- *   @copyright Copyright (c) 2016-2018 United States Government as represented by
+/**  @copyright Copyright (c) 2016-2019 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
-
 #ifndef EmptyPrognosticsModel_H
 #define EmptyPrognosticsModel_H
 

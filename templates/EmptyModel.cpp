@@ -1,12 +1,7 @@
-/**  EmptyModel - Body
- *   @file       EmptyModel.cpp
- *   @ingroup    GSAP-Support
- *
- *   @copyright Copyright (c) 2017-2018 United States Government as represented by
+/**  @copyright Copyright (c) 2017-2018 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
-
 #include <string>
 #include <vector>
 
