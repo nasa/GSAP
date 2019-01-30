@@ -21,14 +21,13 @@ namespace PCOE {
      * any validation, and will accept null pointers for any of its constructor
      * arguments.
      **/
-    class EventDrivenPrognoser  {
+    class EventDrivenPrognoser {
     public:
-        EventDrivenPrognoser(MessageBus& messageBus, std::string source): bus(messageBus), src(source) {
-        };
+        EventDrivenPrognoser(MessageBus& messageBus) : bus(messageBus) {}
 
         EventDrivenPrognoser(const EventDrivenPrognoser&) = delete;
 
-        EventDrivenPrognoser(EventDrivenPrognoser&& other) : bus(other.bus), src(other.src) {
+        EventDrivenPrognoser(EventDrivenPrognoser&& other) : bus(other.bus) {
             using std::swap;
             if (&other == this) {
                 return;
@@ -50,7 +49,7 @@ namespace PCOE {
                 delete listener;
             }
         }
-        
+
         void setModel(SystemModel* model) {
             Expect(model != nullptr, "null model");
             Expect(this->model == nullptr, "model already set");
@@ -70,7 +69,6 @@ namespace PCOE {
 
     private:
         MessageBus& bus;
-        const std::string src;
         SystemModel* model = nullptr;
         LoadEstimator* loadEstimator = nullptr;
         std::vector<IMessageProcessor*> eventListeners;

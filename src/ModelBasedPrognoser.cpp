@@ -73,9 +73,6 @@ namespace PCOE {
             loadEstimator = loadEstFact.Create(DEFAULT_LOAD_EST, configMap);
         }
 
-        // Create Trajectory Service
-        TrajectoryService trajectoryService;
-
         // Create Predictor
         log.WriteLine(LOG_DEBUG, moduleName, "Creating Predictor");
         PredictorFactory& pPredictorFactory = PredictorFactory::instance();

@@ -13,14 +13,24 @@ namespace PCOE {
     const extern std::string MODEL_KEY;
     const extern std::string OBSERVER_KEY;
     const extern std::string PREDICTOR_KEY;
-    
+
     /**
      * Collects information about a prognostics configuration and builds the
      * necessary classes.
      **/
     class ModelBasedEventDrivenPrognoserBuilder : public EventDrivenPrognoserBuilder {
     public:
-        void setModelName(const std::string& value, bool isPrognosticsModel = false);
+        /**
+         * Initializes a new builder with an empty configuration.
+         **/
+        ModelBasedEventDrivenPrognoserBuilder() = default;
+
+        /**
+         * Initializes a new builder using the specified configuration.
+         **/
+        explicit ModelBasedEventDrivenPrognoserBuilder(ConfigMap config);
+
+        void setModelName(const std::string& value, bool isPrognosticsModel);
 
         void setObserverName(const std::string& value);
 

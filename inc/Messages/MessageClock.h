@@ -57,7 +57,7 @@ namespace PCOE {
          * Indicates that sucsessive calls to @{code now} do not yield
          * monotonically increasing results.
          **/
-        const bool is_steady = false;
+        static const bool is_steady = false;
 
         /**
          * Gets the current time as represented by this clock.

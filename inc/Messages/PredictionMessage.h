@@ -42,6 +42,7 @@ namespace PCOE {
         }
 
         void serializePayload(std::ostream& os) const override final {
+            (void)os;
             throw std::domain_error("Serialization not supported");
         }
 
