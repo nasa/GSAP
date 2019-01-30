@@ -4,16 +4,24 @@ project(gsap-tests)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../compiler_flags.cmake)
 
-set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin/)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin/)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/)
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testresults/)
+
+# Copy config files used to test config map to output directory
+set(TEST_CONFIG_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cfg/)
+file(MAKE_DIRECTORY ${TEST_CONFIG_DIRECTORY})
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cfg/Test.cfg
+    ${TEST_CONFIG_DIRECTORY}
+    COPYONLY
+)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cfg/Test2.cfg
+    ${TEST_CONFIG_DIRECTORY}
+    COPYONLY
+)
 
 set(HEADERS
     inc/MockClasses.h
@@ -67,8 +75,16 @@ add_subdirectory(
 link_libraries(gsap)
 add_executable(tests ${HEADERS} ${SRCS})
 
-# Templates - we compile these as part of the test to make sure they don't break
-add_subdirectory(
-    ${CMAKE_CURRENT_SOURCE_DIR}/../templates/
-    ${CMAKE_CURRENT_SOURCE_DIR}/build/templates
+# Compile all of the example code to make sure it's not totally broken
+#Template library
+set(TEMPLATE_SRCS
+    ../templates/EmptyModel.cpp
+    ../templates/EmptyObserver.cpp
+    ../templates/EmptyPredictor.cpp
+    ../templates/EmptyPrognoser.cpp
+    ../templates/EmptyPrognosticsModel.cpp
 )
+add_library(templates ${TEMPLATE_SRCS})
+
+add_executable(ex_simple ../examples/simple/main.cpp)
+add_executable(ex_async ../examples/async/main.cpp)

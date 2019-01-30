@@ -37,33 +37,26 @@ namespace ConfigMapTests {
         Assert::AreEqual(INT64_MAX, theMap.getInt64("testSetInt64"), "Setting int64 value failed.");
 
         theMap.set("testSetUInt64", UINT64_MAX);
-        Assert::AreEqual(UINT64_MAX, theMap.getUInt64("testSetUInt64"), "Setting uint64 value failed.");
+        Assert::AreEqual(UINT64_MAX,
+                         theMap.getUInt64("testSetUInt64"),
+                         "Setting uint64 value failed.");
 
         theMap.set("testSetUInt32", UINT32_MAX);
-        Assert::AreEqual(UINT32_MAX, theMap.getUInt32("testSetUInt32"), "Setting uint32 value failed.");
-
-        // std::string exampleLine("test3:a,b,dslfjs,d");
-        // theMap.add(exampleLine);
-        // assert(theMap["test3"].size() == 4);
-        // assert(theMap["test3"][0].compare("a")==0);
-        // assert(theMap["test3"][2].compare("dslfjs")==0);
-
-        // The error case- improperline
-        // ConfigMap theMap2;
-        // theMap2.add("test4");
-        // assert(theMap2.size() == 0);
+        Assert::AreEqual(UINT32_MAX,
+                         theMap.getUInt32("testSetUInt32"),
+                         "Setting uint32 value failed.");
     }
 
     void configMapLoad() {
         ConfigMap theMap;
-        theMap.addSearchPath("../cfg");
+        theMap.addSearchPath("./cfg");
         theMap = ConfigMap("Test.cfg");
         Assert::AreNotEqual(0, theMap.getVector("test")[0].compare("modelBasedPrognoser"));
     }
 
     void configMapLoadNonexistent() {
         ConfigMap theMap;
-        theMap.addSearchPath("../");
+        theMap.addSearchPath("./cfg");
         try {
             theMap = ConfigMap("Nonexistent.cfg"); // File doesn't exist
             Assert::Fail("Found file that should not exist.");
@@ -75,7 +68,7 @@ namespace ConfigMapTests {
     void configMapAddBadSearchPath() {
         ConfigMap theMap;
         try {
-            theMap.addSearchPath("../badPath");
+            theMap.addSearchPath("./badPath");
             Assert::Fail("ConfigMap added invalid search path.");
         }
         catch (std::domain_error&) {
@@ -84,7 +77,7 @@ namespace ConfigMapTests {
 
     void configMapTrim() {
         ConfigMap theMap;
-        theMap.addSearchPath("../cfg");
+        theMap.addSearchPath("./cfg");
         theMap = ConfigMap("Test.cfg");
     }
 

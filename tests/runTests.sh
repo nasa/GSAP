@@ -60,8 +60,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # This is to handle the case where the makefile was placed up one directory
-if [ ! -d build ]; then
-		popd
+if [ -d build ]; then
+		pushd build
 fi
 
 pushd bin
