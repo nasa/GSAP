@@ -2,7 +2,8 @@ language: cpp
 
 matrix:
   include:
-    - os: linux
+    - name: "Linux/GCC"
+      os: linux
       compiler: gcc
       addons:
         apt:
@@ -12,9 +13,16 @@ matrix:
             - g++-7
             - lcov
       env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && CMAKE_OPTS=-DCoverage=ON"
         - COMPENV="gcc"
-    - os: linux
+      after_success:
+        # Create lcov report
+        - lcov --c --d . --o coverage.info
+        - lcov --r coverage.info '/usr/*' --o coverage.info # filter system-files
+        # Uploading to CodeCov
+        - bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
+    - name: "Linux/Clang"
+      os: linux
       compiler: clang
       addons:
         apt:
@@ -22,16 +30,17 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-            - lcov
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
         - COMPENV="clang"
-    - os: osx
+    - name: "macOS/Clang"
+      os: osx
       compiler: clang
       env:
         - MATRIX_EVAL=""
         - COMPENV="clang"
-    - os: osx
+    - name: "macOS/Xcode"
+      os: osx
       env:
         - MATRIX_EVAL="GENERATOR='-G Xcode'"
         - COMPENV=""
@@ -39,26 +48,14 @@ matrix:
 before_install:
     - eval "${MATRIX_EVAL}"
 
-script:
-  - set OPEN_MP_NUM_THREADS 4
+before_script:
   - pushd tests
   - mkdir build
-  # - mkdir coverage
   - pushd build
-  - cmake -DCoverage=ON .. $GENERATOR
+
+script:
+  - cmake $CMAKE_OPTS .. $GENERATOR
   - cmake --build .
-  # - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$COMPENV" == "gcc" ]; then
-  #   pushd coverage;
-  #   lcov -b ../tests/ -c -q -i -d ../build/CMakeFiles/gsap.dir/ -o .coverage.initial;
-  #   popd;
-  #   fi
   - pushd bin
   - ./tests
-  # - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$COMPENV" == "gcc" ]; then
-  #   popd;
-  #   pushd coverage;
-  #   lcov -b ../ -c -q -d ../build/CMakeFiles/gsap.dir/ -o .coverage.run;
-  #   lcov -a .coverage.initial -a .coverage.run -o .coverage.total;
-  #   lcov -r .coverage.total 'usr/include/c++/*' -o .coverage.filtered;
-  #   popd;
-  #   fi
+  - popd
