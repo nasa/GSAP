@@ -17,13 +17,13 @@ matrix:
       script:
         - cmake -DCoverage=ON .. $GENERATOR
         - cmake --build .
-        - lcov -q -c -i -d . -o coverage_base.info
+        - lcov -q -c -i -d ./gsap -o coverage_base.info
         - pushd bin
         - ./tests
         - popd
       after_success:
         # Create lcov report
-        - lcov -q -c -d . -o coverage_test.info
+        - lcov -q -c -d ./gsap -o coverage_test.info
         - lcov -q -a coverage_base.info -a coverage_test.info -o coverage.info
         - lcov -q -r coverage.info '/usr/*' --o coverage.info # filter system-files
         # Upload to CodeCov
