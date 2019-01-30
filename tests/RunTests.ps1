@@ -2,16 +2,9 @@
 Push-Location "$PSScriptRoot";
 
 # Delete bin to make sure we get a clean build, and make sure the build Directory exists
-if (Test-Path bin) {
-    Remove-Item -Recurse -Force bin;
-}
-if (Test-Path build/CMakeCache.txt) {
-    Remove-Item -Force build/CMakeCache.txt;
-}
 if (!(Test-Path build)) {
     New-Item build -ItemType Directory;
 }
-New-Item bin/testresults -ItemType Directory -Force;
 
 Push-Location build;
 Write-Host "Running CMake." -ForegroundColor Yellow;
@@ -23,28 +16,27 @@ if (!($?)) {
     return;
 }
 Write-Host "`nRunning MSBuild." -ForegroundColor Yellow;
-# To build in release mode add /p:Configuration=Release
-cmake --build .;
+cmake --build . --clean-first -- /p:Configuration=Release;
 if (!($?)) {
     Write-Warning "MSBuild did not run correctly. Exiting.";
     Pop-Location;
     Pop-Location;
     return;
 }
-Pop-Location;
 
 Push-Location bin;
 Write-Host "`nRunning Tests." -ForegroundColor Yellow;
-$failedTests = 0;
 
 ./tests.exe;
 Write-Host "";
 if ($lastExitCode -ne 0) {
     Write-Warning "$lastExitCode tests failed.`n`n`n";
 }
-$failedTests += $lastExitCode;
+$failedTests = $lastExitCode;
 
 Write-Host "`n${failedTests} tests failed." -ForegroundColor Yellow;
 Pop-Location;
 
 Pop-Location;
+
+exit $failedTests;
