@@ -13,14 +13,21 @@ matrix:
             - g++-7
             - lcov
       env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && CMAKE_OPTS=-DCoverage=ON"
-        - COMPENV="gcc"
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+      script:
+        - cmake -DCoverage=ON .. $GENERATOR
+        - cmake --build .
+        - lcov -c -i -d . -o coverage_base.info
+        - pushd bin
+        - ./tests
+        - popd
       after_success:
         # Create lcov report
-        - lcov --c --d . --o coverage.info
-        - lcov --r coverage.info '/usr/*' --o coverage.info # filter system-files
-        # Uploading to CodeCov
-        - bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
+        - lcov -c -d . -o coverage_test.info
+        - lcov -a coverage_base.info -a coverage_test.info -o coverage.info
+        - lcov -r coverage.info '/usr/*' --o coverage.info # filter system-files
+        # Upload to CodeCov
+        - bash <(curl -s https://codecov.io/bash) -f coverage.info
     - name: "Linux/Clang"
       os: linux
       compiler: clang
@@ -32,18 +39,15 @@ matrix:
             - clang-5.0
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
-        - COMPENV="clang"
     - name: "macOS/Clang"
       os: osx
       compiler: clang
       env:
         - MATRIX_EVAL=""
-        - COMPENV="clang"
     - name: "macOS/Xcode"
       os: osx
       env:
         - MATRIX_EVAL="GENERATOR='-G Xcode'"
-        - COMPENV=""
 
 before_install:
     - eval "${MATRIX_EVAL}"
@@ -54,7 +58,7 @@ before_script:
   - pushd build
 
 script:
-  - cmake $CMAKE_OPTS .. $GENERATOR
+  - cmake .. $GENERATOR
   - cmake --build .
   - pushd bin
   - ./tests
