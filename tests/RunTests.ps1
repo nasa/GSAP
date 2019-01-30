@@ -1,7 +1,6 @@
 # Expect this script to be in the test subdirectory
 Push-Location "$PSScriptRoot";
 
-# Delete bin to make sure we get a clean build, and make sure the build Directory exists
 if (!(Test-Path build)) {
     New-Item build -ItemType Directory;
 }
@@ -13,7 +12,7 @@ if (!($?)) {
     Write-Warning "CMake did not run correctly. Exiting.";
     Pop-Location;
     Pop-Location;
-    return;
+    exit 1;
 }
 Write-Host "`nRunning MSBuild." -ForegroundColor Yellow;
 cmake --build . --clean-first -- /p:Configuration=Release;
@@ -21,7 +20,7 @@ if (!($?)) {
     Write-Warning "MSBuild did not run correctly. Exiting.";
     Pop-Location;
     Pop-Location;
-    return;
+    exit 1;
 }
 
 Push-Location bin;
