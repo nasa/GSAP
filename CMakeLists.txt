@@ -25,8 +25,6 @@ endif()
 
 set(HEADERS
     inc/BenchmarkTimer.h
-    inc/Communicator.h
-    inc/CommunicatorFactory.h
     inc/CompositeSavePointProvider.h
     inc/ConfigMap.h
     inc/Contracts.h
@@ -63,9 +61,6 @@ set(HEADERS
     inc/Models/SystemModelFactory.h
     inc/Models/PrognosticsModel.h
     inc/Models/PrognosticsModelFactory.h
-    inc/Net/TCPServer.h
-    inc/Net/TCPSocket.h
-    inc/Net/UDPSocket.h
     inc/Observers/EventDrivenObserver.h
     inc/Observers/Observer.h
     inc/Observers/ObserverFactory.h
@@ -76,16 +71,12 @@ set(HEADERS
     inc/Predictors/Predictor.h
     inc/Predictors/PredictorFactory.h
     inc/PContainer.h
-    inc/PlaybackCommunicator.h
     inc/Point3D.h
     inc/ProgEvent.h
     inc/Prognoser.h
     inc/PrognoserFactory.h
-    inc/RandomCommunicator.h
-    inc/RecorderCommunicator.h
     inc/Singleton.h
     inc/StatisticalTools.h
-    inc/STDINCommunicator.h
     inc/StringUtils.h
     inc/Trajectory/EventDrivenTrajectoryService.h
     inc/Trajectory/ITrajectoryCorrelator.h
@@ -97,7 +88,6 @@ set(HEADERS
 )
 
 set(SRCS
-    src/Communicator.cpp
     src/ConfigMap.cpp
     src/DataPoint.cpp
     src/DataPoints.cpp
@@ -115,20 +105,13 @@ set(SRCS
     src/ModelBasedEventDrivenPrognoserBuilder.cpp
     src/ModelBasedPrognoser.cpp
     src/Models/BatteryModel.cpp
-    src/Net/TCPSocket.cpp
-    src/Net/UDPSocket.cpp
-    src/Net/TCPServer.cpp
     src/Observers/EventDrivenObserver.cpp
     src/Observers/ParticleFilter.cpp
     src/Observers/UnscentedKalmanFilter.cpp
     src/PContainer.cpp
-    src/PlaybackCommunicator.cpp
     src/Predictors/EventDrivenPredictor.cpp
     src/Predictors/MonteCarloPredictor.cpp
-    src/RandomCommunicator.cpp
-    src/RecorderCommunicator.cpp
     src/StatisticalTools.cpp
-    src/STDINCommunicator.cpp
     src/Thread.cpp
     src/ThreadSafeLog.cpp
     src/Trajectory/EventDrivenTrajectoryService.cpp
