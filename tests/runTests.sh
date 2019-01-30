@@ -17,18 +17,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 pushd "${DIR}"
 
 
-# Delete bin to make sure we get a clean build, and make sure the build Directory exists
-if [ -d bin ]; then
-	rm -rf bin
-fi
-if [ -a build/CMakeCache.txt ]; then
-    rm -rf build/CMakeCache.txt
-fi
 if [ ! -d build ]; then
 	mkdir build
 fi
-mkdir -p bin/testresults
-
 
 pushd build
 echo -e "\n\n${YELLOW}Running CMake.${NORMAL}"
@@ -47,11 +38,11 @@ fi
 
 # For some reason the makefile is placed up one directory in some systems
 if [ -a ../Makefile ]; then
-		popd
+    popd
 fi
 
 echo -e "\n\n${YELLOW}Running make.${NORMAL}"
-make
+cmake --build . --clean-first
 if [ $? -ne 0 ]; then
     echo -e "${RED}make did not run correctly. Exiting.${NORMAL}"
     popd
@@ -61,7 +52,7 @@ fi
 
 # This is to handle the case where the makefile was placed up one directory
 if [ -d build ]; then
-		pushd build
+    pushd build
 fi
 
 pushd bin
@@ -69,18 +60,15 @@ echo -e "\n\n${YELLOW}Running Tests.${NORMAL}"
 failedTests=0;
 
 ./tests
-echo -e "\n"
 ec=$?
+echo -e "\n"
 if [ $ec -ne 0 ]; then
     echo -e "${PURPLE}$ec tests failed.${NORMAL}\n\n\n"
 fi
 failedTests=$(($failedTests+$ec));
 
 echo -e "\n\n${YELLOW}${failedTests} tests failed.${NORMAL}"
-popd;
+popd
+popd
 
-if [ -a build/CMakeCache.txt ]; then
-    rm -rf build/CMakeCache.txt
-fi
-
-popd;
+exit $failedTests
