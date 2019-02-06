@@ -7,6 +7,10 @@
 
 using namespace PCOE::Test;
 
+namespace AsyncIntegrationTests {
+    void registerTests(TestContext& context);
+}
+
 namespace SyncIntegrationTests {
     void registerTests(TestContext& context);
 }
@@ -132,6 +136,7 @@ int main() {
     
     // Integration Tests
     SyncIntegrationTests::registerTests(context);
+    AsyncIntegrationTests::registerTests(context);
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");
