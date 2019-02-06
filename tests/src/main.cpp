@@ -7,6 +7,10 @@
 
 using namespace PCOE::Test;
 
+namespace SyncIntegrationTests {
+    void registerTests(TestContext& context);
+}
+
 namespace BatteryResultTests {
     void registerTests(TestContext& context);
 }
@@ -101,7 +105,8 @@ namespace UDataTests {
 
 int main() {
     TestContext context;
-
+    
+    // Unit Tests
     BatteryResultTests::registerTests(context);
     ConfigMapTests::registerTests(context);
     DataPointTests::registerTests(context);
@@ -124,6 +129,9 @@ int main() {
     ThreadTests::registerTests(context);
     TrajectoryServiceTests::registerTests(context);
     UDataTests::registerTests(context);
+    
+    // Integration Tests
+    SyncIntegrationTests::registerTests(context);
 
     int result = context.Execute();
     std::ofstream junit("testresults/support.xml");

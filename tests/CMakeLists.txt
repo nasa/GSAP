@@ -55,6 +55,7 @@ set(SRCS
     src/Predictors/EventDrivenPredictorTests.cpp
     src/Predictors/PredictorTests.cpp
     src/StatisticalToolsTests.cpp
+    src/SyncIntegrationTests.cpp
     src/Tank3.cpp
     src/TestPrognoser.cpp
     src/ThreadTests.cpp
