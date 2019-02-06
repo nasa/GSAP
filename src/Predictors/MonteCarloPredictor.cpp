@@ -163,13 +163,16 @@ namespace PCOE {
                 //  blocked weighted bootstrap
                 static std::uniform_real_distribution<> uniformDistribution(0, 1);
                 auto step = uniformDistribution(generator);
+                
+                // Assumes that data is coupled- same sample for all states
+                size_t k = 0;
+                double weight = 0.0;
+                while (weight < step) {
+                    weight = (weight + state[0].get(WEIGHT(k)));
+                    k = (k+1)%state[0].size();
+                }
+                
                 for (size_t j = 0; j < state.size(); j++) {
-                    size_t k = 0;
-                    double weight = 0.0;
-                    while (weight < step) {
-                        weight = (weight + state[j].get(WEIGHT(k)));
-                        k = (k+1)%state[j].size();
-                    }
                     x[j] = state[j].get(SAMPLE((k-1)%state[j].size()));
                 }
             }
