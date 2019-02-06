@@ -109,12 +109,16 @@ namespace PCOE {
         // from it directly? So don't have to check within here. First step is to construct the mean
         // vector and covariance matrix from the UDatas
         Matrix Pxx(model.getStateSize(), model.getStateSize());
-        for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
-            xMean[xIndex][0] = state[xIndex][MEAN];
-            std::vector<double> covariance = state[xIndex].getVec(COVAR());
-            Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
+        Matrix PxxChol(model.getStateSize(), model.getStateSize());
+        
+        if (state.front().uncertainty() == UType::MeanCovar) {
+            for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
+                xMean[xIndex][0] = state[xIndex][MEAN];
+                std::vector<double> covariance = state[xIndex].getVec(COVAR());
+                Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
+            }
+            auto PxxChol = Pxx.chol();
         }
-        auto PxxChol = Pxx.chol();
 
 /* OpenMP info
  * If the application is built with OpenMP, the predictor below operates in parallel.
@@ -138,17 +142,37 @@ namespace PCOE {
 
             // 1. Sample the state
             // Create state vector
-            // Now we have mean vector (x) and covariance matrix (Pxx). We can use that to sample a
-            // realization of the state. I need to generate a vector of random numbers, size of the
-            // state vector Create standard normal distribution
-            Matrix xRandom(model.getStateSize(), 1);
-            static std::normal_distribution<> standardDistribution(0, 1);
-            for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
-                xRandom[xIndex][0] = standardDistribution(generator);
+            auto x = SystemModel::state_type(state.size());
+            if (state.front().uncertainty() == UType::MeanCovar) {
+                // Now we have mean vector (x) and covariance matrix (Pxx). We can use that to sample a
+                // realization of the state. I need to generate a vector of random numbers, size of the
+                // state vector Create standard normal distribution
+                Matrix xRandom(model.getStateSize(), 1);
+                static std::normal_distribution<> standardDistribution(0, 1);
+                for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
+                    xRandom[xIndex][0] = standardDistribution(generator);
+                }
+                // Update with mean and covariance
+                xRandom = xMean + PxxChol * xRandom;
+                x = SystemModel::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
+            } else if (state.front().uncertainty() == UType::Samples) {
+                for (size_t j = 0; j < state.size(); j++) {
+                    x[sample] = state[j][sample%state[j].size()];
+                }
+            } else if (state.front().uncertainty() == UType::WSamples) {
+                //  blocked weighted bootstrap
+                static std::uniform_real_distribution<> uniformDistribution(0, 1);
+                auto step = uniformDistribution(generator);
+                for (size_t j = 0; j < state.size(); j++) {
+                    size_t k = 0;
+                    double weight = 0.0;
+                    while (weight < step) {
+                        weight = (weight + state[j].get(WEIGHT(k)));
+                        k = (k+1)%state[j].size();
+                    }
+                    x[j] = state[j].get(SAMPLE((k-1)%state[j].size()));
+                }
             }
-            // Update with mean and covariance
-            xRandom = xMean + PxxChol * xRandom;
-            auto x = SystemModel::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
 
             // 3. Simulate until time limit reached
             SystemModel::input_type inputParams(model.getInputSize());
