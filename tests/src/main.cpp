@@ -39,15 +39,15 @@ namespace DynamicArrayTests {
     void registerTests(TestContext& context);
 }
 
-namespace EventDrivenObserverTests {
+namespace AsyncObserverTests {
     void registerTests(TestContext& context);
 }
 
-namespace EventDrivenPredictorTests {
+namespace AsyncPredictorTests {
     void registerTests(TestContext& context);
 }
 
-namespace EventDrivenPrognoserTests {
+namespace AsyncPrognoserTests {
     void registerTests(TestContext& context);
 }
 
@@ -112,9 +112,9 @@ int main() {
     DataPointsTests::registerTests(context);
     DataStoreTests::registerTests(context);
     DynamicArrayTests::registerTests(context);
-    EventDrivenObserverTests::registerTests(context);
-    EventDrivenPredictorTests::registerTests(context);
-    EventDrivenPrognoserTests::registerTests(context);
+    AsyncObserverTests::registerTests(context);
+    AsyncPredictorTests::registerTests(context);
+    AsyncPrognoserTests::registerTests(context);
     GaussianVariableTests::registerTests(context);
     LoadEstimatorTests::registerTests(context);
     MatrixTests::registerTests(context);

@@ -22,29 +22,29 @@ namespace PCOE {
      * @author Jason Watkins
      * @since 1.2
      **/
-    class EventDrivenObserver final : public IMessageProcessor {
+    class AsyncObserver final : public IMessageProcessor {
     public:
         /**
-         * Constructs a new {@code EventDrivenObserver}.
+         * Constructs a new {@code AsyncObserver}.
          *
          * @param messageBus The message bus on which to listen for and publish
-         *                   messages. The {@code EventDrivenObserver} will
+         *                   messages. The {@code AsyncObserver} will
          *                   immediately register to receive messages from the
          *                   message bus, and will publish results of the
          *                   observer to the message bus.
-         * @param observer   The observer that the {@code EventDrivenObserver}
+         * @param observer   The observer that the {@code AsyncObserver}
          *                   is monitoring.
          * @param source     The name of the source that is being observed.
          **/
-        EventDrivenObserver(MessageBus& messageBus,
+        AsyncObserver(MessageBus& messageBus,
                             std::unique_ptr<Observer>&& observer,
                             std::string source);
 
         /**
-         * Unsubscribes the {@code EventDrivenObserver} from the message bus.
+         * Unsubscribes the {@code AsyncObserver} from the message bus.
          **/
-        ~EventDrivenObserver();
-        
+        ~AsyncObserver();
+
         const std::string& getName() {
             return source;
         }

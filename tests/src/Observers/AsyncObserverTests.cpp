@@ -6,19 +6,19 @@
 
 #include "Messages/ScalarMessage.h"
 #include "MockClasses.h"
-#include "Observers/EventDrivenObserver.h"
+#include "Observers/AsyncObserver.h"
 #include "Test.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
-namespace EventDrivenObserverTests {
+namespace AsyncObserverTests {
     void constructor() {
         MessageBus bus;
         TestModel tm;
         const std::string src = "test";
 
-        EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tm)), src);
+        AsyncObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tm)), src);
         // Constructed without exception
     }
 
@@ -28,7 +28,7 @@ namespace EventDrivenObserverTests {
         const std::string src = "test";
 
         MessageCounter listener(bus, src, MessageId::ModelStateEstimate);
-        EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tm)), src);
+        AsyncObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tm)), src);
 
         Assert::AreEqual(0, listener.getCount(), "obs produced state estimate on construction");
         bus.publish(std::shared_ptr<Message>(
@@ -61,9 +61,9 @@ namespace EventDrivenObserverTests {
                          listener.getCount(),
                          "obs didn't produce state estimate after two sets of data");
     }
-    
+
     void registerTests(TestContext& context) {
-        context.AddTest("construct", constructor, "EventDrivenObserver");
-        context.AddTest("processMessage", processMessage, "EventDrivenObserver");
+        context.AddTest("construct", constructor, "AsyncObserver");
+        context.AddTest("processMessage", processMessage, "AsyncObserver");
     }
 }

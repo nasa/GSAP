@@ -2,20 +2,20 @@
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 
-#include "Predictors/EventDrivenPredictor.h"
 #include "Contracts.h"
 #include "Messages/PredictionMessage.h"
 #include "Messages/ProgEventMessage.h"
 #include "Messages/UDataMessage.h"
+#include "Predictors/AsyncPredictor.h"
 
 namespace PCOE {
     static const Log& log = Log::Instance();
     static const std::string MODULE_NAME = "PRED-ED";
 
-    EventDrivenPredictor::EventDrivenPredictor(MessageBus& messageBus,
-                                               std::unique_ptr<Predictor>&& predictor,
-                                               std::string source,
-                                               bool batch)
+    AsyncPredictor::AsyncPredictor(MessageBus& messageBus,
+                                   std::unique_ptr<Predictor>&& predictor,
+                                   std::string source,
+                                   bool batch)
         : bus(messageBus),
           pred(std::move(predictor)),
           source(std::move(source)),
@@ -25,12 +25,12 @@ namespace PCOE {
         bus.subscribe(this, this->source, MessageId::ModelStateEstimate);
     }
 
-    EventDrivenPredictor::~EventDrivenPredictor() {
+    AsyncPredictor::~AsyncPredictor() {
         lock_guard guard(m);
         bus.unsubscribe(this);
     }
 
-    void EventDrivenPredictor::processMessage(const std::shared_ptr<Message>& message) {
+    void AsyncPredictor::processMessage(const std::shared_ptr<Message>& message) {
         // Note (JW): If we are unable to aquire the lock within a few
         //            milliseconds, the predictor is already in the middle of a
         //            prediction, so we need to drop the current message to keep

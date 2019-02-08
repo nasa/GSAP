@@ -11,7 +11,7 @@
 #include "Messages/MessageBus.h"
 #include "Messages/ProgEventMessage.h"
 #include "Messages/ScalarMessage.h"
-#include "ModelBasedEventDrivenPrognoserBuilder.h"
+#include "ModelBasedAsyncPrognoserBuilder.h"
 
 using namespace PCOE;
 
@@ -124,7 +124,7 @@ public:
         std::cout << "Predicted median EoD: " << eod_dur.count() << " s (T- "
                   << (eod_dur-now_s).count() << " s)" << std::endl;
     }
- 
+
 private:
     MessageBus& bus;
 };
@@ -156,7 +156,7 @@ int main() {
 
     // The builder uses configuration information and other methods to determine
     // the correct set of objects needed to perform prognostics.
-    ModelBasedEventDrivenPrognoserBuilder builder(std::move(config));
+    ModelBasedAsyncPrognoserBuilder builder(std::move(config));
     builder.setModelName("Battery", true);
     builder.setObserverName("UKF");
     builder.setPredictorName("MC");

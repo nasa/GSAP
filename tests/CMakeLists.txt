@@ -42,7 +42,7 @@ set(SRCS
     src/DPointsTests.cpp
     src/DPointTests.cpp
     src/DynamicArrayTests.cpp
-    src/EventDrivenPrognoserTests.cpp
+    src/AsyncPrognoserTests.cpp
     src/GaussianVariableTests.cpp
     src/Loading/ConstLoadEstimatorTests.cpp
     src/Loading/GaussianLoadEstimatorTests.cpp
@@ -54,11 +54,11 @@ set(SRCS
     src/Messages/MessageWatcherTests.cpp
     src/ModelBasedPrognoserTests.cpp
     src/ModelTests.cpp
-    src/Observers/EventDrivenObserverTests.cpp
+    src/Observers/AsyncObserverTests.cpp
     src/Observers/ObserverTests.cpp
     src/Observers/ParticleFilterTests.cpp
     src/Predictors/BatteryResultTests.cpp
-    src/Predictors/EventDrivenPredictorTests.cpp
+    src/Predictors/AsyncPredictorTests.cpp
     src/Predictors/PredictorTests.cpp
     src/StatisticalToolsTests.cpp
     src/SyncIntegrationTests.cpp

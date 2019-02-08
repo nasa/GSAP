@@ -6,11 +6,11 @@
 #include <queue>
 
 #include "Datum.h"
-#include "EventDrivenPrognoser.h"
+#include "AsyncPrognoser.h"
 #include "Messages/ProgEventMessage.h"
 #include "Messages/ScalarMessage.h"
 #include "MockClasses.h"
-#include "ModelBasedEventDrivenPrognoserBuilder.h"
+#include "ModelBasedAsyncPrognoserBuilder.h"
 #include "Models/PrognosticsModelFactory.h"
 #include "Observers/ObserverFactory.h"
 #include "Predictors/PredictorFactory.h"
@@ -19,7 +19,7 @@
 using namespace PCOE;
 using namespace PCOE::Test;
 
-namespace EventDrivenPrognoserTests {
+namespace AsyncPrognoserTests {
     const std::string SENSOR_SRC = "test_sensor_src";
     const std::string TRAJ_SRC = "test_traj_src";
 
@@ -146,13 +146,13 @@ namespace EventDrivenPrognoserTests {
         PrognosticsModelFactory::instance().Register<TestPrognosticsModel>("Mock");
         ObserverFactory::instance().Register<TestObserver>("Mock");
         PredictorFactory::instance().Register<TestPredictor>("Mock");
-        ModelBasedEventDrivenPrognoserBuilder builder;
+        ModelBasedAsyncPrognoserBuilder builder;
         builder.setModelName("Mock", true);
         builder.setObserverName("Mock");
         builder.setPredictorName("Mock");
         builder.setConfigParam("LoadEstimator.Loading", std::vector<std::string>({"1", "2"}));
         MessageBus bus(std::launch::async);
-        EventDrivenPrognoser prognoser = builder.build(bus, SENSOR_SRC, TRAJ_SRC);
+        AsyncPrognoser prognoser = builder.build(bus, SENSOR_SRC, TRAJ_SRC);
 
         // Initialize
         std::map<MessageId, Datum<double>> data;
@@ -179,7 +179,7 @@ namespace EventDrivenPrognoserTests {
         config.set("predictor", "Mock");
         config.set("LoadEstimator.Loading", {"1", "2"});
         MessageBus bus2;
-        EventDrivenPrognoser prognoser2 = builder.build(bus2, SENSOR_SRC, TRAJ_SRC);
+        AsyncPrognoser prognoser2 = builder.build(bus2, SENSOR_SRC, TRAJ_SRC);
 
         // Initialize
         std::map<MessageId, Datum<double>> data2;
@@ -198,7 +198,7 @@ namespace EventDrivenPrognoserTests {
         Assert::AreEqual(result2.getState()[0].get(), 1, 1e-6);
         Assert::AreEqual(result2.getTOE().get(), 1.5, 1e-6);
     }
-    
+
     void registerTests(TestContext& context) {
         context.AddTest("Event DrivenPrognoser with Mock Model Test",
                     testEDPWithMockModel,

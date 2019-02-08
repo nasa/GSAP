@@ -10,7 +10,7 @@
 #include "Messages/ScalarMessage.h"
 #include "Messages/WaypointMessage.h"
 #include "Test.h"
-#include "Trajectory/EventDrivenTrajectoryService.h"
+#include "Trajectory/AsyncTrajectoryService.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -21,7 +21,7 @@ namespace TrajectoryServiceTests {
     void testTrajectoryService() {
         MessageBus mb;
 
-        EventDrivenTrajectoryService etc(mb,
+        AsyncTrajectoryService etc(mb,
                                          std::unique_ptr<TrajectoryService>(
                                              new TrajectoryService()),
                                          TEST_SRC);
@@ -94,7 +94,7 @@ namespace TrajectoryServiceTests {
         sp = tc.getSavePts();
         Test::Assert::AreEqual(sp.size(), 0, "Checking result of clear waypoint");
     }
-    
+
     void registerTests(TestContext& context) {
         context.AddTest("Trajectory Service", testTrajectoryService, "Trajectory Service");
     }

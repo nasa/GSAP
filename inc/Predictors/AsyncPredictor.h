@@ -8,7 +8,7 @@
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
 #include "Predictors/Predictor.h"
-#include "Trajectory/EventDrivenTrajectoryService.h"
+#include "Trajectory/AsyncTrajectoryService.h"
 
 namespace PCOE {
     /**
@@ -19,32 +19,32 @@ namespace PCOE {
      * @author Jason Watkins
      * @since 1.2
      **/
-    class EventDrivenPredictor final : public IMessageProcessor {
+    class AsyncPredictor final : public IMessageProcessor {
     public:
         /**
-         * Constructs a new {@code EventDrivenPredictor}.
+         * Constructs a new {@code AsyncPredictor}.
          *
          * @param messageBus The message bus on which to listen for and publish
-         *                   messages. The {@code EventDrivenPredictor} will
+         *                   messages. The {@code AsyncPredictor} will
          *                   immediately register to receive messages from the
          *                   message bus, and will publish results of the
          *                   observer to the message bus.
-         * @param observer   The predictor that the {@code EventDrivenPredictor}
+         * @param observer   The predictor that the {@code AsyncPredictor}
          *                   uses to produce predictions.
          * @param source     The name of the source that is being observed.
          * @param batch      True to publish a single message per prediction.
          *                   False to send one message per event in the
          *                   prediction.
          **/
-        EventDrivenPredictor(MessageBus& messageBus,
+        AsyncPredictor(MessageBus& messageBus,
                              std::unique_ptr<Predictor>&& predictor,
                              std::string source,
                              bool batch = false);
 
         /**
-         * Unsubscribes the {@code EventDrivenPredictor} from the message bus.
+         * Unsubscribes the {@code AsyncPredictor} from the message bus.
          **/
-        ~EventDrivenPredictor();
+        ~AsyncPredictor();
 
         const std::string& getName() {
             return source;
