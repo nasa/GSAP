@@ -48,8 +48,8 @@ namespace MovingAverageLoadEstimatorTests {
 
         auto estimate = le.estimateLoad(0.0);
         Assert::AreEqual(2, estimate.size(), "Estimate size");
-        Assert::AreEqual(1.0, estimate[0], "First estimate value (0)");
-        Assert::AreEqual(1.0, estimate[1], "Second estimate value (0)");
+        Assert::AreEqual(1.0, estimate[0], 1e-9, "First estimate value (0)");
+        Assert::AreEqual(1.0, estimate[1], 1e-9, "Second estimate value (0)");
 
         le.addLoad({0.0, 0.0});
         estimate = le.estimateLoad(0.0);

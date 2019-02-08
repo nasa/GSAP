@@ -177,6 +177,7 @@ namespace UDataTests {
         try {
             UData ud2(UType::MeanSD);
             double v2 = static_cast<double>(ud2);
+            (void)v2;
             Assert::Fail("Cast of mean/sd UData succeeded");
         }
         catch (const std::domain_error&) {
@@ -210,10 +211,8 @@ namespace UDataTests {
     }
 
     void updated() {
-        using size_type = UData::size_type;
-
         UData ud;
-        size_type start = ud.updated();
+        UData::time_ticks start = ud.updated();
         Assert::AreEqual(0, ud.updated(), "Default updated time not 0");
 
         // Need short pause between every updated() call for IDEs that run test too quickly
@@ -221,19 +220,19 @@ namespace UDataTests {
         std::this_thread::sleep_for(ms); // Pause for 1 ms
 
         ud.set(7);
-        size_type doubleTime = ud.updated();
+        UData::time_ticks doubleTime = ud.updated();
         Assert::IsTrue(doubleTime > start, "updated not changed after setting double [0]");
 
         std::this_thread::sleep_for(ms); // Pause for 1 ms
 
         ud.set(std::make_pair(7, 11));
-        size_type pairTime = ud.updated();
+        UData::time_ticks pairTime = ud.updated();
         Assert::IsTrue(pairTime > doubleTime, "updated not changed after setting pair [0]");
 
         std::this_thread::sleep_for(ms); // Pause for 1 ms
 
         ud.set({7, 11, 19});
-        size_type vecTime = ud.updated();
+        UData::time_ticks vecTime = ud.updated();
         Assert::IsTrue(vecTime > pairTime, "updated not changed after setting vector [0]");
 
         std::this_thread::sleep_for(ms); // Pause for 1 ms
@@ -378,14 +377,14 @@ namespace UDataTests {
         Assert::AreEqual(1, ud.npoints(), "Unexpected npoints");
 
         ud[VALUE] = 3.433;
-        UData::size_type update1 = ud.updated();
+        UData::time_ticks update1 = ud.updated();
         Assert::AreEqual(3.433, ud.get(VALUE), 1e-12, "Unexpected value using indexer");
         Assert::IsTrue(update1 > 0, "Time not updated on first insert");
         Assert::IsTrue(ud.valid(), "Not valid after first insert");
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         ud.set(7.35);
-        UData::size_type update2 = ud.updated();
+        UData::time_ticks update2 = ud.updated();
         Assert::AreEqual(7.35, ud.get(VALUE), 1e-12, "Unexpected value using set");
         Assert::IsTrue(update2 - update1 > 0, "Time not updated on second insert");
         Assert::IsTrue(ud.valid(), "Not valid after second insert");
@@ -634,7 +633,7 @@ namespace UDataTests {
         std::size_t size = ud.getVec().size();
         Assert::AreEqual(10, size);
     }
-    
+
     void registerTests(PCOE::Test::TestContext& context) {
         context.AddTest("construct_default", construct_default, "UData");
         context.AddTest("construct_type", construct_type, "UData");

@@ -7,18 +7,19 @@
 
 using namespace PCOE;
 
-const std::string MODULE_NAME   = "TestPrognoser";
+const std::string MODULE_NAME = "TestPrognoser";
 
-TestPrognoser::TestPrognoser(PCOE::ConfigMap & paramMap):
-Prognoser(paramMap) {
+TestPrognoser::TestPrognoser(PCOE::ConfigMap& paramMap) {
     log.WriteLine(LOG_DEBUG, MODULE_NAME, "Creating");
 
     if (paramMap.hasKey("futureLoading")) {
-        log.FormatLine(LOG_DEBUG, MODULE_NAME, "Received Future Loading: %s", paramMap.getVector("futureLoading")[0].c_str());
+        log.FormatLine(LOG_DEBUG,
+                       MODULE_NAME,
+                       "Received Future Loading: %s",
+                       paramMap.getVector("futureLoading")[0].c_str());
     }
 }
 
-Prediction TestPrognoser::step(std::map<MessageId, Datum<double> >) {
+Prediction TestPrognoser::step(std::map<MessageId, Datum<double>>) {
     return Prediction::EmptyPrediction();
 }
-

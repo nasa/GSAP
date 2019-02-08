@@ -31,8 +31,8 @@
 #include "Models/PrognosticsModelFactory.h"
 #include "Observers/ObserverFactory.h"
 #include "Predictors/PredictorFactory.h"
-#include "UData.h"
 #include "ThreadSafeLog.h"
+#include "UData.h"
 
 namespace PCOE {
     // Configuration Keys
@@ -42,14 +42,12 @@ namespace PCOE {
     const std::string LOAD_EST_KEY = "Predictor.loadEstimator";
 
     const std::string DEFAULT_LOAD_EST = "MovingAverage";
-    
+
     std::string moduleName = "ModelBasedPrognoser";
 
-    ModelBasedPrognoser::ModelBasedPrognoser(ConfigMap& configMap)
-        : Prognoser(configMap), initialized(false) {
+    ModelBasedPrognoser::ModelBasedPrognoser(ConfigMap& configMap) : initialized(false) {
         // Check for required config parameters
-        requireKeys(configMap,
-                    {MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY});
+        requireKeys(configMap, {MODEL_KEY, OBSERVER_KEY, PREDICTOR_KEY});
         /// TODO(CT): Move Model, Predictor subkeys into Model/Predictor constructor
 
         // Create Model
@@ -82,17 +80,18 @@ namespace PCOE {
                                              trajectoryService,
                                              configMap);
     }
-    
-    ModelBasedPrognoser::ModelBasedPrognoser(PrognosticsModel & mdl,
-    	    	    	    	    	     Observer & obs,
-    	    	    	    	    	     Predictor & pred,
-    	    	    	    	    	     LoadEstimator & ldest) :
-	    model(&mdl), observer(&obs), predictor(&pred), loadEstimator(&ldest),
-	    Prognoser(), initialized(false)  {
-	    
-    }
 
-    Prediction ModelBasedPrognoser::step(std::map<MessageId, Datum<double> > data) {
+    ModelBasedPrognoser::ModelBasedPrognoser(PrognosticsModel& mdl,
+                                             Observer& obs,
+                                             Predictor& pred,
+                                             LoadEstimator& ldest)
+        : model(&mdl),
+          observer(&obs),
+          predictor(&pred),
+          loadEstimator(&ldest),
+          initialized(false) {}
+
+    Prediction ModelBasedPrognoser::step(std::map<MessageId, Datum<double>> data) {
         // Get new time (convert to seconds)
         // @todo(MD): Add config for time units so conversion is not hard-coded
         double newT_s = data[model->getInputs()[0]].getTime() / 1.0e3;
@@ -101,10 +100,10 @@ namespace PCOE {
         log.WriteLine(LOG_DEBUG, moduleName, "Getting data in step");
         auto u = model->getInputVector();
         auto z = model->getOutputVector();
-	    auto inputNames = model->getInputs();
+        auto inputNames = model->getInputs();
         for (unsigned int i = 0; i < model->getInputSize(); i++) {
             log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %u", i);
-            MessageId & input_name = inputNames[i];
+            MessageId& input_name = inputNames[i];
             log.FormatLine(LOG_TRACE, "PROG-MBP", "Getting input %ull", input_name);
             Datum<double> input = data[input_name];
 
@@ -117,23 +116,23 @@ namespace PCOE {
             if (!input.isSet()) {
                 // Do nothing if data not yet available
                 log.WriteLine(LOG_TRACE, "PROG-MBP", "Data not yet available. Returning.");
-	    	    return Prediction::EmptyPrediction();
+                return Prediction::EmptyPrediction();
             }
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
-    	    u[i] = input;
+            u[i] = input;
             log.WriteLine(LOG_TRACE, "PROG-MBP", "Adding load");
             if (loadEstimator->canAddLoad()) {
                 loadEstimator->addLoad(u.vec());
             }
         }
         for (unsigned int i = 0; i < model->getOutputSize(); i++) {
-    	    log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
-    	    Datum<double> output = data[model->getOutputs()[i]];
+            log.WriteLine(LOG_TRACE, "PROG-MBP", "Reading data");
+            Datum<double> output = data[model->getOutputs()[i]];
             if (!output.isSet()) {
                 // Do nothing if data not yet available
                 return Prediction::EmptyPrediction();
             }
-    	    z[i] = output;
+            z[i] = output;
         }
 
         // If this is the first step, will want to initialize the observer and the predictor
@@ -166,12 +165,12 @@ namespace PCOE {
 
                 // Set lastTime
                 lastTime = newT_s;
-	    	    return prediction;
+                return prediction;
             }
             catch (...) {
                 log.WriteLine(LOG_ERROR, moduleName, "Error in Step, skipping");
             }
         }
-	    return Prediction::EmptyPrediction();
+        return Prediction::EmptyPrediction();
     }
 }

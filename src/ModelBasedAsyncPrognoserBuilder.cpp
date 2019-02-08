@@ -75,8 +75,8 @@ namespace PCOE {
                            DEFAULT_LOAD_ESTIMATOR.c_str());
             config.set(LOAD_ESTIMATOR_KEY, DEFAULT_LOAD_ESTIMATOR);
         }
-        auto& factory = LoadEstimatorFactory::instance();
-        loadEstimator = factory.Create(config.getString(LOAD_ESTIMATOR_KEY), config).release();
+        auto& leFactory = LoadEstimatorFactory::instance();
+        loadEstimator = leFactory.Create(config.getString(LOAD_ESTIMATOR_KEY), config).release();
         container.setLoadEstimator(loadEstimator);
 
         if (config.hasKey(MODEL_KEY)) {
@@ -86,14 +86,14 @@ namespace PCOE {
                                MODULE_NAME,
                                "Building prognostics model %s",
                                modelName.c_str());
-                auto& factory = PrognosticsModelFactory::instance();
-                progModel = factory.Create(modelName, config).release();
+                auto& pmFactory = PrognosticsModelFactory::instance();
+                progModel = pmFactory.Create(modelName, config).release();
                 container.setModel(progModel);
             }
             else {
                 log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building model %s", modelName.c_str());
-                auto& factory = SystemModelFactory::instance();
-                model = factory.Create(modelName).release();
+                auto& mfactory = SystemModelFactory::instance();
+                model = mfactory.Create(modelName).release();
                 container.setModel(model);
             }
         }
@@ -104,10 +104,10 @@ namespace PCOE {
         if (config.hasKey(OBSERVER_KEY)) {
             std::string observerName = config.getString(OBSERVER_KEY);
             log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building observer %s", observerName.c_str());
-            auto& factory = ObserverFactory::instance();
+            auto& obsFactory = ObserverFactory::instance();
             const SystemModel* m = progModel ? progModel : model;
             Require(m, "Observer missing model");
-            observer = factory.Create(observerName, *m, config);
+            observer = obsFactory.Create(observerName, *m, config);
         }
         else {
             log.WriteLine(LOG_WARN, MODULE_NAME, "No observer name found");
@@ -116,14 +116,14 @@ namespace PCOE {
         if (config.hasKey(PREDICTOR_KEY)) {
             std::string predictorName = config.getString(PREDICTOR_KEY);
             log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building predictor %s", predictorName.c_str());
-            auto& factory = PredictorFactory::instance();
+            auto& predFactory = PredictorFactory::instance();
             Require(progModel, "Predictor missing model");
             Require(loadEstimator, "Predictor missing load estimator");
-            predictor = factory.Create(predictorName,
-                                       *progModel,
-                                       *loadEstimator,
-                                       ts->getTrajectoryService(),
-                                       config);
+            predictor = predFactory.Create(predictorName,
+                                           *progModel,
+                                           *loadEstimator,
+                                           ts->getTrajectoryService(),
+                                           config);
         }
         else {
             log.WriteLine(LOG_WARN, MODULE_NAME, "No predictor name found");
@@ -141,6 +141,6 @@ namespace PCOE {
 
         Ensure(!(model && progModel), "SystemModel and PrognosticsModel both created");
         log.WriteLine(LOG_WARN, MODULE_NAME, "Build complete");
-        return std::move(container);
+        return container;
     }
 }

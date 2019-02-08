@@ -16,36 +16,42 @@ namespace GaussianVariableTests {
     }
 
     void ctorUnspecified() {
-        GaussianVariable test = GaussianVariable();
+        try {
+            GaussianVariable test;
+            (void)test;
+        }
+        catch (...) {
+            Assert::Fail("Failed to contruct Gaussian Variable");
+        }
     }
 
     void generateSamplesDirect() {
-        GaussianVariable test = GaussianVariable();
+        GaussianVariable test;
         test.generatesamplesdirect(0);
         test.generatesamplesdirect(200);
     }
 
     void generateSamplesICDFUR() {
-        GaussianVariable test = GaussianVariable();
+        GaussianVariable test;
         test.generatesamplesicdfur(0);
         test.generatesamplesicdfur(200);
     }
 
     void setMeanStd() {
-        GaussianVariable test = GaussianVariable();
+        GaussianVariable test;
         test.setmeanstd(0, 0);
         test.setmeanstd(INFINITY, INFINITY);
         test.setmeanstd(123, 456);
     }
 
     void evaluatePDF() {
-        GaussianVariable test = GaussianVariable();
+        GaussianVariable test;
         test.evaluatepdf(0);
         test.evaluatepdf(1000);
     }
 
     void evaluateCDF() {
-        GaussianVariable test = GaussianVariable();
+        GaussianVariable test;
         test.evaluatecdf(0);
         test.evaluatecdf(1000);
     }

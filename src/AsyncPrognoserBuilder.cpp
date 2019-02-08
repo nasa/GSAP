@@ -86,7 +86,7 @@ namespace PCOE {
         container.setLoadEstimator(loadEstimator);
 
         log.WriteLine(LOG_WARN, MODULE_NAME, "Build complete");
-        return std::move(container);
+        return container;
     }
 
     void AsyncPrognoserBuilder::reset() {

@@ -68,14 +68,14 @@ namespace TrajectoryServiceTests {
             tc.getPoint(time + (time2 - time) * 2);
             Test::Assert::Fail("Did not catch high out of range request");
         }
-        catch (std::out_of_range) {
+        catch (const std::out_of_range&) {
         }
 
         try {
             tc.getPoint(time - (time2 - time) / 2);
             Test::Assert::Fail("Did not catch low out of range request");
         }
-        catch (std::out_of_range) {
+        catch (const std::out_of_range&) {
         }
 
         mb.publish(std::shared_ptr<Message>(new U64Message(MessageId::RouteDeleteWP,
