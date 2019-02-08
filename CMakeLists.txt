@@ -81,7 +81,6 @@ set(HEADERS
     inc/Trajectory/EventDrivenTrajectoryService.h
     inc/Trajectory/ITrajectoryCorrelator.h
     inc/Trajectory/TrajectoryService.h
-    inc/Thread.h
     inc/ThreadSafeLog.h
     inc/UData.h
     inc/UDataInterfaces.h
@@ -112,7 +111,6 @@ set(SRCS
     src/Predictors/EventDrivenPredictor.cpp
     src/Predictors/MonteCarloPredictor.cpp
     src/StatisticalTools.cpp
-    src/Thread.cpp
     src/ThreadSafeLog.cpp
     src/Trajectory/EventDrivenTrajectoryService.cpp
     src/Trajectory/TrajectoryService.cpp

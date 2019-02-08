@@ -57,7 +57,6 @@ set(SRCS
     src/StatisticalToolsTests.cpp
     src/Tank3.cpp
     src/TestPrognoser.cpp
-    src/ThreadTests.cpp
     src/TrajectoryServiceTests.cpp
     src/UDataTests.cpp
 )
