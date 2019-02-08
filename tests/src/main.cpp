@@ -110,7 +110,6 @@ namespace UDataTests {
 int main() {
     TestContext context;
     
-    // Unit Tests
     BatteryResultTests::registerTests(context);
     ConfigMapTests::registerTests(context);
     DataPointTests::registerTests(context);

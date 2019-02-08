@@ -21,6 +21,9 @@ namespace PCOE {
 
     // Other string constants
     const std::string MODULE_NAME = "PRED-MC";
+    
+    // Other constants
+    const std::vector<UType> SUPPORTED_UTYPES = {UType::MeanCovar, UType::Samples, UType::WSamples};
 
     MonteCarloPredictor::MonteCarloPredictor(const PrognosticsModel& m,
                                              LoadEstimator& le,
@@ -71,6 +74,9 @@ namespace PCOE {
         // TODO (JW): Contract has been changed so that this is checked in the
         //            constructor. Shouldn't be possible here.
 
+        Ensure(std::any_of(SUPPORTED_UTYPES.begin(), SUPPORTED_UTYPES.end(),
+                           [state](UType x) {return state.front().uncertainty() == x;}),
+                           "State provided in unsupport uncertainty type");
         auto savePts = savePointProvider.getSavePts();
         auto eventNames = model.getEvents();
 

@@ -1,9 +1,6 @@
 // Copyright (c) 2019 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
-
-// TODO (JW): By its nature, this file is designed to be copied. It should
-// be explicitely (un)licensed as public domain or CC0.
 #include <chrono>
 #include <ctime>
 #include <fstream>
@@ -23,9 +20,6 @@ using namespace PCOE;
 namespace AsyncIntegrationTests {
     const size_t ITERATIONS = 12;
     
-    // This function is a quick and dirty reader for the example data files.
-    // For production-ready applications, a complete and well-tested CSV library
-    // should be used.
     std::vector<std::vector<std::shared_ptr<DoubleMessage>>> read_file(const std::string& filename,
                                                                        const std::string& src) {
         using namespace std::chrono;
@@ -70,30 +64,16 @@ namespace AsyncIntegrationTests {
         return result;
     }
     
-    // The PredictionPrinter class subscribes to the battery EoD event message and
-    // prints each event as it is received.
     class PredictionPrinter : public IMessageProcessor {
     public:
-        /**
-         * Constructs a new prediction printer that subscribes to battery EoD
-         * predictions for the specified source and on the specified message
-         * bus.
-         **/
         PredictionPrinter(MessageBus& bus, const std::string& src) : bus(bus) {
             bus.subscribe(this, src, MessageId::BatteryEod);
         }
         
-        /**
-         * Unsubscribes the prediction printer from the message bus.
-         **/
         ~PredictionPrinter() {
             bus.unsubscribe(this);
         }
         
-        /**
-         * The message bus will call this function each time the predictor publishes
-         * a new battery EoD prediction.
-         **/
         void processMessage(const std::shared_ptr<Message>& message) override {
             using namespace std::chrono;
             // The prediction printer only ever subscribes to the BatteryEoD message
@@ -132,55 +112,28 @@ namespace AsyncIntegrationTests {
         MessageBus& bus;
     };
     
-    // This example sets up a predictor to predict battery EoD using a Monte Carlo
-    // predictor and an Unscented Kalman Filter.
     void run_test(ConfigMap config) {
-        // The source string is a unique identifier for each thing that GSAP is
-        // monitoring. This could be a batter serial number or any other unique
-        // identifier for each component.
         std::string src = "sensor";
-        
+
         // Read battery data from a file.
         auto data = read_file("../../data/data_const_load.csv", src);
-        
-        // The message bus is the core of the asynchronous architecture. It
-        // maintains a list of listeners who are listening for specific messages
-        // and alerts those listeners when a message they are interested in is
-        // received.
+
         MessageBus bus;
-        
-        // The printer is the first thing that subscribes to the message bus. Its
-        // constructor tells the bus that it wants to know about any predictions
-        // that are produced for the thing identified by `src`.
+
         PredictionPrinter printer(bus, src);
-        
-        // The builder uses configuration information and other methods to determine
-        // the correct set of objects needed to perform prognostics.
+
         ModelBasedEventDrivenPrognoserBuilder builder(config);
         builder.setModelName("Battery", true);
         builder.setObserverName(config.getString("observer"));
         builder.setPredictorName(config.getString("predictor"));
         builder.setLoadEstimatorName("Const");
         
-        // The build function call constructs all of the necessary objects to
-        // perform prognostics using the specified parameters. These objects
-        // are constructed and subscribed to the correct message types on the
-        // message bus so that the user only needs to publish data and subscribe
-        // to results.
         auto prognoser = builder.build(bus, src, "trajectory");
         
         size_t i = 0;
-        // For each line of data in the example file, run a single prediction step.
         for (const auto& line : data) {
-            // Sleep until the timestamp specified by the file. While the main
-            // thread is sleeping, worker threads owned by the message bus are
-            // processing messages and the prediction printer may be printing
-            // the results.
             std::this_thread::sleep_until(line.front()->getTimestamp());
             
-            // Publish all of the data in the line. This will trigger the components
-            // contructed by the builder to run a prediction, ultimately triggering
-            // the prediction printer to print the result.
             for (const auto& msg : line) {
                 bus.publish(msg);
             }
@@ -189,8 +142,6 @@ namespace AsyncIntegrationTests {
             }
         }
         
-        // Before exiting, wait for the bus to finish processing all messages to
-        // make sure we see all predictions.
         bus.waitAll();
     }
     
