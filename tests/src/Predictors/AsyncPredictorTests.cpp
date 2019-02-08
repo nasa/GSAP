@@ -4,8 +4,8 @@
 #include <thread>
 
 #include "MockClasses.h"
-#include "Observers/EventDrivenObserver.h"
-#include "Predictors/EventDrivenPredictor.h"
+#include "Observers/AsyncObserver.h"
+#include "Predictors/AsyncPredictor.h"
 #include "Test.h"
 
 #include "ConfigMap.h"
@@ -20,12 +20,12 @@
 #include "Observers/Observer.h"
 #include "Observers/ObserverFactory.h"
 #include "Predictors/PredictorFactory.h"
-#include "Trajectory/EventDrivenTrajectoryService.h"
+#include "Trajectory/AsyncTrajectoryService.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
 
-namespace EventDrivenPredictorTests {
+namespace AsyncPredictorTests {
     void constructor() {
         MessageBus bus;
         TestPrognosticsModel tpm;
@@ -34,7 +34,7 @@ namespace EventDrivenPredictorTests {
 
         TrajectoryService trajService;
 
-        EventDrivenPredictor edPred(bus,
+        AsyncPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
                                         new TestPredictor(tpm, tle, trajService, ConfigMap())),
                                     src);
@@ -52,8 +52,8 @@ namespace EventDrivenPredictorTests {
         TrajectoryService trajService;
 
         MessageCounter listener(bus, src, MessageId::TestEvent0);
-        EventDrivenObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tpm)), src);
-        EventDrivenPredictor edPred(bus,
+        AsyncObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tpm)), src);
+        AsyncPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
                                         new TestPredictor(tpm, tle, trajService, ConfigMap())),
                                     src);
@@ -194,11 +194,11 @@ namespace EventDrivenPredictorTests {
         TrajectoryService trajService;
         BatteryModel model(config);
         ConstLoadEstimator le(config);
-        EventDrivenObserver edObs(bus,
+        AsyncObserver edObs(bus,
                                   std::unique_ptr<Observer>(
                                       new UnscentedKalmanFilter(model, config)),
                                   src);
-        EventDrivenPredictor edPred(bus,
+        AsyncPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
                                         new MonteCarloPredictor(model, le, trajService, config)),
                                     src);
@@ -237,17 +237,17 @@ namespace EventDrivenPredictorTests {
         MessageCounter listener(bus, src, MessageId::BatteryEod);
         ConfigMap config = createConfig();
 
-        EventDrivenTrajectoryService trajService(bus,
+        AsyncTrajectoryService trajService(bus,
                                                  std::unique_ptr<TrajectoryService>(
                                                      new TrajectoryService()),
                                                  src);
         BatteryModel model(config);
         ConstLoadEstimator le(config);
-        EventDrivenObserver edObs(bus,
+        AsyncObserver edObs(bus,
                                   std::unique_ptr<Observer>(
                                       new UnscentedKalmanFilter(model, config)),
                                   src);
-        EventDrivenPredictor edPred(bus,
+        AsyncPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(new MonteCarloPredictor(
                                         model, le, trajService.getTrajectoryService(), config)),
                                     src);
@@ -316,11 +316,11 @@ namespace EventDrivenPredictorTests {
         TrajectoryService trajService;
         BatteryModel model(config);
         ConstLoadEstimator le(config);
-        EventDrivenObserver edObs(bus,
+        AsyncObserver edObs(bus,
                                   std::unique_ptr<Observer>(
                                       new UnscentedKalmanFilter(model, config)),
                                   src);
-        EventDrivenPredictor edPred(bus,
+        AsyncPredictor edPred(bus,
                                     std::unique_ptr<Predictor>(
                                         new MonteCarloPredictor(model, le, trajService, config)),
                                     src,
@@ -352,10 +352,10 @@ namespace EventDrivenPredictorTests {
     }
 
     void registerTests(TestContext& context) {
-        context.AddTest("construct", constructor, "EventDrivenPredictor");
-        context.AddTest("processMessage", processMessage, "EventDrivenPredictor");
-        context.AddTest("Full Config", fullConfig, "EventDrivenPredictor");
-        context.AddTest("Save Points", savePts, "EventDrivenPredictor");
-        context.AddTest("Batch Result", batch, "EventDrivenPredictor");
+        context.AddTest("construct", constructor, "AsyncPredictor");
+        context.AddTest("processMessage", processMessage, "AsyncPredictor");
+        context.AddTest("Full Config", fullConfig, "AsyncPredictor");
+        context.AddTest("Save Points", savePts, "AsyncPredictor");
+        context.AddTest("Batch Result", batch, "AsyncPredictor");
     }
 }

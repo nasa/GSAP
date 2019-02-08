@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "ConfigMap.h"
-#include "EventDrivenPrognoser.h"
+#include "AsyncPrognoser.h"
 
 namespace PCOE {
     /**
@@ -18,7 +18,7 @@ namespace PCOE {
      * @author Jason Watkins
      * @author Chris Teubert
      **/
-    class EventDrivenPrognoserBuilder {
+    class AsyncPrognoserBuilder {
     public:
         static const std::string LOAD_ESTIMATOR_KEY;
         static const std::string DEFAULT_LOAD_ESTIMATOR;
@@ -26,12 +26,12 @@ namespace PCOE {
         /**
          * Initializes a new builder with an empty configuration.
          **/
-        EventDrivenPrognoserBuilder() = default;
+        AsyncPrognoserBuilder() = default;
 
         /**
          * Initializes a new builder using the specified configuration.
          **/
-        explicit EventDrivenPrognoserBuilder(ConfigMap config);
+        explicit AsyncPrognoserBuilder(ConfigMap config);
 
         void setLoadEstimatorName(const std::string& value);
 
@@ -39,7 +39,7 @@ namespace PCOE {
 
         void setConfigParam(const std::string& key, const std::vector<std::string>& value);
 
-        virtual EventDrivenPrognoser build(PCOE::MessageBus& bus,
+        virtual AsyncPrognoser build(PCOE::MessageBus& bus,
                                            const std::string& sensorSource,
                                            const std::string& trajectorySource);
 

@@ -9,13 +9,13 @@
 #include "Messages/ScalarMessage.h"
 #include "Messages/WaypointMessage.h"
 #include "ThreadSafeLog.h"
-#include "Trajectory/EventDrivenTrajectoryService.h"
+#include "Trajectory/AsyncTrajectoryService.h"
 
 namespace PCOE {
     static const Log& log = Log::Instance();
     static const std::string MODULE_NAME = "TSVC-ED";
 
-    EventDrivenTrajectoryService::EventDrivenTrajectoryService(
+    AsyncTrajectoryService::AsyncTrajectoryService(
         MessageBus& messageBus,
         std::unique_ptr<TrajectoryService>&& ts,
         std::string source)
@@ -29,12 +29,12 @@ namespace PCOE {
         bus.subscribe(this, this->source, MessageId::RouteSetWP);
     }
 
-    EventDrivenTrajectoryService::~EventDrivenTrajectoryService() {
+    AsyncTrajectoryService::~AsyncTrajectoryService() {
         lock_guard guard(m);
         bus.unsubscribe(this);
     }
 
-    void EventDrivenTrajectoryService::processMessage(const std::shared_ptr<Message>& message) {
+    void AsyncTrajectoryService::processMessage(const std::shared_ptr<Message>& message) {
         lock_guard lock(m);
 
         MessageId id = message->getMessageId();

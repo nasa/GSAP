@@ -6,8 +6,8 @@
 
 #include <string>
 
-#include "EventDrivenPrognoser.h"
-#include "EventDrivenPrognoserBuilder.h"
+#include "AsyncPrognoser.h"
+#include "AsyncPrognoserBuilder.h"
 
 namespace PCOE {
     const extern std::string MODEL_KEY;
@@ -18,17 +18,17 @@ namespace PCOE {
      * Collects information about a prognostics configuration and builds the
      * necessary classes.
      **/
-    class ModelBasedEventDrivenPrognoserBuilder : public EventDrivenPrognoserBuilder {
+    class ModelBasedAsyncPrognoserBuilder : public AsyncPrognoserBuilder {
     public:
         /**
          * Initializes a new builder with an empty configuration.
          **/
-        ModelBasedEventDrivenPrognoserBuilder() = default;
+        ModelBasedAsyncPrognoserBuilder() = default;
 
         /**
          * Initializes a new builder using the specified configuration.
          **/
-        explicit ModelBasedEventDrivenPrognoserBuilder(ConfigMap config);
+        explicit ModelBasedAsyncPrognoserBuilder(ConfigMap config);
 
         void setModelName(const std::string& value, bool isPrognosticsModel);
 
@@ -36,7 +36,7 @@ namespace PCOE {
 
         void setPredictorName(const std::string& value);
 
-        EventDrivenPrognoser build(PCOE::MessageBus& bus,
+        AsyncPrognoser build(PCOE::MessageBus& bus,
                                    const std::string& sensorSource,
                                    const std::string& trajectorySource) override;
 

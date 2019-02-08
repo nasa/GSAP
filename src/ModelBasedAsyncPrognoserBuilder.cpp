@@ -6,13 +6,13 @@
 #include "ConfigMap.h"
 #include "Contracts.h"
 #include "Loading/LoadEstimatorFactory.h"
-#include "ModelBasedEventDrivenPrognoserBuilder.h"
+#include "ModelBasedAsyncPrognoserBuilder.h"
 #include "Models/PrognosticsModelFactory.h"
 #include "Models/SystemModelFactory.h"
-#include "Observers/EventDrivenObserver.h"
+#include "Observers/AsyncObserver.h"
 #include "Observers/Observer.h"
 #include "Observers/ObserverFactory.h"
-#include "Predictors/EventDrivenPredictor.h"
+#include "Predictors/AsyncPredictor.h"
 #include "Predictors/PredictorFactory.h"
 
 namespace PCOE {
@@ -24,10 +24,10 @@ namespace PCOE {
 
     const std::string MODULE_NAME = "MBEDPrognoserBuilder";
 
-    ModelBasedEventDrivenPrognoserBuilder::ModelBasedEventDrivenPrognoserBuilder(ConfigMap config)
-        : EventDrivenPrognoserBuilder(std::move(config)) {}
+    ModelBasedAsyncPrognoserBuilder::ModelBasedAsyncPrognoserBuilder(ConfigMap config)
+        : AsyncPrognoserBuilder(std::move(config)) {}
 
-    void ModelBasedEventDrivenPrognoserBuilder::setModelName(const std::string& value,
+    void ModelBasedAsyncPrognoserBuilder::setModelName(const std::string& value,
                                                              bool isPrognosticsModel) {
         lock_guard guard(m);
         Expect(value.length() > 0, "Model name length");
@@ -35,30 +35,30 @@ namespace PCOE {
         modelIsPrognosticsModel = isPrognosticsModel;
     }
 
-    void ModelBasedEventDrivenPrognoserBuilder::setObserverName(const std::string& value) {
+    void ModelBasedAsyncPrognoserBuilder::setObserverName(const std::string& value) {
         lock_guard guard(m);
         Expect(value.length() > 0, "Observer name length");
         config.set(OBSERVER_KEY, value);
     }
 
-    void ModelBasedEventDrivenPrognoserBuilder::setPredictorName(const std::string& value) {
+    void ModelBasedAsyncPrognoserBuilder::setPredictorName(const std::string& value) {
         lock_guard guard(m);
         Expect(value.length() > 0, "Predictor name length");
         config.set(PREDICTOR_KEY, value);
     }
 
-    EventDrivenPrognoser
-    ModelBasedEventDrivenPrognoserBuilder::build(PCOE::MessageBus& bus,
+    AsyncPrognoser
+    ModelBasedAsyncPrognoserBuilder::build(PCOE::MessageBus& bus,
                                                  const std::string& sensorSource,
                                                  const std::string& trajectorySource) {
         lock_guard guard(m);
-        EventDrivenPrognoser container(bus);
+        AsyncPrognoser container(bus);
         SystemModel* model = nullptr;
         PrognosticsModel* progModel = nullptr;
         std::unique_ptr<Observer> observer;
         std::unique_ptr<Predictor> predictor;
         LoadEstimator* loadEstimator = nullptr;
-        EventDrivenTrajectoryService* ts = new EventDrivenTrajectoryService(
+        AsyncTrajectoryService* ts = new AsyncTrajectoryService(
             bus, std::unique_ptr<TrajectoryService>(new TrajectoryService()), trajectorySource);
         container.addEventListener(ts);
 
@@ -131,12 +131,12 @@ namespace PCOE {
 
         if (observer) {
             container.addEventListener(
-                new EventDrivenObserver(bus, std::move(observer), sensorSource));
+                new AsyncObserver(bus, std::move(observer), sensorSource));
         }
 
         if (predictor) {
             container.addEventListener(
-                new EventDrivenPredictor(bus, std::move(predictor), sensorSource));
+                new AsyncPredictor(bus, std::move(predictor), sensorSource));
         }
 
         Ensure(!(model && progModel), "SystemModel and PrognosticsModel both created");

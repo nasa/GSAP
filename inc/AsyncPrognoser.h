@@ -21,13 +21,13 @@ namespace PCOE {
      * any validation, and will accept null pointers for any of its constructor
      * arguments.
      **/
-    class EventDrivenPrognoser {
+    class AsyncPrognoser {
     public:
-        EventDrivenPrognoser(MessageBus& messageBus) : bus(messageBus) {}
+        AsyncPrognoser(MessageBus& messageBus) : bus(messageBus) {}
 
-        EventDrivenPrognoser(const EventDrivenPrognoser&) = delete;
+        AsyncPrognoser(const AsyncPrognoser&) = delete;
 
-        EventDrivenPrognoser(EventDrivenPrognoser&& other) : bus(other.bus) {
+        AsyncPrognoser(AsyncPrognoser&& other) : bus(other.bus) {
             using std::swap;
             if (&other == this) {
                 return;
@@ -38,7 +38,7 @@ namespace PCOE {
             swap(eventListeners, other.eventListeners);
         }
 
-        ~EventDrivenPrognoser() {
+        ~AsyncPrognoser() {
             if (model != nullptr) {
                 delete model;
             }

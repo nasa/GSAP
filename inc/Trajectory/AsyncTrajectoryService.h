@@ -21,7 +21,7 @@ namespace PCOE {
      * @author Christopher Teubert
      * @since 1.2
      **/
-    class EventDrivenTrajectoryService : public IMessageProcessor {
+    class AsyncTrajectoryService : public IMessageProcessor {
     public:
         /**
          * Constructs a new {@code TrajectoryService}.
@@ -33,14 +33,14 @@ namespace PCOE {
          *                   observer to the message bus.
          * @param source     The name of the source that is being observed.
          */
-        EventDrivenTrajectoryService(MessageBus& messageBus,
+        AsyncTrajectoryService(MessageBus& messageBus,
                                      std::unique_ptr<TrajectoryService>&& ts,
                                      std::string source);
 
         /**
          * Unsubscribes the {@code TrajectoryService} from the message bus.
          */
-        ~EventDrivenTrajectoryService();
+        ~AsyncTrajectoryService();
 
         const TrajectoryService& getTrajectoryService() const {
             return *trajService.get();

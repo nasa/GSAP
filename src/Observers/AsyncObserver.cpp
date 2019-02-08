@@ -5,13 +5,13 @@
 
 #include "Contracts.h"
 #include "Messages/UDataMessage.h"
-#include "Observers/EventDrivenObserver.h"
+#include "Observers/AsyncObserver.h"
 
 namespace PCOE {
     static const Log& log = Log::Instance();
     static const std::string MODULE_NAME = "OBS-ED";
 
-    EventDrivenObserver::EventDrivenObserver(MessageBus& messageBus,
+    AsyncObserver::AsyncObserver(MessageBus& messageBus,
                                              std::unique_ptr<Observer>&& obs,
                                              std::string src)
         : bus(messageBus),
@@ -30,12 +30,12 @@ namespace PCOE {
         bus.subscribe(this, source, MessageId::ModelOutputVector);
     }
 
-    EventDrivenObserver::~EventDrivenObserver() {
+    AsyncObserver::~AsyncObserver() {
         lock_guard guard(m);
         bus.unsubscribe(this);
     }
 
-    void EventDrivenObserver::processMessage(const std::shared_ptr<Message>& message) {
+    void AsyncObserver::processMessage(const std::shared_ptr<Message>& message) {
         // Note (JW): If we are unable to aquire the lock immediately, the
         //            observer is already processing a message. If we can't
         //            aquire the lock within a few milliseconds, the observer is
@@ -67,7 +67,7 @@ namespace PCOE {
         }
     }
 
-    void EventDrivenObserver::stepObserver() {
+    void AsyncObserver::stepObserver() {
         auto imsgVec = std::dynamic_pointer_cast<DoubleVecMessage, Message>(inputMsg);
         auto omsgVec = std::dynamic_pointer_cast<DoubleVecMessage, Message>(outputMsg);
 
