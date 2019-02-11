@@ -23,7 +23,7 @@ namespace PCOE {
         /**
          * The type used internally to store the clock duration in ticks.
          **/
-        using rep = std::uint64_t;
+        using rep = std::int64_t;
 
         /**
          * A ratio representing the tick period of the clock in seconds.
