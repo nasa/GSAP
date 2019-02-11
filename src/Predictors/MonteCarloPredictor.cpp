@@ -21,6 +21,9 @@ namespace PCOE {
 
     // Other string constants
     const std::string MODULE_NAME = "PRED-MC";
+    
+    // Other constants
+    const std::vector<UType> SUPPORTED_UTYPES = {UType::MeanCovar, UType::Samples, UType::WSamples};
 
     MonteCarloPredictor::MonteCarloPredictor(const PrognosticsModel& m,
                                              LoadEstimator& le,
@@ -71,6 +74,9 @@ namespace PCOE {
         // TODO (JW): Contract has been changed so that this is checked in the
         //            constructor. Shouldn't be possible here.
 
+        Ensure(std::any_of(SUPPORTED_UTYPES.begin(), SUPPORTED_UTYPES.end(),
+                           [state](UType x) {return state.front().uncertainty() == x;}),
+                           "State provided in unsupport uncertainty type");
         auto savePts = savePointProvider.getSavePts();
         auto eventNames = model.getEvents();
 
@@ -108,13 +114,19 @@ namespace PCOE {
         // handle. Perhaps it would be useful to have general code to deal with this, to get samples
         // from it directly? So don't have to check within here. First step is to construct the mean
         // vector and covariance matrix from the UDatas
-        Matrix Pxx(model.getStateSize(), model.getStateSize());
-        for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
-            xMean[xIndex][0] = state[xIndex][MEAN];
-            std::vector<double> covariance = state[xIndex].getVec(COVAR());
-            Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
+        Matrix PxxChol;
+        if (state.front().uncertainty() == UType::MeanCovar) {
+            Matrix Pxx(model.getStateSize(), model.getStateSize());
+            for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
+                xMean[xIndex][0] = state[xIndex][MEAN];
+                std::vector<double> covariance = state[xIndex].getVec(COVAR());
+                Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
+            }
+            PxxChol = Pxx.chol();
         }
-        auto PxxChol = Pxx.chol();
+        else {
+            PxxChol = Matrix(model.getStateSize(), model.getStateSize());
+        }
 
 /* OpenMP info
  * If the application is built with OpenMP, the predictor below operates in parallel.
@@ -138,21 +150,46 @@ namespace PCOE {
 
             // 1. Sample the state
             // Create state vector
-            // Now we have mean vector (x) and covariance matrix (Pxx). We can use that to sample a
-            // realization of the state. I need to generate a vector of random numbers, size of the
-            // state vector Create standard normal distribution
-            Matrix xRandom(model.getStateSize(), 1);
-            static std::normal_distribution<> standardDistribution(0, 1);
-            for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
-                xRandom[xIndex][0] = standardDistribution(generator);
+            auto x = SystemModel::state_type(state.size());
+            if (state.front().uncertainty() == UType::MeanCovar) {
+                // Now we have mean vector (x) and covariance matrix (Pxx). We can use that to
+                // sample a realization of the state. I need to generate a vector of random numbers,
+                // size of the state vector Create standard normal distribution
+                Matrix xRandom(model.getStateSize(), 1);
+                static std::normal_distribution<> standardDistribution(0, 1);
+                for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
+                    xRandom[xIndex][0] = standardDistribution(generator);
+                }
+                // Update with mean and covariance
+                xRandom = xMean + PxxChol * xRandom;
+                x = SystemModel::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
             }
-            // Update with mean and covariance
-            xRandom = xMean + PxxChol * xRandom;
-            auto x = SystemModel::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
+            else if (state.front().uncertainty() == UType::Samples) {
+                for (size_t j = 0; j < state.size(); j++) {
+                    x[sample] = state[j][sample % state[j].size()];
+                }
+            }
+            else if (state.front().uncertainty() == UType::WSamples) {
+                //  blocked weighted bootstrap
+                static std::uniform_real_distribution<> uniformDistribution(0, 1);
+                auto step = uniformDistribution(generator);
+
+                // Assumes that data is coupled- same sample for all states
+                size_t k = 0;
+                double weight = 0.0;
+                while (weight < step) {
+                    weight = (weight + state[0].get(WEIGHT(k)));
+                    k = (k + 1) % state[0].size();
+                }
+
+                for (size_t j = 0; j < state.size(); j++) {
+                    x[j] = state[j].get(SAMPLE((k - 1) % state[j].size()));
+                }
+            }
 
             // 3. Simulate until time limit reached
             SystemModel::input_type inputParams(model.getInputSize());
-            for (auto&& toe: eventToe) {
+            for (auto&& toe : eventToe) {
                 toe[sample] = INFINITY;
             }
 
@@ -174,7 +211,8 @@ namespace PCOE {
                 // event, and we don't want to overwrite that.
                 auto thresholdMet = model.thresholdEqn(t_s, x);
                 int thresholdsMet = 0;
-                for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
+                for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size();
+                     eventId++) {
                     if (thresholdMet[eventId]) {
                         eventToe[eventId][sample] = t_s;
                         eventToe[eventId].updated(stateTimestamp);
@@ -198,11 +236,14 @@ namespace PCOE {
 
                     // Write to eventState property
                     auto eventStatesEstimate = model.eventStateEqn(x);
-                    
-                    for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
-                        eventStates[eventId][savePtIndex][sample] = eventStatesEstimate[eventId]; // TODO(CT): Save all event states- assuming only one
+
+                    for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size();
+                         eventId++) {
+                        eventStates[eventId][savePtIndex][sample] =
+                            eventStatesEstimate[eventId]; // TODO(CT): Save all event states-
+                                                          // assuming only one
                     }
-                        
+
                     // Update time index
                     savePtIndex++;
                 }
@@ -216,7 +257,7 @@ namespace PCOE {
 
                 // Update state for t to t+dt
                 x = model.stateEqn(t_s, x, loadEstimate, noise, model.getDefaultTimeStep());
-                
+
                 if (thresholdsMet == eventNames.size()) {
                     // All thresholds met- stop simulating for sample
                     break;
@@ -225,15 +266,14 @@ namespace PCOE {
         }
 
         log.WriteLine(LOG_TRACE, MODULE_NAME, "Prediction complete");
-        
+
         std::vector<ProgEvent> events;
         for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
             events.push_back(ProgEvent(eventNames[eventId],
                                        std::move(eventStates[eventId]),
                                        std::move(eventToe[eventId])));
         }
-        
-        return Prediction(std::move(events),
-                          std::move(observables));
+
+        return Prediction(std::move(events), std::move(observables));
     }
 }

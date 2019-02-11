@@ -23,6 +23,11 @@ configure_file(
     COPYONLY
 )
 
+# Copy data files to bin directory
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/data/data_const_load.csv
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    COPYONLY)
+
 set(HEADERS
     inc/MockClasses.h
     inc/Tank3.h
@@ -31,6 +36,7 @@ set(HEADERS
 )
 
 set(SRCS
+    src/AsyncIntegrationTests.cpp
     src/ConfigMapTests.cpp
     src/DataStoreTests.cpp
     src/DPointsTests.cpp
@@ -55,6 +61,7 @@ set(SRCS
     src/Predictors/EventDrivenPredictorTests.cpp
     src/Predictors/PredictorTests.cpp
     src/StatisticalToolsTests.cpp
+    src/SyncIntegrationTests.cpp
     src/Tank3.cpp
     src/TestPrognoser.cpp
     src/TrajectoryServiceTests.cpp
