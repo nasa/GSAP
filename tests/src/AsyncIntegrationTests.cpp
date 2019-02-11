@@ -173,16 +173,16 @@ namespace AsyncIntegrationTests {
         return config;
     }
     
-    void sync_UKF() {
+    void async_UKF() {
         run_test(addUKFConfig(buildBaseMap()));
     }
     
-    void sync_PF() {
+    void async_PF() {
         run_test(addPFConfig(buildBaseMap()));
     }
     
     void registerTests(PCOE::Test::TestContext& context) {
-        context.AddTest("sync UKF", sync_UKF, "Integration");
-        context.AddTest("sync PF", sync_PF, "Integration");
+        context.AddTest("async UKF", async_UKF, "Integration");
+        context.AddTest("async PF", async_PF, "Integration");
     }
 }
