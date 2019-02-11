@@ -58,7 +58,7 @@ namespace PCOE {
     }
 
     AsyncPrognoser AsyncPrognoserBuilder::build(MessageBus& bus,
-                                                const std::string& sensorSource,
+                                                const std::string&,
                                                 const std::string& trajectorySource) {
         lock_guard guard(m);
         AsyncPrognoser container(bus);
