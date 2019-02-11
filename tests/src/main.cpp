@@ -95,10 +95,6 @@ namespace StatisticalToolsTests {
     void registerTests(TestContext& context);
 }
 
-namespace ThreadTests {
-    void registerTests(TestContext& context);
-}
-
 namespace TrajectoryServiceTests {
     void registerTests(TestContext& context);
 }
@@ -129,7 +125,6 @@ int main() {
     ObserverTests::registerTests(context);
     ParticleFilterTests::registerTests(context);
     StatisticalToolsTests::registerTests(context);
-    ThreadTests::registerTests(context);
     TrajectoryServiceTests::registerTests(context);
     UDataTests::registerTests(context);
     

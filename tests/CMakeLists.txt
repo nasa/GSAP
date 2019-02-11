@@ -64,7 +64,6 @@ set(SRCS
     src/SyncIntegrationTests.cpp
     src/Tank3.cpp
     src/TestPrognoser.cpp
-    src/ThreadTests.cpp
     src/TrajectoryServiceTests.cpp
     src/UDataTests.cpp
 )
