@@ -23,6 +23,11 @@ configure_file(
     COPYONLY
 )
 
+# Copy data files to bin directory
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/data/data_const_load.csv
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    COPYONLY)
+
 set(HEADERS
     inc/MockClasses.h
     inc/Tank3.h

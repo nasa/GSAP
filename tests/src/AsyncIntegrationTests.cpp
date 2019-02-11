@@ -116,7 +116,7 @@ namespace AsyncIntegrationTests {
         std::string src = "sensor";
 
         // Read battery data from a file.
-        auto data = read_file("../../data/data_const_load.csv", src);
+        auto data = read_file("data_const_load.csv", src);
 
         MessageBus bus;
 
@@ -150,7 +150,7 @@ namespace AsyncIntegrationTests {
         config.set("model", "Battery");
         config.set("predictor", "MC");
         config.set("Predictor.loadEstimator", "Const");
-        config.set("Predictor.SampleCount", 100);
+        config.set("Predictor.SampleCount", 50);
         config.set("Predictor.Horizon", 10000);
         config.set("Model.ProcessNoise", {"1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5"});
         config.set("LoadEstimator.Loading", 8);
