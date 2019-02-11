@@ -28,7 +28,7 @@ matrix:
         - lcov -q -r coverage.info '/usr/*' --o coverage.info # filter system-files
         # Upload to CodeCov
         - bash <(curl -s https://codecov.io/bash) -f coverage.info
-    - name: "Linux/Clang"
+    - name: "Linux/Clang5"
       os: linux
       compiler: clang
       addons:
@@ -39,6 +39,18 @@ matrix:
             - clang-5.0
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+    - name: "Linux/Clang7"
+      os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-7
+          packages:
+            - clang-7
+      env:
+        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
     - name: "macOS/Clang"
       os: osx
       compiler: clang
