@@ -21,7 +21,7 @@ namespace PCOE {
 
     // Other string constants
     const std::string MODULE_NAME = "PRED-MC";
-    
+
     // Other constants
     const std::vector<UType> SUPPORTED_UTYPES = {UType::MeanCovar, UType::Samples, UType::WSamples};
 
@@ -41,7 +41,7 @@ namespace PCOE {
 
         // Set configuration parameters
         sampleCount = static_cast<unsigned int>(config.getUInt64(NUMSAMPLES_KEY));
-        horizon = config.getUInt64(HORIZON_KEY);
+        horizon = static_cast<double>(config.getUInt32(HORIZON_KEY));
 
         // Set up process noise
         std::vector<std::string> processNoiseStrings = config.getVector(PROCESSNOISE_KEY);
@@ -74,9 +74,10 @@ namespace PCOE {
         // TODO (JW): Contract has been changed so that this is checked in the
         //            constructor. Shouldn't be possible here.
 
-        Ensure(std::any_of(SUPPORTED_UTYPES.begin(), SUPPORTED_UTYPES.end(),
-                           [state](UType x) {return state.front().uncertainty() == x;}),
-                           "State provided in unsupport uncertainty type");
+        Ensure(std::any_of(SUPPORTED_UTYPES.begin(),
+                           SUPPORTED_UTYPES.end(),
+                           [state](UType x) { return state.front().uncertainty() == x; }),
+               "State provided in unsupport uncertainty type");
         auto savePts = savePointProvider.getSavePts();
         auto eventNames = model.getEvents();
 
@@ -210,7 +211,7 @@ namespace PCOE {
                 // If timeOfEvent is not set to INFINITY that means we already encountered the
                 // event, and we don't want to overwrite that.
                 auto thresholdMet = model.thresholdEqn(t_s, x);
-                int thresholdsMet = 0;
+                std::size_t thresholdsMet = 0;
                 for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size();
                      eventId++) {
                     if (thresholdMet[eventId]) {

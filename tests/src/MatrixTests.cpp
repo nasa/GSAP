@@ -476,20 +476,20 @@ namespace MatrixTests {
             m3.row(m + 1, c1);
             Assert::Fail("Set column that doesn't exist.");
         }
-        catch (std::out_of_range) {
+        catch (const std::out_of_range&) {
         }
         try {
             m3.row(0, c2);
             m3.row(0, c3);
             Assert::Fail("Set column with invalid size.");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
         try {
             m3.row(0, c4);
             Assert::Fail("Set column with matrix that isn't a column vector.");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 
@@ -520,14 +520,14 @@ namespace MatrixTests {
             m3.row(m + 1, v1);
             Assert::Fail("Set column that doesn't exist.");
         }
-        catch (std::out_of_range) {
+        catch (const std::out_of_range&) {
         }
         try {
             m3.row(0, v2);
             m3.row(0, v3);
             Assert::Fail("Set column with invalid size.");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 
@@ -558,7 +558,7 @@ namespace MatrixTests {
             m2.row(m + 1);
             Assert::Fail("Got row that doesn't exist.");
         }
-        catch (std::out_of_range) {
+        catch (const std::out_of_range&) {
         }
     }
 
@@ -597,13 +597,13 @@ namespace MatrixTests {
             m3.row(0, r3);
             Assert::Fail("Set row with invalid size.");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
         try {
             m3.row(0, r4);
             Assert::Fail("Set row with matrix that isn't a row vector.");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 
@@ -634,14 +634,14 @@ namespace MatrixTests {
             m3.row(m + 1, v1);
             Assert::Fail("Set row that doesn't exist.");
         }
-        catch (std::out_of_range) {
+        catch (const std::out_of_range&) {
         }
         try {
             m3.row(0, v2);
             m3.row(0, v3);
             Assert::Fail("Set row with invalid size.");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 
@@ -734,10 +734,11 @@ namespace MatrixTests {
                   std::numeric_limits<double>::infinity(),
                   std::numeric_limits<double>::quiet_NaN()});
         Matrix m2 = -m;
-        Assert::AreEqual(0, m2.at(0, 0), "Unexpected value for -0");
-        Assert::AreEqual(-1, m2.at(0, 1), "Unexpected value for -1");
+        Assert::AreEqual(0, m2.at(0, 0), 1e-15, "Unexpected value for -0");
+        Assert::AreEqual(-1, m2.at(0, 1), 1e-15, "Unexpected value for -1");
         Assert::AreEqual(-std::numeric_limits<double>::infinity(),
                          m2.at(1, 0),
+                         1e-15,
                          "Unexpected value for -Inf");
         Assert::IsTrue(std::isnan(m2.at(1, 1)), "Unexpected value for -NaN");
     }
@@ -779,7 +780,7 @@ namespace MatrixTests {
             m3 + m4;
             Assert::Fail("Added matrices of different sizes");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 
@@ -856,7 +857,7 @@ namespace MatrixTests {
             m3 - m4;
             Assert::Fail("Subtracted matrices of different sizes");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 
@@ -1080,7 +1081,7 @@ namespace MatrixTests {
             matrix.adjoint();
             Assert::Fail("Failed to throw on non-square matrix.");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 
@@ -1107,7 +1108,7 @@ namespace MatrixTests {
             matrix.cofactors();
             Assert::Fail("Failed to throw on non-square matrix.");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 
@@ -1176,7 +1177,7 @@ namespace MatrixTests {
 
     void laplaceDet() {
         Matrix m1(3, 3, {0, 0, 0, 0, 4, 5, 0, 7, 8});
-        Assert::AreEqual(0, m1.determinant(), "Laplace determinant calculation wrong");
+        Assert::AreEqual(0, m1.determinant(), 1e-15, "Laplace determinant calculation wrong");
     }
 
     void diagonal() {
@@ -1224,7 +1225,7 @@ namespace MatrixTests {
             matrix.inverse();
             Assert::Fail("Failed to throw on non-square matrix.");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 
@@ -1251,7 +1252,7 @@ namespace MatrixTests {
             matrix.minors();
             Assert::Fail("Failed to throw on non-square matrix.");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 
@@ -1277,14 +1278,14 @@ namespace MatrixTests {
             matrix.submatrix(3, 1);
             Assert::Fail("Succesfully removed non-existant row.");
         }
-        catch (std::out_of_range) {
+        catch (const std::out_of_range&) {
         }
 
         try {
             matrix.submatrix(1, 3);
             Assert::Fail("Succesfully removed non-existant column.");
         }
-        catch (std::out_of_range) {
+        catch (const std::out_of_range&) {
         }
     }
 
@@ -1364,7 +1365,7 @@ namespace MatrixTests {
             matrix.weightedCovariance(w3, 1);
             Assert::Fail("Calculated weighted covariance with wrong number of weights");
         }
-        catch (std::domain_error) {
+        catch (const std::domain_error&) {
         }
     }
 

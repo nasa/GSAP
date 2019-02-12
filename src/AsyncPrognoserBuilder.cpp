@@ -58,7 +58,7 @@ namespace PCOE {
     }
 
     AsyncPrognoser AsyncPrognoserBuilder::build(MessageBus& bus,
-                                                const std::string& sensorSource,
+                                                const std::string&,
                                                 const std::string& trajectorySource) {
         lock_guard guard(m);
         AsyncPrognoser container(bus);
@@ -86,7 +86,7 @@ namespace PCOE {
         container.setLoadEstimator(loadEstimator);
 
         log.WriteLine(LOG_WARN, MODULE_NAME, "Build complete");
-        return std::move(container);
+        return container;
     }
 
     void AsyncPrognoserBuilder::reset() {

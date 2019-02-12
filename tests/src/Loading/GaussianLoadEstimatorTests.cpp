@@ -44,8 +44,8 @@ namespace GaussianLoadEstimatorTests {
 
         auto estimate = le.estimateLoad(0.0);
         Assert::AreEqual(2, estimate.size(), "Estimate size");
-        Assert::AreNotEqual(1.0, estimate[0], "First estimate value");
-        Assert::AreNotEqual(1.0, estimate[1], "Second estimate value");
+        Assert::AreNotEqual(1.0, estimate[0], 1e-15, "First estimate value");
+        Assert::AreNotEqual(1.0, estimate[1], 1e-15, "Second estimate value");
     }
 
     void addLoad() {

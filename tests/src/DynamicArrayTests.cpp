@@ -54,9 +54,9 @@ namespace DynamicArrayTests {
         std::size_t size = 4;
         DynamicArray<test_type, TestAllocator<test_type>> arr(size, alloc);
 
-        Assert::AreEqual(0.0, arr.at(0), "Default value");
+        Assert::AreEqual(0.0, arr.at(0), 1e-15, "Default value");
         arr.at(0) = 1.0;
-        Assert::AreEqual(1.0, arr.at(0), "Indexer");
+        Assert::AreEqual(1.0, arr.at(0), 1e-15, "Indexer");
         // Assert::AreEqual(8 + size * sizeof(test_type), *alloc.totalAllocated, "Allocation size");
     }
 
@@ -65,9 +65,9 @@ namespace DynamicArrayTests {
         std::size_t size = 4;
         DynamicArray<test_type, TestAllocator<test_type>> arr(size, alloc);
 
-        Assert::AreEqual(0.0, arr[0], "Default value");
+        Assert::AreEqual(0.0, arr[0], 1e-15, "Default value");
         arr[0] = 1.0;
-        Assert::AreEqual(1.0, arr[0], "Indexer");
+        Assert::AreEqual(1.0, arr[0], 1e-15, "Indexer");
         // Assert::AreEqual(8 + size * sizeof(test_type), *alloc.totalAllocated, "Allocation size");
     }
 
@@ -76,16 +76,16 @@ namespace DynamicArrayTests {
         std::size_t size = 4;
         DynamicArray<test_type, TestAllocator<test_type>> arr(size, alloc);
 
-        Assert::AreEqual(0.0, arr.at(0), "Default value");
+        Assert::AreEqual(0.0, arr.at(0), 1e-15, "Default value");
         arr[0] = 1.0;
         arr[1] = 2.0;
         arr[2] = 3.0;
         arr[3] = 4.0;
-        Assert::AreEqual(1.0, arr.front(), "front");
+        Assert::AreEqual(1.0, arr.front(), 1e-15, "front");
         // Assert::AreEqual(8 + size * sizeof(test_type), *alloc.totalAllocated, "Allocation size");
 
         arr.front() = 5.0;
-        Assert::AreEqual(5.0, arr.front(), "front 2");
+        Assert::AreEqual(5.0, arr.front(), 1e-15, "front 2");
     }
 
     void back() {
@@ -93,16 +93,15 @@ namespace DynamicArrayTests {
         std::size_t size = 4;
         DynamicArray<test_type, TestAllocator<test_type>> arr(size, alloc);
 
-        Assert::AreEqual(0.0, arr.at(0), "Default value");
+        Assert::AreEqual(0.0, arr.at(0), 1e-15, "Default value");
         arr[0] = 1.0;
         arr[1] = 2.0;
         arr[2] = 3.0;
         arr[3] = 4.0;
-        Assert::AreEqual(4.0, arr.back(), "back");
-        // Assert::AreEqual(8 + size * sizeof(test_type), *alloc.totalAllocated, "Allocation size");
+        Assert::AreEqual(4.0, arr.back(), 1e-15, "back");
 
         arr.back() = 5.0;
-        Assert::AreEqual(5.0, arr.back(), "back 2");
+        Assert::AreEqual(5.0, arr.back(), 1e-15, "back 2");
     }
 
     void empty() {

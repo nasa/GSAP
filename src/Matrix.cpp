@@ -54,7 +54,7 @@ namespace PCOE {
             std::none_of(l.begin(), l.end(), [=](const Matrix& i) { return i.rows() != m; });
         if (rowsMatch) {
             M = m;
-            N = std::accumulate(l.begin(), l.end(), 0, [](std::size_t i, const Matrix& j) {
+            N = std::accumulate(l.begin(), l.end(), 0u, [](std::size_t i, const Matrix& j) {
                 return i + j.cols();
             });
             data = new double[M * N];
@@ -75,7 +75,7 @@ namespace PCOE {
         bool colsMatch =
             std::none_of(l.begin(), l.end(), [=](const Matrix& i) { return i.cols() != n; });
         if (colsMatch) {
-            M = std::accumulate(l.begin(), l.end(), 0, [](std::size_t i, const Matrix& j) {
+            M = std::accumulate(l.begin(), l.end(), 0u, [](std::size_t i, const Matrix& j) {
                 return i + j.rows();
             });
             N = n;
@@ -106,7 +106,7 @@ namespace PCOE {
         bool rowsMatch =
             std::none_of(l.begin(), l.end(), [=](const Matrix& i) { return i.rows() != m; });
         std::size_t columnCount =
-            std::accumulate(l.begin(), l.end(), 0, [](std::size_t i, const Matrix& j) {
+            std::accumulate(l.begin(), l.end(), 0u, [](std::size_t i, const Matrix& j) {
                 return i + j.cols();
             });
         if (rowsMatch && columnCount == n) {
@@ -126,7 +126,7 @@ namespace PCOE {
         bool colsMatch =
             std::none_of(l.begin(), l.end(), [=](const Matrix& i) { return i.cols() != n; });
         std::size_t rowCount =
-            std::accumulate(l.begin(), l.end(), 0, [](std::size_t i, const Matrix& j) {
+            std::accumulate(l.begin(), l.end(), 0u, [](std::size_t i, const Matrix& j) {
                 return i + j.rows();
             });
         if (colsMatch && rowCount == m) {

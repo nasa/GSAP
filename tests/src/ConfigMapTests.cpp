@@ -9,9 +9,28 @@ using namespace PCOE::Test;
 
 namespace ConfigMapTests {
     void configMapLoadArgs() {
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wwrite-strings"
+#elif defined __GNUC__ && __GNUC__ >= 6
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
+
         const int argc = 4;
+        // Note (JW): Usually string literals should be `const char*`, but in
+        // this case we're testing a constructor specifically designed to allow
+        // setting config by passing command line arguments from the program's
+        // `main`, which the C++ spec specifies as having the type char*[] for
+        // argv.
         char* argv[argc] = {"-test", "-test2", "-test3", "badTest"};
         ConfigMap theMap(argc, argv);
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#elif defined __GNUC__ && __GNUC__ >= 6
+#pragma GCC diagnostic pop
+#endif
     }
 
     void configMapUse() {
@@ -89,7 +108,7 @@ namespace ConfigMapTests {
             requireKeys(theMap, {"test1", "test2"});
             Assert::Fail("Found params that shouldn't exist [0]");
         }
-        catch (std::range_error) {
+        catch (const std::range_error&) {
         }
 
         // checkRequiredParams- Mix exist
@@ -98,7 +117,7 @@ namespace ConfigMapTests {
             requireKeys(theMap, {"test1", "test2"});
             Assert::Fail("Found params that shouldn't exist [1]");
         }
-        catch (std::range_error) {
+        catch (const std::range_error&) {
         }
 
         // checkRequiredParams- Do exist

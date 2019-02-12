@@ -1,7 +1,16 @@
-/**  @copyright Copyright (c) 2016-2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
+// Copyright (c) 2017-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+
+// Supress warnings for unused parameters. Remove this when copying the template
+// to create a new instance of the templated class.
+#ifdef _MSC_VER
+#pragma warning(disable : 4100)
+#elif defined __clang__
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#elif defined __GNUC__ && __GNUC__ >= 6
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 #include "EmptyPrognosticsModel.h"
 
@@ -15,14 +24,13 @@ using namespace PCOE;
 const BatteryModel::state_type::size_type STATE_SIZE = 2;
 
 // Inputs to model (e.g., current)
-auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
+static auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
 
 // Outputs of model (e.g., voltage)
-auto OUTPUTS = {MessageId::TestOutput0, MessageId::TestOutput1};
+static auto OUTPUTS = {MessageId::TestOutput0, MessageId::TestOutput1};
 
 const std::vector<std::string> PREDICTED_OUTPUTS = {"pOutput1"};
 const std::vector<MessageId> EVENTS = {MessageId::TestEvent0};
-const BatteryModel::input_type::size_type INPUT_PARAM_COUNT = 1;
 
 EmptyPrognosticsModel::EmptyPrognosticsModel()
     : PrognosticsModel(STATE_SIZE, INPUTS, OUTPUTS, PREDICTED_OUTPUTS, EVENTS) {
@@ -67,8 +75,7 @@ SystemModel::state_type EmptyPrognosticsModel::initialize(const input_type& u,
     return initialized_state;
 }
 
-std::vector<bool> EmptyPrognosticsModel::thresholdEqn(double t,
-                                         const state_type& x) const {
+std::vector<bool> EmptyPrognosticsModel::thresholdEqn(double t, const state_type& x) const {
     // Often uses outputs to calculate threshold, remove line if not relevant
     auto z = outputEqn(t, x, std::vector<double>(2));
 
@@ -79,8 +86,7 @@ std::vector<bool> EmptyPrognosticsModel::thresholdEqn(double t,
 }
 
 PrognosticsModel::observables_type
-EmptyPrognosticsModel::observablesEqn(double t,
-                                          const state_type& x) const {
+EmptyPrognosticsModel::observablesEqn(double t, const state_type& x) const {
     auto observables = getObservablesVector();
     // Fill observables
 

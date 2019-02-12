@@ -1,7 +1,17 @@
-/**  @copyright Copyright (c) 2017-2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
+// Copyright (c) 2017-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+
+// Supress warnings for unused parameters. Remove this when copying the template
+// to create a new instance of the templated class.
+#ifdef _MSC_VER
+#pragma warning(disable : 4100)
+#elif defined __clang__
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#elif defined __GNUC__ && __GNUC__ >= 6
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <random>
 #include <string>
 #include <vector>
@@ -16,7 +26,10 @@ namespace PCOE {
     const std::string MODULE_NAME = "PRED-Empty";
 
     // ConfigMap-based Constructor
-    EmptyPredictor::EmptyPredictor(const PrognosticsModel& m, LoadEstimator& le, TrajectoryService& ts, ConfigMap& config)
+    EmptyPredictor::EmptyPredictor(const PrognosticsModel& m,
+                                   LoadEstimator& le,
+                                   TrajectoryService& ts,
+                                   ConfigMap& config)
         : Predictor(m, le, ts, config) {
         // Setup based on configuration parameters
         // ...

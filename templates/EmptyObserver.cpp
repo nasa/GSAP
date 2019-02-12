@@ -1,7 +1,17 @@
-/**  @copyright Copyright (c) 2017-2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
+// Copyright (c) 2017-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+
+// Supress warnings for unused parameters. Remove this when copying the template
+// to create a new instance of the templated class.
+#ifdef _MSC_VER
+#pragma warning(disable : 4100)
+#elif defined __clang__
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#elif defined __GNUC__ && __GNUC__ >= 6
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <algorithm>
 #include <cmath>
 #include <string>
@@ -18,7 +28,8 @@ namespace PCOE {
 
     const std::string MODULE_NAME = "OBS-Empty";
 
-    EmptyObserver::EmptyObserver(const SystemModel& m, const Matrix Q, const Matrix R) : Observer(m) {}
+    EmptyObserver::EmptyObserver(const SystemModel& m, const Matrix Q, const Matrix R)
+        : Observer(m) {}
 
     // Initialize function (required by Observer interface)
     void EmptyObserver::initialize(const double t0,
@@ -34,7 +45,9 @@ namespace PCOE {
     }
 
     // Step function (required by Observer interface)
-    void EmptyObserver::step(double t, const SystemModel::input_type& u, const SystemModel::output_type& z) {
+    void EmptyObserver::step(double t,
+                             const SystemModel::input_type& u,
+                             const SystemModel::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
 
         if (!isInitialized()) {

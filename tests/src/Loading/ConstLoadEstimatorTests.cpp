@@ -2,8 +2,8 @@
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #include "ConfigMap.h"
-#include "Test.h"
 #include "Loading/ConstLoadEstimator.h"
+#include "Test.h"
 
 using namespace PCOE;
 using namespace PCOE::Test;
@@ -31,8 +31,8 @@ namespace ConstLoadEstimatorTests {
 
         auto estimate = le.estimateLoad(0.0);
         Assert::AreEqual(2, estimate.size(), "Estimate size");
-        Assert::AreEqual(1.0, estimate[0], "First estimate value");
-        Assert::AreEqual(1.0, estimate[1], "Second estimate value");
+        Assert::AreEqual(1.0, estimate[0], 1e-15, "First estimate value");
+        Assert::AreEqual(1.0, estimate[1], 1e-15, "Second estimate value");
     }
 
     void addLoad() {
