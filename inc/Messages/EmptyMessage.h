@@ -33,7 +33,7 @@ namespace PCOE {
         EmptyMessage(MessageId id, std::string source, time_point timestamp);
 
     protected:
-        inline std::uint16_t getPayloadSize() const override final {
+        inline std::uint32_t getPayloadSize() const override final {
             return 0;
         }
 

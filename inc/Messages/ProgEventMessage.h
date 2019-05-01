@@ -42,7 +42,7 @@ namespace PCOE {
         }
 
     protected:
-        std::uint16_t getPayloadSize() const override final {
+        std::uint32_t getPayloadSize() const override final {
             throw std::domain_error("Serialization not supported");
         }
 

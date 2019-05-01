@@ -15,7 +15,7 @@ namespace PCOE {
                                      double alt)
         : Message(id, source, timestamp), eta(eta), point(lat, lon, alt) {}
 
-    std::uint16_t WaypointMessage::getPayloadSize() const {
+    std::uint32_t WaypointMessage::getPayloadSize() const {
         return 32;
     }
 

@@ -18,8 +18,9 @@ namespace PCOE {
         std::uint64_t raw_time = timestamp.time_since_epoch().count();
         os.write(reinterpret_cast<const char*>(&raw_time), 8);
 
-        std::uint16_t payloadLen = getPayloadSize();
-        os.write(reinterpret_cast<const char*>(&payloadLen), 2);
+        std::uint32_t payloadLen = getPayloadSize();
+        Require(payloadLen < 1073741824, "Payload length");
+        os.write(reinterpret_cast<const char*>(&payloadLen), sizeof(payloadLen));
         serializePayload(os);
     }
 }

@@ -84,10 +84,10 @@ namespace PCOE {
         }
 
     protected:
-        std::uint16_t getPayloadSize() const override final {
+        std::uint32_t getPayloadSize() const override final {
             std::size_t size = 2 + values.size() * sizeof(T);
-            Expect(size < std::numeric_limits<std::uint16_t>::max(), "Payload size too big");
-            return static_cast<std::uint16_t>(size);
+            Ensure(size < 1073741824, "Payload size too big");
+            return static_cast<std::uint32_t>(size);
         }
 
         void serializePayload(std::ostream& os) const override final {

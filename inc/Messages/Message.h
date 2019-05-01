@@ -77,7 +77,7 @@ namespace PCOE {
         void serialize(std::ostream& os) const;
 
     protected:
-        virtual std::uint16_t getPayloadSize() const = 0;
+        virtual std::uint32_t getPayloadSize() const = 0;
 
         virtual void serializePayload(std::ostream& os) const = 0;
 

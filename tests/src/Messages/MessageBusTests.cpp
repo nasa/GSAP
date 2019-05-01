@@ -17,7 +17,7 @@ public:
         : Message(id, source, MessageClock::now()) {}
 
 protected:
-    std::uint16_t getPayloadSize() const override {
+    std::uint32_t getPayloadSize() const override {
         return 0;
     }
 
