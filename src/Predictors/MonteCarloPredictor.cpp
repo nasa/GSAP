@@ -148,6 +148,12 @@ namespace PCOE {
             std::random_device rDevice;
             std::mt19937 generator(rDevice());
 #endif
+            std::vector<std::normal_distribution<>> processNoiseDists;
+            processNoiseDists.reserve(model.getStateSize());
+            for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
+                processNoiseDists.push_back(
+                    std::normal_distribution<>{0, sqrt(processNoise[xIndex])});
+            }
 
             // 1. Sample the state
             // Create state vector
@@ -252,8 +258,7 @@ namespace PCOE {
                 // Sample process noise - for now, assuming independent
                 std::vector<double> noise(model.getStateSize());
                 for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
-                    std::normal_distribution<> noiseDistribution(0, sqrt(processNoise[xIndex]));
-                    noise[xIndex] = noiseDistribution(generator);
+                    noise[xIndex] = processNoiseDists[xIndex](generator);
                 }
 
                 // Update state for t to t+dt
