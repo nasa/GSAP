@@ -1,53 +1,40 @@
-/**  EmptyPredictor - Header
- *   @file      EmptyPredictor Class
- *   @ingroup   GPIC++
- *   @ingroup    Predictors
- *
- *   @brief     EmptyPredictor Class - Class defining the EmptyPredictor
- *
- *   @author    Matthew Daigle
- *   @version   1.1.0
- *
- *   @pre       N/A
- *
- *      Contact: Matthew Daigle (matthew.j.daigle@nasa.gov)
- *      Created: January 10, 2017
- *
- *   @copyright Copyright (c) 2017-2018 United States Government as represented by
+/**  @copyright Copyright (c) 2017-2019 United States Government as represented by
  *     the Administrator of the National Aeronautics and Space Administration.
  *     All Rights Reserved.
  */
-
 #ifndef PCOE_EmptyPredictor_H
 #define PCOE_EmptyPredictor_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "Model.h"
-#include "Predictor.h"
-#include "GSAPConfigMap.h"
+#include "ConfigMap.h"
+#include "Models/SystemModel.h"
+#include "Predictors/Predictor.h"
 
 namespace PCOE {
     class EmptyPredictor final : public Predictor {
-
     public:
-        /** @brief    Constructor for a EmptyPredictor based on a configMap
-        *   @param  configMap Configuration map specifying predictor parameters
-        **/
-        explicit EmptyPredictor(GSAPConfigMap & configMap);
-        /** @brief Set model pointer
-        *   @param model given model pointer
-        **/
-        void setModel(PrognosticsModel * model);
+        /**
+         * Initializes a new @{code EmptyPredictor}.
+         *
+         * @param m      The model used by the predictor.
+         * @param le     The load estimator used by the predictor.
+         * @param ts     The trajectory service to be used by the predictor
+         * @param config Configuration map specifying predictor parameters.
+         **/
+        explicit EmptyPredictor(const PrognosticsModel& m,
+                                LoadEstimator& le,
+                                TrajectoryService& ts,
+                                ConfigMap& config);
 
-        /** @brief    Predict function for a Predictor
-        *   @param    tP Time of prediction
-        *    @param    state state of system at time of prediction
-        *   @param  data ProgData object, in which prediction results are stored
-        **/
-        void predict(const double tP, const std::vector<UData> & state, ProgData & data);
+        /**
+         * Predict future events and values of system variables
+         *
+         * @param t     Time of prediction
+         * @param state State of system at time of prediction
+         **/
+        Prediction predict(double t, const std::vector<UData>& state) override;
     };
 }
-
-#endif  // PCOE_EmptyPredictor_H
+#endif // PCOE_EmptyPredictor_H

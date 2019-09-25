@@ -1,90 +1,69 @@
-/**  EmptyObserver - Body
- *   @file       EmptyObserver.cpp
- *   @ingroup    GPIC++
- *
- *   @copyright Copyright (c) 2017-2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
+// Copyright (c) 2017-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+
+// Supress warnings for unused parameters. Remove this when copying the template
+// to create a new instance of the templated class.
+#ifdef _MSC_VER
+#pragma warning(disable : 4100)
+#elif defined __clang__
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#elif defined __GNUC__ && __GNUC__ >= 6
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 #include <algorithm>
+#include <cmath>
 #include <string>
 #include <vector>
-#include <cmath>
 
-#include "Model.h"
+#include "Models/SystemModel.h"
 #include "UData.h"
 
-#include "Exceptions.h"
 #include "EmptyObserver.h"
+#include "Exceptions.h"
 
 namespace PCOE {
-    
-    // Set model
-    void EmptyObserver::setModel(Model * model) {
-        // Set the model pointer
-        // pModel = model;
-    }
-    
+    const static Log& log = Log::Instance();
+
+    const std::string MODULE_NAME = "OBS-Empty";
+
+    EmptyObserver::EmptyObserver(const SystemModel& m, const Matrix Q, const Matrix R)
+        : Observer(m) {}
+
     // Initialize function (required by Observer interface)
-    void EmptyObserver::initialize(const double t0, const std::vector<double> & x0,
-                                           const std::vector<double> & u0) {
+    void EmptyObserver::initialize(const double t0,
+                                   const SystemModel::state_type& x0,
+                                   const SystemModel::input_type& u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
-        
-        // Check that model has been set
-        if (pModel == NULL) {
-            log.WriteLine(LOG_ERROR, MODULE_NAME, "EmptyObserver does not have a model!");
-            throw ConfigurationError("EmptyObserver does not have a model!");
-        }
-        
-        // Initialize time, inputs
-        m_t = t0;
-        m_uOld = u0;
-        
-        // Other initialization activities
+        auto initialized_state = model.getStateVector();
+
+        // Initialization activities
         // ...
-        
-        // Set initialized flag
-        m_initialized = true;
+
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initialize completed");
     }
-    
-    // Get state mean
-    const std::vector<double> & EmptyObserver::getStateMean() const {
-        // return xEstimated;
-    }
-    
-    // Get output mean
-    const std::vector<double> & EmptyObserver::getOutputMean() const {
-        // return zEstimated;
-    }
-    
+
     // Step function (required by Observer interface)
-    void EmptyObserver::step(const double newT, const std::vector<double> & u,
-                                     const std::vector<double> & z) {
+    void EmptyObserver::step(double t,
+                             const SystemModel::input_type& u,
+                             const SystemModel::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
-        
+
         if (!isInitialized()) {
             log.WriteLine(LOG_ERROR, MODULE_NAME, "Called step before initialized");
             throw std::domain_error("EmptyObserver::step not initialized");
         }
-        
-        // Update time
-        double dt = newT - m_t;
-        m_t = newT;
-        if (dt <= 0) {
-            log.WriteLine(LOG_ERROR, MODULE_NAME, "dt is less than or equal to zero");
-            throw std::domain_error("EmptyObserver::step dt is 0");
-        }
-        
+
         // Perform state estimation
         // ...
-        
-        // Update uOld
-        m_uOld = u;
     }
-    
+
     std::vector<UData> EmptyObserver::getStateEstimate() const {
-        // return state;
+        std::vector<UData> state(model.getStateSize());
+
+        // Fill state
+
+        return state;
     }
 }

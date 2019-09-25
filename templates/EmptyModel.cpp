@@ -1,100 +1,73 @@
-/**  EmptyModel - Body
-*   @file       EmptyModel.cpp
-*   @ingroup    GSAP-Support
-*
-*   @copyright Copyright (c) 2017-2018 United States Government as represented by
-*     the Administrator of the National Aeronautics and Space Administration.
-*     All Rights Reserved.
-*/
+// Copyright (c) 2017-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+
+// Supress warnings for unused parameters. Remove this when copying the template
+// to create a new instance of the templated class.
+#ifdef _MSC_VER
+#pragma warning(disable : 4100)
+#elif defined __clang__
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#elif defined __GNUC__ && __GNUC__ >= 6
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
+#include <string>
+#include <vector>
 
 #include "EmptyModel.h"
-#include "ConfigMap.h"
 
 using namespace PCOE;
 
-EmptyModel::EmptyModel() {
-    // Default constructor
-    inputs  = {} // SET MODEL INPUT TAG NAMES
-    // e.g., inputs = {"power"}
-    outputs = {} // SET MODEL OUTPUT TAG NAMES
-    // e.g., outputs = {"voltage", "temperature"}
-    events = {} // SET EVENT NAMES
-    // e.g., events = {"EOD"}
-    predictedOutputs = {} // SET PREDICTED OUTPUT NAMES
-    // e.g., predictedOutputs = {"SOC"}
-}
+// Number of state variables
+const SystemModel::state_type::size_type STATE_SIZE = 2;
+
+// Inputs to model (e.g., current)
+static auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
+
+// Outputs of model (e.g., voltage)
+static auto OUTPUTS = {MessageId::TestOutput0, MessageId::TestOutput1};
+
+EmptyModel::EmptyModel() : SystemModel(STATE_SIZE, INPUTS, OUTPUTS, {}, {}) {}
 
 // Constructor based on configMap
-EmptyModel::EmptyModel(const ConfigMap & configMap) : EmptyModel::EmptyModel() {
+EmptyModel::EmptyModel(const ConfigMap& configMap) : EmptyModel::EmptyModel() {
     // Setup model based on configuration parameters
 }
 
 // EmptyModel State Equation
-void EmptyModel::stateEqn(const double, std::vector<double> & x, 
-                       const std::vector<double> & u, const std::vector<double> & n, 
-                       const double dt) {
+SystemModel::state_type EmptyModel::stateEqn(double t,
+                                             const SystemModel::state_type& x,
+                                             const SystemModel::input_type& u,
+                                             const SystemModel::noise_type& n,
+                                             double dt) const {
+    auto new_state = getStateVector();
 
-    // Extract states
-    // double a = x[0];
-    // double b = x[1];
-    // ...
+    // Fill new_state
+    // e.g., new_state[0] = SOMEVALUE;
 
-    // Extract inputs
-    // double c = u[0];
-    // ...
-
-    // State equations
-    // double adot = a + b;
-    // double bdot = c;
-    // ...
-
-    // Update state
-    // x[0] = a + adot*dt;
-    // x[1] = b + bdot*dt;
-    // ...
-
-    // Add process noise
-    // x[0] += dt*n[0];
-    // x[1] += dt*n[1];
-    // ...
+    return new_state;
 }
 
 // EmptyModel Output Equation
-void EmptyModel::outputEqn(const double, const std::vector<double> & x,
-                        const std::vector<double> &, const std::vector<double> & n,
-                        std::vector<double> & z) {
+SystemModel::output_type EmptyModel::outputEqn(double t,
+                                               const SystemModel::state_type& x,
+                                               const SystemModel::noise_type& n) const {
+    auto output = getOutputVector();
 
-    // Extract states
-    // double a = x[0];
-    // double b = x[1];
-    // ...
-    
-    // Extract inputs
-    // double c = u[0];
-    // ...
+    // Fill output
+    // e.g., output[0] = SOMEVALUE;
 
-    // Output equations
-    // double d = a + b + c;
-    // ...
-
-    // Set outputs
-    // z[0] = d;
-    // ...
-
-    // Add noise
-    // z[0] += n[0];
-    // ...
+    return output;
 }
 
 // Initialize state, given initial inputs and outputs
-void EmptyModel::initialize(std::vector<double> & x, const std::vector<double> & u, const std::vector<double> & z) {
-    // Determine x from u and z (model-dependent) or as fixed values
-    // double a0 = 1;
-    // double b0 = 2;
-    // ...
-    
-    // Set x
-    // x[0] = a0;
-    // x[1] = b0;
-    // ...
+SystemModel::state_type EmptyModel::initialize(const SystemModel::input_type& u,
+                                               const SystemModel::output_type& z) const {
+    SystemModel::state_type initialized_state = getStateVector();
+
+    // Fill initialized_state
+    // e.g., initialized_state[0] = SOMEVALUE;
+
+    return initialized_state;
 }

@@ -1,9 +1,9 @@
 language: cpp
 
-# Use reasonable compiler versions
 matrix:
   include:
-    - os: linux
+    - name: "Linux/GCC"
+      os: linux
       compiler: gcc
       addons:
         apt:
@@ -14,8 +14,22 @@ matrix:
             - lcov
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-        - COMPENV="gcc"
-    - os: linux
+      script:
+        - cmake -DCoverage=ON .. $GENERATOR
+        - cmake --build .
+        - lcov -q -c -i -d ./gsap -o coverage_base.info
+        - pushd bin
+        - ./tests
+        - popd
+      after_success:
+        # Create lcov report
+        - lcov -q -c -d ./gsap -o coverage_test.info
+        - lcov -q -a coverage_base.info -a coverage_test.info -o coverage.info
+        - lcov -q -r coverage.info '/usr/*' --o coverage.info # filter system-files
+        # Upload to CodeCov
+        - bash <(curl -s https://codecov.io/bash) -f coverage.info
+    - name: "Linux/Clang"
+      os: linux
       compiler: clang
       addons:
         apt:
@@ -23,31 +37,29 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-            - lcov
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
-        - COMPENV="clang"
-    - os: osx
+    - name: "macOS/Clang"
+      os: osx
       compiler: clang
       env:
         - MATRIX_EVAL=""
-        - COMPENV="clang"
-    - os: osx
+    - name: "macOS/Xcode"
+      os: osx
       env:
         - MATRIX_EVAL="GENERATOR='-G Xcode'"
-        - COMPENV=""
 
 before_install:
     - eval "${MATRIX_EVAL}"
 
-script:
+before_script:
+  - pushd tests
   - mkdir build
-  - mkdir bin
   - pushd build
-  - cmake ..
+
+script:
+  - cmake .. $GENERATOR
   - cmake --build .
-  - popd
   - pushd bin
-  - ./supportTests
-  - ./frameworkTests
-  - ./commCollectionTests
+  - ./tests
+  - popd

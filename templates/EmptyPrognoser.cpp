@@ -1,65 +1,46 @@
-/**  Empty Prognoser - Body
- *   @class     EmptyPrognoser EmptyPrognoser.h
- *   @ingroup   GPIC++
- *   @ingroup   ProgLib
- *
- *   @brief     Empty Prognoser Class
- *
- *   The purpose of this class is to serve as a template for creating future prognosers
- *
- *   @author    Chris Teubert
- *   @version   1.1.0
- *
- *   @pre       Prognostic Configuration File and Prognoster Configuration Files
- *
- *      Contact: Chris Teubert (Christopher.a.teubert@nasa.gov)
- *      Created: November 11, 2015
- *
- *   @copyright Copyright (c) 2013-2018 United States Government as represented by
- *     the Administrator of the National Aeronautics and Space Administration.
- *     All Rights Reserved.
- */
-#include "GSAPConfigMap.h"
+// Copyright (c) 2017-2018 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+
+// Supress warnings for unused parameters. Remove this when copying the template
+// to create a new instance of the templated class.
+#ifdef _MSC_VER
+#pragma warning(disable : 4100)
+#elif defined __clang__
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#elif defined __GNUC__ && __GNUC__ >= 6
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
+#include <vector>
+
+#include "ConfigMap.h"
+#include "DataPoint.h"
 #include "EmptyPrognoser.h"
+#include "ProgEvent.h"
 
 namespace PCOE {
-    EmptyPrognoser::EmptyPrognoser(GSAPConfigMap & configMap) :
-        CommonPrognoser(configMap) {
-        // DEFINE EVENTS FOR THIS SPECIFIC PROGNOSER
-        // Ex:
-            // results.addEvent("EOL");
-
+    std::string moduleName = "Empty Prognoser";
+    EmptyPrognoser::EmptyPrognoser(ConfigMap& configMap) {
         // Handle Configuration
         log.WriteLine(LOG_DEBUG, moduleName, "Configuring");
         // std::string a = configMap.at("ExampleParam");
     }
 
-    void EmptyPrognoser::step() {
-        log.WriteLine(LOG_TRACE, moduleName, "Running Monitor Step");
+    Prediction EmptyPrognoser::step(std::map<MessageId, Datum<double>> data) {
+        // Run calculations
+        std::vector<ProgEvent> events;
+        std::vector<UData> state = {UData(1.0)}; // Example
+        UData toe = UData(124222.01); // Example time of event
+        events.push_back(ProgEvent(MessageId::TestEvent0, state, toe));
 
-        // Update States
-    //    results.state["STATE1"].set(1.1);
-    //    results.state["STATE2"].set(0.9);
+        std::vector<DataPoint> trajectories; // System Trajectories
+        DataPoint exampleTrajectory;
+        exampleTrajectory.setNumTimes(1); // Save only one time
+        exampleTrajectory[0] = UData(0.5);
+        trajectories.push_back(exampleTrajectory);
 
-        log.WriteLine(LOG_TRACE, moduleName, "Running Prediction Step");
-        // Update Time To Events
-        //    results.timeToEvent[MEAN].set(1.5);
-
-        // Update Future Safety Metrics
+        Prediction pred(events, trajectories);
+        return pred;
     }
-
-    // *------------------------------------------------------*
-    // |          Optional Methods- Uncomment to use          |
-    // *------------------------------------------------------*
-    // void EmptyPrognoser::checkInputValidity() {
-    // }
-    //
-    // bool EmptyPrognoser::isEnoughData() {
-    //    ///@todo(CT): Fill out example of checking if there is enough data
-    //    return true
-    // }
-    //
-    // void EmptyPrognoser::checkResultValidity() {
-    //    ///@todo(CT): Fill out example of setting to invalid
-    // }
 }
