@@ -11,7 +11,7 @@ enables reuse of prognostic algorithms and models across using the GSAP
 framework.
 
 There are two operational modes for GSAP: 'async' and 'simple'. These are both described below:
-* 'async': Asynchronous GSAP. This takes advantage of parallization, performing prognostics on a different thread for each system.
+* 'async': Asynchronous GSAP. This takes advantage of parallization, includes autonomatic thread managment to perform calculations on multiple threads. 
 * 'simple': Simple single-threaded GSAP. Resulting prognostics application is smaller and simplier, but does not take advantage of multi-threading. Ideal for resource constrained hardware. 
 
 ![GSAP Layers](images/Layers.png)
