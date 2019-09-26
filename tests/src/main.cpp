@@ -19,6 +19,10 @@ namespace BatteryResultTests {
     void registerTests(TestContext& context);
 }
 
+namespace CentrifugalPumpModelTests {
+    void registerTests(TestContext& context);
+}
+
 namespace ConfigMapTests {
     void registerTests(TestContext& context);
 }
@@ -106,7 +110,11 @@ namespace UDataTests {
 int main() {
     TestContext context;
     
+    CentrifugalPumpModelTests::registerTests(context);
+    context.Execute();
+    return 0;
     BatteryResultTests::registerTests(context);
+    CentrifugalPumpModelTests::registerTests(context);
     ConfigMapTests::registerTests(context);
     DataPointTests::registerTests(context);
     DataPointsTests::registerTests(context);

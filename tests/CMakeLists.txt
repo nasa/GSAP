@@ -37,6 +37,7 @@ set(HEADERS
 
 set(SRCS
     src/AsyncIntegrationTests.cpp
+    src/CentrifugalPumpModelTests.cpp
     src/ConfigMapTests.cpp
     src/DataStoreTests.cpp
     src/DPointsTests.cpp
