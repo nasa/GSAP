@@ -81,17 +81,17 @@ public:
         
         //  Initial state
         struct X0 {
-            double w = 3600*2*M_PI/60;  //  3600 rpm
-            double Q = 0;
-            double Tt = 290;
-            double Tr = 290;
-            double To = 290;
             double A = 12.7084;
-            double rThrust = 1.4e-6;
+            double Q = 0;
+            double To = 290;
+            double Tr = 290;
+            double Tt = 290;
             double rRadial = 1.8e-006;
+            double rThrust = 1.4e-6;
+            double w = 3600*2*M_PI/60;  //  3600 rpm
             double wA = 0;
-            double wThrust = 0;
             double wRadial = 0;
+            double wThrust = 0;
         } x0;
         
         //  Process noise
