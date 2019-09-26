@@ -57,6 +57,7 @@ set(HEADERS
     inc/ModelBasedAsyncPrognoserBuilder.h
     inc/ModelBasedPrognoser.h
     inc/Models/BatteryModel.h
+    inc/Models/CentrifugalPumpModel.h
     inc/Models/SystemModel.h
     inc/Models/SystemModelFactory.h
     inc/Models/PrognosticsModel.h
@@ -104,6 +105,7 @@ set(SRCS
     src/ModelBasedAsyncPrognoserBuilder.cpp
     src/ModelBasedPrognoser.cpp
     src/Models/BatteryModel.cpp
+    src/Models/CentrifugalPumpModel.cpp
     src/Observers/AsyncObserver.cpp
     src/Observers/ParticleFilter.cpp
     src/Observers/UnscentedKalmanFilter.cpp
