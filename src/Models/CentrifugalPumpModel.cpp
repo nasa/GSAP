@@ -394,7 +394,12 @@ std::vector<bool> CentrifugalPumpModel::thresholdEqn(double, const state_type& x
     
     auto eventState = eventStateEqn(x);
     
-    return {std::for_each(eventState.begin(), eventState.end(), [](double x){return x <= 0;})};
+    std::vector<bool> thresholdMet(eventState.size());
+    
+    for (unsigned long i = 0; i < eventState.size(); i++) {
+        thresholdMet[i] = eventState[i] <= 0.0;
+    }
+    return thresholdMet;
 }
 
 SystemModel::event_state_type CentrifugalPumpModel::eventStateEqn(const state_type& x) const {
@@ -406,10 +411,10 @@ SystemModel::event_state_type CentrifugalPumpModel::eventStateEqn(const state_ty
     double Tt = x[4];
     
     // Individual performance constraints
-    auto BA = (parameters.x0.A - A) / (parameters.x0.A - parameters.ALim);
-    auto BTo = (To - parameters.x0.To) / (parameters.ToLim - parameters.x0.To);
-    auto BTt = (Tt - parameters.x0.Tt) / (parameters.TtLim - parameters.x0.Tt);
-    auto BTr = (Tr - parameters.x0.Tr) / (parameters.TrLim - parameters.x0.Tr);
+    auto BA = (A - parameters.ALim) / (parameters.x0.A - parameters.ALim);
+    auto BTo = (parameters.ToLim - To) / (parameters.ToLim - parameters.x0.To);
+    auto BTt = (parameters.TtLim - Tt) / (parameters.TtLim - parameters.x0.Tt);
+    auto BTr = (parameters.TrLim - Tr) / (parameters.TrLim - parameters.x0.Tr);
     return event_state_type({BA, BTo, BTr, BTt});
 }
 
