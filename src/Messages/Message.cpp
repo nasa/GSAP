@@ -15,7 +15,7 @@ namespace PCOE {
         os.write(reinterpret_cast<const char*>(&sourceLen), 2);
         os.write(source.c_str(), sourceLen);
 
-        std::uint64_t raw_time = timestamp.time_since_epoch().count();
+        std::int64_t raw_time = timestamp.time_since_epoch().count();
         os.write(reinterpret_cast<const char*>(&raw_time), 8);
 
         std::uint16_t payloadLen = getPayloadSize();

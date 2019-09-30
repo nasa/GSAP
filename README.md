@@ -7,8 +7,12 @@ here](https://github.com/nasa/GSAP/wiki)** </div></font>
 The Generic Software Architecture for Prognostics (GSAP) is a framework for
 applying prognostics. It makes applying prognostics easier by implementing many
 of the common elements across prognostic applications. The standard interface
-enables reuse of prognostic algorithms and models across  using the GSAP
+enables reuse of prognostic algorithms and models across using the GSAP
 framework.
+
+There are two operational modes for GSAP: 'async' and 'simple'. These are both described below:
+* 'async': Asynchronous GSAP. This takes advantage of parallization, including automatic thread management to perform calculations on multiple threads. 
+* 'simple': Simple single-threaded GSAP. Resulting prognostics application is smaller and simplier, but does not take advantage of multi-threading. Ideal for resource constrained hardware. 
 
 ![GSAP Layers](images/Layers.png)
 
@@ -19,7 +23,7 @@ described further below:
 
 * **Communicators**:
 
-  Communicators are used to communicate data with the outside world. These
+Communicators are used to communicate data with the outside world. These
 function as interfaces with various data sources and sinks. Some examples could
 be a playback agent that reads from a file, a GUI for displaying prognostic
 results, an automated report generator, or a client that connects into a network
@@ -59,7 +63,7 @@ All contributions are welcome! If you are having problems with the plugin, pleas
 
 ## Notices
 
-Copyright ©2016-2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All Rights Reserved.
+Copyright ©2016, 2019 United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All Rights Reserved.
 
 No Warranty: THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OF
 ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED
