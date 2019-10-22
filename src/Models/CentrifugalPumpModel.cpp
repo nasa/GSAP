@@ -74,21 +74,24 @@ const std::string N_TTM = "CentrifugalPump.n.Ttm";
 const std::string N_TRM = "CentrifugalPump.n.Trm";
 const std::string N_TOM = "CentrifugalPump.n.Tom";
 
-const auto INPUT_ARRAY = {MessageId::Kelvin, // Ambient Temp
+const auto INPUT_ARRAY = {
+    MessageId::Kelvin, // Ambient Temp
     MessageId::Volts, // Voltage
     MessageId::Pascal, // Discharge Pressure
     MessageId::Pascal, // Suction Pressure
     MessageId::RadiansPerSecond //Syncronous Rotational Speed of Supply Voltage
 };
 
-const auto OUTPUT_ARRAY = {MessageId::MetersCubedPerSecond, // Discharge Flow
+const auto OUTPUT_ARRAY = {
+    MessageId::MetersCubedPerSecond, // Discharge Flow
     MessageId::Kelvin, // Oil Temperature
     MessageId::Kelvin, // Radial Bearing Temperature
     MessageId::Kelvin, // Thrust Bearing Temperature
     MessageId::RadiansPerSecond // Mechanical Rotation
 };
 
-const auto EVENT_ARRAY = {MessageId::CentrifugalPumpImpellerWearFailure,
+const auto EVENT_ARRAY = {
+    MessageId::CentrifugalPumpImpellerWearFailure,
     MessageId::CentrifugalPumpOilOverheat,
     MessageId::CentrifugalPumpRadialBearingOverheat,
     MessageId::CentrifugalPumpImpellerWearFailure
@@ -350,8 +353,8 @@ SystemModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type&
     x_new[11] = parameters.cLeak*parameters.ALeak*sqrt(abs(psuc-pdisch))*sign(psuc-pdisch);
     
     // Add process noise
-    for (size_type it = 0; it <= x_new.size(); it++) {
-        x_new[it] += dt * n[it];
+    for (size_type i = 0; i <= x_new.size(); i++) {
+        x_new[i] += dt * n[i];
     }
     
     return x_new;
@@ -383,8 +386,8 @@ SystemModel::output_type CentrifugalPumpModel::outputEqn(double,
     z_new[3] = Ttm;
     z_new[4] = wm;
     
-    for (size_type it = 0; it <= z_new.size(); it++) {
-        z_new[it] += n[it];
+    for (size_type i = 0; i < z_new.size(); i++) {
+        z_new[i] += n[i];
     }
     
     return z_new;
@@ -396,7 +399,7 @@ std::vector<bool> CentrifugalPumpModel::thresholdEqn(double, const state_type& x
     
     std::vector<bool> thresholdMet(eventState.size());
     
-    for (unsigned long i = 0; i < eventState.size(); i++) {
+    for (size_type i = 0; i < eventState.size(); i++) {
         thresholdMet[i] = eventState[i] <= 0.0;
     }
     return thresholdMet;

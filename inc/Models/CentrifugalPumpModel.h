@@ -10,9 +10,6 @@
 #include "ConfigMap.h"
 #include "PrognosticsModel.h"
 
-// Default parameter values
-static const double QMOBILE_DEFAULT_VALUE = 7600;
-
 /**
  * A model of a Centrifugal Pump
  * Original Model by Matthew Daigle can be found here:
