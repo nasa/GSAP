@@ -44,10 +44,7 @@ namespace PCOE {
         horizon = static_cast<double>(config.getUInt32(HORIZON_KEY));
 
         // Set up process noise
-        std::vector<std::string> processNoiseStrings = config.getVector(PROCESSNOISE_KEY);
-        for (unsigned int i = 0; i < processNoiseStrings.size(); i++) {
-            processNoise.push_back(std::stod(processNoiseStrings[i]));
-        }
+        processNoise = config.getDoubleVector(PROCESSNOISE_KEY);
 
         Ensure(horizon > 0, "Non-positive horizon");
         Ensure(sampleCount > 0, "Non-positive sample count");
