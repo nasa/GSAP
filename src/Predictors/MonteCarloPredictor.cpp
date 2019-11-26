@@ -130,7 +130,7 @@ namespace PCOE {
         std::vector<std::normal_distribution<>> noiseDistribution;
         noiseDistribution.reserve(model.getStateSize());
         for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
-            noiseDistribution.emplace_back(0, std::normal_distribution<>(0, sqrt(processNoise[xIndex])));
+            noiseDistribution.emplace_back(0, sqrt(processNoise[xIndex]));
         }
 
 /* OpenMP info
