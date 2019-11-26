@@ -101,16 +101,9 @@ namespace ModelTests {
         x[1] = 0.1;
         x[2] = 0.1;
 
-        // Set up output noise
-        std::vector<double> no;
-        double noValue = 0;
-        no.push_back(noValue);
-        no.push_back(noValue);
-        no.push_back(noValue);
-
         // Output equation
         double t = 0;
-        auto z = TankModel.outputEqn(t, x, no);
+        auto z = TankModel.outputEqn(t, x);
 
         // Check values of z
         Assert::AreEqual(0.1, z[0], 1e-12);
@@ -206,7 +199,7 @@ namespace ModelTests {
         auto u = BatteryModel::input_type({1});
 
         // Compute output
-        auto z = battery.outputEqn(0, x, zeroNoise);
+        auto z = battery.outputEqn(0, x);
 
         // Check outputs
         Assert::IsTrue(z[battery.indices.outputs.Vm] > 3.999871 &&

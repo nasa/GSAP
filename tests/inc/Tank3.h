@@ -61,12 +61,10 @@ public:
     state_type stateEqn(double t,
                         const state_type& x,
                         const input_type& u,
-                        const noise_type& n,
                         const double dt) const override;
 
     output_type outputEqn(double t,
-                          const state_type& x,
-                          const noise_type& n) const override;
+                          const state_type& x) const override;
 
     state_type initialize(const input_type& u, const output_type& z) const override;
 };

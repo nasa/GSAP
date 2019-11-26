@@ -111,8 +111,6 @@ int main() {
     TestContext context;
     
     CentrifugalPumpModelTests::registerTests(context);
-    context.Execute();
-    return 0;
     BatteryResultTests::registerTests(context);
     CentrifugalPumpModelTests::registerTests(context);
     ConfigMapTests::registerTests(context);
