@@ -39,7 +39,6 @@ EmptyModel::EmptyModel(const ConfigMap& configMap) : EmptyModel::EmptyModel() {
 SystemModel::state_type EmptyModel::stateEqn(double t,
                                              const SystemModel::state_type& x,
                                              const SystemModel::input_type& u,
-                                             const SystemModel::noise_type& n,
                                              double dt) const {
     auto new_state = getStateVector();
 
@@ -51,8 +50,7 @@ SystemModel::state_type EmptyModel::stateEqn(double t,
 
 // EmptyModel Output Equation
 SystemModel::output_type EmptyModel::outputEqn(double t,
-                                               const SystemModel::state_type& x,
-                                               const SystemModel::noise_type& n) const {
+                                               const SystemModel::state_type& x) const {
     auto output = getOutputVector();
 
     // Fill output
