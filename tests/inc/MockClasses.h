@@ -52,13 +52,12 @@ public:
     state_type stateEqn(const double,
                         const state_type& x,
                         const input_type&,
-                        const noise_type&,
                         const double) const override {
         return x;
     }
 
-    output_type outputEqn(const double, const state_type&, const noise_type&) const override {
-        return output_type();
+    output_type outputEqn(const double, const state_type&) const override {
+        return getOutputVector();
     }
 
     state_type initialize(const input_type& u, const output_type&) const override {
@@ -78,12 +77,11 @@ public:
     state_type stateEqn(const double,
                         const state_type& x,
                         const input_type&,
-                        const noise_type&,
                         const double) const override {
         return x;
     }
 
-    output_type outputEqn(const double, const state_type&, const noise_type&) const override {
+    output_type outputEqn(const double, const state_type&) const override {
         return output_type({3});
     }
 

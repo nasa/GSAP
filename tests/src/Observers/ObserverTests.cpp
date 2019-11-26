@@ -108,20 +108,6 @@ namespace ObserverTests {
 
         auto z = TankModel.getOutputVector();
 
-        // Set up state noise
-        std::vector<double> ns;
-        double nsValue = 0.001;
-        ns.push_back(nsValue);
-        ns.push_back(nsValue);
-        ns.push_back(nsValue);
-
-        // Set up output noise
-        std::vector<double> no;
-        double noValue = 0.01;
-        no.push_back(noValue);
-        no.push_back(noValue);
-        no.push_back(noValue);
-
         // Set up Q
         Matrix Q(TankModel.getStateSize(), TankModel.getStateSize());
         for (unsigned int i = 0; i < TankModel.getStateSize(); i++) {
@@ -154,8 +140,8 @@ namespace ObserverTests {
 
         // Simulate to get outputs for time t
         t += dt;
-        x = TankModel.stateEqn(t, x, u, ns, dt);
-        z = TankModel.outputEqn(t, x, no);
+        x = TankModel.stateEqn(t, x, u, dt);
+        z = TankModel.outputEqn(t, x);
 
         // Step UKF for time t
         UKF.step(t, u, z);
@@ -187,20 +173,6 @@ namespace ObserverTests {
         x[1] = 0;
         x[2] = 0;
 
-        // Set up state noise
-        std::vector<double> ns;
-        double nsValue = 0.001;
-        ns.push_back(nsValue);
-        ns.push_back(nsValue);
-        ns.push_back(nsValue);
-
-        // Set up output noise
-        std::vector<double> no;
-        double noValue = 0.01;
-        no.push_back(noValue);
-        no.push_back(noValue);
-        no.push_back(noValue);
-
         // Set up outputs
         auto z = TankModel.getOutputVector();
 
@@ -228,8 +200,8 @@ namespace ObserverTests {
 
         // Simulate to get outputs for time t
         t += dt;
-        x = TankModel.stateEqn(t, x, u, ns, dt);
-        z = TankModel.outputEqn(t, x, no);
+        x = TankModel.stateEqn(t, x, u, dt);
+        z = TankModel.outputEqn(t, x);
 
         // Step UKF for time t
         u[0] = 1;
@@ -304,14 +276,6 @@ namespace ObserverTests {
         // Create a UKF
         UnscentedKalmanFilter UKF = UnscentedKalmanFilter(battery, Q, R);
 
-        // Set up zNoise
-        std::vector<double> zNoise(battery.getOutputSize());
-        zNoise[0] = 0.01;
-        zNoise[1] = 0.01;
-
-        // Set up xNoise
-        std::vector<double> xNoise(battery.getStateSize());
-
         // Initialize UKF
         double dt = 1;
         double t = 0;
@@ -320,8 +284,8 @@ namespace ObserverTests {
         // Simulate to get outputs for time t
         t += dt;
         u[0] = 1;
-        x = battery.stateEqn(t, x, u, xNoise, dt);
-        auto z = battery.outputEqn(t, x, zNoise);
+        x = battery.stateEqn(t, x, u, dt);
+        auto z = battery.outputEqn(t, x);
 
         // Step UKF for time t
         UKF.step(t, u, z);
@@ -505,19 +469,11 @@ namespace ObserverTests {
         double dt = 1;
         PF.initialize(t, x, u);
 
-        // Set up zNoise
-        std::vector<double> zNoise(battery.getOutputSize());
-        zNoise[0] = 0.01;
-        zNoise[1] = 0.01;
-
-        // Set up xNoise
-        std::vector<double> xNoise(battery.getStateSize());
-
         // Simulate to get outputs for time t
         t += dt;
         u[0] = 1;
-        x = battery.stateEqn(t, x, u, xNoise, dt);
-        auto z = battery.outputEqn(t, x, zNoise);
+        x = battery.stateEqn(t, x, u, dt);
+        auto z = battery.outputEqn(t, x);
 
         // Step UKF for time t
         PF.step(t, u, z);

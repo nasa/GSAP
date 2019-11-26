@@ -40,7 +40,7 @@ namespace CentrifugalPumpModelTests {
         auto & x0struct = model.parameters.x0;
         PrognosticsModel::state_type x0({x0struct.A, x0struct.Q, x0struct.To, x0struct.Tr,  x0struct.Tt,  x0struct.rRadial, x0struct.rThrust, x0struct.w, x0struct.wA, x0struct.wRadial, x0struct.wThrust});
         
-        auto x = model.stateEqn(0, x0, u, {0,0,0, 0, 0, 0, 0, 0, 0, 0, 0}, model.parameters.sampleTime);
+        auto x = model.stateEqn(0, x0, u, model.parameters.sampleTime);
         
         // Compare to results from Matlab Model
         Assert::AreEqual(12.7084, x[0], 1e-4);
@@ -55,7 +55,7 @@ namespace CentrifugalPumpModelTests {
         Assert::AreEqual(0, x[9], 1e-7);
         Assert::AreEqual(0, x[10], 1e-7);
         
-        auto z = model.outputEqn(0, x, {0, 0, 0, 0, 0});
+        auto z = model.outputEqn(0, x);
         Assert::AreEqual(0.0174, z[0], 1e-4);
         Assert::AreEqual(290, z[1], 1e-4);
         Assert::AreEqual(290.1066, z[2], 1e-4);
