@@ -125,6 +125,12 @@ namespace PCOE {
         else {
             PxxChol = Matrix(model.getStateSize(), model.getStateSize());
         }
+        
+        // Pre-generate distributions
+        std::normal_distribution<> noiseDistribution[model.getStateSize()];
+        for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
+            noiseDistribution[xIndex] = std::normal_distribution<>(0, sqrt(processNoise[xIndex]));
+        }
 
 /* OpenMP info
  * If the application is built with OpenMP, the predictor below operates in parallel.
@@ -254,8 +260,7 @@ namespace PCOE {
                 // Sample process noise - for now, assuming independent
                 std::vector<double> noise(model.getStateSize());
                 for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
-                    std::normal_distribution<> noiseDistribution(0, sqrt(processNoise[xIndex]));
-                    noise[xIndex] = noiseDistribution(generator);
+                    noise[xIndex] = noiseDistribution[xIndex](generator);
                 }
 
                 // Update state for t to t+dt
