@@ -40,6 +40,10 @@ namespace PCOE {
         sigmaX.kappa = 3.0 - model.getStateSize();
         sigmaX.alpha = 1;
         sigmaX.beta = 0;
+
+        // Initialize noise variance in case this is run without a config map
+        processNoiseVariance = SystemModel::noise_type(m.getStateSize());
+        sensorNoiseVariance = SystemModel::noise_type(m.getOutputSize());
     }
 
     UnscentedKalmanFilter::UnscentedKalmanFilter(const SystemModel& m, Matrix q, Matrix r)
