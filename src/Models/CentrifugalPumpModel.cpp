@@ -57,22 +57,6 @@ const std::string X0_RRADIAL = "CentrifugalPump.x0.rRadial";
 const std::string X0_WA = "CentrifugalPump.x0.wA";
 const std::string X0_WTHRUST = "CentrifugalPump.x0.wThrust";
 const std::string X0_WRADIAL = "CentrifugalPump.x0.wRadial";
-const std::string V_W = "CentrifugalPump.v.w";
-const std::string V_Q = "CentrifugalPump.v.Q";
-const std::string V_TT = "CentrifugalPump.v.Tt";
-const std::string V_TR = "CentrifugalPump.v.Tr";
-const std::string V_TO = "CentrifugalPump.v.To";
-const std::string V_A = "CentrifugalPump.v.A";
-const std::string V_RTHRUST = "CentrifugalPump.v.rThrust";
-const std::string V_RRADIAL = "CentrifugalPump.v.rRadial";
-const std::string V_WA = "CentrifugalPump.v.wA";
-const std::string V_WTHRUST = "CentrifugalPump.v.wThrust";
-const std::string V_WRADIAL = "CentrifugalPump.v.wRadial";
-const std::string N_WM = "CentrifugalPump.n.wm";
-const std::string N_QOUTM = "CentrifugalPump.n.Qoutm";
-const std::string N_TTM = "CentrifugalPump.n.Ttm";
-const std::string N_TRM = "CentrifugalPump.n.Trm";
-const std::string N_TOM = "CentrifugalPump.n.Tom";
 
 const auto INPUT_ARRAY = {
     MessageId::Kelvin, // Ambient Temp
@@ -235,61 +219,13 @@ CentrifugalPumpModel::CentrifugalPumpModel(const ConfigMap& configMap) : Centrif
     if (configMap.hasKey(X0_WRADIAL)) {
         parameters.x0.wRadial = configMap.getDouble(X0_WRADIAL);
     }
-    if (configMap.hasKey(V_W)) {
-        parameters.v.w = configMap.getDouble(V_W);
-    }
-    if (configMap.hasKey(V_Q)) {
-        parameters.v.Q = configMap.getDouble(V_Q);
-    }
-    if (configMap.hasKey(V_TT)) {
-        parameters.v.Tt = configMap.getDouble(V_TT);
-    }
-    if (configMap.hasKey(V_TR)) {
-        parameters.v.Tr = configMap.getDouble(V_TR);
-    }
-    if (configMap.hasKey(V_TO)) {
-        parameters.v.To = configMap.getDouble(V_TO);
-    }
-    if (configMap.hasKey(V_A)) {
-        parameters.v.A = configMap.getDouble(V_A);
-    }
-    if (configMap.hasKey(V_RTHRUST)) {
-        parameters.v.rThrust = configMap.getDouble(V_RTHRUST);
-    }
-    if (configMap.hasKey(V_RRADIAL)) {
-        parameters.v.rRadial = configMap.getDouble(V_RRADIAL);
-    }
-    if (configMap.hasKey(V_WA)) {
-        parameters.v.wA = configMap.getDouble(V_WA);
-    }
-    if (configMap.hasKey(V_WTHRUST)) {
-        parameters.v.wThrust = configMap.getDouble(V_WTHRUST);
-    }
-    if (configMap.hasKey(V_WRADIAL)) {
-        parameters.v.wRadial = configMap.getDouble(V_WRADIAL);
-    }
-    if (configMap.hasKey(N_WM)) {
-        parameters.n.wm = configMap.getDouble(N_WM);
-    }
-    if (configMap.hasKey(N_QOUTM)) {
-        parameters.n.Qoutm = configMap.getDouble(N_QOUTM);
-    }
-    if (configMap.hasKey(N_TTM)) {
-        parameters.n.Ttm = configMap.getDouble(N_TTM);
-    }
-    if (configMap.hasKey(N_TRM)) {
-        parameters.n.Trm = configMap.getDouble(N_TRM);
-    }
-    if (configMap.hasKey(N_TOM)) {
-        parameters.n.Tom = configMap.getDouble(N_TOM);
-    }
 }
 
 double sign(double in) {
     return in/abs(in);
 }
 
-SystemModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type& x, const input_type& u, const noise_type& n, double dt) const {
+SystemModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type& x, const input_type& u, double dt) const {
     
     // Extract states
     double A = x[0];
@@ -352,17 +288,11 @@ SystemModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type&
     x_new[10] = wThrust + wThrustdot*dt;
     x_new[11] = parameters.cLeak*parameters.ALeak*sqrt(abs(psuc-pdisch))*sign(psuc-pdisch);
     
-    // Add process noise
-    for (size_type i = 0; i <= x_new.size(); i++) {
-        x_new[i] += dt * n[i];
-    }
-    
     return x_new;
 }
 
 SystemModel::output_type CentrifugalPumpModel::outputEqn(double,
-                                                 const state_type& x,
-                                                 const noise_type& n) const {
+                                                 const state_type& x) const {
     // Extract states
     double Q = x[1];
     double To = x[2];
@@ -385,10 +315,6 @@ SystemModel::output_type CentrifugalPumpModel::outputEqn(double,
     z_new[2] = Trm;
     z_new[3] = Ttm;
     z_new[4] = wm;
-    
-    for (size_type i = 0; i < z_new.size(); i++) {
-        z_new[i] += n[i];
-    }
     
     return z_new;
 }
