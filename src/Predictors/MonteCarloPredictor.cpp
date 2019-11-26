@@ -127,7 +127,7 @@ namespace PCOE {
         }
         
         // Pre-generate distributions
-        std::normal_distribution<> noiseDistribution[model.getStateSize()];
+        std::vector<std::normal_distribution<> > noiseDistribution(model.getStateSize());
         for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
             noiseDistribution[xIndex] = std::normal_distribution<>(0, sqrt(processNoise[xIndex]));
         }

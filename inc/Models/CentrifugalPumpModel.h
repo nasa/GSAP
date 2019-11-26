@@ -91,27 +91,27 @@ public:
             double wThrust = 0;
         } x0;
         
-//        struct V { //  Process noise
-//            double w = 1e-3;
-//            double Q = 1e-8;
-//            double Tt = 1e-7;
-//            double Tr = 1e-7;
-//            double To = 1e-7;
-//            double A = 1e-30;
-//            double rThrust = 1e-30;
-//            double rRadial = 1e-30;
-//            double wA = 1e-30;
-//            double wThrust = 1e-30;
-//            double wRadial = 1e-30;
-//        } v;
-//        
-//        struct N {         //  Sensor noise
-//            double wm = 1e-2;
-//            double Qoutm = 1e-7;
-//            double Ttm = 1e-2;
-//            double Trm = 1e-2;
-//            double Tom = 1e-2;
-//        } n;
+        struct V { //  Process noise
+            double w = 1e-3;
+            double Q = 1e-8;
+            double Tt = 1e-7;
+            double Tr = 1e-7;
+            double To = 1e-7;
+            double A = 1e-30;
+            double rThrust = 1e-30;
+            double rRadial = 1e-30;
+            double wA = 1e-30;
+            double wThrust = 1e-30;
+            double wRadial = 1e-30;
+        } v;
+        
+        struct N {         //  Sensor noise
+            double wm = 1e-2;
+            double Qoutm = 1e-7;
+            double Ttm = 1e-2;
+            double Trm = 1e-2;
+            double Tom = 1e-2;
+        } n;
     } parameters;
     
     /**

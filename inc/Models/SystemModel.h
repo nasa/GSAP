@@ -145,7 +145,7 @@ namespace PCOE {
             state_type x_new = stateEqn(t, x, u, dt);
             
             // Add process noise
-            for (size_type it = 0; it <= x_new.size(); it++) {
+            for (size_type it = 0; it < getStateSize(); it++) {
                 x_new[it] += dt * n[it];
             }
             return x_new;
@@ -179,7 +179,7 @@ namespace PCOE {
             output_type z = outputEqn(t, x);
             
             // Add sensor noise
-            for (size_type it = 0; it <= z.size(); it++) {
+            for (size_type it = 0; it < getOutputSize(); it++) {
                 z[it] += n[it];
             }
             return z;
