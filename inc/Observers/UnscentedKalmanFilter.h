@@ -138,6 +138,8 @@ namespace PCOE {
         Matrix R;
         Matrix P;
         struct SigmaPoints sigmaX;
+        std::vector<double> processNoiseVariance; // variance vector (zero-mean assumed)
+        std::vector<double> sensorNoiseVariance; // variance vector (zero-mean assumed)
     };
 }
 

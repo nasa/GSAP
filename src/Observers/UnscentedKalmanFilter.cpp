@@ -3,6 +3,7 @@
 // All Rights Reserved.
 #include <algorithm>
 #include <cmath>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -16,6 +17,8 @@ namespace PCOE {
     const static Log& log = Log::Instance();
 
     // Configuration Keys
+    const std::string SENSORNOISE_KEY = "Model.SensorNoise";
+    const std::string PROCESSNOISE_KEY = "Model.ProcessNoise";
     const std::string Q_KEY = "Observer.Q";
     const std::string R_KEY = "Observer.R";
     const std::string K_KEY = "Observer.kappa";
@@ -98,6 +101,15 @@ namespace PCOE {
             setBeta(config.getDouble(B_KEY));
         }
 
+        // Set up noise
+        processNoiseVariance = config.getDoubleVector(PROCESSNOISE_KEY);
+        sensorNoiseVariance = config.getDoubleVector(SENSORNOISE_KEY);
+        
+        Ensure(processNoiseVariance.size() == model.getStateSize(),
+               "Process noise size not equal to model state size");
+        Ensure(sensorNoiseVariance.size() == model.getOutputSize(),
+               "Sensor noise size not equal to model output size");
+
         log.WriteLine(LOG_INFO, MODULE_NAME, "Created UKF");
     }
 
@@ -133,6 +145,9 @@ namespace PCOE {
         Expect(isInitialized(), "Not initialized");
         Expect(timestamp - lastTime > 0, "Time has not advanced");
 
+        static std::random_device rDevice;
+        static std::mt19937 generator(rDevice());
+
         // Update time
         double dt = timestamp - lastTime;
         lastTime = timestamp;
@@ -145,13 +160,28 @@ namespace PCOE {
         // Compute sigma points for current state estimate
         computeSigmaPoints(xEstimated, Q, sigmaX);
 
+        // Pre-generate process noise distributions
+        std::vector<std::normal_distribution<>> processNoiseDistribution(model.getStateSize());
+        std::vector<double> processNoise(model.getStateSize());
+        for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
+            processNoiseDistribution[xIndex] = std::normal_distribution<>(0, sqrt(processNoiseVariance[xIndex]));
+            processNoise[xIndex] = processNoiseDistribution[xIndex](generator);
+        }
+
         // Propagate sigma points through state equation
         Matrix Xkk1(model.getStateSize(), sigmaPointCount);
-        std::vector<double> zeroNoise(model.getStateSize());
         for (unsigned int i = 0; i < sigmaPointCount; i++) {
             auto x = SystemModel::state_type(static_cast<std::vector<double>>(sigmaX.M.col(i)));
-            x = model.stateEqn(timestamp, x, uPrev, zeroNoise, dt);
+            x = model.stateEqn(timestamp, x, uPrev, processNoise, dt);
             Xkk1.col(i, x.vec());
+        }
+
+        // Pre-generate sensor noise distributions
+        std::vector<std::normal_distribution<>> sensorNoiseDistribution(model.getOutputSize());
+        std::vector<double> sensorNoise(model.getOutputSize());
+        for (unsigned int zIndex = 0; zIndex < model.getOutputSize(); zIndex++) {
+            sensorNoiseDistribution[zIndex] = std::normal_distribution<>(0, sqrt(sensorNoiseVariance[zIndex]));
+            sensorNoise[zIndex] = sensorNoiseDistribution[zIndex](generator);
         }
 
         // Recombine weighted sigma points to produce predicted state and covariance
@@ -165,7 +195,7 @@ namespace PCOE {
             auto zkk1 = model.outputEqn(timestamp,
                                         SystemModel::state_type(
                                             static_cast<std::vector<double>>(Xkk1.col(i))),
-                                        zeroNoise);
+                                        sensorNoise);
             Zkk1.col(i, zkk1.vec());
         }
 
