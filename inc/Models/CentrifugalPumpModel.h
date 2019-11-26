@@ -90,8 +90,9 @@ public:
             double wRadial = 0;
             double wThrust = 0;
         } x0;
-        
-        struct V { //  Process noise
+
+        //  Process noise
+        struct V {
             double w = 1e-3;
             double Q = 1e-8;
             double Tt = 1e-7;
@@ -104,8 +105,9 @@ public:
             double wThrust = 1e-30;
             double wRadial = 1e-30;
         } v;
-        
-        struct N {         //  Sensor noise
+
+        //  Sensor noise
+        struct N {
             double wm = 1e-2;
             double Qoutm = 1e-7;
             double Ttm = 1e-2;
