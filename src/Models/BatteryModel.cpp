@@ -227,7 +227,6 @@ BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryMo
 SystemModel::state_type BatteryModel::stateEqn(double,
                                                const state_type& x,
                                                const input_type& u,
-                                               const noise_type& n,
                                                double dt) const {
     // Extract states
     double Tb = x[0];
@@ -329,17 +328,12 @@ SystemModel::state_type BatteryModel::stateEqn(double,
     x_new[6] = qpB + qpBdot * dt;
     x_new[7] = qpS + qpSdot * dt;
 
-    // Add process noise
-    for (size_type it = 0; it <= 7; it++) {
-        x_new[it] += dt * n[it];
-    }
     return x_new;
 }
 
 // Battery Output Equation
 SystemModel::output_type BatteryModel::outputEqn(double,
-                                                 const state_type& x,
-                                                 const noise_type& n) const {
+                                                 const state_type& x) const {
     // Extract states
     const double& Tb = x[0];
     const double& Vo = x[1];
@@ -407,17 +401,13 @@ SystemModel::output_type BatteryModel::outputEqn(double,
     // Set outputs
     z_new[OUT::TEMP] = Tb - 273.15;
     z_new[OUT::VOLTS] = -Ven + Vep - Vo - Vsn - Vsp;
-
-    // Add noise
-    z_new[OUT::TEMP] += n[OUT::TEMP];
-    z_new[OUT::VOLTS] += n[OUT::VOLTS];
     return z_new;
 }
 
 // Battery Threshold Equation
 std::vector<bool> BatteryModel::thresholdEqn(double t, const state_type& x) const {
     // Compute based on voltage, so use output equation to get voltage
-    auto z = outputEqn(t, x, std::vector<double>(2));
+    auto z = outputEqn(t, x);
 
     // Determine if voltage (second element in z) is below VEOD threshold
     return {z[1] <= parameters.VEOD};

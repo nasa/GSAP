@@ -137,11 +137,33 @@ namespace PCOE {
          * @param dt The size of the time step to calculate.
          * @return   The model state vector at the next time step.
          **/
-        virtual state_type stateEqn(const double t,
+        inline state_type stateEqn(const double t,
                                     const state_type& x,
                                     const input_type& u,
                                     const noise_type& n,
-                                    const double dt) const = 0;
+                                    const double dt) const  {
+            state_type x_new = stateEqn(t, x, u, dt);
+            
+            // Add process noise
+            for (size_type it = 0; it <= x_new.size(); it++) {
+                x_new[it] += dt * n[it];
+            }
+            return x_new;
+        }
+        
+        /**
+         * Calculate the model state using the given sampling time without noise
+         *
+         * @param t  Time
+         * @param x  The model state vector at the current time step.
+         * @param u  The model input vector at the current time step.
+         * @param dt The size of the time step to calculate.
+         * @return   The model state vector at the next time step.
+         **/
+        virtual state_type stateEqn(const double t,
+                                   const state_type& x,
+                                   const input_type& u,
+                                   const double dt) const  = 0;
 
         /**
          * Calculate the model output.
@@ -151,9 +173,27 @@ namespace PCOE {
          * @param n  The process noise vector.
          * @return   The model output vector at the next time step.
          **/
-        virtual output_type outputEqn(const double t,
+        inline output_type outputEqn(const double t,
                                       const state_type& x,
-                                      const noise_type& n) const = 0;
+                                     const noise_type& n) const {
+            output_type z = outputEqn(t, x);
+            
+            // Add sensor noise
+            for (size_type it = 0; it <= z.size(); it++) {
+                z[it] += n[it];
+            }
+            return z;
+        };
+        
+        /**
+         * Calculate the model output without noise
+         *
+         * @param t  Time
+         * @param x  The model state vector at the current time step.
+         * @return   The model output vector at the next time step.
+         **/
+        virtual output_type outputEqn(const double t,
+                                      const state_type& x) const = 0;
 
         /**
          * Calculate event state.

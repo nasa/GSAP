@@ -91,29 +91,27 @@ public:
             double wThrust = 0;
         } x0;
         
-        //  Process noise
-        struct V {
-            double w = 1e-3;
-            double Q = 1e-8;
-            double Tt = 1e-7;
-            double Tr = 1e-7;
-            double To = 1e-7;
-            double A = 1e-30;
-            double rThrust = 1e-30;
-            double rRadial = 1e-30;
-            double wA = 1e-30;
-            double wThrust = 1e-30;
-            double wRadial = 1e-30;
-        } v;
-        
-        //  Sensor noise
-        struct N {
-            double wm = 1e-2;
-            double Qoutm = 1e-7;
-            double Ttm = 1e-2;
-            double Trm = 1e-2;
-            double Tom = 1e-2;
-        } n;
+//        struct V { //  Process noise
+//            double w = 1e-3;
+//            double Q = 1e-8;
+//            double Tt = 1e-7;
+//            double Tr = 1e-7;
+//            double To = 1e-7;
+//            double A = 1e-30;
+//            double rThrust = 1e-30;
+//            double rRadial = 1e-30;
+//            double wA = 1e-30;
+//            double wThrust = 1e-30;
+//            double wRadial = 1e-30;
+//        } v;
+//        
+//        struct N {         //  Sensor noise
+//            double wm = 1e-2;
+//            double Qoutm = 1e-7;
+//            double Ttm = 1e-2;
+//            double Trm = 1e-2;
+//            double Tom = 1e-2;
+//        } n;
     } parameters;
     
     /**
@@ -122,14 +120,12 @@ public:
      * @param t  Time
      * @param x  The model state vector at the current time step.
      * @param u  The model input vector at the current time step.
-     * @param n  The process noise vector.
      * @param dt The size of the time step to calculate
      * @return   The model state vector at the next time step.
      **/
     state_type stateEqn(double t,
                         const state_type& x,
                         const input_type& u,
-                        const noise_type& n,
                         double dt) const override;
     
     /**
@@ -137,10 +133,9 @@ public:
      *
      * @param t  Time
      * @param x  The model state vector at the current time step.
-     * @param n  The process noise vector.
      * @return   The model output vector at the next time step.
      **/
-    output_type outputEqn(double t, const state_type& x, const noise_type& n) const override;
+    output_type outputEqn(double t, const state_type& x) const override;
     
     /**
      * Initialize the model state.
