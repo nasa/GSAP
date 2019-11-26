@@ -217,6 +217,11 @@ namespace PCOE {
                         thresholdsMet++;
                     }
                 }
+                
+                if (thresholdsMet == eventNames.size()) {
+                    // All thresholds met- stop simulating for sample
+                    break;
+                }
 
                 if (savePtIndex < savePts.size() && t_s > timeOfCurrentSavePt) {
                     // Write to system trajectory (model variables for which we are interested in
@@ -255,11 +260,6 @@ namespace PCOE {
 
                 // Update state for t to t+dt
                 x = model.stateEqn(t_s, x, loadEstimate, noise, model.getDefaultTimeStep());
-
-                if (thresholdsMet == eventNames.size()) {
-                    // All thresholds met- stop simulating for sample
-                    break;
-                }
             }
         }
 
