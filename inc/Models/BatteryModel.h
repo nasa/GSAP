@@ -120,6 +120,37 @@ public:
         double tDiffusion;
         double qMobile;
         double An3;
+        
+        struct CachedParams {
+            double An12_F;
+            double An11_F;
+            double An10_F;
+            double An9_F;
+            double An8_F;
+            double An7_F;
+            double An6_F;
+            double An5_F;
+            double An4_F;
+            double An3_F;
+            double An2_F;
+            double An1_F;
+            double An0_F;
+            double Ap12_F;
+            double Ap11_F;
+            double Ap10_F;
+            double Ap9_F;
+            double Ap8_F;
+            double Ap7_F;
+            double Ap6_F;
+            double Ap5_F;
+            double Ap4_F;
+            double Ap3_F;
+            double Ap2_F;
+            double Ap1_F;
+            double Ap0_F;
+            double R_F;
+            double R_FAlpha;
+        } cached;
     } parameters;
 
     /**
