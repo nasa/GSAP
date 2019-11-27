@@ -321,9 +321,11 @@ namespace ObserverTests {
                 }
             }
         }
-        paramMap.set("Observer.R", rStrings);
-
         BatteryModel battery;
+
+        paramMap.set("Model.ProcessNoise", std::vector<std::string>(battery.getStateSize(), "0"));
+        paramMap.set("Model.SensorNoise", std::vector<std::string>(battery.getOutputSize(), "0"));
+        paramMap.set("Observer.R", rStrings);
 
         // Construct a UKF from the config map
         UnscentedKalmanFilter ukf(battery, paramMap);

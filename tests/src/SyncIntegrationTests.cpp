@@ -73,6 +73,7 @@ namespace SyncIntegrationTests {
         config.set("Predictor.SampleCount", 50);
         config.set("Predictor.Horizon", 10000);
         config.set("Model.ProcessNoise", {"1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5"});
+        config.set("Model.SensorNoise", {"0", "0"});
         config.set("LoadEstimator.Loading", 8);
         return config;
     }

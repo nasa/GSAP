@@ -159,6 +159,7 @@ namespace AsyncIntegrationTests {
         config.set("Predictor.Horizon", 10000);
         config.set("Model.ProcessNoise",
                    {"1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5"});
+        config.set("Model.SensorNoise", {"0", "0"});
         config.set("LoadEstimator.Loading", 8);
         return config;
     }
@@ -180,8 +181,8 @@ namespace AsyncIntegrationTests {
         config.set("observer", "PF");
         config.set("Observer.ParticleCount", "200");
         config.set("Observer.ProcessNoise", {"1", "1", "1", "1", "1", "1", "1", "1"});
-        config.set("Observer.SensorNoise", {"1", "1"});
         config.set("Observer.MinEffective", "100");
+        config.set("Observer.SensorNoise", {"1", "1"});
         return config;
     }
 

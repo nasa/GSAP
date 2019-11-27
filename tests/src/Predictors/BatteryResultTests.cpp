@@ -88,16 +88,16 @@ namespace BatteryResultTests {
                     "1e-10"});
         config.set("Observer.R", {"1e-2", "0", "0", "1e-2"});
         config.set("Predictor.SampleCount", "100");
+        config.set("Model.ProcessNoise", std::vector<std::string>(8, "0"));
         config.set("Predictor.Horizon", "10000");
         // Note (JW): This value is actually required by the MC predictor, not the model
-        config.set("Model.ProcessNoise",
-                   {"1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5"});
         config.set("LoadEstimator.Loading", "8");
 
         TrajectoryService trajectoryService;
         BatteryModel model(config);
         ConstLoadEstimator loadEstimator(config);
         UnscentedKalmanFilter observer(model, config);
+        config.set("Model.ProcessNoise", std::vector<std::string>(8, "1e-5"));
         MonteCarloPredictor predictor(model, loadEstimator, trajectoryService, config);
 
         // Data taken from the PlaybackScn2Constant.txt file from the example

@@ -179,6 +179,7 @@ namespace AsyncPredictorTests {
         config.set("Predictor.SampleCount", "100");
         config.set("Predictor.Horizon", "100");
         config.set("LoadEstimator.Loading", "8");
+        config.set("Model.SensorNoise", {"0", "0"});
 
         return config;
     }
