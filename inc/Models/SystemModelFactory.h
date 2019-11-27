@@ -23,6 +23,8 @@
 #define PCOE_MODELFACTORY_H
 
 #include "BatteryModel.h"
+#include "CentrifugalPumpModel.h"
+#include "CircuitBatteryModel.h"
 #include "Factory.h"
 #include "Singleton.h"
 #include "SystemModel.h"
@@ -46,6 +48,9 @@ namespace PCOE {
          **/
         SystemModelFactory() {
             Register<BatteryModel>("Battery");
+            Register<BatteryModel>("Battery.Electrochemistry");
+            Register<CircuitBatteryModel>("Battery.Circuit");
+            Register<CentrifugalPumpModel>("Centrifugal Pump");
         };
     };
 }

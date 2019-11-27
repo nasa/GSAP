@@ -10,15 +10,12 @@
 #include "ConfigMap.h"
 #include "PrognosticsModel.h"
 
-// Default parameter values
-static const double QMOBILE_DEFAULT_VALUE = 7600;
-
 /**
  * An electro-chemical model of a battery.
  *
  * @author Matthew Daigle
  * @author Chris Teubert
- * @since 2.0
+ * @since 2.1
  **/
 class CircuitBatteryModel final : public PCOE::PrognosticsModel {
 public:
