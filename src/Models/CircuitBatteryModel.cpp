@@ -184,17 +184,12 @@ CircuitBatteryModel::CircuitBatteryModel(const ConfigMap& configMap) : CircuitBa
 SystemModel::state_type CircuitBatteryModel::stateEqn(double,
                                                const state_type& x,
                                                const input_type& u,
-                                               const noise_type& n,
                                                double dt) const {
     // StateEqn   Compute the new states of the battery model
     //
     // XNew = StateEqn(parameters,t,X,U,N,dt) computes the new states of the
     // battery model given the parameters strcucture, the current time, the
     //  current states, inputs, process noise, and the sampling time.
-    //
-    // Copyright (c) 2016, 2019 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.
-    // No copyright is claimed in the United States under Title 17, U.S. Code. All Other Rights Reserved.
-
     
     // Extract states
     double Tb = x[0];
@@ -228,18 +223,13 @@ SystemModel::state_type CircuitBatteryModel::stateEqn(double,
     x_new[1] = qb + qbdot*dt;
     x_new[2] = qcp + qcpdot*dt;
     x_new[3] = qcs + qcsdot*dt;
-
-    // Add process noise
-    for (size_type it = 0; it < x.size(); it++) {
-        x_new[it] += dt * n[it];
-    }
+    
     return x_new;
 }
 
 // Battery Output Equation
 SystemModel::output_type CircuitBatteryModel::outputEqn(double,
-                                                 const state_type& x,
-                                                 const noise_type& n) const {
+                                                 const state_type& x) const {
     // Extract states
     auto Tbm = x[0];
     auto qb = x[1];
@@ -257,19 +247,15 @@ SystemModel::output_type CircuitBatteryModel::outputEqn(double,
 
     // set outputs
     SystemModel::output_type z(2);
-    z[0] = Tbm;
-    z[1] = Vm;
-
-    // Add noise
-    z[OUT::TEMP] += n[OUT::TEMP];
-    z[OUT::VOLTS] += n[OUT::VOLTS];
+    z[OUT::TEMP] = Tbm;
+    z[OUT::VOLTS] = Vm;
     return z;
 }
 
 // Battery Threshold Equation
 std::vector<bool> CircuitBatteryModel::thresholdEqn(double t, const state_type& x) const {
     // Compute based on voltage, so use output equation to get voltage
-    auto z = outputEqn(t, x, std::vector<double>(2));
+    auto z = outputEqn(t, x);
 
     // Determine if voltage (second element in z) is below VEOD threshold
     return {z[1] <= parameters.VEOD};
@@ -282,7 +268,7 @@ SystemModel::event_state_type CircuitBatteryModel::eventStateEqn(const state_typ
 }
 
 // Set model parameters, given qMobile
-void CircuitBatteryModel::setParameters(const double qMobile, const double Vol) {
+void CircuitBatteryModel::setParameters() {
     
     // Basics
     parameters.Id = 2.02;
