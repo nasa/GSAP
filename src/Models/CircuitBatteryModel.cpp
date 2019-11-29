@@ -295,14 +295,4 @@ void CircuitBatteryModel::setParameters() {
     parameters.x0.qcp = 0;
     parameters.x0.qcs = 0;
     parameters.x0.Tb = parameters.Ta;
-
-    // Process noise variances
-    parameters.v.qb = 1e-1;
-    parameters.v.qcp = 1e-2;
-    parameters.v.qcs = 1e-2;
-    parameters.v.Tb = 1e-5;
-
-    // Sensor noise variances
-    parameters.n.Vm = 1e-3;
-    parameters.n.Tbm = 1e-3;
 }
