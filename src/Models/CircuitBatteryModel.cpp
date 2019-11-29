@@ -63,7 +63,6 @@ CircuitBatteryModel::CircuitBatteryModel()
 // Constructor based on configMap
 CircuitBatteryModel::CircuitBatteryModel(const ConfigMap& configMap) : CircuitBatteryModel::CircuitBatteryModel
 () {
-    setParameters();
     if (configMap.hasKey(ID_KEY)) {
         parameters.Id = configMap.getDouble(ID_KEY);
     }
