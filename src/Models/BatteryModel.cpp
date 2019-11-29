@@ -65,6 +65,38 @@ const std::string XNMIN_KEY = "Battery.xnMin";
 const std::string XPMAX_KEY = "Battery.xpMax";
 const std::string XPMIN_KEY = "Battery.xpMin";
 
+inline void calculateCachedParams(BatteryModel::Parameters & parameters) {
+    // Cache parameters
+    parameters.cached.An12_F = parameters.An12 / parameters.F;
+    parameters.cached.An11_F = parameters.An11 / parameters.F;
+    parameters.cached.An10_F = parameters.An10 / parameters.F;
+    parameters.cached.An9_F = parameters.An9 / parameters.F;
+    parameters.cached.An8_F = parameters.An8 / parameters.F;
+    parameters.cached.An7_F = parameters.An7 / parameters.F;
+    parameters.cached.An6_F = parameters.An6 / parameters.F;
+    parameters.cached.An5_F = parameters.An5 / parameters.F;
+    parameters.cached.An4_F = parameters.An4 / parameters.F;
+    parameters.cached.An3_F = parameters.An3 / parameters.F;
+    parameters.cached.An2_F = parameters.An2 / parameters.F;
+    parameters.cached.An1_F = parameters.An1 / parameters.F;
+    parameters.cached.An0_F = parameters.An0 / parameters.F;
+    parameters.cached.Ap12_F = parameters.Ap12 / parameters.F;
+    parameters.cached.Ap11_F = parameters.Ap11 / parameters.F;
+    parameters.cached.Ap10_F = parameters.Ap10 / parameters.F;
+    parameters.cached.Ap9_F = parameters.Ap9 / parameters.F;
+    parameters.cached.Ap8_F = parameters.Ap8 / parameters.F;
+    parameters.cached.Ap7_F = parameters.Ap7 / parameters.F;
+    parameters.cached.Ap6_F = parameters.Ap6 / parameters.F;
+    parameters.cached.Ap5_F = parameters.Ap5 / parameters.F;
+    parameters.cached.Ap4_F = parameters.Ap4 / parameters.F;
+    parameters.cached.Ap3_F = parameters.Ap3 / parameters.F;
+    parameters.cached.Ap2_F = parameters.Ap2 / parameters.F;
+    parameters.cached.Ap1_F = parameters.Ap1 / parameters.F;
+    parameters.cached.Ap0_F = parameters.Ap0 / parameters.F;
+    parameters.cached.R_F = parameters.R / parameters.F;
+    parameters.cached.R_FAlpha = parameters.cached.R_F / parameters.alpha;
+}
+
 BatteryModel::BatteryModel()
     : PrognosticsModel(8,
                        {MessageId::Watts},
@@ -73,6 +105,7 @@ BatteryModel::BatteryModel()
                        {MessageId::BatteryEod}) {
     // Set some default parameters
     setParameters();
+    calculateCachedParams(parameters);
 }
 
 // Constructor based on configMap
@@ -221,6 +254,7 @@ BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryMo
     if (configMap.hasKey(XPMIN_KEY)) {
         parameters.xpMin = configMap.getDouble(XPMIN_KEY);
     }
+    calculateCachedParams(parameters);
 }
 
 // Battery State Equation
@@ -252,54 +286,46 @@ SystemModel::state_type BatteryModel::stateEqn(double,
     auto xnS2_1 = 2 * xnS - 1;
     auto xnS2_xnS = xnS2 - xnS;
     double Ven11 =
-        parameters.An11 * (22 * xnS2_1 * pow(xnS2_1, 10) + pow(xnS2_1, 12)) / parameters.F;
-    double Ven1 = parameters.An1 * (2 * xnS2_1 + pow(xnS2_1, 2)) / parameters.F;
+        parameters.cached.An11_F * (22 * xnS2_1 * pow(xnS2_1, 10) + pow(xnS2_1, 12));
+    double Ven1 = parameters.cached.An1_F * (2 * xnS2_1 + pow(xnS2_1, 2));
     double CnBulk = qnB / parameters.VolB;
-    double Ven6 = parameters.An6 * (12 * xnS2_1 * pow(xnS2_1, 5) + pow(xnS2_1, 7)) / parameters.F;
+    double Ven6 = parameters.cached.An6_F * (12 * xnS2_1 * pow(xnS2_1, 5) + pow(xnS2_1, 7));
     double xpS = qpS / parameters.qSMax;
     auto xpS2 = xpS * xpS;
     auto xpS2_1 = 2 * xpS - 1;
     auto xpS2_xpS = xpS2 - xpS;
     double xSp = qpS / parameters.qSMax;
     double qdotDiffusionBSp = (CpBulk - CpSurface) / parameters.tDiffusion;
-    double Ven8 = parameters.An8 * (16 * xnS2_xnS * pow(xnS2_1, 7) + pow(xnS2_1, 9)) / parameters.F;
-    double Ven7 = parameters.An7 * (14 * xnS2_xnS * pow(xnS2_1, 6) + pow(xnS2_1, 8)) / parameters.F;
-    double Ven9 = parameters.An9 * (18 * xnS2_1 * pow(xnS2_1, 8) + pow(xnS2_1, 10)) / parameters.F;
-    double Ven4 = parameters.An4 * (8 * xnS2_1 * pow(xnS2_1, 3) + pow(xnS2_1, 5)) / parameters.F;
-    double Ven3 = parameters.An3 * (6 * xnS2_1 * pow(xnS2_1, 2) + pow(xnS2_1, 4)) / parameters.F;
-    double Ven2 = parameters.An2 * (4 * xnS2_1 * (xnS2_1) + pow(xnS2_1, 3)) / parameters.F;
+    double Ven8 = parameters.cached.An8_F * (16 * xnS2_xnS * pow(xnS2_1, 7) + pow(xnS2_1, 9));
+    double Ven7 = parameters.cached.An7_F * (14 * xnS2_xnS * pow(xnS2_1, 6) + pow(xnS2_1, 8));
+    double Ven9 = parameters.cached.An9_F * (18 * xnS2_1 * pow(xnS2_1, 8) + pow(xnS2_1, 10));
+    double Ven4 = parameters.cached.An4_F * (8 * xnS2_1 * pow(xnS2_1, 3) + pow(xnS2_1, 5));
+    double Ven3 = parameters.cached.An3_F * (6 * xnS2_1 * pow(xnS2_1, 2) + pow(xnS2_1, 4));
+    double Ven2 = parameters.cached.An2_F * (4 * xnS2_1 * (xnS2_1) + pow(xnS2_1, 3));
     double qdotDiffusionBSn = (CnBulk - CnSurface) / parameters.tDiffusion;
-    double Ven5 = parameters.An5 * (10 * xnS2_1 * pow(xnS2_1, 4) + pow(xnS2_1, 6)) / parameters.F;
-    double Vep4 = parameters.Ap4 * (8 * xpS2_xpS * pow(xpS2_1, 3) + pow(xpS2_1, 5)) / parameters.F;
-    double Vep6 = parameters.Ap6 * (12 * xpS2_xpS * pow(xpS2_1, 5) + pow(xpS2_1, 7)) / parameters.F;
-    double Vep0 = parameters.Ap0 * xpS2_1 / parameters.F;
-    double Vep3 = parameters.Ap3 * (6 * xpS2_xpS * pow(xpS2_1, 2) + pow(xpS2_1, 4)) / parameters.F;
-    double Vep10 =
-        parameters.Ap10 * (20 * xpS2_xpS * pow(xpS2_1, 9) + pow(xpS2_1, 11)) / parameters.F;
-    double Vep12 =
-        parameters.Ap12 * (24 * xpS2_xpS * pow(xpS2_1, 11) + pow(xpS2_1, 13)) / parameters.F;
+    double Ven5 = parameters.cached.An5_F * (10 * xnS2_1 * pow(xnS2_1, 4) + pow(xnS2_1, 6));
+    double Vep4 = parameters.cached.Ap4_F * (8 * xpS2_xpS * pow(xpS2_1, 3) + pow(xpS2_1, 5));
+    double Vep6 = parameters.cached.Ap6_F * (12 * xpS2_xpS * pow(xpS2_1, 5) + pow(xpS2_1, 7));
+    double Vep0 = parameters.cached.Ap0_F * xpS2_1;
+    double Vep3 = parameters.cached.Ap3_F * (6 * xpS2_xpS * pow(xpS2_1, 2) + pow(xpS2_1, 4));
+    double Vep10 = parameters.cached.Ap10_F * (20 * xpS2_xpS * pow(xpS2_1, 9) + pow(xpS2_1, 11));
+    double Vep12 = parameters.cached.Ap12_F * (24 * xpS2_xpS * pow(xpS2_1, 11) + pow(xpS2_1, 13));
     double Jn0 = parameters.kn * pow(xSn, parameters.alpha) * pow(-xSn + 1, parameters.alpha);
-    double Vep7 = parameters.Ap7 * (14 * xpS2_xpS * pow(xpS2_1, 6) + pow(xpS2_1, 8)) / parameters.F;
-    double Vep2 = parameters.Ap2 * (4 * xpS2_xpS * (xpS2_1) + pow(xpS2_1, 3)) / parameters.F;
-    double Vep11 =
-        parameters.Ap11 * (22 * xpS2_xpS * pow(xpS2_1, 10) + pow(xpS2_1, 12)) / parameters.F;
-    double Ven0 = parameters.An0 * xnS2_1 / parameters.F;
-    double Ven12 =
-        parameters.An12 * (24 * xnS2_1 * pow(xnS2_1, 11) + pow(xnS2_1, 13)) / parameters.F;
-    double Ven10 =
-        parameters.An10 * (20 * xnS2_1 * pow(xnS2_1, 9) + pow(xnS2_1, 11)) / parameters.F;
-    double Vep9 =
-        parameters.Ap9 * (18 * xpS2_xpS * pow(xpS2_1, 8) + pow(xpS2_1, 10)) / parameters.F;
-    double Vep5 = parameters.Ap5 * (10 * xpS2_xpS * pow(xpS2_1, 4) + pow(xpS2_1, 6)) / parameters.F;
-    double Vep8 = parameters.Ap8 * (16 * xpS2_xpS * pow(xpS2_1, 7) + pow(xpS2_1, 9)) / parameters.F;
-    double Vep1 = parameters.Ap1 * (2 * xpS2_xpS + pow(xpS2_1, 2)) / parameters.F;
+    double Vep7 = parameters.cached.Ap7_F * (14 * xpS2_xpS * pow(xpS2_1, 6) + pow(xpS2_1, 8));
+    double Vep2 = parameters.cached.Ap2_F * (4 * xpS2_xpS * (xpS2_1) + pow(xpS2_1, 3));
+    double Vep11 = parameters.cached.Ap11_F * (22 * xpS2_xpS * pow(xpS2_1, 10) + pow(xpS2_1, 12));
+    double Ven0 = parameters.cached.An0_F * xnS2_1;
+    double Ven12 = parameters.cached.An12_F * (24 * xnS2_1 * pow(xnS2_1, 11) + pow(xnS2_1, 13));
+    double Ven10 = parameters.cached.An10_F * (20 * xnS2_1 * pow(xnS2_1, 9) + pow(xnS2_1, 11));
+    double Vep9 = parameters.cached.Ap9_F * (18 * xpS2_xpS * pow(xpS2_1, 8) + pow(xpS2_1, 10));
+    double Vep5 = parameters.cached.Ap5_F * (10 * xpS2_xpS * pow(xpS2_1, 4) + pow(xpS2_1, 6));
+    double Vep8 = parameters.cached.Ap8_F * (16 * xpS2_xpS * pow(xpS2_1, 7) + pow(xpS2_1, 9));
+    double Vep1 = parameters.cached.Ap1_F * (2 * xpS2_xpS + pow(xpS2_1, 2));
     double Jp0 = parameters.kp * pow(xSp, parameters.alpha) * pow(-xSp + 1, parameters.alpha);
     double Ven = parameters.U0n + Ven0 + Ven1 + Ven10 + Ven11 + Ven12 + Ven2 + Ven3 + Ven4 + Ven5 +
-                 Ven6 + Ven7 + Ven8 + Ven9 +
-                 parameters.R * Tb * log((-xnS + 1) / xnS) / parameters.F;
+                 Ven6 + Ven7 + Ven8 + Ven9 + parameters.cached.R_F * Tb * log((-xnS + 1) / xnS);
     double Vep = parameters.U0p + Vep0 + Vep1 + Vep10 + Vep11 + Vep12 + Vep2 + Vep3 + Vep4 + Vep5 +
-                 Vep6 + Vep7 + Vep8 + Vep9 +
-                 parameters.R * Tb * log((-xpS + 1) / xpS) / parameters.F;
+                 Vep6 + Vep7 + Vep8 + Vep9 + parameters.cached.R_F * Tb * log((-xpS + 1) / xpS);
     double V = Vep - Vo - Vsn - Vsp - Ven;
     double i = P / V;
     double qnSdot = qdotDiffusionBSn - i;
@@ -310,10 +336,8 @@ SystemModel::state_type BatteryModel::stateEqn(double,
     double qpBdot = -qdotDiffusionBSp;
     double qpSdot = i + qdotDiffusionBSp;
     double Vodot = (VoNominal - Vo) / parameters.to;
-    double VsnNominal = static_cast<double>(parameters.R * Tb * asinh((1.0L / 2.0L) * Jn / Jn0) /
-                                            (parameters.F * parameters.alpha));
-    double VspNominal = static_cast<double>(parameters.R * Tb * asinh((1.0L / 2.0L) * Jp / Jp0) /
-                                            (parameters.F * parameters.alpha));
+    double VsnNominal = static_cast<double>(parameters.cached.R_FAlpha * Tb * asinh(0.5L * Jn / Jn0));
+    double VspNominal = static_cast<double>(parameters.cached.R_FAlpha * Tb * asinh(0.5L * Jp / Jp0));
     double Vsndot = (VsnNominal - Vsn) / parameters.tsn;
     double Vspdot = (VspNominal - Vsp) / parameters.tsp;
 
@@ -349,53 +373,46 @@ SystemModel::output_type BatteryModel::outputEqn(double,
     auto xnS2 = xnS * xnS;
     auto xnS2_1 = 2 * xnS - 1;
     auto xnS2_xnS = xnS2 - xnS;
-    double Ven11 =
-        parameters.An11 * (22 * xnS2_xnS * pow(xnS2_1, 10) + pow(xnS2_1, 12)) / parameters.F;
+    double Ven11 = parameters.cached.An11_F * (22 * xnS2_xnS * pow(xnS2_1, 10) + pow(xnS2_1, 12));
     double xpS = qpS / parameters.qSMax;
     auto xpS2 = xpS * xpS;
     auto xpS2_1 = 2 * xpS - 1;
     auto xpS2_xpS = xpS2 - xpS;
 
-    double Vep6 = parameters.Ap6 * (12 * xpS2_xpS * pow(xpS2_1, 5) + pow(xpS2_1, 7)) / parameters.F;
-    double Ven5 = parameters.An5 * (10 * xnS2_xnS * pow(xnS2_1, 4) + pow(xnS2_1, 6)) / parameters.F;
-    double Ven7 = parameters.An7 * (14 * xnS2_xnS * pow(xnS2_1, 6) + pow(xnS2_1, 8)) / parameters.F;
-    double Vep4 = parameters.Ap4 * (8 * xpS2_xpS * pow(xpS2_1, 3) + pow(xpS2_1, 5)) / parameters.F;
-    double Ven9 =
-        parameters.An9 * (18 * xnS2_xnS * pow(xnS2_1, 8) + pow(xnS2_1, 10)) / parameters.F;
-    double Ven3 = parameters.An3 * (6 * xnS2_xnS * pow(xnS2_1, 2) + pow(xnS2_1, 4)) / parameters.F;
-    double Vep7 = parameters.Ap7 * (14 * xpS2_xpS * pow(xpS2_1, 6) + pow(xpS2_1, 8)) / parameters.F;
-    double Vep11 =
-        parameters.Ap11 * (22 * xpS2_xpS * pow(xpS2_1, 10) + pow(xpS2_1, 12)) / parameters.F;
+    double Vep6 = parameters.cached.Ap6_F * (12 * xpS2_xpS * pow(xpS2_1, 5) + pow(xpS2_1, 7));
+    double Ven5 = parameters.cached.An5_F * (10 * xnS2_xnS * pow(xnS2_1, 4) + pow(xnS2_1, 6));
+    double Ven7 = parameters.cached.An7_F * (14 * xnS2_xnS * pow(xnS2_1, 6) + pow(xnS2_1, 8));
+    double Vep4 = parameters.cached.Ap4_F * (8 * xpS2_xpS * pow(xpS2_1, 3) + pow(xpS2_1, 5));
+    double Ven9 = parameters.cached.An9_F * (18 * xnS2_xnS * pow(xnS2_1, 8) + pow(xnS2_1, 10));
+    double Ven3 = parameters.cached.An3_F * (6 * xnS2_xnS * pow(xnS2_1, 2) + pow(xnS2_1, 4));
+    double Vep7 = parameters.cached.Ap7_F * (14 * xpS2_xpS * pow(xpS2_1, 6) + pow(xpS2_1, 8));
+    double Vep11 = parameters.cached.Ap11_F * (22 * xpS2_xpS * pow(xpS2_1, 10) + pow(xpS2_1, 12));
     double Ven12 =
-        parameters.An12 * (24 * xnS2_xnS * pow(xnS2_1, 11) + pow(xnS2_1, 13)) / parameters.F;
+        parameters.cached.An12_F * (24 * xnS2_xnS * pow(xnS2_1, 11) + pow(xnS2_1, 13));
     double Vep9 =
-        parameters.Ap9 * (18 * xpS2_xpS * pow(xpS2_1, 8) + pow(xpS2_1, 10)) / parameters.F;
-    double Vep5 = parameters.Ap5 * (10 * xpS2_xpS * pow(xpS2_1, 4) + pow(xpS2_1, 6)) / parameters.F;
-    double Ven1 = parameters.An1 * (6 * xnS2_xnS + 1) /
-                  parameters.F; // Was parameters.An1*(-2 * xnS*(-xnS + 1) + pow(xnS2_1, 2))
-    double Vep8 = parameters.Ap8 * (16 * xpS2_xpS * pow(xpS2_1, 7) + pow(xpS2_1, 9)) / parameters.F;
-    double Ven6 = parameters.An6 * (12 * xnS2_xnS * pow(xnS2_1, 5) + pow(xnS2_1, 7)) / parameters.F;
-    double Ven8 = parameters.An8 * (16 * xnS2_xnS * pow(xnS2_1, 7) + pow(xnS2_1, 9)) / parameters.F;
-    double Vep3 = parameters.Ap3 * (6 * xpS2_xpS * pow(xpS2_1, 2) + pow(xpS2_1, 4)) / parameters.F;
+        parameters.cached.Ap9_F * (18 * xpS2_xpS * pow(xpS2_1, 8) + pow(xpS2_1, 10));
+    double Vep5 = parameters.cached.Ap5_F * (10 * xpS2_xpS * pow(xpS2_1, 4) + pow(xpS2_1, 6));
+    double Ven1 = parameters.cached.An1_F * (6 * xnS2_xnS + 1); // Was parameters.An1*(-2 * xnS*(-xnS + 1) + pow(xnS2_1, 2))
+    double Vep8 = parameters.cached.Ap8_F * (16 * xpS2_xpS * pow(xpS2_1, 7) + pow(xpS2_1, 9));
+    double Ven6 = parameters.cached.An6_F * (12 * xnS2_xnS * pow(xnS2_1, 5) + pow(xnS2_1, 7));
+    double Ven8 = parameters.cached.An8_F * (16 * xnS2_xnS * pow(xnS2_1, 7) + pow(xnS2_1, 9));
+    double Vep3 = parameters.cached.Ap3_F * (6 * xpS2_xpS * pow(xpS2_1, 2) + pow(xpS2_1, 4));
     double Vep10 =
-        parameters.Ap10 * (20 * xpS2_xpS * pow(xpS2_1, 9) + pow(xpS2_1, 11)) / parameters.F;
-    double Vep12 =
-        parameters.Ap12 * (24 * xpS2_xpS * pow(xpS2_1, 11) + pow(xpS2_1, 13)) / parameters.F;
-    double Ven4 = parameters.An4 * (8 * xnS2_xnS * pow(xnS2_1, 3) + pow(xnS2_1, 5)) / parameters.F;
-    double Ven2 = parameters.An2 * (4 * xnS2_xnS * xnS2_1 + pow(xnS2_1, 3)) / parameters.F;
-    double Vep2 = parameters.Ap2 * (4 * xpS2_xpS * xpS2_1 + pow(xpS2_1, 3)) / parameters.F;
-    double Ven0 = parameters.An0 * (xnS2_1) / parameters.F;
-    double Ven10 =
-        parameters.An10 * (20 * xnS2_xnS * pow(xnS2_1, 9) + pow(xnS2_1, 11)) / parameters.F;
-    double Vep1 = parameters.Ap1 * (6 * xpS2_xpS + 1) /
-                  parameters.F; // was (-2 * xpS*(-xpS + 1) + pow(xpS2_1, 2)
-    double Vep0 = parameters.Ap0 * (xpS2_1) / parameters.F;
+        parameters.cached.Ap10_F * (20 * xpS2_xpS * pow(xpS2_1, 9) + pow(xpS2_1, 11));
+    double Vep12 = parameters.cached.Ap12_F * (24 * xpS2_xpS * pow(xpS2_1, 11) + pow(xpS2_1, 13));
+    double Ven4 = parameters.cached.An4_F * (8 * xnS2_xnS * pow(xnS2_1, 3) + pow(xnS2_1, 5));
+    double Ven2 = parameters.cached.An2_F * (4 * xnS2_xnS * xnS2_1 + pow(xnS2_1, 3));
+    double Vep2 = parameters.cached.Ap2_F * (4 * xpS2_xpS * xpS2_1 + pow(xpS2_1, 3));
+    double Ven0 = parameters.cached.An0_F * (xnS2_1);
+    double Ven10 = parameters.cached.An10_F * (20 * xnS2_xnS * pow(xnS2_1, 9) + pow(xnS2_1, 11));
+    double Vep1 = parameters.cached.Ap1_F * (6 * xpS2_xpS + 1); // was (-2 * xpS*(-xpS + 1) + pow(xpS2_1, 2)
+    double Vep0 = parameters.cached.Ap0_F * (xpS2_1);
     double Ven = parameters.U0n + Ven0 + Ven1 + Ven10 + Ven11 + Ven12 + Ven2 + Ven3 + Ven4 + Ven5 +
                  Ven6 + Ven7 + Ven8 + Ven9 +
-                 parameters.R * Tb * log((-xnS + 1) / xnS) / parameters.F;
+                 parameters.cached.R_F * Tb * log((-xnS + 1) / xnS);
     double Vep = parameters.U0p + Vep0 + Vep1 + Vep10 + Vep11 + Vep12 + Vep2 + Vep3 + Vep4 + Vep5 +
                  Vep6 + Vep7 + Vep8 + Vep9 +
-                 parameters.R * Tb * log((-xpS + 1) / xpS) / parameters.F;
+                 parameters.cached.R_F * Tb * log((-xpS + 1) / xpS);
 
     auto z_new = getOutputVector();
     // Set outputs
@@ -562,82 +579,62 @@ SystemModel::state_type BatteryModel::initialize(const input_type& u, const outp
     for (size_t i = 0; i < xp.size(); i++) {
         // For xp
         double xpS = xp[i];
-        double Vep0 = parameters.Ap0 * (2 * xpS - 1) / parameters.F;
-        double Vep1 = parameters.Ap1 * (-2 * xpS * (-xpS + 1) + pow(2 * xpS - 1, 2)) / parameters.F;
-        double Vep2 = parameters.Ap2 *
-                      (-4 * xpS * (-xpS + 1) * (2 * xpS - 1) + pow(2 * xpS - 1, 3)) / parameters.F;
-        double Vep3 = parameters.Ap3 *
-                      (-6 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 2) + pow(2 * xpS - 1, 4)) /
-                      parameters.F;
-        double Vep4 = parameters.Ap4 *
-                      (-8 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 3) + pow(2 * xpS - 1, 5)) /
-                      parameters.F;
-        double Vep5 = parameters.Ap5 *
-                      (-10 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 4) + pow(2 * xpS - 1, 6)) /
-                      parameters.F;
-        double Vep6 = parameters.Ap6 *
-                      (-12 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 5) + pow(2 * xpS - 1, 7)) /
-                      parameters.F;
-        double Vep7 = parameters.Ap7 *
-                      (-14 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 6) + pow(2 * xpS - 1, 8)) /
-                      parameters.F;
-        double Vep8 = parameters.Ap8 *
-                      (-16 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 7) + pow(2 * xpS - 1, 9)) /
-                      parameters.F;
-        double Vep9 = parameters.Ap9 *
-                      (-18 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 8) + pow(2 * xpS - 1, 10)) /
-                      parameters.F;
-        double Vep10 = parameters.Ap10 *
-                       (-20 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 9) + pow(2 * xpS - 1, 11)) /
-                       parameters.F;
-        double Vep11 = parameters.Ap11 *
-                       (-22 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 10) + pow(2 * xpS - 1, 12)) /
-                       parameters.F;
-        double Vep12 = parameters.Ap12 *
-                       (-24 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 11) + pow(2 * xpS - 1, 13)) /
-                       parameters.F;
+        double Vep0 = parameters.cached.Ap0_F * (2 * xpS - 1);
+        double Vep1 = parameters.cached.Ap1_F * (-2 * xpS * (-xpS + 1) + pow(2 * xpS - 1, 2));
+        double Vep2 = parameters.cached.Ap2_F *
+                      (-4 * xpS * (-xpS + 1) * (2 * xpS - 1) + pow(2 * xpS - 1, 3));
+        double Vep3 = parameters.cached.Ap3_F *
+                      (-6 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 2) + pow(2 * xpS - 1, 4));
+        double Vep4 = parameters.cached.Ap4_F *
+                      (-8 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 3) + pow(2 * xpS - 1, 5));
+        double Vep5 = parameters.cached.Ap5_F *
+                      (-10 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 4) + pow(2 * xpS - 1, 6));
+        double Vep6 = parameters.cached.Ap6_F *
+                      (-12 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 5) + pow(2 * xpS - 1, 7));
+        double Vep7 = parameters.cached.Ap7_F *
+                      (-14 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 6) + pow(2 * xpS - 1, 8));
+        double Vep8 = parameters.cached.Ap8_F *
+                      (-16 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 7) + pow(2 * xpS - 1, 9));
+        double Vep9 = parameters.cached.Ap9_F *
+                      (-18 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 8) + pow(2 * xpS - 1, 10));
+        double Vep10 = parameters.cached.Ap10_F *
+                       (-20 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 9) + pow(2 * xpS - 1, 11));
+        double Vep11 = parameters.cached.Ap11_F *
+                       (-22 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 10) + pow(2 * xpS - 1, 12));
+        double Vep12 = parameters.cached.Ap12_F *
+                       (-24 * xpS * (-xpS + 1) * pow(2 * xpS - 1, 11) + pow(2 * xpS - 1, 13));
         double Vep = parameters.U0p + Vep0 + Vep1 + Vep10 + Vep11 + Vep12 + Vep2 + Vep3 + Vep4 +
                      Vep5 + Vep6 + Vep7 + Vep8 + Vep9 +
-                     parameters.R * Tb * log((-xpS + 1) / xpS) / parameters.F;
+                     parameters.cached.R_F * Tb * log((-xpS + 1) / xpS);
         // For xn
         double xnS = xn[i];
-        double Ven0 = parameters.An0 * (2 * xnS - 1) / parameters.F;
-        double Ven1 = parameters.An1 * (-2 * xnS * (-xnS + 1) + pow(2 * xnS - 1, 2)) / parameters.F;
-        double Ven2 = parameters.An2 *
-                      (-4 * xnS * (-xnS + 1) * (2 * xnS - 1) + pow(2 * xnS - 1, 3)) / parameters.F;
-        double Ven3 = parameters.An3 *
-                      (-6 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 2) + pow(2 * xnS - 1, 4)) /
-                      parameters.F;
-        double Ven4 = parameters.An4 *
-                      (-8 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 3) + pow(2 * xnS - 1, 5)) /
-                      parameters.F;
-        double Ven5 = parameters.An5 *
-                      (-10 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 4) + pow(2 * xnS - 1, 6)) /
-                      parameters.F;
-        double Ven6 = parameters.An6 *
-                      (-12 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 5) + pow(2 * xnS - 1, 7)) /
-                      parameters.F;
-        double Ven7 = parameters.An7 *
-                      (-14 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 6) + pow(2 * xnS - 1, 8)) /
-                      parameters.F;
-        double Ven8 = parameters.An8 *
-                      (-16 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 7) + pow(2 * xnS - 1, 9)) /
-                      parameters.F;
-        double Ven9 = parameters.An9 *
-                      (-18 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 8) + pow(2 * xnS - 1, 10)) /
-                      parameters.F;
-        double Ven10 = parameters.An10 *
-                       (-20 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 9) + pow(2 * xnS - 1, 11)) /
-                       parameters.F;
-        double Ven11 = parameters.An11 *
-                       (-22 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 10) + pow(2 * xnS - 1, 12)) /
-                       parameters.F;
-        double Ven12 = parameters.An12 *
-                       (-24 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 11) + pow(2 * xnS - 1, 13)) /
-                       parameters.F;
+        double Ven0 = parameters.cached.An0_F * (2 * xnS - 1);
+        double Ven1 = parameters.cached.An1_F * (-2 * xnS * (-xnS + 1) + pow(2 * xnS - 1, 2));
+        double Ven2 = parameters.cached.An2_F *
+                      (-4 * xnS * (-xnS + 1) * (2 * xnS - 1) + pow(2 * xnS - 1, 3));
+        double Ven3 = parameters.cached.An3_F *
+                      (-6 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 2) + pow(2 * xnS - 1, 4));
+        double Ven4 = parameters.cached.An4_F *
+                      (-8 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 3) + pow(2 * xnS - 1, 5));
+        double Ven5 = parameters.cached.An5_F *
+                      (-10 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 4) + pow(2 * xnS - 1, 6));
+        double Ven6 = parameters.cached.An6_F *
+                      (-12 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 5) + pow(2 * xnS - 1, 7));
+        double Ven7 = parameters.cached.An7_F *
+                      (-14 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 6) + pow(2 * xnS - 1, 8));
+        double Ven8 = parameters.cached.An8_F *
+                      (-16 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 7) + pow(2 * xnS - 1, 9));
+        double Ven9 = parameters.cached.An9_F *
+                      (-18 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 8) + pow(2 * xnS - 1, 10));
+        double Ven10 = parameters.cached.An10_F *
+                       (-20 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 9) + pow(2 * xnS - 1, 11));
+        double Ven11 = parameters.cached.An11_F *
+                       (-22 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 10) + pow(2 * xnS - 1, 12));
+        double Ven12 = parameters.cached.An12_F *
+                       (-24 * xnS * (-xnS + 1) * pow(2 * xnS - 1, 11) + pow(2 * xnS - 1, 13));
         double Ven = parameters.U0n + Ven0 + Ven1 + Ven10 + Ven11 + Ven12 + Ven2 + Ven3 + Ven4 +
                      Ven5 + Ven6 + Ven7 + Ven8 + Ven9 +
-                     parameters.R * Tb * log((-xnS + 1) / xnS) / parameters.F;
+                     parameters.cached.R_F * Tb * log((-xnS + 1) / xnS);
         // Compute equilibrium voltage
         double Ve = Vep - Ven;
         // Compute what voltage would be for this xp,xn
