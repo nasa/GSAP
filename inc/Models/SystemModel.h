@@ -227,9 +227,9 @@ namespace PCOE {
          * @param z The initial model output vector.
          * @return The initial model state vector.
          *
-         * @note override if
+         * @note override if you have your own custome initialization
          **/
-        state_type initialize(const input_type& u, const output_type& z) const {
+        virtual state_type initialize(const input_type& u, const output_type&) const {
             return stateEqn(0.0f, getStateVector(), u, defaultTimeStep);
         };
 

@@ -114,15 +114,6 @@ public:
     output_type outputEqn(double t, const state_type& x) const override;
 
     /**
-     * Initialize the model state.
-     *
-     * @param u The model input vector.
-     * @param z The model output vector.
-     * @returns The initial model state vector.
-     **/
-    state_type initialize(const input_type& u, const output_type& z) const override;
-
-    /**
      * Calculate whether the model threshold is reached.
      *
      * @param t  Time
