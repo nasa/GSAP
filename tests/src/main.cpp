@@ -19,6 +19,10 @@ namespace BatteryResultTests {
     void registerTests(TestContext& context);
 }
 
+namespace CircuitBatteryModelTests {
+    void registerTests(TestContext& context);
+}
+
 namespace CentrifugalPumpModelTests {
     void registerTests(TestContext& context);
 }
@@ -113,6 +117,7 @@ int main() {
     CentrifugalPumpModelTests::registerTests(context);
     BatteryResultTests::registerTests(context);
     CentrifugalPumpModelTests::registerTests(context);
+    CircuitBatteryModelTests::registerTests(context);
     ConfigMapTests::registerTests(context);
     DataPointTests::registerTests(context);
     DataPointsTests::registerTests(context);
