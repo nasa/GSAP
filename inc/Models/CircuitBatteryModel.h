@@ -113,6 +113,15 @@ public:
     std::vector<bool> thresholdEqn(double t, const state_type& x) const override;
 
     event_state_type eventStateEqn(const state_type& x) const override;
+    
+    state_type initialize(const input_type&, const output_type&) const override {
+        return state_type({
+                           parameters.x0.Tb,
+                           parameters.x0.qb,
+                           parameters.x0.qcp,
+                           parameters.x0.qcs
+                          });
+    }
 
     // Set default parameters
     void setParameters();
