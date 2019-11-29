@@ -78,16 +78,6 @@ public:
             double qcs;
             double Tb;
         } x0;
-        struct V {
-            double qb;
-            double qcp;
-            double qcs;
-            double Tb;
-        } v;
-        struct N {
-            double Vm;
-            double Tbm;
-        } n;
     } parameters;
 
     /**

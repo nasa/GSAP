@@ -49,12 +49,6 @@ const std::string X0_QB_KEY = "Battery.x0.qb";
 const std::string X0_QCP_KEY = "Battery.x0.qcp";
 const std::string X0_QCS_KEY = "Battery.x0.qcs";
 const std::string X0_TB_KEY = "Battery.x0.Tb";
-const std::string V_QB_KEY = "Battery.v.qb";
-const std::string V_QCP_KEY = "Battery.v.qcp";
-const std::string V_QCS_KEY = "Battery.v.qcs";
-const std::string V_TB_KEY = "Battery.v.Tb";
-const std::string N_VM_KEY = "Battery.n.Vm";
-const std::string N_TBM_KEY = "Battery.v.Tbm";
 
 CircuitBatteryModel::CircuitBatteryModel()
     : PrognosticsModel(8,
@@ -159,24 +153,6 @@ CircuitBatteryModel::CircuitBatteryModel(const ConfigMap& configMap) : CircuitBa
     }
     if (configMap.hasKey(X0_TB_KEY)) {
         parameters.x0.Tb = configMap.getDouble(X0_TB_KEY);
-    }
-    if (configMap.hasKey(V_QB_KEY)) {
-        parameters.v.qb = configMap.getDouble(V_QB_KEY);
-    }
-    if (configMap.hasKey(V_QCP_KEY)) {
-        parameters.v.qcp = configMap.getDouble(V_QCP_KEY);
-    }
-    if (configMap.hasKey(V_QCS_KEY)) {
-        parameters.v.qcs = configMap.getDouble(V_QCS_KEY);
-    }
-    if (configMap.hasKey(V_TB_KEY)) {
-        parameters.v.Tb = configMap.getDouble(V_TB_KEY);
-    }
-    if (configMap.hasKey(N_VM_KEY)) {
-        parameters.n.Vm = configMap.getDouble(N_VM_KEY);
-    }
-    if (configMap.hasKey(N_TBM_KEY)) {
-        parameters.n.Tbm = configMap.getDouble(N_TBM_KEY);
     }
 }
 
