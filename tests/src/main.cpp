@@ -114,7 +114,6 @@ namespace UDataTests {
 int main() {
     TestContext context;
     
-    CentrifugalPumpModelTests::registerTests(context);
     BatteryResultTests::registerTests(context);
     CentrifugalPumpModelTests::registerTests(context);
     CircuitBatteryModelTests::registerTests(context);
