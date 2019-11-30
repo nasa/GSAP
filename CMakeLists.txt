@@ -61,6 +61,7 @@ set(HEADERS
     inc/Models/CircuitBatteryModel.h
     inc/Models/SystemModel.h
     inc/Models/SystemModelFactory.h
+    inc/Models/PneumaticValveModel.h
     inc/Models/PrognosticsModel.h
     inc/Models/PrognosticsModelFactory.h
     inc/Observers/AsyncObserver.h
@@ -108,6 +109,7 @@ set(SRCS
     src/Models/BatteryModel.cpp
     src/Models/CircuitBatteryModel.cpp
     src/Models/CentrifugalPumpModel.cpp
+    src/Models/PneumaticValveModel.cpp
     src/Observers/AsyncObserver.cpp
     src/Observers/ParticleFilter.cpp
     src/Observers/UnscentedKalmanFilter.cpp

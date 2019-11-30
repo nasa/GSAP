@@ -45,13 +45,23 @@ namespace PCOE {
 
         /**
          * Calculate whether the model threshold is reached.
+         *   Default checks if any eventState has reached zero
          *
          * @param t Time
          * @param x The model state vector at the current time step.
          * @return  For each event: true if the threshold is reached; otherwise, false.
          **/
-        virtual std::vector<bool> thresholdEqn(double t,
-                                  const state_type& x) const = 0;
+        virtual std::vector<bool> thresholdEqn(double,
+                                               const state_type& x) const {
+            auto eventState = eventStateEqn(x);
+            
+            std::vector<bool> thresholdMet(eventState.size());
+            
+            for (size_type i = 0; i < eventState.size(); i++) {
+                thresholdMet[i] = eventState[i] <= 0.0;
+            }
+            return thresholdMet;
+        }
     };
 }
 #endif

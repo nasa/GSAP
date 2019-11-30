@@ -26,6 +26,7 @@
 #include "CentrifugalPumpModel.h"
 #include "CircuitBatteryModel.h"
 #include "Factory.h"
+#include "PneumaticValveModel.h"
 #include "Singleton.h"
 #include "SystemModel.h"
 
@@ -51,6 +52,7 @@ namespace PCOE {
             Register<BatteryModel>("Battery.Electrochemistry");
             Register<CircuitBatteryModel>("Battery.Circuit");
             Register<CentrifugalPumpModel>("Centrifugal Pump");
+            Register<PneumaticValveModel>("Pneumatic Valve");
         };
     };
 }
