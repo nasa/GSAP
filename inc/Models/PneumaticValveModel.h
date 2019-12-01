@@ -25,14 +25,7 @@ public:
     
     PneumaticValveModel(const PCOE::ConfigMap& paramMap);
     
-    static const struct Consts {
-        double R = 8.314; // Universal Gas Constant in J/K/mol
-    } consts;
-    
     struct Parameters {
-        double sampleTime = 0.01; // TODO(CT): IS THIS ACTUALLY USED?
-        double cycleTime = 20; // length of a valve usage cycle
-        
         // Environmental parameters
         double g = 9.81; // Acceleration of gravity in m/s^2
         double pAtm = 101325; // spring constant in N/m

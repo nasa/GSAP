@@ -3,18 +3,14 @@
 // All Rights Reserved.
 
 #include <algorithm>
-#include <cmath>
-#include <vector>
 
-#include "ConfigMap.h"
 #include "Contracts.h"
 #include "Models/PneumaticValveModel.h"
 
 using namespace PCOE;
 
 // Configuration Keys
-const std::string SAMPLETIME_KEY = "PneumaticValve.SampleTime";
-const std::string CYCLETIME_KEY = "PneumaticValve.CycleTime";
+
 const std::string G_KEY = "PneumaticValve.g";
 const std::string PATM_KEY = "PneumaticValve.pATM";
 const std::string M_KEY = "PneumaticValve.m";
@@ -43,6 +39,8 @@ const std::string ATMAX_KEY = "PneumaticValve.AtMax";
 const std::string AIMAX_KEY = "PneumaticValve.AiMax";
 const std::string RMAX_KEY = "PneumaticValve.rMax";
 const std::string KMIN_KEY = "PneumaticValve.kMin";
+
+constexpr double R = 8.31446; // Universal Gas Constant in J/K/mol
 
 const auto INPUT_ARRAY = {
     MessageId::Pascal, // pL, Fluid pressure at left
@@ -79,7 +77,6 @@ PneumaticValveModel::PneumaticValveModel()
 inline double gasFlow(double pIn, double pOut, PneumaticValveModel::Parameters::GN2 gas, double C, double A) {
     // Compute the mass flow through an orifice for both choked and nonchoked flow conditions
     double k = gas.gamma;
-    double R = PneumaticValveModel::consts.R;
     double T = gas.T;
     double Z = gas.Z;
 
@@ -100,12 +97,6 @@ inline double gasFlow(double pIn, double pOut, PneumaticValveModel::Parameters::
 }
 
 PneumaticValveModel::PneumaticValveModel(const ConfigMap& configMap) : PneumaticValveModel::PneumaticValveModel() {
-    if (configMap.hasKey(SAMPLETIME_KEY)) {
-        params.sampleTime = configMap.getDouble(SAMPLETIME_KEY);
-    }
-    if (configMap.hasKey(CYCLETIME_KEY)) {
-        params.cycleTime = configMap.getDouble(CYCLETIME_KEY);
-    }
     if (configMap.hasKey(G_KEY)) {
         params.g = configMap.getDouble(G_KEY);
     }
@@ -236,9 +227,9 @@ SystemModel::state_type PneumaticValveModel::stateEqn(double, const state_type& 
     double kdot = -wk*abs(v*springForce);
     double rdot = wr*abs(v*friction);
     double Aidot = wi*abs(v*friction);
-    double pressureBot = mBot*consts.R*params.gn2.T/params.gn2.M/volumeBot;
+    double pressureBot = mBot*R*params.gn2.T/params.gn2.M/volumeBot;
     double mBotDotn = gasFlow(pInBot,pressureBot,params.gn2,params.Cb,params.Ab);
-    double pressureTop = mTop*consts.R*params.gn2.T/params.gn2.M/volumeTop;
+    double pressureTop = mTop*R*params.gn2.T/params.gn2.M/volumeTop;
     double leakBotToAtm = gasFlow(pressureBot,params.pAtm,params.gn2,1,Aeb);
     double gasForceTop = pressureTop*params.Ap;
     double gasForceBot = pressureBot*params.Ap;
@@ -301,8 +292,8 @@ SystemModel::output_type PneumaticValveModel::outputEqn(double,
     double volumeBot = params.Vbot0 + params.Ap*x;
     double volumeTop = params.Vtop0 + params.Ap*(params.Ls-x);
     double trueFlow = maxFlow* fmax(0,x)/params.Ls;
-    double pressureTop = mTop*consts.R*params.gn2.T/params.gn2.M/volumeTop;
-    double pressureBot = mBot*consts.R*params.gn2.T/params.gn2.M/volumeBot;
+    double pressureTop = mTop*R*params.gn2.T/params.gn2.M/volumeTop;
+    double pressureBot = mBot*R*params.gn2.T/params.gn2.M/volumeBot;
     
     // set outputs
     auto z_new = getOutputVector();
@@ -317,7 +308,6 @@ SystemModel::output_type PneumaticValveModel::outputEqn(double,
 }
 
 SystemModel::event_state_type PneumaticValveModel::eventStateEqn(const state_type& x_in) const {
-    
     // Extract states
     double Aeb = x_in[0];
     double Aet = x_in[1];
@@ -341,7 +331,7 @@ SystemModel::state_type PneumaticValveModel::initialize(const input_type& u, con
     double pR = u[1];
     
     // Initialize state
-    double MoRT = params.gn2.M / (consts.R * params.gn2.T);
+    double MoRT = params.gn2.M / (R * params.gn2.T);
     double Vtopi = params.Vtop0 + params.Ap * params.Ls;
     return state_type({
         params.Ab, // Aeb, Area of External Leak- bottom
