@@ -3,12 +3,6 @@
 // All Rights Reserved.
 #include "Models/CircuitBatteryModel.h"
 
-#include <cmath>
-#include <iostream>
-#include <sstream>
-#include <vector>
-
-#include "ConfigMap.h"
 #include "Contracts.h"
 
 using namespace PCOE;
@@ -155,25 +149,18 @@ CircuitBatteryModel::CircuitBatteryModel(const ConfigMap& configMap) : CircuitBa
     }
 }
 
-// Battery State Equation
 SystemModel::state_type CircuitBatteryModel::stateEqn(double,
                                                const state_type& x,
                                                const input_type& u,
                                                double dt) const {
-    // StateEqn   Compute the new states of the battery model
-    //
-    // XNew = StateEqn(parameters,t,X,U,N,dt) computes the new states of the
-    // battery model given the parameters strcucture, the current time, the
-    //  current states, inputs, process noise, and the sampling time.
-    
     // Extract states
-    double Tb = x[0];
-    double qb = x[1];
-    double qcp = x[2];
-    double qcs = x[3];
+    auto Tb = x[0];
+    auto qb = x[1];
+    auto qcp = x[2];
+    auto qcs = x[3];
 
     // Extract inputs
-    double i = u[0];
+    auto i = u[0];
 
     // Constraints
     auto Vcs = qcs/parameters.Cs;
@@ -202,7 +189,6 @@ SystemModel::state_type CircuitBatteryModel::stateEqn(double,
     return x_new;
 }
 
-// Battery Output Equation
 SystemModel::output_type CircuitBatteryModel::outputEqn(double,
                                                  const state_type& x) const {
     // Extract states
@@ -227,7 +213,6 @@ SystemModel::output_type CircuitBatteryModel::outputEqn(double,
     return z;
 }
 
-// Battery Threshold Equation
 std::vector<bool> CircuitBatteryModel::thresholdEqn(double t, const state_type& x) const {
     // Compute based on voltage, so use output equation to get voltage
     auto z = outputEqn(t, x);
@@ -242,9 +227,7 @@ SystemModel::event_state_type CircuitBatteryModel::eventStateEqn(const state_typ
     return event_state_type({SOC});
 }
 
-// Set model parameters, given qMobile
 void CircuitBatteryModel::setParameters() {
-    
     // Basics
     parameters.Id = 2.02;
     parameters.td = 3850;
