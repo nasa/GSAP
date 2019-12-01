@@ -99,6 +99,10 @@ namespace PredictorTests {
     void registerTests(TestContext& context);
 }
 
+namespace PneumaticValveModelTests {
+    void registerTests(TestContext& context);
+}
+
 namespace StatisticalToolsTests {
     void registerTests(TestContext& context);
 }
@@ -113,6 +117,9 @@ namespace UDataTests {
 
 int main() {
     TestContext context;
+    
+    PneumaticValveModelTests::registerTests(context);
+    return context.Execute();
     
     BatteryResultTests::registerTests(context);
     CentrifugalPumpModelTests::registerTests(context);
@@ -134,6 +141,7 @@ int main() {
     ModelTests::registerTests(context);
     ObserverTests::registerTests(context);
     ParticleFilterTests::registerTests(context);
+    PneumaticValveModelTests::registerTests(context);
     StatisticalToolsTests::registerTests(context);
     TrajectoryServiceTests::registerTests(context);
     UDataTests::registerTests(context);

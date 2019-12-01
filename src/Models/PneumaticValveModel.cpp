@@ -10,7 +10,6 @@
 using namespace PCOE;
 
 // Configuration Keys
-
 const std::string G_KEY = "PneumaticValve.g";
 const std::string PATM_KEY = "PneumaticValve.pATM";
 const std::string M_KEY = "PneumaticValve.m";
@@ -55,7 +54,7 @@ const auto OUTPUT_ARRAY = {
     MessageId::Boolean, // Indicator Top
     MessageId::Pascal, // Pressure at Bottom
     MessageId::Pascal, // Pressure at Top
-    MessageId::Meters, // x
+    MessageId::Meters, // x, position
 };
 
 const auto EVENT_ARRAY = {
@@ -184,7 +183,6 @@ PneumaticValveModel::PneumaticValveModel(const ConfigMap& configMap) : Pneumatic
 }
 
 SystemModel::state_type PneumaticValveModel::stateEqn(double, const state_type& x_in, const input_type& u, double dt) const {
-    
     // Extract states
     double Aeb = x_in[0];
     double Aet = x_in[1];
@@ -266,7 +264,7 @@ SystemModel::state_type PneumaticValveModel::stateEqn(double, const state_type& 
     x_new[5] = mBot + mBotdot*dt;
     x_new[6] = mTop + mTopdot*dt;
     x_new[7] = r + rdot*dt;
-    x_new[8] = x;
+    x_new[8] = v;
     x_new[9] = wb + wbdot*dt;
     x_new[10] = wi + widot*dt;
     x_new[11] = wk + wkdot*dt;

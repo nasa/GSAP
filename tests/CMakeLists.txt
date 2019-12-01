@@ -37,6 +37,7 @@ set(HEADERS
 
 set(SRCS
     src/AsyncIntegrationTests.cpp
+    src/AsyncPrognoserTests.cpp
     src/CentrifugalPumpModelTests.cpp
     src/CircuitBatteryTests.cpp
     src/ConfigMapTests.cpp
@@ -44,7 +45,6 @@ set(SRCS
     src/DPointsTests.cpp
     src/DPointTests.cpp
     src/DynamicArrayTests.cpp
-    src/AsyncPrognoserTests.cpp
     src/GaussianVariableTests.cpp
     src/Loading/ConstLoadEstimatorTests.cpp
     src/Loading/GaussianLoadEstimatorTests.cpp
@@ -62,6 +62,7 @@ set(SRCS
     src/Predictors/BatteryResultTests.cpp
     src/Predictors/AsyncPredictorTests.cpp
     src/Predictors/PredictorTests.cpp
+    src/PneumaticValveTests.cpp
     src/StatisticalToolsTests.cpp
     src/SyncIntegrationTests.cpp
     src/Tank3.cpp

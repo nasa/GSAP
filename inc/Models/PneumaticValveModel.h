@@ -15,8 +15,8 @@
  * Original Model by Matthew Daigle can be found in:
  *   M. Daigle and K. Goebel, "A Model-based Prognostics Approach Applied to Pneumatic Valves," International Journal of Prognostics and Health Management, vol. 2, no. 2, August 2011.
  *
- * @author Matthew Daigle
- * @author Chris Teubert
+ * @author Matthew Daigle (wrote original model in Matlab)
+ * @author Chris Teubert (translated model from Matlab)
  * @since 2.1
  **/
 class PneumaticValveModel final : public PCOE::PrognosticsModel {
