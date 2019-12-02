@@ -5,6 +5,8 @@
 #define PCOE_PROGNOSTICSMODELFACTORY_H
 
 #include "BatteryModel.h"
+#include "CentrifugalPumpModel.h"
+#include "CircuitBatteryModel.h"
 #include "Factory.h"
 #include "PrognosticsModel.h"
 #include "Singleton.h"
@@ -29,6 +31,9 @@ namespace PCOE {
          **/
         PrognosticsModelFactory() {
             Register<BatteryModel>("Battery");
+            Register<BatteryModel>("Battery.Electrochemistry");
+            Register<CircuitBatteryModel>("Battery.Circuit");
+            Register<CentrifugalPumpModel>("Centrifugal Pump");
         };
     };
 }
