@@ -11,7 +11,7 @@
 #include "PrognosticsModel.h"
 
 /**
- * An electro-chemical model of a battery.
+ * A circuit-based model of a battery.
  *
  * @author Matthew Daigle
  * @author Chris Teubert
