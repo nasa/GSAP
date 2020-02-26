@@ -58,7 +58,7 @@ const std::string X0_WA = "CentrifugalPump.x0.wA";
 const std::string X0_WTHRUST = "CentrifugalPump.x0.wThrust";
 const std::string X0_WRADIAL = "CentrifugalPump.x0.wRadial";
 
-const auto INPUT_ARRAY = {
+const std::vector<MessageId> INPUT_ARRAY{
     MessageId::Kelvin, // Ambient Temp
     MessageId::Volts, // Voltage
     MessageId::Pascal, // Discharge Pressure
@@ -66,7 +66,7 @@ const auto INPUT_ARRAY = {
     MessageId::RadiansPerSecond //Syncronous Rotational Speed of Supply Voltage
 };
 
-const auto OUTPUT_ARRAY = {
+const std::vector<MessageId> OUTPUT_ARRAY{
     MessageId::MetersCubedPerSecond, // Discharge Flow
     MessageId::Kelvin, // Oil Temperature
     MessageId::Kelvin, // Radial Bearing Temperature
@@ -74,7 +74,7 @@ const auto OUTPUT_ARRAY = {
     MessageId::RadiansPerSecond // Mechanical Rotation
 };
 
-const auto EVENT_ARRAY = {
+const std::vector<MessageId> EVENT_ARRAY{
     MessageId::CentrifugalPumpImpellerWearFailure,
     MessageId::CentrifugalPumpOilOverheat,
     MessageId::CentrifugalPumpRadialBearingOverheat,
@@ -85,7 +85,7 @@ CentrifugalPumpModel::CentrifugalPumpModel()
     : PrognosticsModel(12,
                        INPUT_ARRAY,
                        OUTPUT_ARRAY,
-                       {} /* Observables */,
+                       std::vector<std::string> {}, // Observables
                        EVENT_ARRAY) {
 }
 
@@ -226,7 +226,7 @@ double sign(double in) {
 }
 
 SystemModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type& x, const input_type& u, double dt) const {
-    
+
     // Extract states
     double A = x[0];
     double Q = x[1];
@@ -239,17 +239,17 @@ SystemModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type&
     double wA = x[8];
     double wRadial = x[9];
     double wThrust = x[10];
-    
+
     // Extract inputs
     double Tamb = u[0];
     double V = u[1];
     double pdisch = u[2];
     double psuc = u[3];
     double wsync = u[4];
-    
+
     // Cached Values
     double w_squared = w*w;
-    
+
     // Constraints
     double Todot = 1.0/parameters.mcOil * (parameters.HOil1*(Tt-To) + parameters.HOil2*(Tr-To) + parameters.HOil3*(Tamb-To));
     double Ttdot = 1.0/parameters.mcThrust * (rThrust*w*w - parameters.HThrust1*(Tt-Tamb) - parameters.HThrust2*(Tt-To));
@@ -272,7 +272,7 @@ SystemModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type&
     double Qo = parameters.c*sqrt(abs(deltaP))*sign(deltaP);
     double wdot = (Te-friction-backTorque)/parameters.I;
     double Qdot = 1/parameters.FluidI*(Qo-Q);
-    
+
     // Update state
     auto x_new = getStateVector();
     x_new[0] = A + Adot*dt;
@@ -287,7 +287,7 @@ SystemModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type&
     x_new[9] = wRadial + wRadialdot*dt;
     x_new[10] = wThrust + wThrustdot*dt;
     x_new[11] = parameters.cLeak*parameters.ALeak*sqrt(abs(psuc-pdisch))*sign(psuc-pdisch);
-    
+
     return x_new;
 }
 
@@ -300,14 +300,14 @@ SystemModel::output_type CentrifugalPumpModel::outputEqn(double,
     double Tt = x[4];
     double w = x[7];
     double QLeak = x[11];
-    
+
     // Constraints
     auto Ttm = Tt;
     auto Tom = To;
     auto wm = w;
     auto Trm = Tr;
     auto Qoutm = fmax(0,Q-QLeak);
-    
+
     // set outputs
     auto z_new = getOutputVector();
     z_new[0] = Qoutm;
@@ -315,16 +315,16 @@ SystemModel::output_type CentrifugalPumpModel::outputEqn(double,
     z_new[2] = Trm;
     z_new[3] = Ttm;
     z_new[4] = wm;
-    
+
     return z_new;
 }
 
 std::vector<bool> CentrifugalPumpModel::thresholdEqn(double, const state_type& x) const {
-    
+
     auto eventState = eventStateEqn(x);
-    
+
     std::vector<bool> thresholdMet(eventState.size());
-    
+
     for (size_type i = 0; i < eventState.size(); i++) {
         thresholdMet[i] = eventState[i] <= 0.0;
     }
@@ -332,13 +332,13 @@ std::vector<bool> CentrifugalPumpModel::thresholdEqn(double, const state_type& x
 }
 
 SystemModel::event_state_type CentrifugalPumpModel::eventStateEqn(const state_type& x) const {
-    
+
     // Extract states
     double A = x[0];
     double To = x[2];
     double Tr = x[3];
     double Tt = x[4];
-    
+
     // Individual performance constraints
     auto BA = (A - parameters.ALim) / (parameters.x0.A - parameters.ALim);
     auto BTo = (parameters.ToLim - To) / (parameters.ToLim - parameters.x0.To);
@@ -361,6 +361,6 @@ SystemModel::state_type CentrifugalPumpModel::initialize(const input_type&, cons
     x0[8] = parameters.x0.wA;
     x0[9] = parameters.x0.wRadial;
     x0[10] = parameters.x0.wThrust;
-    
+
     return x0;
 }
