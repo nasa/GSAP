@@ -1,44 +1,47 @@
-/** @file  Test.h
- * @brief A simple, robust and lightweight unit testing framework.
+/**
+ * A simple, robust and lightweight unit testing framework.
+ *
  * @details
- *      This file contains a classes to facilitate running unit test
- *      functions. Any function that takes no arguments and has no return
- *      value can be used as a test. Tests will fail if they throw or cause an
- *      abort. The expectation is that tests will fail as the result of a
- *      failed assertion using the @see{Assert} class, which throws
- *      @see{AssertFailed} exceptions. Other exceptions and aborts are
- *      reported as such and considered unexpected.
+ * This file contains a classes to facilitate running unit test functions. Any
+ * function that takes no arguments and has no return value can be used as a
+ * test. Tests will fail if they throw or cause an abort. The expectation is
+ * that tests will fail as the result of a failed assertion using the
+ * @see{Assert} class, which throws @see{AssertFailed} exceptions. Other
+ * exceptions and aborts are reported as such and considered unexpected.
+ *
  * @details
- *      The general usage of this framework is as follows. First, a number of
- *      unit tests are written that take no arguments and return nothing. The
- *      test methods are expected to use the static methods of the
- *      @see{Assert} class to evaluate the expected outcomes of the test.
+ * The general usage of this framework is as follows. First, a number of unit
+ * tests are written that take no arguments and return nothing. The test methods
+ * are expected to use the static methods of the @see{Assert} class to evaluate
+ * the expected outcomes of the test.
+ *
  * @details
- *      With the test cases written, a new @see{TestContext} is created, and
- *      tests are added to it. Once the tests are added, calling the Execute
- *      method will run all of the tests, outputting the progress of the tests
- *      to stdout or another std::ostream specified by calling SetOutput. The
- *      number of failed tests is also reported by the return value of Execute
- *      to allow for programatic action if some tests fail.
+ * With the test cases written, a new @see{TestContext} is created, and tests
+ * are added to it. Once the tests are added, calling the Execute method will
+ * run all of the tests, outputting the progress of the tests to stdout or
+ * another std::ostream specified by calling SetOutput. The number of failed
+ * tests is also reported by the return value of Execute to allow for
+ * programatic action if some tests fail.
  *
  * @example
- *      #include <cstdlib>
- *      #include "Test.h"
- *      using namespace PCOE::Test;
- *      void alway_pass() { } // Any test that doesn't throw or abort passes
- *      void alway_fail() { Assert::Fail(); }
- *      void abort_fail() { std::abort(); } // Fails, but doesn't crash
- *      int main() {
- *          TestContext tests;
- *          tests.AddTest("Pass", always_pass);
- *          tests.AddTest("Fail", alway_fail);
- *          tests.AddTest("Abort", abort_fail);
- *          return tests.Execute();
- *      }
+ * #include <cstdlib>
+ * #include "Test.h"
+ * using namespace PCOE::Test;
+ * void alway_pass() { } // Any test that doesn't throw or abort passes
+ * void alway_fail() { Assert::Fail(); }
+ * void abort_fail() { std::abort(); } // Fails, but doesn't crash
+ * int main() {
+ *     TestContext tests;
+ *     tests.AddTest("Pass", always_pass);
+ *     tests.AddTest("Fail", alway_fail);
+ *     tests.AddTest("Abort", abort_fail);
+ *     return tests.Execute();
+ * }
  *
- * @copyright Copyright (c) 2018-2019 United States Government as represented by
- *            the Administrator of the National Aeronautics and Space
- *            Administration. All Rights Reserved.
+ * @copyright
+ * Copyright (c) 2016-2020 United States Government as represented by
+ * the Administrator of the National Aeronautics and Space
+ * Administration. All Rights Reserved.
  */
 
 #ifndef PCOE_TEST_H
@@ -46,21 +49,28 @@
 
 #include <chrono>
 #include <cmath>
-#include <csetjmp>
 #include <functional>
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 #include <vector>
 
+namespace {
+    // Note (JW): C++11 compatability. See what we can switch to std types if
+    // we ever switch to C++14 or higher
+    template <bool B, class T = void>
+    using EnableIfT = typename std::enable_if<B, T>::type;
+
+    template <class T>
+    using RemoveRefT = typename std::remove_reference<T>::type;
+}
+
 namespace PCOE {
     namespace Test {
-        /** @brief An exception to be thrown when a unit test assertion fails.
-         *
-         * @author  Jason Watkins <jason-watkins@outlook.com>
-         * @version 1.0.0
-         * @date    2016-07-13
+        /**
+         * An exception to be thrown when a unit test assertion fails.
          */
         class AssertFailed : public std::exception {
         public:
@@ -76,410 +86,460 @@ namespace PCOE {
             const std::string message;
         };
 
-        /** @brief Verifies conditions in unit tests using true/false propositions.
-         *
-         * @author  Jason Watkins <jason-watkins@outlook.com>
-         * @version 1.0.0
-         * @date    2016-07-13
+        /**
+         * Verifies conditions in unit tests using true/false propositions.
          */
         class Assert {
         public:
-            /** @brief Verifies that two specified generic type data are equal
-             *        by using the equality operator. The assertion fails if
-             *        they are not equal.
+            /**
+             * Verifies that two specified generic type data are equal by using
+             * the equality operator. The assertion fails if they are not equal.
              *
              * @param expected The value that the unit test expects.
-             * @param acutal   The value that the unit test produced.
-             * @param message  A message to be displayed if the unit test
-             *                   fails.
-             * @expection AssertionFailed If the assertion fails.
+             * @param actual   The value that the unit test produced.
+             * @param message  A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
              */
-            template <typename T>
-            static void AreEqual(const T& expected,
-                                 const T& actual,
+            template <typename TE,
+                      typename TA,
+                      typename = EnableIfT<std::is_convertible<TE, TA>::value>>
+            static void AreEqual(const TE& expected,
+                                 const TA& actual,
                                  const std::string& message = "") {
+                AreEqual(expected, actual, [&]() { return message; });
+            }
+
+            /**
+             * Verifies that two specified generic type data are equal by using
+             * the equality operator. The assertion fails if they are not equal.
+             *
+             * @param expected The value that the unit test expects.
+             * @param actual   The value that the unit test produced.
+             * @param msg_fn   A function that produces a string to be
+             *                 displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename TE,
+                      typename TA,
+                      typename = EnableIfT<std::is_convertible<TE, TA>::value>>
+            static void AreEqual(const TE& expected,
+                                 const TA& actual,
+                                 const std::function<std::string()>& msg_fn) {
                 if (!(actual == expected)) {
-                    throw AssertFailed(message);
+                    throw AssertFailed(msg_fn());
                 }
             }
 
-            /** @brief Verifies that two specified generic type data are equal
-             *        by using the equality operator. The assertion fails if
-             *        they are not equal.
+            /**
+             * Verifies that two specified generic type data are almost equal by
+             * comparing the magnitude of the difference between @p{expected} and
+             * @p{actual} to @p{delta}. The assertion fails if the magnitude of the
+             * difference is greater than @p{delta}.
              *
              * @param expected The value that the unit test expects.
-             * @param acutal   The value that the unit test produced.
-             * @param message  A message to be displayed if the unit test
-             *                   fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            template <typename TExpected, typename TActual>
-            static void AreEqual(const TExpected& expected,
-                                 const TActual& actual,
-                                 const std::string& message = "") {
-                TActual tmp = static_cast<TActual>(expected);
-                if (!(actual == tmp)) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that two specified generic type data are almost
-             *        equal by comparing the magnitude of the difference
-             *        between @p{expected} and @p{actual} to @p{delta}.
-             *        The assertion fails if the magnitude of the difference
-             *        is greater than @p{delta}.
-             *
-             * @param expected The value that the unit test expects.
-             * @param acutal   The value that the unit test produced.
+             * @param actual   The value that the unit test produced.
              * @param delta    The maximum difference in magnitude.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
+             * @param message  A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
              */
-            template <typename T>
-            static void AreEqual(const T& expected,
-                                 const T& actual,
-                                 const T& delta,
+            template <
+                typename TE,
+                typename TA,
+                typename TD,
+                typename = EnableIfT<std::is_convertible<TE, TA>::value>,
+                typename = EnableIfT<std::is_convertible<TD, TA>::value>,
+                typename DiffType = decltype(std::declval<const TA&>() - std::declval<const TE&>()),
+                typename = decltype(std::declval<const DiffType&>() <= std::declval<const TD&>())>
+            static void AreEqual(const TE& expected,
+                                 const TA& actual,
+                                 const TD& delta,
                                  const std::string& message = "") {
-                if (std::abs(actual - expected) > delta) {
-                    throw AssertFailed(message);
-                }
+                AreEqual(expected, actual, delta, [&]() { return message; });
             }
 
-            /** @brief Verifies that two specified doubles are almost
-             *        equal by comparing the magnitude of the difference
-             *        between @p{expected} and @p{actual} to @p{delta}.
-             *        The assertion fails if the magnitude of the difference
-             *        is greater than @p{delta}.
+            /**
+             * Verifies that two specified generic type data are almost equal by
+             * comparing the magnitude of the difference between @p{expected} and
+             * @p{actual} to @p{delta}. The assertion fails if the magnitude of the
+             * difference is greater than @p{delta}.
              *
              * @param expected The value that the unit test expects.
-             * @param acutal   The value that the unit test produced.
+             * @param actual   The value that the unit test produced.
              * @param delta    The maximum difference in magnitude.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
+             * @param msg_fn   A function that produces a string to be displayed if the
+             *                 unit test fails.
+             * @expection AssertFailed If the assertion fails.
              */
-            static void AreEqual(double expected,
-                                 double actual,
-                                 double delta,
-                                 const std::string& message = "") {
-                if (std::abs(actual - expected) > delta) {
-                    throw AssertFailed(message);
+            template <
+                typename TE,
+                typename TA,
+                typename TD,
+                typename = EnableIfT<std::is_convertible<TE, TA>::value>,
+                typename = EnableIfT<std::is_convertible<TD, TA>::value>,
+                typename DiffType = decltype(std::declval<const TA&>() - std::declval<const TE&>()),
+                typename = decltype(std::declval<const DiffType&>() <= std::declval<const TD&>())>
+            static void AreEqual(const TE& expected,
+                                 const TA& actual,
+                                 const TD& delta,
+                                 const std::function<std::string()>& msg_fn) {
+                // Note (JW): Use !(x <= y) instead of x > y to get the right result
+                // when one of the arguments is NaN.
+                if (!(std::abs(actual - expected) <= delta)) {
+                    throw AssertFailed(msg_fn());
                 }
             }
 
-            /** @brief Verifies that two specified generic type data are almost
-             *        equal by comparing the magnitude of the difference
-             *        between @p{expected} and @p{actual} to @p{delta}.
-             *        The assertion fails if the magnitude of the difference
-             *        is greater than @p{delta}.
+            /**
+             * Verifies that two specified generic type data are not equal by using the
+             * equality operator. The assertion fails if they are not equal.
+             *
+             * @param not_expected The value that the unit test expects.
+             * @param actual       The value that the unit test produced.
+             * @param message      A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename TE,
+                      typename TA,
+                      typename = EnableIfT<std::is_convertible<TE, TA>::value>>
+            static void AreNotEqual(const TE& not_expected,
+                                    const TA& actual,
+                                    const std::string& message = "") {
+                AreNotEqual(static_cast<TA>(not_expected), actual, [&]() { return message; });
+            }
+
+            /**
+             * Verifies that two specified generic type data are not equal by using the
+             * not equal operator. The assertion fails if they are equal.
+             *
+             * @param not_expected The value that the unit test expects.
+             * @param actual       The value that the unit test produced.
+             * @param msg_fn       A function that produces a string to be displayed if
+             *                     the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename TE,
+                      typename TA,
+                      typename = EnableIfT<std::is_convertible<TE, TA>::value>>
+            static void AreNotEqual(const TE& not_expected,
+                                    const TA& actual,
+                                    const std::function<std::string()>& msg_fn) {
+                if (!(actual != static_cast<TA>(not_expected))) {
+                    throw AssertFailed(msg_fn());
+                }
+            }
+
+            /**
+             * Verifies that two specified generic type data are not almost equal by
+             * comparing the magnitude of the difference between @p{expected} and
+             * @p{actual} to @p{delta}. The assertion fails if the magnitude of the
+             * difference is less than or equal to @p{delta}.
+             *
+             * @param not_expected The value that the unit test expects.
+             * @param actual       The value that the unit test produced.
+             * @param delta        The minimum difference in magnitude.
+             * @param message      A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <
+                typename TE,
+                typename TA,
+                typename TD,
+                typename = EnableIfT<std::is_convertible<TE, TA>::value>,
+                typename = EnableIfT<std::is_convertible<TD, TA>::value>,
+                typename DiffType = decltype(std::declval<const TA&>() - std::declval<const TE&>()),
+                typename = decltype(std::declval<const DiffType&>() > std::declval<const TD&>())>
+            static void AreNotEqual(const TE& not_expected,
+                                    const TA& actual,
+                                    const TD& delta,
+                                    const std::string& message = "") {
+                AreNotEqual(not_expected, actual, delta, [&]() { return message; });
+            }
+
+            /**
+             * Verifies that two specified generic type data are not almost equal by
+             * comparing the magnitude of the difference between @p{expected} and
+             * @p{actual} to @p{delta}. The assertion fails if the magnitude of the
+             * difference is less than or equal to @p{delta}.
+             *
+             * @param not_expected The value that the unit test expects.
+             * @param actual       The value that the unit test produced.
+             * @param delta        The minimum difference in magnitude.
+             * @param message      A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <
+                typename TE,
+                typename TA,
+                typename TD,
+                typename = EnableIfT<std::is_convertible<TE, TA>::value>,
+                typename = EnableIfT<std::is_convertible<TD, TA>::value>,
+                typename DiffType = decltype(std::declval<const TA&>() - std::declval<const TE&>()),
+                typename = decltype(std::declval<const DiffType&>() > std::declval<const TD&>())>
+            static void AreNotEqual(const TE& not_expected,
+                                    const TA& actual,
+                                    const TD& delta,
+                                    const std::function<std::string()>& msg_fn) {
+                // Note (JW): Use !(x > y) instead of x <= y to get the right result
+                // when one of the arguments is NaN.
+                if (!(std::abs(actual - not_expected) > delta)) {
+                    throw AssertFailed(msg_fn());
+                }
+            }
+
+            /**
+             * Verifies that two pointers refer to the same memory location. The
+             * assertion fails if they refer to different memory locations.
              *
              * @param expected The value that the unit test expects.
-             * @param acutal   The value that the unit test produced.
-             * @param delta    The maximum difference in magnitude.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
+             * @param actual   The value that the unit test produced.
+             * @param message  A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
              */
-            template <typename TExpected, typename TActual>
-            static void AreEqual(const TExpected& expected,
-                                 const TActual& actual,
-                                 const TActual& delta,
-                                 const std::string& message = "") {
-                TActual tmp = static_cast<TActual>(expected);
-                if (std::abs(actual - tmp) > delta) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that two specified generic type data are not
-             *          equal by using the not equal operator. The assertion
-             *          fails if they are equal.
-             *
-             * @param notExpected The value that the unit test expects.
-             * @param acutal      The value that the unit test produced.
-             * @param message     A message to be displayed if the unit test
-             *                    fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            template <typename T>
-            static void AreNotEqual(const T& notExpected,
-                                    const T& actual,
-                                    const std::string& message = "") {
-                if (!(actual != notExpected)) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that two specified generic type data are not
-             *        equal by using the equality operator. The assertion
-             *        fails if they are not equal.
-             *
-             * @param notExpected The value that the unit test expects.
-             * @param acutal      The value that the unit test produced.
-             * @param message     A message to be displayed if the unit test
-             *                    fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            template <typename TExpected, typename TActual>
-            static void AreNotEqual(const TExpected& notExpected,
-                                    const TActual& actual,
-                                    const std::string& message = "") {
-                TActual tmp = static_cast<TActual>(notExpected);
-                if (!(actual == tmp)) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that two specified generic type data are not
-             *        almost equal by comparing the magnitude of the
-             *        difference between @p{expected} and @p{actual} to
-             *        @p{delta}. The assertion fails if the magnitude of
-             *        the difference is less than or equal to @p{delta}.
-             *
-             * @param notExpected The value that the unit test expects.
-             * @param acutal      The value that the unit test produced.
-             * @param delta       The minimum difference in magnitude.
-             * @param message      A message to be displayed if the unit test
-             *                     fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            template <typename T>
-            static void AreNotEqual(const T& notExpected,
-                                    const T& actual,
-                                    const T& delta,
-                                    const std::string& message = "") {
-                if (std::abs(actual - notExpected) <= delta) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that two specified doubles are almost
-             *        equal by comparing the magnitude of the difference
-             *        between @p{expected} and @p{actual} to @p{delta}.
-             *        The assertion fails if the magnitude of the difference
-             *        is greater than @p{delta}.
-             *
-             * @param notExpected The value that the unit test expects.
-             * @param acutal      The value that the unit test produced.
-             * @param delta       The maximum difference in magnitude.
-             * @param message     A message to be displayed if the unit test
-             *                    fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            static void AreNotEqual(double notExpected,
-                                    double actual,
-                                    double delta,
-                                    const std::string& message = "") {
-                if (std::abs(actual - notExpected) <= delta) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that two specified generic type data are not
-             *        almost equal by comparing the magnitude of the
-             *        difference between @p{expected} and @p{actual} to
-             *        @p{delta}. The assertion fails if the magnitude of
-             *        the difference is less than or equal to @p{delta}.
-             *
-             * @param notExpected The value that the unit test expects.
-             * @param acutal      The value that the unit test produced.
-             * @param delta       The minimum difference in magnitude.
-             * @param message     A message to be displayed if the unit test
-             *                    fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            template <typename TExpected, typename TActual>
-            static void AreNotEqual(const TExpected& notExpected,
-                                    const TActual& actual,
-                                    const TActual& delta,
-                                    const std::string& message = "") {
-                TActual tmp = static_cast<TActual>(notExpected);
-                if (std::abs(actual - tmp) <= delta) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that two pointers refer to the same memory
-             *        location. The assertion fails if they refer to different
-             *        memory locations.
-             *
-             * @param expected The value that the unit test expects.
-             * @param acutal   The value that the unit test produced.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            template <typename TExpected, typename TActual>
-            static void AreSame(const TExpected* expected,
-                                const TActual* actual,
+            template <typename TE, typename TA>
+            static void AreSame(const TE* expected,
+                                const TA* actual,
                                 const std::string& message = "") {
+                AreSame(expected, actual, [&]() { return message; });
+            }
+
+            /**
+             * Verifies that two pointers refer to the same memory location. The
+             * assertion fails if they refer to different memory locations.
+             *
+             * @param expected The value that the unit test expects.
+             * @param actual   The value that the unit test produced.
+             * @param message  A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename TE, typename TA>
+            static void AreSame(const TE* expected,
+                                const TA* actual,
+                                const std::function<std::string()>& msg_fn) {
                 void* a = static_cast<void*>(expected);
                 void* b = static_cast<void*>(actual);
                 if (a != b) {
-                    throw AssertFailed(message);
+                    throw AssertFailed(msg_fn());
                 }
             }
 
-            /** @brief Verifies that two pointers refer to different memory
-             *        locations. The assertion fails if they refer to the
-             *        same memory location.
+            /**
+             * Verifies that two pointers refer to different memory locations. The
+             * assertion fails if they refer to the same memory location.
              *
-             * @param notExpected The value that the unit test expects.
-             * @param acutal      The value that the unit test produced.
-             * @param message     A message to be displayed if the unit test
-             *                    fails.
-             * @expection AssertionFailed If the assertion fails.
+             * @param expected The value that the unit test expects.
+             * @param actual   The value that the unit test produced.
+             * @param message  A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
              */
-            template <typename TExpected, typename TActual>
-            static void AreNotSame(const TExpected* expected,
-                                   const TActual* actual,
+            template <typename TE, typename TA>
+            static void AreNotSame(const TE* expected,
+                                   const TA* actual,
                                    const std::string& message = "") {
+                AreNotSame(expected, actual, [&]() { return message; });
+            }
+
+            /**
+             * Verifies that two pointers refer to different memory locations. The
+             * assertion fails if they refer to the same memory location.
+             *
+             * @param expected The value that the unit test expects.
+             * @param actual   The value that the unit test produced.
+             * @param message  A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename TE, typename TA>
+            static void AreNotSame(const TE* expected,
+                                   const TA* actual,
+                                   const std::function<std::string()>& msg_fn) {
                 void* a = static_cast<void*>(expected);
                 void* b = static_cast<void*>(actual);
                 if (a == b) {
-                    throw AssertFailed(message);
+                    throw AssertFailed(msg_fn());
                 }
             }
 
-            /** @brief Fails without checking any conditions
+            /**
+             * Fails without checking any conditions
              *
-             * @param message  A message to be display.
-             * @expection AssertionFailed Always thrown.
+             * @param message A message to be display.
+             * @expection AssertFailed Always thrown.
              */
             [[noreturn]] static void Fail(const std::string& message = "") {
                 throw AssertFailed(message);
             }
 
-            /** @brief Verifies that two specified condition is false. The
-             *        assertion fails if the condition is true.
+            /**
+             * Verifies that two specified condition is true. The assertion fails if the
+             * condition is false.
              *
              * @param condition The condition to verify.
-             * @param message   A message to be displayed if the unit test
-             *                  fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            static void IsFalse(bool condition, const std::string& message = "") {
-                if (condition) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that the specified float value is not a
-             *        number using std::isnan. The assertion fails if
-             *        @p{value} is a valid number.
-             *
-             * @param value    The value to check.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            static void IsNaN(float value, const std::string& message = "") {
-                if (!std::isnan(value)) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that the specified double value is not a
-             *        number using std::isnan. The assertion fails if
-             *        @p{value} is a valid number.
-             *
-             * @param value    The value to check.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            static void IsNaN(double value, const std::string& message = "") {
-                if (!std::isnan(value)) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that the specified long double value is not a
-             *        number using std::isnan. The assertion fails if
-             *        @p{value} is a valid number.
-             *
-             * @param value    The value to check.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            static void IsNaN(long double value, const std::string& message = "") {
-                if (!std::isnan(value)) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that the specified pointer is null. The
-             *        assertion fails if it is not null.
-             *
-             * @param value    The value to check.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            template <typename T>
-            static void IsNull(const T* value, const std::string& message = "") {
-                if (value) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that the specified value is not valid. The
-             *        assertion fails if it coerces to true.
-             *
-             * @param value    The value to check.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            template <typename T>
-            static void IsNull(const T& value, const std::string& message = "") {
-                if (value) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that the specified pointer is not null. The
-             *        assertion fails if it is null.
-             *
-             * @param value    The value to check.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            template <typename T>
-            static void IsNotNull(const T* value, const std::string& message = "") {
-                if (!value) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that the specified value is valid. The
-             *          assertion fails if it coerces to false.
-             *
-             * @param value    The value to check.
-             * @param message  A message to be displayed if the unit test
-             *                 fails.
-             * @expection AssertionFailed If the assertion fails.
-             */
-            template <typename T>
-            static void IsNotNull(const T& value, const std::string& message = "") {
-                if (!value) {
-                    throw AssertFailed(message);
-                }
-            }
-
-            /** @brief Verifies that two specified condition is true. The
-             *        assertion fails if the condition is false.
-             *
-             * @param condition The condition to verify.
-             * @param message   A message to be displayed if the unit test
-             *                  fails.
-             * @expection AssertionFailed If the assertion fails.
+             * @param message   A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
              */
             static void IsTrue(bool condition, const std::string& message = "") {
+                return IsTrue(condition, [&]() { return message; });
+            }
+
+            /**
+             * Verifies that two specified condition is true. The assertion fails if the
+             * condition is false.
+             *
+             * @param condition The condition to verify.
+             * @param message   A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            static void IsTrue(bool condition, const std::function<std::string()>& msg_fn) {
                 if (!condition) {
+                    throw AssertFailed(msg_fn());
+                }
+            }
+
+            /**
+             * Verifies that two specified condition is false. The assertion fails if
+             * the condition is true.
+             *
+             * @param condition The condition to verify.
+             * @param message   A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            static void IsFalse(bool condition, const std::string& message = "") {
+                return IsFalse(condition, [&]() { return message; });
+            }
+
+            /**
+             * Verifies that two specified condition is false. The assertion fails if
+             * the condition is true.
+             *
+             * @param condition The condition to verify.
+             * @param message   A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            static void IsFalse(bool condition, const std::function<std::string()>& msg_fn) {
+                if (condition) {
+                    throw AssertFailed(msg_fn());
+                }
+            }
+
+            /**
+             * Verifies that the specified value is not a number using
+             * @code{std::isnan}. The assertion fails if @p{value} is a valid number.
+             * Note that this function differs from @code{std::isnan} in that it only
+             * accepts floating point types. It will not cast integral types to double.
+             *
+             * @param value    The value to check.
+             * @param message  A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename T, typename = EnableIfT<std::is_floating_point<T>::value>>
+            static void IsNaN(T value, const std::string& message = "") {
+                IsNan(value, [&]() { return message; });
+            }
+
+            /**
+             * Verifies that the specified value is not a number using
+             * @code{std::isnan}. The assertion fails if @p{value} is a valid number.
+             * Note that this function differs from @code{std::isnan} in that it only
+             * accepts floating point types. It will not cast integral types to double.
+             *
+             * @param value  The value to check.
+             * @param msg_fn A function that produces a string to be displayed if the
+             *               unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename T, typename = EnableIfT<std::is_floating_point<T>::value>>
+            static void IsNaN(T value, const std::function<std::string()>& msg_fn) {
+                if (!std::isnan(value)) {
+                    throw AssertFailed(msg_fn());
+                }
+            }
+
+            /**
+             * Verifies that the specified value is not a number using
+             * @code{std::isnan}. The assertion fails if @p{value} is a valid number.
+             * Note that this function differs from @code{std::isnan} in that it only
+             * accepts floating point types. It will not cast integral types to double.
+             *
+             * @param value   The value to check.
+             * @param message A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename T, typename = EnableIfT<std::is_floating_point<T>::value>>
+            static void IsNotNaN(T value, const std::string& message = "") {
+                IsNotNaN(value, [&]() { return message; });
+            }
+
+            /**
+             * Verifies that the specified value is not a number using
+             * @code{std::isnan}. The assertion fails if @p{value} is a valid number.
+             * Note that this function differs from @code{std::isnan} in that it only
+             * accepts floating point types. It will not cast integral types to double.
+             *
+             * @param value  The value to check.
+             * @param msg_fn A function that produces a string to be displayed if the
+             *               unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename T, typename = EnableIfT<std::is_floating_point<T>::value>>
+            static void IsNotNaN(T value, const std::function<std::string()>& msg_fn) {
+                if (std::isnan(value)) {
+                    throw AssertFailed(msg_fn());
+                }
+            }
+
+            /**
+             * Verifies that the specified pointer is null. The assertion fails if it is
+             * not null.
+             *
+             * @param value   The value to check.
+             * @param message A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename T>
+            static void IsNull(const RemoveRefT<T>* value, const std::string& message = "") {
+                IsNull(value, [&]() { return message; });
+            }
+
+            /**
+             * Verifies that the specified value is not valid. The assertion fails if it
+             * coerces to true.
+             *
+             * @param value   The value to check.
+             * @param message A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename T>
+            static void IsNull(const RemoveRefT<T>& value, const std::string& message = "") {
+                if (value) {
+                    throw AssertFailed(message);
+                }
+            }
+
+            /**
+             * Verifies that the specified pointer is not null. The assertion fails if
+             * it is null.
+             *
+             * @param value   The value to check.
+             * @param message A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename T>
+            static void IsNotNull(const RemoveRefT<T>* value, const std::string& message = "") {
+                if (!value) {
+                    throw AssertFailed(message);
+                }
+            }
+
+            /**
+             * Verifies that the specified value is valid. The assertion fails if it
+             * coerces to false.
+             *
+             * @param value   The value to check.
+             * @param message A message to be displayed if the unit test fails.
+             * @expection AssertFailed If the assertion fails.
+             */
+            template <typename T>
+            static void IsNotNull(const RemoveRefT<T>& value, const std::string& message = "") {
+                if (!value) {
                     throw AssertFailed(message);
                 }
             }
@@ -499,11 +559,8 @@ namespace PCOE {
             std::vector<TestCase> results;
         };
 
-        /** @brief Represents a harness for running unit tests.
-         *
-         *  @author  Jason Watkins <jason-watkins@outlook.com>
-         *  @version 1.0.0
-         *  @date    2016-07-13
+        /**
+         * Represents a harness for running unit tests.
          */
         class TestContext {
             using clock = std::chrono::high_resolution_clock;
@@ -513,58 +570,69 @@ namespace PCOE {
         public:
             using TestFunction = std::function<void(void)>;
 
-            /** @brief Initializes a new TestContext. */
+            /** Initializes a new TestContext. */
             TestContext() : out(&std::cout) {}
 
-            /** @brief Adds a function that contains code that must be run
-             *        after all of the tests in the specified category have
-             *        run and to cleanup resources that are used by the tests.
+            /**
+             * Adds a function that contains code that must be run after all of the
+             * tests in the specified category have run and to cleanup resources that
+             * are used by the tests.
              *
-             * @param category The name of the category associated with the
-             *                 initializer.
+             * @param category The name of the category associated with the initializer.
              * @param clean    A function to run.
              */
             void AddCategoryCleanup(const std::string& category, const TestFunction& clean) {
                 cleanup[category] = clean;
             }
 
-            /** @brief Adds a function that contains code that must be run
-             *        before any of the tests in the specified category have
-             *        run and to allocate resources to be used by the tests.
+            /**
+             * Adds a function that contains code that must be run before any of the
+             * tests in the specified category have run and to allocate resources to be
+             * used by the tests.
              *
-             * @param category The name of the category associated with the
-             *                 initializer.
+             * @param category The name of the category associated with the initializer.
              * @param init     A function to run.
              */
             void AddCategoryInitializer(const std::string& category, const TestFunction& init) {
                 initializers[category] = init;
             }
 
-            /** @brief Adds a unit test to the specified category. If no
-             *        category is specified, the test is added to the empty
-             *        category.
+            /**
+             * Adds a unit test to the specified category. If no category is specified,
+             * the test is added to the empty category.
              *
-             * @param name     The name of the test. Names are printed along
-             *                 with pass/fail status when tests are executed.
+             * @param name     The name of the test. Names are printed along with
+             *                 pass/fail status when tests are executed.
              * @param test     A unit test function.
-             * @param category The group of the unit test. Unit tests results
-             *                 are printed based on their group.
+             * @param category The group of the unit test. Unit tests results are
+             *                 printed based on their group.
              */
             void AddTest(const std::string& name,
                          const TestFunction& test,
                          const std::string& category = "") {
-                NameTestPair ntp = std::make_pair(name, test);
-                tests[category].push_back(ntp);
+                auto it = category_indexes.find(category);
+                if (it == category_indexes.end()) {
+                    TestList tl;
+                    tl.emplace_back(name, test);
+                    test_categories.emplace_back(category, tl);
+                    category_indexes.emplace(category, test_categories.size() - 1);
+                }
+                else {
+                    std::size_t cat_index = it->second;
+                    TestList& cat_tests = test_categories.at(cat_index).second;
+                    cat_tests.emplace_back(name, test);
+                }
             }
 
-            /** @brief Executes the added unit tests.
+            /**
+             * Executes the added unit tests.
              *
              * @returns The number of tests that failed.
              */
-            int Execute() {
+            std::size_t Execute() {
                 std::ostream& rout = *out;
                 time_point startTime = clock::now();
-                for (const TestCategory& cat : tests) {
+                for (const TestCategory& cat : test_categories) {
                     TestSuite ts;
                     ts.name = cat.first;
 
@@ -577,7 +645,7 @@ namespace PCOE {
                         }
                     }
                     catch (...) {
-                        std::size_t s = cat.second.size();
+                        int s = static_cast<int>(cat.second.size());
                         rout << "Initializer failed. Skipping " << s << " tests.\n";
                         failed += s;
                         continue;
@@ -614,15 +682,18 @@ namespace PCOE {
                         ts.results.push_back(tc);
                     }
 
+                    duration tsTime = clock::now() - tsStart;
+                    ts.time = std::chrono::duration_cast<std::chrono::microseconds>(tsTime);
+                    results.push_back(ts);
                     if (ts.failed == 0) {
-                        rout << "All passed." << std::endl;
+                        rout << "All passed. (" << ts.time.count() / 1000 << "ms)" << std::endl;
                     }
                     else {
                         rout << std::endl;
                         for (const auto& tc : ts.results) {
                             rout << "    " << tc.name << " -- ";
                             if (tc.passed) {
-                                rout << "PASSED" << std::endl;
+                                rout << "PASSED (" << tc.time.count() / 1000 << "ms)" << std::endl;
                             }
                             else {
                                 rout << "FAILED: " << tc.failureMessage << std::endl;
@@ -639,16 +710,14 @@ namespace PCOE {
                     catch (...) {
                         rout << "    Cleanup failed.\n";
                     }
-                    duration tsTime = clock::now() - tsStart;
-                    ts.time = std::chrono::duration_cast<std::chrono::microseconds>(tsTime);
-                    results.push_back(ts);
                 }
                 duration contextTime = clock::now() - startTime;
                 time = std::chrono::duration_cast<std::chrono::microseconds>(contextTime);
                 return failed;
             }
 
-            /** @brief Sets the stream to which results are printed.
+            /**
+             * Sets the stream to which results are printed.
              *
              * @param stream The stream to output to.
              */
@@ -689,9 +758,9 @@ namespace PCOE {
             using NameTestPair = std::pair<std::string, TestFunction>;
             using TestList = std::vector<NameTestPair>;
             using TestCategory = std::pair<std::string, TestList>;
-            using CategoryMap = std::unordered_map<std::string, TestList>;
 
-            CategoryMap tests;
+            std::vector<TestCategory> test_categories;
+            std::unordered_map<std::string, std::size_t> category_indexes;
             std::unordered_map<std::string, TestFunction> cleanup;
             std::unordered_map<std::string, TestFunction> initializers;
             std::ostream* out;
@@ -702,4 +771,4 @@ namespace PCOE {
     }
 }
 
-#endif // PCOE_TEST_H
+#endif
