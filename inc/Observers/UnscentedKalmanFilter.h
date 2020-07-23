@@ -134,9 +134,9 @@ namespace PCOE {
     private:
         SystemModel::state_type xEstimated;
         SystemModel::output_type zEstimated;
-        Matrix Q;
-        Matrix R;
-        Matrix P;
+        Matrix Q; // Sensor Noise Covar
+        Matrix R; // Measurement Noise Covar
+        Matrix P; // Process Noise Covar
         struct SigmaPoints sigmaX;
     };
 }

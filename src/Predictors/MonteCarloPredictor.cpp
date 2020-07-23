@@ -117,8 +117,7 @@ namespace PCOE {
             Matrix Pxx(model.getStateSize(), model.getStateSize());
             for (unsigned int xIndex = 0; xIndex < model.getStateSize(); xIndex++) {
                 xMean[xIndex][0] = state[xIndex][MEAN];
-                std::vector<double> covariance = state[xIndex].getVec(COVAR());
-                Pxx.row(xIndex, state[xIndex].getVec(COVAR(0)));
+                Pxx.row(xIndex, state[xIndex].getVec(COVAR()));
             }
             PxxChol = Pxx.chol();
         }
