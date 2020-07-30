@@ -1,8 +1,12 @@
 // Copyright (c) 2018-2019 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
+#include "ConfigMap.h"
+#include "Exceptions.h"
+#include "Loading/ProfileLoadEstimator.h"
 #include "Test.h"
 using namespace PCOE::Test;
+using namespace PCOE;
 
 namespace LoadEstimatorTests {
     void registerConstLoadEstimatorTests(TestContext& context);
@@ -13,5 +17,6 @@ namespace LoadEstimatorTests {
         registerConstLoadEstimatorTests(context);
         registerGaussianLoadEstimatorTests(context);
         registerMovingAverageLoadEstimatorTests(context);
+        registerProfileLoadEstimatorTests(context);
     }
 }

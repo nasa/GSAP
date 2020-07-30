@@ -9,6 +9,7 @@
 #include "Loading/GaussianLoadEstimator.h"
 #include "Loading/LoadEstimator.h"
 #include "Loading/MovingAverageLoadEstimator.h"
+#include "Loading/ProfileLoadEstimator.h"
 #include "Singleton.h"
 
 namespace PCOE {
@@ -33,6 +34,7 @@ namespace PCOE {
             Register<ConstLoadEstimator>("Const");
             Register<GaussianLoadEstimator>("Gaussian");
             Register<MovingAverageLoadEstimator>("MovingAverage");
+            Register<ProfileLoadEstimator>("Profile");
         };
     };
 }
