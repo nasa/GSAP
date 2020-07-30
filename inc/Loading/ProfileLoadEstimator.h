@@ -47,6 +47,9 @@ namespace PCOE {
          **/
         using ProfileElement = std::pair<double, LoadEstimate>;
         std::vector<ProfileElement> profile;
+
+        double startT_s; // First time that the profile load estimator is initialized to.
+        bool is_started = false;
     };
 }
 #endif 

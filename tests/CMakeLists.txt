@@ -50,6 +50,7 @@ set(SRCS
     src/Loading/GaussianLoadEstimatorTests.cpp
     src/Loading/LoadEstimatorTests.cpp
     src/Loading/MovingAverageLoadEstimatorTests.cpp
+    src/Loading/ProfileLoadEstimatorTests.cpp
     src/main.cpp
     src/MatrixTests.cpp
     src/Messages/MessageBusTests.cpp

@@ -21,12 +21,4 @@ namespace PCOE {
     public:
         using std::runtime_error::runtime_error;
     };
-
-    /** @brief Defines a type of object to be thrown as exception. It reports
-     *         errors that are due to out of range element access
-     */
-    class OutOfRangeError : public std::out_of_range {
-    public:
-        using std::out_of_range::out_of_range;
-    };
 }

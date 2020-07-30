@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "ConfigMap.h"
-#include "Exceptions.h"
 #include "Loading/ProfileLoadEstimator.h"
 #include "ThreadSafeLog.h"
 
@@ -22,18 +21,21 @@ namespace PCOE {
 
         uint32_t nElements = config.getUInt32(LOADING_LEN_KEY);
 
-        profile.resize(nElements);
+        profile.reserve(nElements);
         for (uint32_t i = 0; i < nElements; i++) {
             const std::string TAG_BASE = ELEMENT_BASE_KEY + std::to_string(i) + "]";
             requireKeys(config, {TAG_BASE + ".Duration", TAG_BASE + ".Loads"});
             double duration_s = config.getDouble(TAG_BASE + ".Duration");
             LoadEstimate inputs = config.getDoubleVector(TAG_BASE + ".Loads");
-            profile[i] = ProfileElement(duration_s, inputs);
+            profile.emplace_back(duration_s, inputs);
         }
     }
 
     LoadEstimator::LoadEstimate ProfileLoadEstimator::estimateLoad(const double t_s) {
-        const static double startT_s = t_s;
+        if (!is_started) {
+            startT_s = t_s;
+            is_started = true;
+        }
         double relative_t_s = t_s-startT_s;
 
         for (ProfileElement& step : profile) {
@@ -45,6 +47,6 @@ namespace PCOE {
             }
         }
         l.WriteLine(LOG_WARN, LOG_TAG, "Reached end of profile, returning empty load estimate.");
-        throw OutOfRangeError("Reached end of profile, returning empty load estimate.");
+        throw std::out_of_range("Reached end of profile, returning empty load estimate.");
     }
 }
