@@ -43,6 +43,7 @@ set(HEADERS
     inc/Loading/LoadEstimator.h
     inc/Loading/LoadEstimatorFactory.h
     inc/Loading/MovingAverageLoadEstimator.h
+    inc/Loading/ProfileLoadEstimator.h
     inc/Matrix.h
     inc/Messages/IMessageProcessor.h
     inc/Messages/IMessagePublisher.h
@@ -97,6 +98,7 @@ set(SRCS
     src/Loading/ConstLoadEstimator.cpp
     src/Loading/GaussianLoadEstimator.cpp
     src/Loading/MovingAverageLoadEstimator.cpp
+    src/Loading/ProfileLoadEstimator.cpp
     src/Matrix.cpp
     src/Messages/EmptyMessage.cpp
     src/Messages/Message.cpp
