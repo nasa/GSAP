@@ -78,7 +78,7 @@ const std::vector<MessageId> EVENT_ARRAY{
     MessageId::CentrifugalPumpImpellerWearFailure,
     MessageId::CentrifugalPumpOilOverheat,
     MessageId::CentrifugalPumpRadialBearingOverheat,
-    MessageId::CentrifugalPumpImpellerWearFailure
+    MessageId::CentrifugalPumpThrustBearingOverheat
 };
 
 CentrifugalPumpModel::CentrifugalPumpModel()
