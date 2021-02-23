@@ -258,7 +258,7 @@ BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryMo
 }
 
 // Battery State Equation
-SystemModel::state_type BatteryModel::stateEqn(double,
+PrognosticsModel::state_type BatteryModel::stateEqn(double,
                                                const state_type& x,
                                                const input_type& u,
                                                double dt) const {
@@ -356,7 +356,7 @@ SystemModel::state_type BatteryModel::stateEqn(double,
 }
 
 // Battery Output Equation
-SystemModel::output_type BatteryModel::outputEqn(double,
+PrognosticsModel::output_type BatteryModel::outputEqn(double,
                                                  const state_type& x) const {
     // Extract states
     const double& Tb = x[0];
@@ -430,7 +430,7 @@ std::vector<bool> BatteryModel::thresholdEqn(double t, const state_type& x) cons
     return {z[1] <= parameters.VEOD};
 }
 
-SystemModel::event_state_type BatteryModel::eventStateEqn(const state_type& x) const {
+PrognosticsModel::event_state_type BatteryModel::eventStateEqn(const state_type& x) const {
     // Compute "nominal" SOC
     double qnS = x[indices.states.qnS];
     double qnB = x[indices.states.qnB];
@@ -540,7 +540,7 @@ void BatteryModel::setParameters(const double qMobile, const double Vol) {
 }
 
 // Initialize state, given an initial voltage, current, and temperature
-SystemModel::state_type BatteryModel::initialize(const input_type& u, const output_type& z) const {
+PrognosticsModel::state_type BatteryModel::initialize(const input_type& u, const output_type& z) const {
     std::stringstream ss;
     ss << "Inputs: ";
     for (std::size_t i = 0; i < u.size(); ++i) {

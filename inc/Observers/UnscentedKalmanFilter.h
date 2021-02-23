@@ -37,7 +37,7 @@ namespace PCOE {
          * @param m A valid pointer to a model on which state estimation will be
          *          performed. The UKF does not take ownership of the model.
          **/
-        explicit UnscentedKalmanFilter(const SystemModel& m);
+        explicit UnscentedKalmanFilter(const PrognosticsModel& m);
 
     public:
         /**
@@ -49,7 +49,7 @@ namespace PCOE {
          * @param Q Process noise covariance matrix
          * @param R Sensor noise covariance matrix
          **/
-        UnscentedKalmanFilter(const SystemModel& m, const Matrix Q, const Matrix R);
+        UnscentedKalmanFilter(const PrognosticsModel& m, const Matrix Q, const Matrix R);
 
         /**
          * Constructs a new @{code UnscentedKalmanFilter} instance with the
@@ -61,7 +61,7 @@ namespace PCOE {
          *               the model.
          * @param config A configuration from which to read covariance matrices.
          **/
-        UnscentedKalmanFilter(const SystemModel& m, const ConfigMap& config);
+        UnscentedKalmanFilter(const PrognosticsModel& m, const ConfigMap& config);
 
         /**
          * Sets the initial model state and computes initial sigma points.
@@ -71,8 +71,8 @@ namespace PCOE {
          * @param u0 Initial model input
          **/
         void initialize(double t0,
-                        const SystemModel::state_type& x0,
-                        const SystemModel::input_type& u0) override;
+                        const PrognosticsModel::state_type& x0,
+                        const PrognosticsModel::input_type& u0) override;
 
         /**
          * Performs a single state estimation with the given model inputs and
@@ -82,7 +82,7 @@ namespace PCOE {
          * @param u The model input vector at time @{code t}.
          * @param z The model output vector at time @{code t}.
          **/
-        void step(double t, const SystemModel::input_type& u, const SystemModel::output_type& z) override;
+        void step(double t, const PrognosticsModel::input_type& u, const PrognosticsModel::output_type& z) override;
 
         /**
          * Compute sigma points given mean vector and covariance matrix.
@@ -92,7 +92,7 @@ namespace PCOE {
          * @param Pxx   Covariance matrix
          * @param sigma Sigma points
          **/
-        void computeSigmaPoints(const SystemModel::state_type& mx, const Matrix& Pxx, SigmaPoints& sigma);
+        void computeSigmaPoints(const PrognosticsModel::state_type& mx, const Matrix& Pxx, SigmaPoints& sigma);
 
         /**
          * Sets the kappa tuning parameter.
@@ -132,8 +132,8 @@ namespace PCOE {
         }
 
     private:
-        SystemModel::state_type xEstimated;
-        SystemModel::output_type zEstimated;
+        PrognosticsModel::state_type xEstimated;
+        PrognosticsModel::output_type zEstimated;
         Matrix Q; // Sensor Noise Covar
         Matrix R; // Measurement Noise Covar
         Matrix P; // Process Noise Covar

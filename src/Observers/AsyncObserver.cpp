@@ -76,9 +76,9 @@ namespace PCOE {
         auto timestamp = std::max(tIn, tOut);
         double timestampSeconds = seconds(timestamp);
         const auto& u =
-            hasInputs ? SystemModel::input_type(imsgVec->getValue()) : SystemModel::input_type(0);
-        const auto& z = hasOutputs ? SystemModel::output_type(omsgVec->getValue())
-                                   : SystemModel::output_type(0);
+            hasInputs ? PrognosticsModel::input_type(imsgVec->getValue()) : PrognosticsModel::input_type(0);
+        const auto& z = hasOutputs ? PrognosticsModel::output_type(omsgVec->getValue())
+                                   : PrognosticsModel::output_type(0);
         if (!observer->isInitialized()) {
             log.FormatLine(LOG_TRACE,
                            MODULE_NAME,
