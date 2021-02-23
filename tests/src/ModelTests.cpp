@@ -6,7 +6,7 @@
 #include "Test.h"
 
 #include "Models/BatteryModel.h"
-#include "Models/SystemModel.h"
+#include "Models/PrognosticsModel.h"
 #include "Tank3.h"
 
 using namespace PCOE;
@@ -164,7 +164,7 @@ namespace ModelTests {
         auto u = BatteryModel::input_type({1});
 
         // Compute next state
-        x = battery.SystemModel::stateEqn(0, x, u, zeroNoise);
+        x = battery.PrognosticsModel::stateEqn(0, x, u, zeroNoise);
 
         // Check states
         Assert::AreEqual(293.15, x[battery.indices.states.Tb], 1e-12);

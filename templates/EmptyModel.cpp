@@ -20,7 +20,7 @@
 using namespace PCOE;
 
 // Number of state variables
-const SystemModel::state_type::size_type STATE_SIZE = 2;
+const PrognosticsModel::state_type::size_type STATE_SIZE = 2;
 
 // Inputs to model (e.g., current)
 static auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
@@ -28,7 +28,7 @@ static auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
 // Outputs of model (e.g., voltage)
 static auto OUTPUTS = {MessageId::TestOutput0, MessageId::TestOutput1};
 
-EmptyModel::EmptyModel() : SystemModel(STATE_SIZE, INPUTS, OUTPUTS, {}, {}) {}
+EmptyModel::EmptyModel() : PrognosticsModel(STATE_SIZE, INPUTS, OUTPUTS, {}, {}) {}
 
 // Constructor based on configMap
 EmptyModel::EmptyModel(const ConfigMap& configMap) : EmptyModel::EmptyModel() {
@@ -36,9 +36,9 @@ EmptyModel::EmptyModel(const ConfigMap& configMap) : EmptyModel::EmptyModel() {
 }
 
 // EmptyModel State Equation
-SystemModel::state_type EmptyModel::stateEqn(double t,
-                                             const SystemModel::state_type& x,
-                                             const SystemModel::input_type& u,
+PrognosticsModel::state_type EmptyModel::stateEqn(double t,
+                                             const PrognosticsModel::state_type& x,
+                                             const PrognosticsModel::input_type& u,
                                              double dt) const {
     auto new_state = getStateVector();
 
@@ -49,8 +49,8 @@ SystemModel::state_type EmptyModel::stateEqn(double t,
 }
 
 // EmptyModel Output Equation
-SystemModel::output_type EmptyModel::outputEqn(double t,
-                                               const SystemModel::state_type& x) const {
+PrognosticsModel::output_type EmptyModel::outputEqn(double t,
+                                               const PrognosticsModel::state_type& x) const {
     auto output = getOutputVector();
 
     // Fill output
@@ -60,9 +60,9 @@ SystemModel::output_type EmptyModel::outputEqn(double t,
 }
 
 // Initialize state, given initial inputs and outputs
-SystemModel::state_type EmptyModel::initialize(const SystemModel::input_type& u,
-                                               const SystemModel::output_type& z) const {
-    SystemModel::state_type initialized_state = getStateVector();
+PrognosticsModel::state_type EmptyModel::initialize(const PrognosticsModel::input_type& u,
+                                               const PrognosticsModel::output_type& z) const {
+    PrognosticsModel::state_type initialized_state = getStateVector();
 
     // Fill initialized_state
     // e.g., initialized_state[0] = SOMEVALUE;

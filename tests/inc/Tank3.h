@@ -5,13 +5,13 @@
 #define TANK3_H
 #include <vector>
 
-#include "Models/SystemModel.h"
+#include "Models/PrognosticsModel.h"
 
-class Tank3 final : public PCOE::SystemModel {
+class Tank3 final : public PCOE::PrognosticsModel {
 public:
     // Constructor
     Tank3()
-        : PCOE::SystemModel(3,
+        : PCOE::PrognosticsModel(3,
                       {PCOE::MessageId::TestInput0,
                        PCOE::MessageId::TestInput1,
                        PCOE::MessageId::TestInput2},
@@ -56,7 +56,7 @@ public:
         double R2c3;
     } parameters;
 
-    using SystemModel::stateEqn;
+    using PrognosticsModel::stateEqn;
 
     state_type stateEqn(double t,
                         const state_type& x,
@@ -67,5 +67,8 @@ public:
                           const state_type& x) const override;
 
     state_type initialize(const input_type& u, const output_type& z) const override;
+
+    std::vector<bool> thresholdEqn(double,
+                                   const state_type&) const override { return {}; }
 };
 #endif

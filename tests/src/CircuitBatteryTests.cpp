@@ -25,7 +25,7 @@ namespace CircuitBatteryModelTests {
         auto u = model.getInputVector();
         u[0] = 2; // Default load of 2 amperes
 
-        PrognosticsModel::state_type x0 = model.initialize(SystemModel::input_type({}), SystemModel::output_type({}));
+        PrognosticsModel::state_type x0 = model.initialize(PrognosticsModel::input_type({}), PrognosticsModel::output_type({}));
 
         auto x = model.stateEqn(0, x0, u, 1);
 

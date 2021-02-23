@@ -43,7 +43,7 @@ EmptyPrognosticsModel::EmptyPrognosticsModel(const ConfigMap& configMap)
     // Setup model based on configuration parameters
 }
 
-SystemModel::state_type EmptyPrognosticsModel::stateEqn(double t,
+PrognosticsModel::state_type EmptyPrognosticsModel::stateEqn(double t,
                                                         const state_type& x,
                                                         const input_type& u,
                                                         double dt) const {
@@ -54,7 +54,7 @@ SystemModel::state_type EmptyPrognosticsModel::stateEqn(double t,
     return new_state;
 }
 
-SystemModel::output_type EmptyPrognosticsModel::outputEqn(double t,
+PrognosticsModel::output_type EmptyPrognosticsModel::outputEqn(double t,
                                                           const state_type& x) const {
     auto output = getOutputVector();
 
@@ -64,7 +64,7 @@ SystemModel::output_type EmptyPrognosticsModel::outputEqn(double t,
 }
 
 // Initialize state, given initial inputs and outputs
-SystemModel::state_type EmptyPrognosticsModel::initialize(const input_type& u,
+PrognosticsModel::state_type EmptyPrognosticsModel::initialize(const input_type& u,
                                                           const output_type& z) const {
     auto initialized_state = getStateVector();
 

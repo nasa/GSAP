@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "Models/SystemModel.h"
+#include "Models/PrognosticsModel.h"
 #include "UData.h"
 
 #include "EmptyObserver.h"
@@ -28,13 +28,13 @@ namespace PCOE {
 
     const std::string MODULE_NAME = "OBS-Empty";
 
-    EmptyObserver::EmptyObserver(const SystemModel& m, const Matrix Q, const Matrix R)
+    EmptyObserver::EmptyObserver(const PrognosticsModel& m, const Matrix Q, const Matrix R)
         : Observer(m) {}
 
     // Initialize function (required by Observer interface)
     void EmptyObserver::initialize(const double t0,
-                                   const SystemModel::state_type& x0,
-                                   const SystemModel::input_type& u0) {
+                                   const PrognosticsModel::state_type& x0,
+                                   const PrognosticsModel::input_type& u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
         auto initialized_state = model.getStateVector();
 
@@ -46,8 +46,8 @@ namespace PCOE {
 
     // Step function (required by Observer interface)
     void EmptyObserver::step(double t,
-                             const SystemModel::input_type& u,
-                             const SystemModel::output_type& z) {
+                             const PrognosticsModel::input_type& u,
+                             const PrognosticsModel::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
 
         if (!isInitialized()) {

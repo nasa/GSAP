@@ -7,7 +7,7 @@
 using namespace std;
 
 // Tank3 State Equation
-PCOE::SystemModel::state_type Tank3::stateEqn(const double,
+PCOE::PrognosticsModel::state_type Tank3::stateEqn(const double,
                                         const state_type& x,
                                         const input_type& u,
                                         const double dt) const {
@@ -44,7 +44,7 @@ PCOE::SystemModel::state_type Tank3::stateEqn(const double,
 }
 
 // Tank3 Output Equation
-PCOE::SystemModel::output_type
+PCOE::PrognosticsModel::output_type
 Tank3::outputEqn(const double, const state_type& x) const {
     // Extract states
     double m1 = x[0];
@@ -68,7 +68,7 @@ Tank3::outputEqn(const double, const state_type& x) const {
     return z_out;
 }
 
-PCOE::SystemModel::state_type Tank3::initialize(const input_type&, const output_type&) const {
+PCOE::PrognosticsModel::state_type Tank3::initialize(const input_type&, const output_type&) const {
     auto x = getStateVector();
     x[0] = 0;
     x[1] = 0;
