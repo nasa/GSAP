@@ -10,6 +10,10 @@
 #include "ConfigMap.h"
 #include "PrognosticsModel.h"
 
+#ifndef M_PI
+#define M_PI 3.14159
+#endif
+
 /**
  * A model of a Centrifugal Pump
  * Original Model by Matthew Daigle can be found here:
