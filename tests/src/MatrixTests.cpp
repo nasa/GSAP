@@ -738,7 +738,6 @@ namespace MatrixTests {
         Assert::AreEqual(-1, m2.at(0, 1), 1e-15, "Unexpected value for -1");
         Assert::AreEqual(-std::numeric_limits<double>::infinity(),
                          m2.at(1, 0),
-                         1e-15,
                          "Unexpected value for -Inf");
         Assert::IsTrue(std::isnan(m2.at(1, 1)), "Unexpected value for -NaN");
     }
