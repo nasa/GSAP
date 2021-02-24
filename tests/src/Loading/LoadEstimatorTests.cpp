@@ -17,6 +17,6 @@ namespace LoadEstimatorTests {
         registerConstLoadEstimatorTests(context);
         registerGaussianLoadEstimatorTests(context);
         registerMovingAverageLoadEstimatorTests(context);
-        registerProfileLoadEstimatorTests(context);
+        registerConstLoadEstimatorTests(context);
     }
 }
