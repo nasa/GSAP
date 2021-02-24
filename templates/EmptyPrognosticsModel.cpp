@@ -46,7 +46,6 @@ EmptyPrognosticsModel::EmptyPrognosticsModel(const ConfigMap& configMap)
 SystemModel::state_type EmptyPrognosticsModel::stateEqn(double t,
                                                         const state_type& x,
                                                         const input_type& u,
-                                                        const noise_type& n,
                                                         double dt) const {
     auto new_state = getStateVector();
 
@@ -56,8 +55,7 @@ SystemModel::state_type EmptyPrognosticsModel::stateEqn(double t,
 }
 
 SystemModel::output_type EmptyPrognosticsModel::outputEqn(double t,
-                                                          const state_type& x,
-                                                          const noise_type& n) const {
+                                                          const state_type& x) const {
     auto output = getOutputVector();
 
     // Fill output
@@ -77,7 +75,7 @@ SystemModel::state_type EmptyPrognosticsModel::initialize(const input_type& u,
 
 std::vector<bool> EmptyPrognosticsModel::thresholdEqn(double t, const state_type& x) const {
     // Often uses outputs to calculate threshold, remove line if not relevant
-    auto z = outputEqn(t, x, std::vector<double>(2));
+    auto z = outputEqn(t, x);
 
     bool hasReachedThreshold = false;
     // SET hasReachedThreshold

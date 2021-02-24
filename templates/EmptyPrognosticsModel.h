@@ -33,7 +33,6 @@ public:
     state_type stateEqn(double t,
                         const state_type& x,
                         const input_type& u,
-                        const noise_type& n,
                         double dt) const override;
 
     /**
@@ -45,8 +44,7 @@ public:
      * @return   The model output vector at the next time step.
      **/
     output_type outputEqn(double t,
-                          const state_type& x,
-                          const noise_type& n) const override;
+                          const state_type& x) const override;
 
     /**
      * Initialize the model state.
