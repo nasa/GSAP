@@ -291,13 +291,13 @@ namespace UDataTests {
         UData::iterator i = ud.begin();
         std::vector<double>::iterator j = values.begin();
         for (; i != ud.end() && j != values.end(); ++i, ++j) {
-            Assert::AreEqual(*j, *i, 1e-12, "Unexpexted non-equal value in data");
+            Assert::AreEqual(double(*j), double(*i), 1e-12, "Unexpected non-equal value in data");
         }
 
         UData::const_iterator x = ud.cbegin();
         std::vector<double>::const_iterator y = values.cbegin();
         for (; x != ud.cend() && y != values.cend(); ++x, ++y) {
-            Assert::AreEqual(*y, *x, 1e-12, "Unexpexted non-equal value in data");
+            Assert::AreEqual(*y, *x, 1e-12, "Unexpected non-equal value in data");
         }
     }
 
@@ -309,13 +309,13 @@ namespace UDataTests {
         UData::reverse_iterator i = ud.rbegin();
         std::vector<double>::reverse_iterator j = values.rbegin();
         for (; i != ud.rend() && j != values.rend(); ++i, ++j) {
-            Assert::AreEqual(*j, *i, 1e-12, "Unexpexted non-equal value in data");
+            Assert::AreEqual(*j, *i, 1e-12, "Unexpected non-equal value in data");
         }
 
         UData::const_reverse_iterator x = ud.crbegin();
         std::vector<double>::const_reverse_iterator y = values.crbegin();
         for (; x != ud.crend() && y != values.crend(); ++x, ++y) {
-            Assert::AreEqual(*y, *x, 1e-12, "Unexpexted non-equal value in data");
+            Assert::AreEqual(*y, *x, 1e-12, "Unexpected non-equal value in data");
         }
     }
 
@@ -327,15 +327,15 @@ namespace UDataTests {
         ud.set(1.0);
         Assert::AreEqual(1.0, ud.get(), 1e-12, "Default getter failed [0]");
         Assert::AreEqual(1.0, ud.get(0), 1e-12, "Indexed getter failed [0]");
-        Assert::AreEqual(1.0, ud[0], 1e-12, "Index operator failed [0]");
+        Assert::AreEqual(1.0, double(ud[0]), 1e-12, "Index operator failed [0]");
 
         ud.uncertainty(UType::MeanSD);
         ud.set(1, 7.0);
         Assert::AreNotEqual(7.0, ud.get(), 1e-12, "Default getter failed [1]");
         Assert::AreNotEqual(7.0, ud.get(0), 1e-12, "Indexed getter failed [1]");
-        Assert::AreNotEqual(7.0, ud[0], 1e-12, "Index operator failed [1]");
+        Assert::AreNotEqual(7.0, double(ud[0]), 1e-12, "Index operator failed [1]");
         Assert::AreEqual(7.0, ud.get(1), 1e-12, "Indexed getter failed [2]");
-        Assert::AreEqual(7.0, ud[1], 1e-12, "Index operator failed [2]");
+        Assert::AreEqual(7.0, double(ud[1]), 1e-12, "Index operator failed [2]");
     }
 
     void access_pair() {
@@ -418,7 +418,7 @@ namespace UDataTests {
         Assert::AreEqual(1, ud.npoints(), "Unexpected npoints");
 
         ud[MEAN] = 3.433;
-        Assert::AreEqual(3.433, ud[MEAN], 1e-12, "Unexpected value from mean indexer");
+        Assert::AreEqual(3.433, double(ud[MEAN]), 1e-12, "Unexpected value from mean indexer");
 
         ud.set(7);
         Assert::AreEqual(7, ud.get(), 1e-12, "Unexpected value from mean default get/set");
@@ -427,15 +427,15 @@ namespace UDataTests {
         Assert::AreEqual(9, ud.get(MEAN), 1e-12, "Unexpected value from mean get/set");
 
         ud[SD] = 0;
-        Assert::AreEqual(0, ud[SD], 1e-12, "Unexpected value from SD indexer");
+        Assert::AreEqual(0, double(ud[SD]), 1e-12, "Unexpected value from SD indexer");
 
         ud.set(SD, 9.5);
         Assert::AreEqual(9.5, ud.get(SD), 1e-12, "Unexpected value from SD get/set");
 
         // Pair Tests
         ud.set(std::pair<double, double>(1.3, 2.0));
-        Assert::AreEqual(1.3, ud[MEAN], 1e-12, "Unexpected mean value from pair [0]");
-        Assert::AreEqual(2.0, ud[SD], 1e-12, "Unexpected SD value from pair [0]");
+        Assert::AreEqual(1.3, double(ud[MEAN]), 1e-12, "Unexpected mean value from pair [0]");
+        Assert::AreEqual(2.0, double(ud[SD]), 1e-12, "Unexpected SD value from pair [0]");
 
         std::pair<double, double> pair = ud.getPair();
         Assert::AreEqual(1.3, pair.first, 1e-12, "Unexpected mean value from pair [1]");
@@ -443,13 +443,13 @@ namespace UDataTests {
 
         pair = std::make_pair(7.0, 5.0);
         ud.setPair(pair);
-        Assert::AreEqual(7.0, ud[MEAN], 1e-12, "Unexpected mean value from pair [2]");
-        Assert::AreEqual(5.0, ud[SD], 1e-12, "Unexpected SD value from pair [2]");
+        Assert::AreEqual(7.0, double(ud[MEAN]), 1e-12, "Unexpected mean value from pair [2]");
+        Assert::AreEqual(5.0, double(ud[SD]), 1e-12, "Unexpected SD value from pair [2]");
 
         // Vector Tests
         ud.set(std::vector<double>({1.3, 2.0}));
-        Assert::AreEqual(1.3, ud[MEAN], 1e-12, "Unexpected mean value from vec [0]");
-        Assert::AreEqual(2.0, ud[SD], 1e-12, "Unexpected SD value from vec [0]");
+        Assert::AreEqual(1.3, double(ud[MEAN]), 1e-12, "Unexpected mean value from vec [0]");
+        Assert::AreEqual(2.0, double(ud[SD]), 1e-12, "Unexpected SD value from vec [0]");
 
         std::vector<double> vec = ud.getVec();
         Assert::AreEqual(1.3, vec[0], 1e-12, "Unexpected mean value from vec [1]");
@@ -457,8 +457,8 @@ namespace UDataTests {
 
         vec = std::vector<double>({7.0, 5.0});
         ud.setVec(vec);
-        Assert::AreEqual(7.0, ud[MEAN], 1e-12, "Unexpected mean value from vec [2]");
-        Assert::AreEqual(5.0, ud[SD], 1e-12, "Unexpected SD value from vec [2]");
+        Assert::AreEqual(7.0, double(ud[MEAN]), 1e-12, "Unexpected mean value from vec [2]");
+        Assert::AreEqual(5.0, double(ud[SD]), 1e-12, "Unexpected SD value from vec [2]");
     }
 
     void meanCovar() {
@@ -474,7 +474,7 @@ namespace UDataTests {
 
         for (size_t i = 0; i < ud.npoints(); i++) {
             ud[COVAR(i)] = i * 7.0;
-            Assert::AreEqual(i * 7.0, ud[COVAR(i)], 1e-12, "Unexpected value using indexer");
+            Assert::AreEqual(i * 7.0, double(ud[COVAR(i)]), 1e-12, "Unexpected value using indexer");
 
             ud.set(COVAR(i), i * 5.0);
             Assert::AreEqual(i * 5.0, ud.get(COVAR(i)), 1e-12, "Unexpected value using get/set");
@@ -514,26 +514,26 @@ namespace UDataTests {
         Assert::AreEqual(5, ud.npoints(), "Unexpected npoints [1]");
 
         ud[PVALUE(0)] = 3.433;
-        Assert::AreEqual(3.433, ud[PVALUE(0)], 1e-12);
+        Assert::AreEqual(3.433, double(ud[PVALUE(0)]), 1e-12);
         ud.set(7);
-        Assert::AreEqual(7, ud[PVALUE(0)], 1e-12);
+        Assert::AreEqual(7, double(ud[PVALUE(0)]), 1e-12);
         ud[PERCENTILE(0)] = 0.1;
-        Assert::AreEqual(0.1, ud[PERCENTILE(0)], 1e-12);
-        Assert::AreEqual(7.0, ud[PVALUE(0)], 1e-12);
+        Assert::AreEqual(0.1, double(ud[PERCENTILE(0)]), 1e-12);
+        Assert::AreEqual(7.0, double(ud[PVALUE(0)]), 1e-12);
         ud[PVALUE(4)] = 15.0;
-        Assert::AreEqual(15.0, ud[PVALUE(4)], 1e-12);
+        Assert::AreEqual(15.0, double(ud[PVALUE(4)]), 1e-12);
         ud.set(PVALUE(0), 9);
-        Assert::AreEqual(9, ud[PVALUE(0)], 1e-12);
-        Assert::AreEqual(ud.get(), ud[PVALUE(0)], 1e-12);
+        Assert::AreEqual(9, double(ud[PVALUE(0)]), 1e-12);
+        Assert::AreEqual(ud.get(), double(ud[PVALUE(0)]), 1e-12);
         ud.set(PVALUE(1), 9.5);
-        Assert::AreEqual(9.5, ud[PVALUE(1)], 1e-12);
-        Assert::AreEqual(ud.get(PVALUE(1)), ud[PVALUE(1)], 1e-12);
+        Assert::AreEqual(9.5, double(ud[PVALUE(1)]), 1e-12);
+        Assert::AreEqual(double(ud.get(PVALUE(1))), double(ud[PVALUE(1)]), 1e-12);
         ud.set(std::pair<double, double>(1.3, 0.5));
-        Assert::AreEqual(0.5, ud[PERCENTILE(0)], 1e-12);
-        Assert::AreEqual(1.3, ud[PVALUE(0)], 1e-12);
+        Assert::AreEqual(0.5, double(ud[PERCENTILE(0)]), 1e-12);
+        Assert::AreEqual(1.3, double(ud[PVALUE(0)]), 1e-12);
         ud.set(PAIR(3), std::pair<double, double>(1.9, 0.25));
-        Assert::AreEqual(0.25, ud[PERCENTILE(3)], 1e-12);
-        Assert::AreEqual(1.9, ud[PVALUE(3)], 1e-12);
+        Assert::AreEqual(0.25, double(ud[PERCENTILE(3)]), 1e-12);
+        Assert::AreEqual(1.9, double(ud[PVALUE(3)]), 1e-12);
         std::size_t size = ud.getVec().size();
         Assert::AreEqual(10, size);
     }
@@ -549,54 +549,54 @@ namespace UDataTests {
         Assert::AreEqual(5, ud.npoints(), "Unexpected npoints [1]");
 
         ud[0] = 3.433;
-        Assert::AreEqual(3.433, ud[0], 1e-12);
+        Assert::AreEqual(3.433, double(ud[0]), 1e-12);
         ud.set(7);
-        Assert::AreEqual(7, ud[0], 1e-12);
+        Assert::AreEqual(7, double(ud[0]), 1e-12);
         ud[1] = 0;
-        Assert::AreEqual(0, ud[1], 1e-12);
+        Assert::AreEqual(0, double(ud[1]), 1e-12);
         ud[4] = 15.0;
-        Assert::AreEqual(15.0, ud[4], 1e-12);
+        Assert::AreEqual(15.0, double(ud[4]), 1e-12);
         ud.set(0, 9);
-        Assert::AreEqual(9, ud[0], 1e-12);
+        Assert::AreEqual(9, double(ud[0]), 1e-12);
         ud.set(1, 9.5);
-        Assert::AreEqual(9.5, ud[1], 1e-12);
+        Assert::AreEqual(9.5, double(ud[1]), 1e-12);
         ud.set(std::pair<double, double>(1.3, 2.0));
-        Assert::AreEqual(1.3, ud[0], 1e-12);
-        Assert::AreEqual(2.0, ud[1], 1e-12);
+        Assert::AreEqual(1.3, double(ud[0]), 1e-12);
+        Assert::AreEqual(2.0, double(ud[1]), 1e-12);
         ud.set(1, std::pair<double, double>(1.3, 2.0));
-        Assert::AreEqual(1.3, ud[0], 1e-12);
-        Assert::AreEqual(1.3, ud[1], 1e-12);
-        Assert::AreEqual(2.0, ud[2], 1e-12);
+        Assert::AreEqual(1.3, double(ud[0]), 1e-12);
+        Assert::AreEqual(1.3, double(ud[1]), 1e-12);
+        Assert::AreEqual(2.0, double(ud[2]), 1e-12);
 
         ud.set(getTestVec());
-        Assert::AreEqual(1.3, ud[0], 1e-12);
-        Assert::AreEqual(4.4, ud[1], 1e-12);
-        Assert::AreEqual(5.5, ud[2], 1e-12);
-        Assert::AreEqual(2.1, ud[3], 1e-12);
-        Assert::AreEqual(3.3, ud[4], 1e-12);
+        Assert::AreEqual(1.3, double(ud[0]), 1e-12);
+        Assert::AreEqual(4.4, double(ud[1]), 1e-12);
+        Assert::AreEqual(5.5, double(ud[2]), 1e-12);
+        Assert::AreEqual(2.1, double(ud[3]), 1e-12);
+        Assert::AreEqual(3.3, double(ud[4]), 1e-12);
 
         std::vector<double> testVec = ud.getVec();
-        Assert::AreEqual(1.3, testVec[0], 1e-12);
-        Assert::AreEqual(4.4, testVec[1], 1e-12);
-        Assert::AreEqual(5.5, testVec[2], 1e-12);
-        Assert::AreEqual(2.1, testVec[3], 1e-12);
-        Assert::AreEqual(3.3, testVec[4], 1e-12);
+        Assert::AreEqual(1.3, double(testVec[0]), 1e-12);
+        Assert::AreEqual(4.4, double(testVec[1]), 1e-12);
+        Assert::AreEqual(5.5, double(testVec[2]), 1e-12);
+        Assert::AreEqual(2.1, double(testVec[3]), 1e-12);
+        Assert::AreEqual(3.3, double(testVec[4]), 1e-12);
 
         ud[4] = 8.5;
-        Assert::AreEqual(8.5, ud[4], 1e-12);
+        Assert::AreEqual(8.5, double(ud[4]), 1e-12);
         ud.set(getTestVec());
-        Assert::AreEqual(3.3, ud[4], 1e-12);
+        Assert::AreEqual(3.3, double(ud[4]), 1e-12);
 
         testVec[4] = 8.5;
-        Assert::AreEqual(3.3, ud[4], 1e-12);
+        Assert::AreEqual(3.3, double(ud[4]), 1e-12);
         ud.setVec(testVec);
-        Assert::AreEqual(8.5, ud[4], 1e-12);
+        Assert::AreEqual(8.5, double(ud[4]), 1e-12);
 
         std::size_t size = ud.getVec().size();
         Assert::AreEqual(5, size);
 
-        Assert::AreEqual(ud.get(1), ud[1], 1e-12);
-        Assert::AreEqual(ud.get(), ud[0], 1e-12);
+        Assert::AreEqual(double(ud.get(1)), double(ud[1]), 1e-12);
+        Assert::AreEqual(double(ud.get()), double(ud[0]), 1e-12);
     }
 
     void wSamples() {
@@ -610,20 +610,20 @@ namespace UDataTests {
         Assert::AreEqual(5, ud.npoints(), "Unexpected npoints [1]");
 
         ud[SAMPLE(0)] = 3.433;
-        Assert::AreEqual(3.433, ud[SAMPLE(0)], 1e-12);
+        Assert::AreEqual(3.433, double(ud[SAMPLE(0)]), 1e-12);
         ud.set(7);
-        Assert::AreEqual(7, ud[SAMPLE(0)], 1e-12);
+        Assert::AreEqual(7, double(ud[SAMPLE(0)]), 1e-12);
         ud[WEIGHT(0)] = 0.1;
         Assert::IsTrue(std::abs(ud[WEIGHT(0)] - 0.1) < 1e-12 &&
                        std::abs(ud[SAMPLE(0)] - 7) < 1e-12);
         ud[SAMPLE(4)] = 15.0;
-        Assert::AreEqual(15.0, ud[SAMPLE(4)], 1e-12);
+        Assert::AreEqual(15.0, double(ud[SAMPLE(4)]), 1e-12);
         ud.set(SAMPLE(0), 9);
-        Assert::AreEqual(9, ud[SAMPLE(0)], 1e-12);
-        Assert::AreEqual(ud.get(), ud[SAMPLE(0)], 1e-12);
+        Assert::AreEqual(9, double(ud[SAMPLE(0)]), 1e-12);
+        Assert::AreEqual(double(ud.get()), double(ud[SAMPLE(0)]), 1e-12);
         ud.set(SAMPLE(1), 9.5);
-        Assert::AreEqual(9.5, ud[SAMPLE(1)], 1e-12);
-        Assert::AreEqual(ud.get(SAMPLE(1)), ud[SAMPLE(1)], 1e-12);
+        Assert::AreEqual(9.5, double(ud[SAMPLE(1)]), 1e-12);
+        Assert::AreEqual(double(ud.get(SAMPLE(1))), double(ud[SAMPLE(1)]), 1e-12);
         ud.set(std::pair<double, double>(1.3, 0.5));
         Assert::IsTrue(std::abs(ud[SAMPLE(0)] - 1.3) < 1e-12 &&
                        std::abs(ud[WEIGHT(0)] - 0.5) < 1e-12);

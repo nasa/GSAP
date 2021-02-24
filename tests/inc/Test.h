@@ -432,7 +432,7 @@ namespace PCOE {
              */
             template <typename T, typename = EnableIfT<std::is_floating_point<T>::value>>
             static void IsNaN(T value, const std::string& message = "") {
-                IsNan(value, [&]() { return message; });
+                IsNaN(value, [&]() { return message; });
             }
 
             /**
