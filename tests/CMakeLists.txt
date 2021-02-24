@@ -93,7 +93,15 @@ set(TEMPLATE_SRCS
     ../templates/EmptyPrognoser.cpp
     ../templates/EmptyPrognosticsModel.cpp
 )
-add_library(templates ${TEMPLATE_SRCS})
+
+set(TEMPLATE_INCS
+    ../templates/EmptyModel.h
+    ../templates/EmptyObserver.h
+    ../templates/EmptyPredictor.h
+    ../templates/EmptyPrognoser.h
+    ../templates/EmptyPrognosticsModel.h
+)
+add_library(templates ${TEMPLATE_INCS} ${TEMPLATE_SRCS})
 
 add_executable(ex_simple ../examples/simple/main.cpp)
 add_executable(ex_async ../examples/async/main.cpp)
