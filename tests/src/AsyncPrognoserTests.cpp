@@ -147,7 +147,7 @@ namespace AsyncPrognoserTests {
         ObserverFactory::instance().Register<TestObserver>("Mock");
         PredictorFactory::instance().Register<TestPredictor>("Mock");
         ModelBasedAsyncPrognoserBuilder builder;
-        builder.setModelName("Mock", true);
+        builder.setModelName("Mock");
         builder.setObserverName("Mock");
         builder.setPredictorName("Mock");
         builder.setConfigParam("LoadEstimator.Loading", std::vector<std::string>({"1", "2"}));

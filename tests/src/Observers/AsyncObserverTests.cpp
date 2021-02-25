@@ -15,7 +15,7 @@ using namespace PCOE::Test;
 namespace AsyncObserverTests {
     void constructor() {
         MessageBus bus;
-        TestModel tm;
+        TestPrognosticsModel tm;
         const std::string src = "test";
 
         AsyncObserver edObs(bus, std::unique_ptr<Observer>(new TestObserver(tm)), src);
@@ -24,7 +24,7 @@ namespace AsyncObserverTests {
 
     void processMessage() {
         MessageBus bus;
-        TestModel tm;
+        TestPrognosticsModel tm;
         const std::string src = "test";
 
         MessageCounter listener(bus, src, MessageId::ModelStateEstimate);
