@@ -154,7 +154,7 @@ namespace PCOE {
 
             // 1. Sample the state
             // Create state vector
-            auto x = SystemModel::state_type(state.size());
+            auto x = PrognosticsModel::state_type(state.size());
             if (state.front().uncertainty() == UType::MeanCovar) {
                 // Now we have mean vector (x) and covariance matrix (Pxx). We can use that to
                 // sample a realization of the state. I need to generate a vector of random numbers,
@@ -166,7 +166,7 @@ namespace PCOE {
                 }
                 // Update with mean and covariance
                 xRandom = xMean + PxxChol * xRandom;
-                x = SystemModel::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
+                x = PrognosticsModel::state_type(static_cast<std::vector<double>>(xRandom.col(0)));
             }
             else if (state.front().uncertainty() == UType::Samples) {
                 for (size_t j = 0; j < state.size(); j++) {
@@ -192,7 +192,7 @@ namespace PCOE {
             }
 
             // 3. Simulate until time limit reached
-            SystemModel::input_type inputParams(model.getInputSize());
+            PrognosticsModel::input_type inputParams(model.getInputSize());
             for (auto&& toe : eventToe) {
                 toe[sample] = INFINITY;
             }

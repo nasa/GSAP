@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "Contracts.h"
-#include "Models/SystemModel.h"
+#include "Models/PrognosticsModel.h"
 #include "ThreadSafeLog.h"
 #include "UData.h"
 
@@ -28,7 +28,7 @@ namespace PCOE {
          *              observer. The observer does not take ownership of the
          *              model.
          **/
-        explicit Observer(const SystemModel& model) : model(model) {}
+        explicit Observer(const PrognosticsModel& model) : model(model) {}
 
         /**
          * Default destructor. A virtual default destructor is necessary to
@@ -47,8 +47,8 @@ namespace PCOE {
          * @param u0 Initial model input
          **/
         virtual void initialize(double t0,
-                                const SystemModel::state_type& x0,
-                                const SystemModel::input_type& u0) = 0;
+                                const PrognosticsModel::state_type& x0,
+                                const PrognosticsModel::input_type& u0) = 0;
 
         /**
          * When overriden in a derived class, performs a single state estimation
@@ -58,7 +58,7 @@ namespace PCOE {
          * @param u The model input vector at time @{code timestamp}.
          * @param z The model output vector at time @{code timestamp}.
          **/
-        virtual void step(double t, const SystemModel::input_type& u, const SystemModel::output_type& z) = 0;
+        virtual void step(double t, const PrognosticsModel::input_type& u, const PrognosticsModel::output_type& z) = 0;
 
         /**
          * When overriden in a derived class, returns the current state estimate
@@ -72,7 +72,7 @@ namespace PCOE {
         /**
          * Gets the last input used by the observer.
          **/
-        inline const SystemModel::input_type& getPrevInput() const {
+        inline const PrognosticsModel::input_type& getPrevInput() const {
             return uPrev;
         }
 
@@ -90,7 +90,7 @@ namespace PCOE {
         /**
          * Gets a pointer to the model used by the observer.
          **/
-        inline const SystemModel& getModel() const {
+        inline const PrognosticsModel& getModel() const {
             return model;
         }
 
@@ -99,9 +99,9 @@ namespace PCOE {
 
         double lastTime;
 
-        const SystemModel& model;
+        const PrognosticsModel& model;
 
-        SystemModel::input_type uPrev;
+        PrognosticsModel::input_type uPrev;
     };
 }
 #endif

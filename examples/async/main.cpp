@@ -157,7 +157,7 @@ int main() {
     // The builder uses configuration information and other methods to determine
     // the correct set of objects needed to perform prognostics.
     ModelBasedAsyncPrognoserBuilder builder(std::move(config));
-    builder.setModelName("Battery", true);
+    builder.setModelName("Battery");
     builder.setObserverName("UKF");
     builder.setPredictorName("MC");
     builder.setLoadEstimatorName("Const");

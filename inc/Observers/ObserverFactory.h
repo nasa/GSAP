@@ -17,7 +17,7 @@ namespace PCOE {
      * @author Jason Watkins
      * @since 1.0
      **/
-    class ObserverFactory final : public Factory<Observer, const SystemModel&, const ConfigMap&>,
+    class ObserverFactory final : public Factory<Observer, const PrognosticsModel&, const ConfigMap&>,
                                   public Singleton<ObserverFactory> {
         friend class Singleton<ObserverFactory>;
 

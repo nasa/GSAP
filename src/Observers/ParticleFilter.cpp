@@ -27,11 +27,11 @@ namespace PCOE {
     // Other string constants
     const std::string MODULE_NAME = "OBS-PF";
 
-    ParticleFilter::ParticleFilter(const SystemModel& m) : Observer(m) {
+    ParticleFilter::ParticleFilter(const PrognosticsModel& m) : Observer(m) {
         uPrev = model.getInputVector();
     }
 
-    ParticleFilter::ParticleFilter(const SystemModel& m,
+    ParticleFilter::ParticleFilter(const PrognosticsModel& m,
                                    std::size_t count,
                                    std::vector<double>& processNoise,
                                    std::vector<double>& sensorNoise)
@@ -54,7 +54,7 @@ namespace PCOE {
         particles.w.resize(particleCount);
     }
 
-    ParticleFilter::ParticleFilter(const SystemModel& m, const ConfigMap& config)
+    ParticleFilter::ParticleFilter(const PrognosticsModel& m, const ConfigMap& config)
         : ParticleFilter(m) {
         requireKeys(config, {N_KEY, PN_KEY, SN_KEY});
 
@@ -98,8 +98,8 @@ namespace PCOE {
     }
 
     void ParticleFilter::initialize(double t0,
-                                    const SystemModel::state_type& x0,
-                                    const SystemModel::input_type& u0) {
+                                    const PrognosticsModel::state_type& x0,
+                                    const PrognosticsModel::input_type& u0) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Initializing");
         // TODO (JW): This contract is now stated in the constructor, so it
         //            should be guaranteed here. Consider removing.
@@ -122,7 +122,7 @@ namespace PCOE {
         // Initialize particles
         for (size_t p = 0; p < particleCount; p++) {
             particles.X.col(p, x0.vec());
-            SystemModel::output_type z0 = model.getOutputVector();
+            PrognosticsModel::output_type z0 = model.getOutputVector();
             std::vector<double> zeroNoise(model.getOutputSize(), 0);
             z0 = model.outputEqn(t0, x0, zeroNoise);
             particles.Z.col(p, z0.vec());
@@ -135,8 +135,8 @@ namespace PCOE {
     }
 
     void ParticleFilter::step(double newT,
-                              const SystemModel::input_type& u,
-                              const SystemModel::output_type& z) {
+                              const PrognosticsModel::input_type& u,
+                              const PrognosticsModel::output_type& z) {
         log.WriteLine(LOG_DEBUG, MODULE_NAME, "Starting step");
         Expect(initialized, "Step before initialization");
         Expect(newT - lastTime > 0, "Time has not advanced");
@@ -151,7 +151,7 @@ namespace PCOE {
 
             // Generate new particle
             auto xNew =
-                SystemModel::state_type(static_cast<std::vector<double>>(particles.X.col(p)));
+                PrognosticsModel::state_type(static_cast<std::vector<double>>(particles.X.col(p)));
             xNew = model.stateEqn(newT, xNew, uPrev, noise, dt);
             particles.X.col(p, xNew.vec());
             auto zNew = model.outputEqn(newT, xNew, zeroNoise);
@@ -255,8 +255,8 @@ namespace PCOE {
         }
     }
 
-    double ParticleFilter::likelihood(const SystemModel::output_type& zActual,
-                                      const SystemModel::output_type& zPredicted) {
+    double ParticleFilter::likelihood(const PrognosticsModel::output_type& zActual,
+                                      const PrognosticsModel::output_type& zPredicted) {
         // Compute innovation
         Matrix zA(zActual.size(), 1);
         Matrix zP(zActual.size(), 1);
@@ -278,8 +278,8 @@ namespace PCOE {
         }
     }
 
-    SystemModel::state_type ParticleFilter::weightedMean(const Matrix& M,
-                                                         const std::vector<double>& weights) {
+    PrognosticsModel::state_type ParticleFilter::weightedMean(const Matrix& M,
+                                                              const std::vector<double>& weights) {
         Expect(M.rows() == model.getStateSize(), "M rows does not match model state size");
         Expect(M.cols() == weights.size(), "M cols does not match weights size");
 

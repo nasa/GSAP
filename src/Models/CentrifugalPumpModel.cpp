@@ -225,7 +225,7 @@ double sign(double in) {
     return in/abs(in);
 }
 
-SystemModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type& x, const input_type& u, double dt) const {
+PrognosticsModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type& x, const input_type& u, double dt) const {
 
     // Extract states
     double A = x[0];
@@ -291,7 +291,7 @@ SystemModel::state_type CentrifugalPumpModel::stateEqn(double, const state_type&
     return x_new;
 }
 
-SystemModel::output_type CentrifugalPumpModel::outputEqn(double,
+PrognosticsModel::output_type CentrifugalPumpModel::outputEqn(double,
                                                  const state_type& x) const {
     // Extract states
     double Q = x[1];
@@ -331,7 +331,7 @@ std::vector<bool> CentrifugalPumpModel::thresholdEqn(double, const state_type& x
     return thresholdMet;
 }
 
-SystemModel::event_state_type CentrifugalPumpModel::eventStateEqn(const state_type& x) const {
+PrognosticsModel::event_state_type CentrifugalPumpModel::eventStateEqn(const state_type& x) const {
 
     // Extract states
     double A = x[0];
@@ -348,8 +348,8 @@ SystemModel::event_state_type CentrifugalPumpModel::eventStateEqn(const state_ty
 }
 
 
-SystemModel::state_type CentrifugalPumpModel::initialize(const input_type&, const output_type&) const {
-    SystemModel::state_type x0 = getStateVector();
+PrognosticsModel::state_type CentrifugalPumpModel::initialize(const input_type&, const output_type&) const {
+    PrognosticsModel::state_type x0 = getStateVector();
     x0[0] = parameters.x0.A;
     x0[1] = parameters.x0.Q;
     x0[2] = parameters.x0.To;

@@ -87,7 +87,6 @@ add_executable(tests ${HEADERS} ${SRCS})
 # Compile all of the example code to make sure it's not totally broken
 #Template library
 set(TEMPLATE_SRCS
-    ../templates/EmptyModel.cpp
     ../templates/EmptyObserver.cpp
     ../templates/EmptyPredictor.cpp
     ../templates/EmptyPrognoser.cpp
@@ -95,7 +94,6 @@ set(TEMPLATE_SRCS
 )
 
 set(TEMPLATE_INCS
-    ../templates/EmptyModel.h
     ../templates/EmptyObserver.h
     ../templates/EmptyPredictor.h
     ../templates/EmptyPrognoser.h

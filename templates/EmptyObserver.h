@@ -21,7 +21,7 @@ namespace PCOE {
          * @param Q Process noise covariance matrix
          * @param R Sensor noise covariance matrix
          **/
-        EmptyObserver(const SystemModel& m, const Matrix Q, const Matrix R);
+        EmptyObserver(const PrognosticsModel& m, const Matrix Q, const Matrix R);
 
         /** @brief Initialize UKF
          *   @param t0 Initial time
@@ -29,8 +29,8 @@ namespace PCOE {
          *   @param u0 Initial input vector
          **/
         void initialize(const double t0,
-                        const SystemModel::state_type& x0,
-                        const SystemModel::input_type& u0) override;
+                        const PrognosticsModel::state_type& x0,
+                        const PrognosticsModel::input_type& u0) override;
 
         /**
          * Performs a single state estimation with the given model inputs and
@@ -40,7 +40,7 @@ namespace PCOE {
          * @param u The model input vector at time @{code t}.
          * @param z The model output vector at time @{code t}.
          **/
-        void step(double t, const SystemModel::input_type& u, const SystemModel::output_type& z) override;
+        void step(double t, const PrognosticsModel::input_type& u, const PrognosticsModel::output_type& z) override;
 
         std::vector<UData> getStateEstimate() const override;
     };

@@ -5,7 +5,6 @@
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
 #include "Models/PrognosticsModel.h"
-#include "Models/SystemModel.h"
 #include "Observers/Observer.h"
 #include "Predictors/Predictor.h"
 
@@ -38,31 +37,6 @@ private:
     std::string source;
     std::size_t count = 0;
     std::shared_ptr<Message> lastMessage;
-};
-
-class TestModel final : public SystemModel {
-public:
-    TestModel(const ConfigMap& = ConfigMap())
-        : SystemModel(2,
-                      {MessageId::TestInput0, MessageId::TestInput1},
-                      {MessageId::TestOutput0},
-                      {},
-                      {MessageId::TestEvent0}) {}
-
-    state_type stateEqn(const double,
-                        const state_type& x,
-                        const input_type&,
-                        const double) const override {
-        return x;
-    }
-
-    output_type outputEqn(const double, const state_type&) const override {
-        return getOutputVector();
-    }
-
-    state_type initialize(const input_type& u, const output_type&) const override {
-        return state_type(u.vec());
-    }
 };
 
 class TestPrognosticsModel final : public PrognosticsModel {
@@ -119,11 +93,11 @@ private:
 
 class TestObserver final : public Observer {
 public:
-    TestObserver(const SystemModel& model, const ConfigMap& = ConfigMap()) : Observer(model) {}
+    TestObserver(const PrognosticsModel& model, const ConfigMap& = ConfigMap()) : Observer(model) {}
 
     void initialize(double t0,
-                    const SystemModel::state_type& x0,
-                    const SystemModel::input_type& u0) override {
+                    const PrognosticsModel::state_type& x0,
+                    const PrognosticsModel::input_type& u0) override {
         xPrev = x0;
         uPrev = u0;
         std::vector<double> zeroNoiseZ(model.getOutputSize());
@@ -132,8 +106,8 @@ public:
     }
 
     void step(double t,
-              const SystemModel::input_type& u,
-              const SystemModel::output_type&) override {
+              const PrognosticsModel::input_type& u,
+              const PrognosticsModel::output_type&) override {
         std::vector<double> zeroNoiseX(model.getStateSize());
         xPrev = model.stateEqn(t, xPrev, u, zeroNoiseX);
     }
@@ -149,8 +123,8 @@ public:
     }
 
 private:
-    SystemModel::state_type xPrev;
-    SystemModel::output_type zPrev;
+    PrognosticsModel::state_type xPrev;
+    PrognosticsModel::output_type zPrev;
 };
 
 class TestPredictor final : public Predictor {

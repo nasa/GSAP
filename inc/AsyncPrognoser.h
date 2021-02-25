@@ -11,7 +11,7 @@
 #include "Loading/LoadEstimator.h"
 #include "Messages/IMessageProcessor.h"
 #include "Messages/MessageBus.h"
-#include "Models/SystemModel.h"
+#include "Models/PrognosticsModel.h"
 
 namespace PCOE {
     /**
@@ -50,7 +50,7 @@ namespace PCOE {
             }
         }
 
-        void setModel(SystemModel* model) {
+        void setModel(PrognosticsModel* model) {
             Expect(model != nullptr, "null model");
             Expect(this->model == nullptr, "model already set");
             this->model = model;
@@ -69,7 +69,7 @@ namespace PCOE {
 
     private:
         MessageBus& bus;
-        SystemModel* model = nullptr;
+        PrognosticsModel* model = nullptr;
         LoadEstimator* loadEstimator = nullptr;
         std::vector<IMessageProcessor*> eventListeners;
     };

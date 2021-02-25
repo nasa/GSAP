@@ -8,7 +8,6 @@
 #include "Loading/LoadEstimatorFactory.h"
 #include "ModelBasedAsyncPrognoserBuilder.h"
 #include "Models/PrognosticsModelFactory.h"
-#include "Models/SystemModelFactory.h"
 #include "Observers/AsyncObserver.h"
 #include "Observers/Observer.h"
 #include "Observers/ObserverFactory.h"
@@ -27,12 +26,10 @@ namespace PCOE {
     ModelBasedAsyncPrognoserBuilder::ModelBasedAsyncPrognoserBuilder(ConfigMap config)
         : AsyncPrognoserBuilder(std::move(config)) {}
 
-    void ModelBasedAsyncPrognoserBuilder::setModelName(const std::string& value,
-                                                             bool isPrognosticsModel) {
+    void ModelBasedAsyncPrognoserBuilder::setModelName(const std::string& value) {
         lock_guard guard(m);
         Expect(value.length() > 0, "Model name length");
         config.set(MODEL_KEY, value);
-        modelIsPrognosticsModel = isPrognosticsModel;
     }
 
     void ModelBasedAsyncPrognoserBuilder::setObserverName(const std::string& value) {
@@ -53,7 +50,6 @@ namespace PCOE {
                                                  const std::string& trajectorySource) {
         lock_guard guard(m);
         AsyncPrognoser container(bus);
-        SystemModel* model = nullptr;
         PrognosticsModel* progModel = nullptr;
         std::unique_ptr<Observer> observer;
         std::unique_ptr<Predictor> predictor;
@@ -81,21 +77,13 @@ namespace PCOE {
 
         if (config.hasKey(MODEL_KEY)) {
             std::string modelName = config.getString(MODEL_KEY);
-            if (modelIsPrognosticsModel) {
-                log.FormatLine(LOG_DEBUG,
-                               MODULE_NAME,
-                               "Building prognostics model %s",
-                               modelName.c_str());
-                auto& pmFactory = PrognosticsModelFactory::instance();
-                progModel = pmFactory.Create(modelName, config).release();
-                container.setModel(progModel);
-            }
-            else {
-                log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building model %s", modelName.c_str());
-                auto& mfactory = SystemModelFactory::instance();
-                model = mfactory.Create(modelName).release();
-                container.setModel(model);
-            }
+            log.FormatLine(LOG_DEBUG,
+                           MODULE_NAME,
+                           "Building prognostics model %s",
+                           modelName.c_str());
+            auto& pmFactory = PrognosticsModelFactory::instance();
+            progModel = pmFactory.Create(modelName, config).release();
+            container.setModel(progModel);
         }
         else {
             log.WriteLine(LOG_WARN, MODULE_NAME, "No model name found");
@@ -105,9 +93,8 @@ namespace PCOE {
             std::string observerName = config.getString(OBSERVER_KEY);
             log.FormatLine(LOG_DEBUG, MODULE_NAME, "Building observer %s", observerName.c_str());
             auto& obsFactory = ObserverFactory::instance();
-            const SystemModel* m = progModel ? progModel : model;
-            Require(m, "Observer missing model");
-            observer = obsFactory.Create(observerName, *m, config);
+            Require(progModel, "Observer missing model");
+            observer = obsFactory.Create(observerName, *progModel, config);
         }
         else {
             log.WriteLine(LOG_WARN, MODULE_NAME, "No observer name found");
@@ -139,7 +126,6 @@ namespace PCOE {
                 new AsyncPredictor(bus, std::move(predictor), sensorSource));
         }
 
-        Ensure(!(model && progModel), "SystemModel and PrognosticsModel both created");
         log.WriteLine(LOG_WARN, MODULE_NAME, "Build complete");
         return container;
     }

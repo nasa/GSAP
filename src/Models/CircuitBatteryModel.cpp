@@ -149,7 +149,7 @@ CircuitBatteryModel::CircuitBatteryModel(const ConfigMap& configMap) : CircuitBa
     }
 }
 
-SystemModel::state_type CircuitBatteryModel::stateEqn(double,
+PrognosticsModel::state_type CircuitBatteryModel::stateEqn(double,
                                                const state_type& x,
                                                const input_type& u,
                                                double dt) const {
@@ -180,7 +180,7 @@ SystemModel::state_type CircuitBatteryModel::stateEqn(double,
     auto qcsdot = ics;
 
     // Update state
-    SystemModel::state_type x_new(x.size());
+    PrognosticsModel::state_type x_new(x.size());
     x_new[0] = Tb + Tbdot*dt;
     x_new[1] = qb + qbdot*dt;
     x_new[2] = qcp + qcpdot*dt;
@@ -189,7 +189,7 @@ SystemModel::state_type CircuitBatteryModel::stateEqn(double,
     return x_new;
 }
 
-SystemModel::output_type CircuitBatteryModel::outputEqn(double,
+PrognosticsModel::output_type CircuitBatteryModel::outputEqn(double,
                                                  const state_type& x) const {
     // Extract states
     auto Tbm = x[0];
@@ -207,7 +207,7 @@ SystemModel::output_type CircuitBatteryModel::outputEqn(double,
     auto Vm = Vp;
 
     // set outputs
-    SystemModel::output_type z(2);
+    PrognosticsModel::output_type z(2);
     z[OUT::TEMP] = Tbm;
     z[OUT::VOLTS] = Vm;
     return z;
@@ -221,7 +221,7 @@ std::vector<bool> CircuitBatteryModel::thresholdEqn(double t, const state_type& 
     return {z[1] <= parameters.VEOD};
 }
 
-SystemModel::event_state_type CircuitBatteryModel::eventStateEqn(const state_type& x) const {
+PrognosticsModel::event_state_type CircuitBatteryModel::eventStateEqn(const state_type& x) const {
     // Compute "nominal" SOC
     auto SOC = (parameters.CMax - parameters.qMax + x[indices.states.Qb])/parameters.CMax;
     return event_state_type({SOC});

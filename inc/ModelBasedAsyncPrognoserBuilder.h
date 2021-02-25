@@ -30,7 +30,7 @@ namespace PCOE {
          **/
         explicit ModelBasedAsyncPrognoserBuilder(ConfigMap config);
 
-        void setModelName(const std::string& value, bool isPrognosticsModel);
+        void setModelName(const std::string& value);
 
         void setObserverName(const std::string& value);
 
@@ -39,9 +39,6 @@ namespace PCOE {
         AsyncPrognoser build(PCOE::MessageBus& bus,
                                    const std::string& sensorSource,
                                    const std::string& trajectorySource) override;
-
-    private:
-        bool modelIsPrognosticsModel;
     };
 }
 #endif

@@ -4,7 +4,7 @@
 #include "ConfigMap.h"
 #include "Exceptions.h"
 #include "Models/BatteryModel.h"
-#include "Models/SystemModel.h"
+#include "Models/PrognosticsModel.h"
 #include "Observers/ParticleFilter.h"
 #include "Tank3.h"
 #include "Test.h"

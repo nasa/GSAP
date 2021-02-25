@@ -645,7 +645,7 @@ namespace PCOE {
                         }
                     }
                     catch (...) {
-                        int s = static_cast<int>(cat.second.size());
+                        std::size_t s = static_cast<std::size_t>(cat.second.size());
                         rout << "Initializer failed. Skipping " << s << " tests.\n";
                         failed += s;
                         continue;

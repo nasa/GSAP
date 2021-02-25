@@ -60,8 +60,6 @@ set(HEADERS
     inc/Models/BatteryModel.h
     inc/Models/CentrifugalPumpModel.h
     inc/Models/CircuitBatteryModel.h
-    inc/Models/SystemModel.h
-    inc/Models/SystemModelFactory.h
     inc/Models/PrognosticsModel.h
     inc/Models/PrognosticsModelFactory.h
     inc/Observers/AsyncObserver.h

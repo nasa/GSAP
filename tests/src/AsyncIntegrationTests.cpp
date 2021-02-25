@@ -128,7 +128,7 @@ namespace AsyncIntegrationTests {
         PredictionPrinter printer(bus, src);
 
         ModelBasedAsyncPrognoserBuilder builder(config);
-        builder.setModelName("Battery", true);
+        builder.setModelName("Battery");
         builder.setObserverName(config.getString("observer"));
         builder.setPredictorName(config.getString("predictor"));
         builder.setLoadEstimatorName("Const");
