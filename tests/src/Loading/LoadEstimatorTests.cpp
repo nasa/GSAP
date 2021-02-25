@@ -12,11 +12,13 @@ namespace LoadEstimatorTests {
     void registerConstLoadEstimatorTests(TestContext& context);
     void registerGaussianLoadEstimatorTests(TestContext& context);
     void registerMovingAverageLoadEstimatorTests(TestContext& context);
+    void registerProfileLoadEstimatorTests(TestContext& context);
+
 
     void registerTests(TestContext& context) {
         registerConstLoadEstimatorTests(context);
         registerGaussianLoadEstimatorTests(context);
         registerMovingAverageLoadEstimatorTests(context);
-        registerConstLoadEstimatorTests(context);
+        registerProfileLoadEstimatorTests(context);
     }
 }
