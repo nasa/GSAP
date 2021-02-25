@@ -8,9 +8,7 @@
 #include <vector>
 
 #include "ConfigMap.h"
-#include "Models/SystemModelFactory.h"
 #include "Models/PrognosticsModel.h"
-#include "Models/PrognosticsModelFactory.h"
 
 class EmptyPrognosticsModel final : public PCOE::PrognosticsModel {
 public:

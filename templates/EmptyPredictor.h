@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "ConfigMap.h"
-#include "Models/SystemModel.h"
+#include "Models/PrognosticsModel.h"
 #include "Predictors/Predictor.h"
 
 namespace PCOE {

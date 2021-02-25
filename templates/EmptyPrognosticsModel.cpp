@@ -21,7 +21,7 @@
 using namespace PCOE;
 
 // Number of state variables
-const BatteryModel::state_type::size_type STATE_SIZE = 2;
+const PrognosticsModel::state_type::size_type STATE_SIZE = 2;
 
 // Inputs to model (e.g., current)
 static auto INPUTS = {MessageId::TestInput0, MessageId::TestInput1};
