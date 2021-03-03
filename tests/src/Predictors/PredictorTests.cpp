@@ -80,6 +80,23 @@ namespace PredictorTests {
         double meanEOD = 0;
         auto& eod = prediction.getEvents()[0];
         auto& toe = eod.getTOE();
+        Assert::AreEqual(toe.size(), 10, "ToE must have 10 samples");
+        Assert::IsTrue(toe[0] < 3500 && toe[0] > 2500, "ToE should be between 2500-3500");
+
+        auto& eventState = eod.getState();
+        Assert::AreEqual(eventState.size(), 1, "No SavePoints");
+        Assert::AreEqual(eventState[0].size(), 10, "10 Samples");
+        Assert::IsTrue(eventState[0][0] > 0.97, "event state should be ~1.0");
+
+        auto& systemState = eod.getSystemState();
+        Assert::AreEqual(systemState.size(), 1, "No SavePoints");
+        Assert::AreEqual(systemState[0].size(), 8, "8 States");
+        Assert::AreEqual(systemState[0][0].size(), 10, "10 Samples");
+
+        for (unsigned int i = 0; i < toe.npoints(); i++) {
+            meanEOD += toe[i] / toe.npoints();
+        }
+    }
         for (unsigned int i = 0; i < toe.npoints(); i++) {
             meanEOD += toe[i] / toe.npoints();
         }

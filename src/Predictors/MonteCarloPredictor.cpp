@@ -85,8 +85,16 @@ namespace PCOE {
         }
         std::vector<std::vector<UData>> eventStates(eventNames.size());
         for (auto&& eventState : eventStates) {
-            eventState.resize(savePts.size());
+            eventState.resize(savePts.size()+1);
             for (auto&& elem : eventState) {
+                elem.uncertainty(UType::Samples);
+                elem.npoints(sampleCount);
+            }
+        }
+        std::vector<std::vector<UData>> systemStates(savePts.size()+1);
+        for (auto&& systemState : systemStates) {
+            systemState.resize(model.getStateSize());
+            for (auto&& elem : systemState) {
                 elem.uncertainty(UType::Samples);
                 elem.npoints(sampleCount);
             }
@@ -94,7 +102,7 @@ namespace PCOE {
         std::vector<DataPoint> observables(model.getObservables().size());
         for (auto& observable : observables) {
             observable.setUncertainty(UType::Samples);
-            observable.setNumTimes(savePts.size());
+            observable.setNumTimes(savePts.size()+1);
             observable.setNPoints(sampleCount);
         }
         auto stateTimestamp = getLowestTimestamp(state);
@@ -204,6 +212,33 @@ namespace PCOE {
                 timeOfCurrentSavePt = seconds(*currentSavePt);
             }
 
+            // Record first state
+            if (currentSavePt != savePts.end()) {
+                timeOfCurrentSavePt = seconds(*currentSavePt);
+            }
+
+            for (std::vector<bool>::size_type i = 0; i < x.size();
+                 i++) {
+                systemStates[0][i][sample] =
+                    x[i];
+            }
+
+            auto observablesEstimate = model.observablesEqn(time_s, x);
+
+            for (unsigned int p = 0; p < observablesEstimate.size(); p++) {
+                observables[p][0][sample] = observablesEstimate[p];
+            }
+
+            // Write to eventState property
+            auto eventStatesEstimate = model.eventStateEqn(x);
+
+            for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size();
+                 eventId++) {
+                eventStates[eventId][0][sample] =
+                    eventStatesEstimate[eventId]; // TODO(CT): Save all event states-
+                                                  // assuming only one
+            }
+
             for (double t_s = time_s; t_s <= time_s + horizon; t_s += model.getDefaultTimeStep()) {
                 // Get inputs for time t
                 // TODO (JW): Consider per-sample load estimator
@@ -237,10 +272,16 @@ namespace PCOE {
                         timeOfCurrentSavePt = seconds(*currentSavePt);
                     }
 
+                    for (std::vector<bool>::size_type i = 0; i < x.size();
+                         i++) {
+                        systemStates[savePtIndex+1][i][sample] =
+                            x[i];
+                    }
+
                     auto observablesEstimate = model.observablesEqn(t_s, x);
 
                     for (unsigned int p = 0; p < observablesEstimate.size(); p++) {
-                        observables[p][savePtIndex][sample] = observablesEstimate[p];
+                        observables[p][savePtIndex+1][sample] = observablesEstimate[p];
                     }
 
                     // Write to eventState property
@@ -248,7 +289,7 @@ namespace PCOE {
 
                     for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size();
                          eventId++) {
-                        eventStates[eventId][savePtIndex][sample] =
+                        eventStates[eventId][savePtIndex+1][sample] =
                             eventStatesEstimate[eventId]; // TODO(CT): Save all event states-
                                                           // assuming only one
                     }
@@ -274,6 +315,7 @@ namespace PCOE {
         for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size(); eventId++) {
             events.push_back(ProgEvent(eventNames[eventId],
                                        std::move(eventStates[eventId]),
+                                       std::move(systemStates),
                                        std::move(eventToe[eventId])));
         }
 
