@@ -30,9 +30,13 @@ namespace PCOE {
     Prediction EmptyPrognoser::step(std::map<MessageId, Datum<double>> data) {
         // Run calculations
         std::vector<ProgEvent> events;
-        std::vector<UData> state = {UData(1.0)}; // Example
+        std::vector<UData> eventState = {UData(1.0)}; // Example Event state (each element is a time
+
+        // Example System State [Time][state variable] -> UData
+        std::vector<std::vector<UData>> systemState = {{UData(99.2), UData(110.10)}};
+        
         UData toe = UData(124222.01); // Example time of event
-        events.push_back(ProgEvent(MessageId::TestEvent0, state, toe));
+        events.push_back(ProgEvent(MessageId::TestEvent0, eventState, systemState, toe));
 
         std::vector<DataPoint> trajectories; // System Trajectories
         DataPoint exampleTrajectory;
