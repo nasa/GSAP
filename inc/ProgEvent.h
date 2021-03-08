@@ -28,7 +28,7 @@ namespace PCOE {
      * @author    Chris Teubert
      * @author    Jason Watkins
      * @author    Julian Vu
-     * @version   1.1.0
+     * @version   March 2021
      **/
     class ProgEvent {
     public:
@@ -36,18 +36,21 @@ namespace PCOE {
          * Creates a new prognostic event
          *
          * @param id     The message ID associated with the event.
-         * @param state  The state vector associated with the event.
+         * @param eventState  The event state vector associated with the event.
+         * @param systemState The system state vector associated with the event
          * @param toe    The time at which the event will occur.
          * @param points A set of points associated with the event
          * @param tag    A tag that provides aditional information about the event.
          **/
         ProgEvent(MessageId id,
-                  std::vector<UData> state,
+                  std::vector<UData> eventState,
+                  std::vector<std::vector<UData>> systemState,
                   UData toe,
                   std::vector<Point4D<MessageClock>> points = {},
                   std::string tag = "")
             : eventId(id),
-              eventState(std::move(state)),
+              eventState(std::move(eventState)),
+              systemState(std::move(systemState)),
               toe(toe),
               points(std::move(points)),
               tag(std::move(tag)) {}
@@ -60,28 +63,43 @@ namespace PCOE {
         }
 
         /**
-         * Gets the state vector for the event.
+         * Gets the event state vector for the event, where each element corresponds to a savepoint.
+         * Note: Element 0 corresponds to current time.
          **/
-        inline const std::vector<UData>& getState() const {
+        inline const std::vector<UData>& getEventState() const {
             return eventState;
+        }
+
+        inline const std::vector<UData>& getState() const {
+            return getEventState();
+        }
+
+        /**
+        * Gets the system state, where each element corresponds to a savepoint. It is in the format [timepoint][state element] -> UData
+        * Note: Element 0 corresponds to current time.
+        **/
+        inline const std::vector<std::vector<UData>>& getSystemState() const {
+            return systemState;
         }
 
         /**
          * Gets the start time of the event.
+         * Note: for a prognostics event, this is EOL
          **/
         inline const UData& getTOE() const {
             return toe;
         }
 
         /**
-         * Gets the set of state associated with the event.
+         * Gets the position in 4D space associated with the event, where each element corresponds to a savepoint
+         * Note: Element 0 corresponds to current time
          **/
         inline const std::vector<Point4D<MessageClock>> getPoints() const {
             return points;
         }
 
         /**
-         * Gets the tag associated with the event.
+         * Gets the tag (i.e., name) associated with the event.
          **/
         inline const std::string& getTag() const {
             return tag;
@@ -90,6 +108,7 @@ namespace PCOE {
     private:
         MessageId eventId;
         std::vector<UData> eventState;
+        std::vector<std::vector<UData>> systemState;
         UData toe;
         std::vector<Point4D<MessageClock>> points;
         std::string tag;

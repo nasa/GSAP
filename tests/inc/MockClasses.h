@@ -135,9 +135,10 @@ public:
                   const ConfigMap& config)
         : Predictor(m, le, trajService, config) {}
 
-    Prediction predict(double, const std::vector<UData>& state) override {
-        auto prediction = UData((state[1].get() + state[0].get()) / 2);
-        ProgEvent event(MessageId::TestEvent0, state, prediction);
+    Prediction predict(double, const std::vector<UData>& systemState) override {
+        auto prediction = UData((systemState[1].get() + systemState[0].get()) / 2);
+        // In this example systemState == eventState
+        ProgEvent event(MessageId::TestEvent0, systemState, {systemState}, prediction);
 
         return Prediction({event}, std::vector<DataPoint>());
     }

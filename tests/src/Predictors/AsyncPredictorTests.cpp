@@ -302,7 +302,7 @@ namespace AsyncPredictorTests {
         auto msg = std::static_pointer_cast<ProgEventMessage>(listener.getLastMessage());
         auto event = msg->getValue();
         auto eventState = event.getState();
-        Assert::AreEqual(eventState.size(), 2); // Number of savepoints from trajectory
+        Assert::AreEqual(eventState.size(), 3, "EventState size should be 3"); // Number of savepoints (+1) from trajectory
     }
 
     void batch() {

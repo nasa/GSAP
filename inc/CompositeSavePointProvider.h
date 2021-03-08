@@ -19,14 +19,15 @@ namespace PCOE {
     class CompositeSavePointProvider : public ISavePointProvider {
     public:
         std::set<Message::time_point> getSavePts() const override {
-            if (!hasChangedSinceSavePtsCall()) {
-                return savePts;
+            if (hasChangedSinceSavePtsCall()) {
+                savePts = std::set<Message::time_point>();
+
+                for (auto&& provider : providers) {
+                    std::set<Message::time_point> tmp = provider->getSavePts();
+                    savePts.insert(tmp.begin(), tmp.end());
+                }
             }
 
-            for (auto&& provider : providers) {
-                std::set<Message::time_point> tmp = provider->getSavePts();
-                savePts.insert(tmp.begin(), tmp.end());
-            }
             return savePts;
         }
 
@@ -39,10 +40,10 @@ namespace PCOE {
         }
 
         bool hasChangedSinceSavePtsCall() const override {
-            return !std::all_of(providers.begin(),
+            return std::any_of(providers.begin(),
                                 providers.end(),
                                 [](const ISavePointProvider* p) {
-                                    return !p->hasChangedSinceSavePtsCall();
+                                    return p->hasChangedSinceSavePtsCall();
                                 });
         }
 

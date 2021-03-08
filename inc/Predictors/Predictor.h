@@ -95,6 +95,10 @@ namespace PCOE {
             return observables;
         }
 
+        void addSavePtProvider(ISavePointProvider* provider) {
+            savePointProvider.add(provider);
+        }
+
     protected:
         /**
          * Sets the outputs (system trajectories) predicted by the current
