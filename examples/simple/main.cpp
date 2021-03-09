@@ -104,6 +104,21 @@ int main() {
         auto now_s = duration_cast<std::chrono::seconds>(now.time_since_epoch());
         std::cout << "Predicted median EoD: " << eod_median << " s (T- "
                   << (eod_median-now_s.count())<< " s)" << std::endl;
+
+        // The event state or SOC is also part of the ProgEvent object returned by .getEvents().
+        // Each element of the UData vaector corresponds to a prediction at some save point.
+        // Current SOC corresponds to the first element.
+        UData currentSOC = eod_event.getState()[0];
+        // Similar to RUL, SOC contains uncertainty due to the Monte Carlo prediction method.
+        if (currentSOC.uncertainty() != UType::Samples) {
+            std::cerr << "Unexpected uncertainty type for SOC prediction" << std::endl;
+            return std::exit(1);
+        }
+        // For this example, we will print the median SOC.
+        auto socSamples = currentSOC.getVec();
+        std::sort(socSamples.begin(), socSamples.end());
+        double soc_median = socSamples.at(socSamples.size() / 2);
+        std::cout << "\tSOC: " << soc_median << std::endl;         
     }
 
     return 0;
