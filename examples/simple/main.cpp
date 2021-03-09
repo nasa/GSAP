@@ -112,7 +112,7 @@ int main() {
         // Similar to RUL, SOC contains uncertainty due to the Monte Carlo prediction method.
         if (currentSOC.uncertainty() != UType::Samples) {
             std::cerr << "Unexpected uncertainty type for SOC prediction" << std::endl;
-            return std::exit(1);
+            return 1;
         }
         // For this example, we will print the median SOC.
         auto socSamples = currentSOC.getVec();
