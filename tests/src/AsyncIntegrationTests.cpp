@@ -179,8 +179,8 @@ namespace AsyncIntegrationTests {
     ConfigMap addPFConfig(ConfigMap config) {
         config.set("observer", "PF");
         config.set("Observer.ParticleCount", "200");
-        config.set("Observer.ProcessNoise", {"1", "1", "1", "1", "1", "1", "1", "1"});
-        config.set("Observer.SensorNoise", {"1", "1"});
+        config.set("Observer.ProcessNoise", {"1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5", "1e-5"});
+        config.set("Observer.SensorNoise", {"1e-5", "1e-5"});
         config.set("Observer.MinEffective", "100");
         return config;
     }

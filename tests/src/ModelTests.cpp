@@ -130,7 +130,7 @@ namespace ModelTests {
 
         // Initialize
         auto u0 = BatteryModel::input_type({0.4});
-        auto z0 = BatteryModel::output_type({20, 4.0});
+        auto z0 = BatteryModel::output_type({4.0, 20});
         auto x = battery.initialize(u0, z0);
 
         // Check states
@@ -154,7 +154,7 @@ namespace ModelTests {
 
         // Initialize
         auto u0 = BatteryModel::input_type({0.4});
-        auto z0 = BatteryModel::output_type({20, 4.0});
+        auto z0 = BatteryModel::output_type({4.0, 20});
         auto x = battery.initialize(u0, z0);
 
         // Set noise vector
@@ -189,7 +189,7 @@ namespace ModelTests {
 
         // Initialize
         auto u0 = BatteryModel::input_type({0.4});
-        auto z0 = BatteryModel::output_type({20, 4.0});
+        auto z0 = BatteryModel::output_type({4.0, 20});
         auto x = battery.initialize(u0, z0);
 
         // Set noise vector
@@ -216,7 +216,7 @@ namespace ModelTests {
 
         // Initialize
         auto u0 = BatteryModel::input_type({0.4});
-        auto z0 = BatteryModel::output_type({20, 4.0});
+        auto z0 = BatteryModel::output_type({4.0, 20});
         auto x = battery.initialize(u0, z0);
 
         // Check that not at threshold
@@ -224,9 +224,9 @@ namespace ModelTests {
         Assert::AreEqual(false, result);
 
         // Re-initialize to lower voltage
-        u0[0] = 0.3;
-        z0[0] = 20;
-        z0[1] = 3.0;
+        u0[battery.indices.inputs.P] = 0.3;
+        z0[battery.indices.outputs.Tbm] = 20;
+        z0[battery.indices.outputs.Vm] = 3.0;
         x = battery.initialize(u0, z0);
 
         // Check that at threshold
@@ -243,7 +243,7 @@ namespace ModelTests {
 
         // Initialize
         auto u0 = BatteryModel::input_type({0.4});
-        auto z0 = BatteryModel::output_type({20, 4.2});
+        auto z0 = BatteryModel::output_type({4.2, 20});
         auto x = battery.initialize(u0, z0);
 
         // Set up predicted outputs
