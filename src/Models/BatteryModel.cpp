@@ -15,9 +15,6 @@ using namespace PCOE;
 
 static const Log& logFile = Log::Instance();
 
-// CONST: Outputs
-enum OUT { TEMP = 0, VOLTS = 1 };
-
 // Configuration Keys
 const std::string QMOBILE_KEY = "Battery.qMobile";
 const std::string VOL_KEY = "Battery.Vol";
@@ -263,17 +260,17 @@ PrognosticsModel::state_type BatteryModel::stateEqn(double,
                                                const input_type& u,
                                                double dt) const {
     // Extract states
-    double Tb = x[0];
-    double Vo = x[1];
-    double Vsn = x[2];
-    double Vsp = x[3];
-    double qnB = x[4];
-    double qnS = x[5];
-    double qpB = x[6];
-    double qpS = x[7];
+    double Tb = x[stateIndices::Tb];
+    double Vo = x[stateIndices::Vo];
+    double Vsn = x[stateIndices::Vsn];
+    double Vsp = x[stateIndices::Vsp];
+    double qnB = x[stateIndices::qnB];
+    double qnS = x[stateIndices::qnS];
+    double qpB = x[stateIndices::qpB];
+    double qpS = x[stateIndices::qpS];
 
     // Extract inputs
-    double P = u[0];
+    double P = u[inputIndices::P];
 
     // Constraints
     double Tbdot = 0;
@@ -343,14 +340,14 @@ PrognosticsModel::state_type BatteryModel::stateEqn(double,
 
     // Update state
     auto x_new = getStateVector();
-    x_new[0] = Tb + Tbdot * dt;
-    x_new[1] = Vo + Vodot * dt;
-    x_new[2] = Vsn + Vsndot * dt;
-    x_new[3] = Vsp + Vspdot * dt;
-    x_new[4] = qnB + qnBdot * dt;
-    x_new[5] = qnS + qnSdot * dt;
-    x_new[6] = qpB + qpBdot * dt;
-    x_new[7] = qpS + qpSdot * dt;
+    x_new[stateIndices::Tb] = Tb + Tbdot * dt;
+    x_new[stateIndices::Vo] = Vo + Vodot * dt;
+    x_new[stateIndices::Vsn] = Vsn + Vsndot * dt;
+    x_new[stateIndices::Vsp] = Vsp + Vspdot * dt;
+    x_new[stateIndices::qnB] = qnB + qnBdot * dt;
+    x_new[stateIndices::qnS] = qnS + qnSdot * dt;
+    x_new[stateIndices::qpB] = qpB + qpBdot * dt;
+    x_new[stateIndices::qpS] = qpS + qpSdot * dt;
 
     return x_new;
 }
@@ -359,14 +356,14 @@ PrognosticsModel::state_type BatteryModel::stateEqn(double,
 PrognosticsModel::output_type BatteryModel::outputEqn(double,
                                                  const state_type& x) const {
     // Extract states
-    const double& Tb = x[0];
-    const double& Vo = x[1];
-    const double& Vsn = x[2];
-    const double& Vsp = x[3];
+    const double& Tb = x[stateIndices::Tb];
+    const double& Vo = x[stateIndices::Vo];
+    const double& Vsn = x[stateIndices::Vsn];
+    const double& Vsp = x[stateIndices::Vsp];
     // double qnB = x[4];
-    const double& qnS = x[5];
+    const double& qnS = x[stateIndices::qnS];
     // double qpB = x[6];
-    const double& qpS = x[7];
+    const double& qpS = x[stateIndices::qpS];
 
     // Constraints
     double xnS = qnS / parameters.qSMax;
@@ -416,8 +413,8 @@ PrognosticsModel::output_type BatteryModel::outputEqn(double,
 
     auto z_new = getOutputVector();
     // Set outputs
-    z_new[OUT::TEMP] = Tb - 273.15;
-    z_new[OUT::VOLTS] = -Ven + Vep - Vo - Vsn - Vsp;
+    z_new[outputIndices::Tbm] = Tb - 273.15;
+    z_new[outputIndices::Vm] = -Ven + Vep - Vo - Vsn - Vsp;
     return z_new;
 }
 
@@ -427,13 +424,13 @@ std::vector<bool> BatteryModel::thresholdEqn(double t, const state_type& x) cons
     auto z = outputEqn(t, x);
 
     // Determine if voltage (second element in z) is below VEOD threshold
-    return {z[1] <= parameters.VEOD};
+    return {z[outputIndices::Vm] <= parameters.VEOD};
 }
 
 PrognosticsModel::event_state_type BatteryModel::eventStateEqn(const state_type& x) const {
     // Compute "nominal" SOC
-    double qnS = x[indices.states.qnS];
-    double qnB = x[indices.states.qnB];
+    double qnS = x[stateIndices::qnS];
+    double qnB = x[stateIndices::qnB];
     return event_state_type({(qnS + qnB) / parameters.qnMax});
 }
 
@@ -568,11 +565,11 @@ PrognosticsModel::state_type BatteryModel::initialize(const input_type& u, const
     double xno = 0.6;
 
     // Compute temperature in K (needed for equations below)
-    double Tb = z[indices.outputs.Tbm] + 273.15;
+    double Tb = z[outputIndices::Tbm] + 273.15;
 
     // Account for voltage drop due to input current (assuming no concentration gradient)
-    double voltage = z[indices.outputs.Vm];
-    double current = u[indices.inputs.P] / voltage;
+    double voltage = z[outputIndices::Vm];
+    double current = u[inputIndices::P] / voltage;
     double Vo = current * parameters.Ro;
 
     // Now, construct the equilibrium potential voltage for each value of xp and xn
@@ -662,13 +659,13 @@ PrognosticsModel::state_type BatteryModel::initialize(const input_type& u, const
 
     // Set x
     auto x = getStateVector();
-    x[indices.states.Tb] = Tb;
-    x[indices.states.Vo] = Vo;
-    x[indices.states.Vsn] = 0;
-    x[indices.states.Vsp] = 0;
-    x[indices.states.qnB] = qnB0;
-    x[indices.states.qnS] = qnS0;
-    x[indices.states.qpB] = qpB0;
-    x[indices.states.qpS] = qpS0;
+    x[stateIndices::Tb] = Tb;
+    x[stateIndices::Vo] = Vo;
+    x[stateIndices::Vsn] = 0;
+    x[stateIndices::Vsp] = 0;
+    x[stateIndices::qnB] = qnB0;
+    x[stateIndices::qnS] = qnS0;
+    x[stateIndices::qpB] = qpB0;
+    x[stateIndices::qpS] = qpS0;
     return x;
 }

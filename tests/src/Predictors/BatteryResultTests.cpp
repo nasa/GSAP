@@ -103,10 +103,10 @@ namespace BatteryResultTests {
         // Data taken from the PlaybackScn2Constant.txt file from the example
         double t = 0.0;
         auto u = model.getInputVector();
-        u[0] = 0.0; // Watts
+        u[model.indices.inputs.P] = 0.0; // Watts
         auto z = model.getOutputVector();
-        z[0] = 20.00; // Volts
-        z[1] = 4.10; // Degrees C
+        z[model.indices.outputs.Tbm] = 20.00; // Degrees C
+        z[model.indices.outputs.Vm] = 4.10; // Degrees C
         auto x = model.initialize(u, z);
         observer.initialize(0.0, x, u);
 
@@ -116,9 +116,9 @@ namespace BatteryResultTests {
         // differences that aren't actually bugs. Consult your local PhD in the
         // case of confusing failures, especially if your deltas are small.
         t = 1.0;
-        u[0] = 8.00;
-        z[0] = 18.74;
-        z[1] = 4.05;
+        u[model.indices.inputs.P] = 8.00;
+        z[model.indices.outputs.Tbm] = 18.74;
+        z[model.indices.outputs.Vm] = 4.05;
         observer.step(t, u, z);
         auto x_est = observer.getStateEstimate();
         Assert::AreEqual(293.15, x_est[0].get(0), 1e-6, "t=1, x_est[0], mean");
@@ -210,9 +210,9 @@ namespace BatteryResultTests {
         Assert::AreEqual(mean, 2700, 100, "Mean ToE");
 
         t = 2.0;
-        u[0] = 8.00;
-        z[0] = 18.68;
-        z[1] = 4.03;
+        u[model.indices.inputs.P] = 8.00;
+        z[model.indices.outputs.Tbm] = 18.68;
+        z[model.indices.outputs.Vm] = 4.03;
         observer.step(t, u, z);
         x_est = observer.getStateEstimate();
 
