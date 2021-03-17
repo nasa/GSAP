@@ -44,8 +44,8 @@ public:
     };
 
     struct outputIndices {
-        static const unsigned int Tbm = 0;
-        static const unsigned int Vm = 1;
+        static const unsigned int Tbm = 1;
+        static const unsigned int Vm = 0;
     };
 
     struct allIndices {
