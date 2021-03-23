@@ -118,7 +118,26 @@ int main() {
         auto socSamples = currentSOC.getVec();
         std::sort(socSamples.begin(), socSamples.end());
         double soc_median = socSamples.at(socSamples.size() / 2);
-        std::cout << "\tSOC: " << soc_median << std::endl;         
+        std::cout << "\tSOC: " << soc_median << std::endl;
+
+        auto stateSampleVec = eod_event.getSystemState();
+        auto stateSamples = stateSampleVec[0];
+        std::vector<double> state;
+        for (auto sample : stateSamples) {
+          state.push_back(sample[0]);
+        }
+        auto& model = static_cast<ModelBasedPrognoser *>( prognoser.get())->getModel();
+        auto z = model.outputEqn(now_s.count(), (PrognosticsModel::state_type) state);
+        std::cout << "\ttemp: " << z[1];
+
+        auto stateSamplesLast = stateSampleVec[stateSampleVec.size()-1];
+        std::vector<double> stateLast;
+        for (auto sample : stateSamplesLast) {
+          stateLast.push_back(sample[0]);
+        }
+        auto zLast = model.outputEqn(now_s.count(), (PrognosticsModel::state_type) stateLast);
+        std::cout << "->" << zLast[1] << "°C" << std::endl;
+
     }
 
     return 0;
