@@ -277,7 +277,6 @@ PrognosticsModel::state_type BatteryModel::stateEqn(double,
     double P = u[inputIndices::P];
 
     // Constraints
-    double Tbdot = 0;
     double CpBulk = qpB / parameters.VolB;
     double CpSurface = qpS / parameters.VolS;
     double CnSurface = qnS / parameters.VolS;
@@ -341,6 +340,12 @@ PrognosticsModel::state_type BatteryModel::stateEqn(double,
     double VspNominal = static_cast<double>(parameters.cached.R_FAlpha * Tb * asinh(0.5L * Jp / Jp0));
     double Vsndot = (VsnNominal - Vsn) / parameters.tsn;
     double Vspdot = (VspNominal - Vsp) / parameters.tsp;
+
+    double voltage_eta = Vo + Vsn + Vsp; //(Vep - Ven) - V;
+    const double Tb0 = 293.15;
+    const double mC = 37.04;
+    const double tau = 100;
+    double Tbdot = ((voltage_eta*i/mC) + ((Tb0 - Tb)/tau)); //Newman
 
     // Update state
     auto x_new = getStateVector();
