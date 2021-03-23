@@ -85,13 +85,13 @@ namespace PCOE {
         }
         std::vector<std::vector<UData>> eventStates(eventNames.size());
         for (auto&& eventState : eventStates) {
-            eventState.resize(savePts.size()+1);
+            eventState.resize(savePts.size()+2);
             for (auto&& elem : eventState) {
                 elem.uncertainty(UType::Samples);
                 elem.npoints(sampleCount);
             }
         }
-        std::vector<std::vector<UData>> systemStates(savePts.size()+1);
+        std::vector<std::vector<UData>> systemStates(savePts.size()+2);
         for (auto&& systemState : systemStates) {
             systemState.resize(model.getStateSize());
             for (auto&& elem : systemState) {
@@ -102,7 +102,7 @@ namespace PCOE {
         std::vector<DataPoint> observables(model.getObservables().size());
         for (auto& observable : observables) {
             observable.setUncertainty(UType::Samples);
-            observable.setNumTimes(savePts.size()+1);
+            observable.setNumTimes(savePts.size()+2);
             observable.setNPoints(sampleCount);
         }
         auto stateTimestamp = getLowestTimestamp(state);
@@ -219,8 +219,7 @@ namespace PCOE {
 
             for (std::vector<bool>::size_type i = 0; i < x.size();
                  i++) {
-                systemStates[0][i][sample] =
-                    x[i];
+                systemStates[0][i][sample] = x[i];
             }
 
             auto observablesEstimate = model.observablesEqn(time_s, x);
@@ -260,7 +259,31 @@ namespace PCOE {
                 }
                 
                 if (thresholdsMet == eventNames.size()) {
-                    // All thresholds met- stop simulating for sample
+                    // All thresholds met
+
+                    // Record final state
+                    for (std::vector<bool>::size_type i = 0; i < x.size();
+                         i++) {
+                        systemStates[savePtIndex+1][i][sample] = x[i];
+                    }
+
+                    auto observablesEstimate = model.observablesEqn(time_s, x);
+
+                    for (unsigned int p = 0; p < observablesEstimate.size(); p++) {
+                        observables[p][savePtIndex+1][sample] = observablesEstimate[p];
+                    }
+
+                    // Write to eventState property
+                    auto eventStatesEstimate = model.eventStateEqn(x);
+
+                    for (std::vector<bool>::size_type eventId = 0; eventId < eventNames.size();
+                         eventId++) {
+                        eventStates[eventId][savePtIndex+1][sample] =
+                            eventStatesEstimate[eventId]; // TODO(CT): Save all event states-
+                                                          // assuming only one
+                    }
+
+                    // Stop simulating
                     break;
                 }
 
