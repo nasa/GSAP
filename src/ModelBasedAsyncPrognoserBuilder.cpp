@@ -6,6 +6,7 @@
 #include "ConfigMap.h"
 #include "Contracts.h"
 #include "Loading/LoadEstimatorFactory.h"
+#include "Loading/LoadListener.h"
 #include "ModelBasedAsyncPrognoserBuilder.h"
 #include "Models/PrognosticsModelFactory.h"
 #include "Observers/AsyncObserver.h"
@@ -125,6 +126,9 @@ namespace PCOE {
             container.addEventListener(
                 new AsyncPredictor(bus, std::move(predictor), sensorSource));
         }
+
+        LoadListener* loadListener = new LoadListener(bus, sensorSource, loadEstimator);
+        container.addEventListener(loadListener);
 
         log.WriteLine(LOG_WARN, MODULE_NAME, "Build complete");
         return container;
