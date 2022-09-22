@@ -17,7 +17,7 @@ namespace PCOE {
     class LoadListener: public IMessageProcessor {
     public:
 
-        LoadListener(MessageBus& bus, const std::string& src,LoadEstimator* le) : bus(bus), le(le) {
+        LoadListener(MessageBus& bus, const std::string& src, LoadEstimator& le) : bus(bus), le(le) {
             bus.subscribe(this, src, MessageId::ModelInputVector);
         }
 
@@ -27,15 +27,15 @@ namespace PCOE {
 
         void processMessage(const std::shared_ptr<Message>& message) override {
 
-            if (le->canAddLoad()) {
+            if (le.canAddLoad()) {
                 auto imsgVec = std::dynamic_pointer_cast<DoubleVecMessage, Message>(message);
-                le->addLoad(imsgVec->getValue());
+                le.addLoad(imsgVec->getValue());
             }
         }
 
     private:
         MessageBus& bus;
-        LoadEstimator* le;
+        LoadEstimator& le;
         std::vector<double> measurement;
     };
 
