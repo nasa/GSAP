@@ -2,7 +2,7 @@
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #ifndef PCOE_LOADLISTENER_H
-#define LoadListener_h
+#define PCOE_LOADLISTENER_H
 
 #include <memory>
 #include <string>
@@ -41,4 +41,4 @@ namespace PCOE {
 
 }
 
-#endif /* LoadListener_h */
+#endif /* PCOE_LOADLISTENER_H */
