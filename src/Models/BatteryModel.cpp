@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 United States Government as represented by the
+// Copyright (c) 2016-2021 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #include "Models/BatteryModel.h"
