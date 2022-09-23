@@ -117,12 +117,17 @@ public:
         std::sort(samples.begin(), samples.end());
         double eod_median = samples.at(samples.size() / 2);
 
+        UData currentSOC = eod_event.getState()[0];
+        samples = currentSOC.getVec();
+        std::sort(samples.begin(), samples.end());
+        double soc_median = samples.at(samples.size() / 2);
+
         // Finally, we print the number of milliseconds until EoD
         auto eod_dur = std::chrono::seconds(static_cast<unsigned long>(eod_median));
         auto now =  MessageClock::now();
         auto now_s = duration_cast<std::chrono::seconds>(now.time_since_epoch());
         std::cout << "Predicted median EoD: " << eod_dur.count() << " s (T- "
-                  << (eod_dur-now_s).count() << " s)" << std::endl;
+                  << (eod_dur-now_s).count() << " s)" << " SOC: " << soc_median << std::endl;
     }
 
 private:
