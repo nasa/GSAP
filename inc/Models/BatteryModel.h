@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 United States Government as represented by the
+// Copyright (c) 2016-2021 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 #ifndef PCOE_BATTERYMODEL_H
@@ -17,6 +17,7 @@ static const double QMOBILE_DEFAULT_VALUE = 7600;
  * An electro-chemical model of a battery.
  *
  * @author Matthew Daigle
+ * @author Chetan Kulkarni
  * @author Chris Teubert
  * @author Jason Watkins
  * @author Julian Vu

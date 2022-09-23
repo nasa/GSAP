@@ -127,7 +127,7 @@ namespace PCOE {
                 new AsyncPredictor(bus, std::move(predictor), sensorSource));
         }
 
-        LoadListener* loadListener = new LoadListener(bus, sensorSource, loadEstimator);
+        LoadListener* loadListener = new LoadListener(bus, sensorSource, *loadEstimator);
         container.addEventListener(loadListener);
 
         log.WriteLine(LOG_WARN, MODULE_NAME, "Build complete");
