@@ -57,6 +57,7 @@ const std::string TDIFFUSION_KEY = "Battery.tDiffusion";
 const std::string TO_KEY = "Battery.to";
 const std::string TSN_KEY = "Battery.tsn";
 const std::string TSP_KEY = "Battery.tsp";
+const std::string VDROPOFF_KEY = "Battery.VDropoff";
 const std::string XNMAX_KEY = "Battery.xnMax";
 const std::string XNMIN_KEY = "Battery.xnMin";
 const std::string XPMAX_KEY = "Battery.xpMax";
@@ -238,6 +239,9 @@ BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryMo
     }
     if (configMap.hasKey(TSP_KEY)) {
         parameters.tsp = configMap.getDouble(TSP_KEY);
+    }
+    if (configMap.hasKey(VDROPOFF_KEY)) {
+        parameters.VDropoff = configMap.getDouble(VDROPOFF_KEY);
     }
     if (configMap.hasKey(XNMAX_KEY)) {
         parameters.xnMax = configMap.getDouble(XNMAX_KEY);
@@ -431,7 +435,13 @@ PrognosticsModel::event_state_type BatteryModel::eventStateEqn(const state_type&
     // Compute "nominal" SOC
     double qnS = x[stateIndices::qnS];
     double qnB = x[stateIndices::qnB];
-    return event_state_type({(qnS + qnB) / parameters.qnMax});
+    double chargeSOC = (qnS + qnB) / parameters.qnMax;
+
+    // Note: t is set to 0 since it's not used anyways
+    output_type z = outputEqn(0, x);
+    double voltageSOC = (z[outputIndices::Vm] - parameters.VEOD)/(parameters.VDropoff);
+    // When within VDropoff of VEOD, this mode takes effect as the primary contributor
+    return event_state_type({fminf(chargeSOC, voltageSOC)});
 }
 
 // Set model parameters, given qMobile
@@ -534,6 +544,9 @@ void BatteryModel::setParameters(const double qMobile, const double Vol) {
 
     // End-of-discharge voltage threshold
     parameters.VEOD = 3.2;
+
+    // Voltage above EOD after which voltage will be considered in SOC calculation
+    parameters.VDropoff = 0.1;
 }
 
 // Initialize state, given an initial voltage, current, and temperature

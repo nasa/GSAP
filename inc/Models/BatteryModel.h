@@ -121,6 +121,7 @@ public:
         double tDiffusion;
         double qMobile;
         double An3;
+        double VDropoff;
         
         struct CachedParams {
             double An12_F;
