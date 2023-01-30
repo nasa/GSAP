@@ -57,7 +57,7 @@ namespace PCOE {
         Prediction step(std::map<MessageId, Datum<double>> data);
 
         const PrognosticsModel& getModel() {
-            return *model.get();
+            return *model;
         }
     };
 }
