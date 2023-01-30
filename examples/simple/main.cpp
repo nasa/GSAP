@@ -126,7 +126,8 @@ int main() {
         for (auto sample : stateSamples) {
           state.push_back(sample[0]);
         }
-        auto& model = static_cast<ModelBasedPrognoser *>( prognoser.get())->getModel();
+        auto* mbp = static_cast<ModelBasedPrognoser *>(prognoser.get());
+        auto& model = mbp->getModel();
         auto z = model.outputEqn(now_s.count(), (PrognosticsModel::state_type) state);
         std::cout << "\ttemp: " << z[1];
 
