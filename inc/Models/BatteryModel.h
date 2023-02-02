@@ -122,6 +122,9 @@ public:
         double qMobile;
         double An3;
         double VDropoff;
+        double Tau;
+        double Tb0;
+        double mC;
         
         struct CachedParams {
             double An12_F;

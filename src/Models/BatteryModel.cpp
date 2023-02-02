@@ -53,6 +53,9 @@ const std::string VEOD_KEY = "Battery.VEOD";
 const std::string VOLSFRACTION_KEY = "Battery.VolSFraction";
 const std::string KN_KEY = "Battery.kn";
 const std::string KP_KEY = "Battery.kp";
+const std::string MC_KEY = "Battery.mc";
+const std::string TAU_KEY = "Battery.tau";
+const std::string TB0_KEY = "Battery.tb0";
 const std::string TDIFFUSION_KEY = "Battery.tDiffusion";
 const std::string TO_KEY = "Battery.to";
 const std::string TSN_KEY = "Battery.tsn";
@@ -228,6 +231,15 @@ BatteryModel::BatteryModel(const ConfigMap& configMap) : BatteryModel::BatteryMo
     if (configMap.hasKey(KP_KEY)) {
         parameters.kp = configMap.getDouble(KP_KEY);
     }
+    if (configMap.hasKey(MC_KEY)) {
+        parameters.mC = configMap.getDouble(MC_KEY);
+    }
+    if (configMap.hasKey(TAU_KEY)) {
+        parameters.Tau = configMap.getDouble(TAU_KEY);
+    }
+    if (configMap.hasKey(TB0_KEY)) {
+        parameters.Tb0 = configMap.getDouble(TB0_KEY);
+    }
     if (configMap.hasKey(TDIFFUSION_KEY)) {
         parameters.tDiffusion = configMap.getDouble(TDIFFUSION_KEY);
     }
@@ -342,10 +354,7 @@ PrognosticsModel::state_type BatteryModel::stateEqn(double,
     double Vspdot = (VspNominal - Vsp) / parameters.tsp;
 
     double voltage_eta = Vo + Vsn + Vsp; //(Vep - Ven) - V;
-    const double Tb0 = 293.15;
-    const double mC = 37.04;
-    const double tau = 100;
-    double Tbdot = ((voltage_eta*i/mC) + ((Tb0 - Tb)/tau)); //Newman
+    double Tbdot = ((voltage_eta*i/parameters.mC) + ((parameters.Tb0 - Tb)/parameters.Tau)); //Newman
 
     // Update state
     auto x_new = getStateVector();
@@ -552,6 +561,11 @@ void BatteryModel::setParameters(const double qMobile, const double Vol) {
 
     // Voltage above EOD after which voltage will be considered in SOC calculation
     parameters.VDropoff = 0.1;
+
+    // Temperature Parameters
+    parameters.Tb0 = 293.15;
+    parameters.mC = 37.04;
+    parameters.Tau = 100;
 }
 
 // Initialize state, given an initial voltage, current, and temperature
