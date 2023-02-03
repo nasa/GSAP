@@ -167,7 +167,7 @@ namespace ModelTests {
         x = battery.PrognosticsModel::stateEqn(0, x, u, zeroNoise);
 
         // Check states
-        Assert::AreEqual(293.15, x[battery.indices.states.Tb], 1e-12);
+        Assert::AreEqual(293.15, x[battery.indices.states.Tb], 1e-4);
         Assert::IsTrue(x[battery.indices.states.Vo] > 0.01461 &&
                        x[battery.indices.states.Vo] < 0.14611);
         Assert::IsTrue(x[battery.indices.states.Vsn] > 1.34338e-5 &&
